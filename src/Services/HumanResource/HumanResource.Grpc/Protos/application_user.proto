@@ -1,0 +1,152 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "Protos/department.proto";
+
+option csharp_namespace = "HumanResource.Grpc";
+
+package application_user;
+
+// ---------- gRPC Service Definition ----------
+service ApplicationUserProtoService {
+  rpc ListApplicationUsers (ListApplicationUsersRequest) returns (ListApplicationUsersResponse);
+  rpc GetApplicationUser (GetApplicationUserRequest) returns (ApplicationUserDetailModel);
+  rpc CreateApplicationUser (CreateApplicationUserRequest) returns (ApplicationUserDetailModel);
+  rpc UpdateApplicationUser (UpdateApplicationUserRequest) returns (ApplicationUserDetailModel);
+  rpc DeleteApplicationUser (DeleteApplicationUserRequest) returns (DeleteApplicationUserResponse);
+
+  rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse);
+  rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordResponse);
+
+  rpc FindApplicationUserByName (FindApplicationUserByNameRequest) returns (FindApplicationUserByNameResponse);
+  rpc FindApplicationUserByUserName (FindApplicationUserByUserNameRequest) returns (FindApplicationUserByUserNameResponse);
+
+  rpc Login (LoginRequest) returns (LoginResponse);
+}
+
+// ---------- Requests & Responses ----------
+message ListApplicationUsersRequest {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  string keyword = 3;
+}
+
+message ListApplicationUsersResponse {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  int32 count = 3;
+  repeated ApplicationUserSummaryModel data = 4;
+}
+
+message GetApplicationUserRequest {
+  int32 id = 1;
+}
+
+message CreateApplicationUserRequest {
+  string userName = 1;
+  string email = 2;
+  string password = 3;
+  string phoneNumber = 4;
+  string code = 5;
+  string name = 6;
+  repeated string roleNames = 7;
+  repeated int32 departmentIds = 8;
+}
+
+message UpdateApplicationUserRequest {
+  int32 id = 1;
+  string userName = 2;
+  string email = 3;
+  string phoneNumber = 4;
+  string name = 5;
+  bool isSuspended = 6;
+  bool isCancelled = 7;
+  repeated string roleNames = 8;
+  repeated int32 departmentIds = 9;
+}
+
+message DeleteApplicationUserRequest {
+  int32 id = 1;
+}
+
+message DeleteApplicationUserResponse {
+  bool success = 1;
+}
+
+message ChangePasswordRequest {
+  int32 userId = 1;
+  string currentPassword = 2;
+  string newPassword = 3;
+}
+
+message ChangePasswordResponse {
+  bool isSuccess = 1;
+  string message = 2;
+}
+
+message ResetPasswordRequest {
+  string email = 1;
+}
+
+message ResetPasswordResponse {
+  bool isSuccess = 1;
+  string message = 2;
+}
+
+message FindApplicationUserByNameRequest {
+  string name = 1;
+}
+
+message FindApplicationUserByNameResponse {
+  repeated ApplicationUserSummaryModel users = 1;
+}
+
+message FindApplicationUserByUserNameRequest {
+  string userName = 1;
+}
+
+message FindApplicationUserByUserNameResponse {
+  repeated ApplicationUserSummaryModel users = 1;
+}
+
+message LoginRequest {
+  string userName = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  bool isSuccess = 1;
+  string message = 2;
+  ApplicationUserDetailModel user = 3;
+}
+
+// ---------- Data Models ----------
+message ApplicationUserSummaryModel {
+  int32 id = 1;
+  string userName = 2;
+  string email = 3;
+  string code = 4;
+  string name = 5;
+  bool isSuspended = 6;
+  string roles = 7;
+}
+
+message ApplicationUserDetailModel {
+  int32 id = 1;
+  string userName = 2;
+  string email = 3;
+  string phoneNumber = 4;
+  string code = 5;
+  string name = 6;
+  bool emailConfirmed = 7;
+  bool phoneNumberConfirmed = 8;
+  bool twoFactorEnabled = 9;
+  bool isSuspended = 10;
+  bool isCancelled = 11;
+  google.protobuf.Timestamp createdAt = 12;
+  int32 createdBy = 13;
+  google.protobuf.Timestamp lastUpdatedAt = 14;
+  int32 lastUpdatedBy = 15;
+  string roles = 16;
+  repeated department.DepartmentSummaryModel departments = 17;
+}

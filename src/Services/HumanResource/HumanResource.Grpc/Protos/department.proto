@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "HumanResource.Grpc";
+
+package department;
+
+// ---------- gRPC Service ----------
+service DepartmentProtoService {
+  rpc ListDepartments (ListDepartmentsRequest) returns (ListDepartmentsResponse);
+  rpc GetDepartment (GetDepartmentRequest) returns (DepartmentDetailModel);
+  rpc CreateDepartment (CreateDepartmentRequest) returns (DepartmentDetailModel);
+  rpc UpdateDepartment (UpdateDepartmentRequest) returns (DepartmentDetailModel);
+  rpc DeleteDepartment (DeleteDepartmentRequest) returns (DeleteDepartmentResponse);
+}
+
+// ---------- Request & Response ----------
+message ListDepartmentsRequest {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  string keyword = 3;
+}
+
+message ListDepartmentsResponse {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  int32 count = 3;
+  repeated DepartmentSummaryModel data = 4;
+}
+
+message GetDepartmentRequest {
+  int32 id = 1;
+}
+
+message CreateDepartmentRequest {
+  string code = 1;
+  string name = 2;
+  int32 departmentTypeId = 3;
+}
+
+message UpdateDepartmentRequest {
+  int32 id = 1;
+  string code = 2;
+  string name = 3;
+  int32 departmentTypeId = 4;
+  bool isSuspended = 5;
+  bool isCancelled = 6;
+}
+
+message DeleteDepartmentRequest {
+  int32 id = 1;
+}
+
+message DeleteDepartmentResponse {
+  bool isSuccess = 1;
+}
+
+// ---------- Data Models ----------
+message DepartmentSummaryModel {
+  int32 id = 1;
+  string code = 2;
+  string name = 3;
+  string departmentTypeName = 4;
+  bool isSuspended = 5;
+}
+
+message DepartmentDetailModel {
+  int32 id = 1;
+  string code = 2;
+  string name = 3;
+  int32 departmentTypeId = 4;
+  string departmentTypeName = 5;
+  bool isSuspended = 6;
+  bool isCancelled = 7;
+  google.protobuf.Timestamp createdAt = 8;
+  int32 createdBy = 9;
+  google.protobuf.Timestamp lastUpdatedAt = 10;
+  int32 lastUpdatedBy = 11;
+}
+
+message DepartmentTypeModel {
+  int32 id = 1;
+  string code = 2;
+  string name = 3;
+}

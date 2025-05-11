@@ -1,0 +1,154 @@
+﻿name: Deploy BE App
+
+on:
+  push:
+    branches: ["main", "dev"]
+
+env:
+  API_SERVICES: "Authentication"
+  GRPC_SERVICES: "HumanResource"
+  # GATEWAYS: "YarpApiGateway"
+  # CHART_DIR: ./helm
+  # RELEASE_NAME: mediflow
+  # NAMESPACE: mediflow
+  # DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+  # DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+  # VERSION_TAG: ${{ github.sha }}
+
+jobs:
+  notify-start:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord notification - Workflow started
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d "{\"content\": \"🚀 **mediflow » mediflow-be - #${{ github.run_number }}** Started by \`${{ github.actor }}\` ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+          
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
+        
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v1
+
+      - name: Build and start Docker Compose
+        run: |
+          docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up -d
+
+      # - name: Wait for containers to be ready
+      #   run: |
+      #     sleep 10
+
+      # - name: Run tests
+      #   run: |
+      #     dotnet test ./tests/ArchitectureTests/ArchitectureTests.csproj
+
+      - name: Clean up Docker containers
+        run: |
+          docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml down
+
+  build-and-push:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # - name: Log in to Docker_Hub
+      #   uses: docker/login-action@v3
+      #   with:
+      #     username: ${{ env.DOCKER_HUB_USERNAME }}
+      #     password: ${{ env.DOCKER_HUB_TOKEN }}
+
+      # - name: Build and Push images for GRPC Services
+      #   env:
+      #     GRPC_SERVICES: ${{ env.GRPC_SERVICES }}
+      #     DOCKER_HUB_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+      #     VERSION_TAG: ${{ env.VERSION_TAG }}
+      #   run: |
+      #     for SERVICE in $GRPC_SERVICES; do
+      #       SERVICE_LOWER=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')
+      #       IMAGE="$DOCKER_HUB_USERNAME/${SERVICE_LOWER}-grpc"
+      #       docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.Grpc/Dockerfile ./src
+      #       docker push $IMAGE:$VERSION_TAG
+      #     done
+
+      # - name: Build and Push images for API Services
+      #   env:
+      #     API_SERVICES: ${{ env.API_SERVICES }}
+      #     DOCKER_HUB_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+      #     VERSION_TAG: ${{ env.VERSION_TAG }}
+      #   run: |
+      #     for SERVICE in $API_SERVICES; do
+      #       SERVICE_LOWER=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')
+      #       IMAGE="$DOCKER_HUB_USERNAME/${SERVICE_LOWER}-api"
+      #       docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.API/Dockerfile ./src
+      #       docker push $IMAGE:$VERSION_TAG
+      #     done
+
+      # - name: Build and Push images for API Gateways
+      #   env:
+      #     GATEWAYS: ${{ env.GATEWAYS }}
+      #     DOCKER_HUB_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+      #     VERSION_TAG: ${{ env.VERSION_TAG }}
+      #   run: |
+      #     for GATEWAY in $GATEWAYS; do
+      #       GATEWAY_LOWER=$(echo $GATEWAY | tr '[:upper:]' '[:lower:]')
+      #       IMAGE="$DOCKER_HUB_USERNAME/$GATEWAY_LOWER"
+      #       docker build -t $IMAGE:$VERSION_TAG -f ./src/ApiGateways/$GATEWAY/Dockerfile ./src
+      #       docker push $IMAGE:$VERSION_TAG
+      #     done
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Helm and kubectl
+        uses: azure/setup-helm@v3
+
+      # - name: Set KUBECONFIG
+      #   run: |
+      #     mkdir -p $HOME/.kube
+      #     printf "%s" "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+      #     chmod 600 $HOME/.kube/config
+
+      # - name: Helm upgrade
+      #   run: helm upgrade --install $RELEASE_NAME $CHART_DIR -n $NAMESPACE --create-namespace --atomic --wait --set image.tag=${{ env.VERSION_TAG }}
+
+  notify-end:
+    runs-on: ubuntu-latest
+    needs: [build-and-test, build-and-push, deploy]
+    if: always()
+    steps:
+      - name: Notify success
+        if: success()
+        run: |
+          end_time=$(date +%s)
+          duration=$((end_time - ${{ steps.start-time.outputs.start_time }}))
+          mins=$((duration / 60))
+          secs=$((duration % 60))
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d "{\"content\": \"✅ **mediflow » mediflow-be - #${{ github.run_number }}** Success after ${mins} min ${secs} sec ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+          ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Notify failure
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d "{\"content\": \"❌ **mediflow » mediflow-be - #${{ github.run_number }}** Failed. Triggered by \`${{ github.actor }}\` ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+          ${{ secrets.DISCORD_WEBHOOK }}

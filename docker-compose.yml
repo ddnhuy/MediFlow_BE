@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  postgres_db:
+    image: postgres:14
+
+  humanresource.grpc:
+    image: ${DOCKER_REGISTRY-}humanresourcegrpc
+    build:
+      context: .
+      dockerfile: src/Services/HumanResource/HumanResource.Grpc/Dockerfile
+
+  authentication.api:
+    image: ${DOCKER_REGISTRY-}authenticationapi
+    build:
+      context: .
+      dockerfile: src/Services/Authentication/Authentication.API/Dockerfile
+
+volumes:
+  postgres_db:
