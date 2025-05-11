@@ -55,7 +55,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"BuuLe-cyper_MediFlow_BE" /o:"buule-cyper" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin `
+            /k:"ddnhuy_MediFlow_BE" `
+            /o:"ddnhuy" `
+            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
+            /d:sonar.host.url="https://sonarcloud.io" `
+            /d:sonar.exclusions="**/SeedData.cs/**,**/appsettings*.json"
 
       # Build the project and continue even if there are issues
       - name: Build the project
