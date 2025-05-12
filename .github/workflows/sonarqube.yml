@@ -61,8 +61,8 @@ jobs:
             /o:"ddnhuy" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs" `
-            /d:sonar.secret.exclusions="**/appsettings*.json, **/SeedData.cs"
+            /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**" `
+            /d:sonar.secret.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**"
 
       - name: Build the project
         shell: powershell
