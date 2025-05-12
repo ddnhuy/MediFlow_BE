@@ -49,7 +49,7 @@ jobs:
       - name: Restore NuGet packages
         shell: powershell
         run: |
-          dotnet restore
+          dotnet restore MediFlow.sln
 
       - name: Begin SonarQube analysis
         env:
@@ -67,7 +67,7 @@ jobs:
       - name: Build the project
         shell: powershell
         run: |
-          dotnet build --no-restore --configuration Release
+          dotnet build MediFlow.sln --no-restore --configuration Release
           if ($LASTEXITCODE -ne 0) {
             Write-Host "Build failed, continuing with SonarQube analysis."
           }
