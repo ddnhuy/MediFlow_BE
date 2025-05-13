@@ -9,7 +9,7 @@ namespace HumanResource.Grpc.Database.Configurations
             builder.HasIndex(x => x.Name);
             builder.HasIndex(x => x.Code);
             builder.HasOne(x => x.DepartmentType).WithMany().HasForeignKey(x => x.DepartmentTypeId).OnDelete(DeleteBehavior.Restrict);
-            builder.HasMany<ApplicationUser>().WithMany(x => x.Departments);
+            builder.HasMany(x => x.Users).WithMany(x => x.Departments);
         }
     }
 }

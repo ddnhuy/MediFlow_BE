@@ -1,6 +1,4 @@
-﻿using Mapster;
-
-namespace HumanResource.Grpc.Mapping
+﻿namespace HumanResource.Grpc.Mapping
 {
     public class MapsterConfig : IRegister
     {

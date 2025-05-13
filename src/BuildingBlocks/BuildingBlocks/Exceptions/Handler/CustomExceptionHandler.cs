@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Grpc.Core;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -40,6 +41,12 @@ namespace BuildingBlocks.Exceptions.Handler
                     exception.Message,
                     exception.GetType().Name,
                     context.Response.StatusCode = StatusCodes.Status404NotFound
+                ),
+                RpcException =>
+                (
+                    exception.Message,
+                    exception.GetType().Name,
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest
                 ),
                 _ =>
                 (

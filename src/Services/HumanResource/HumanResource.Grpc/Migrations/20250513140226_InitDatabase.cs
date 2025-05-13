@@ -218,12 +218,12 @@ namespace HumanResource.Grpc.Migrations
                 name: "ApplicationUserDepartment",
                 columns: table => new
                 {
-                    ApplicationUserId = table.Column<int>(type: "integer", nullable: false),
-                    DepartmentsId = table.Column<int>(type: "integer", nullable: false)
+                    DepartmentsId = table.Column<int>(type: "integer", nullable: false),
+                    UsersId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApplicationUserDepartment", x => new { x.ApplicationUserId, x.DepartmentsId });
+                    table.PrimaryKey("PK_ApplicationUserDepartment", x => new { x.DepartmentsId, x.UsersId });
                     table.ForeignKey(
                         name: "FK_ApplicationUserDepartment_Departments_DepartmentsId",
                         column: x => x.DepartmentsId,
@@ -231,17 +231,17 @@ namespace HumanResource.Grpc.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ApplicationUserDepartment_Users_ApplicationUserId",
-                        column: x => x.ApplicationUserId,
+                        name: "FK_ApplicationUserDepartment_Users_UsersId",
+                        column: x => x.UsersId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ApplicationUserDepartment_DepartmentsId",
+                name: "IX_ApplicationUserDepartment_UsersId",
                 table: "ApplicationUserDepartment",
-                column: "DepartmentsId");
+                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Departments_Code",

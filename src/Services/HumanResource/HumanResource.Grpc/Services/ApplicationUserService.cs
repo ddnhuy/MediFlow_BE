@@ -1,6 +1,5 @@
 ﻿using Grpc.Core;
 using HumanResource.Grpc.Database;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HumanResource.Grpc.Services
 {
@@ -55,7 +54,7 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, "User not found."));
+                throw new RpcException(new Status(StatusCode.NotFound, $"Không tìm thấy người dùng với ID \"{request.Id}\"."));
             }
 
             var userModel = user.Adapt<ApplicationUserDetailModel>();
@@ -108,7 +107,7 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, "User not found."));
+                throw new RpcException(new Status(StatusCode.NotFound, $"Không tìm thấy người dùng với ID \"{request.Id}\"."));
             }
 
             user.UserName = request.UserName;
@@ -128,7 +127,7 @@ namespace HumanResource.Grpc.Services
             if (!result.Succeeded)
             {
                 logger.LogWarning("Failed to update user {Id}: {Errors}", user.Id, string.Join("; ", result.Errors.Select(e => e.Description)));
-                throw new RpcException(new Status(StatusCode.Internal, "Update failed."));
+                throw new RpcException(new Status(StatusCode.Internal, $"Cập nhật thông tin người dùng với ID \"{request.Id}\" thất bại."));
             }
 
             logger.LogInformation("User updated successfully: {Id}", user.Id);
@@ -143,7 +142,7 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, "User not found."));
+                throw new RpcException(new Status(StatusCode.NotFound, $"Không tìm thấy người dùng với ID \"{request.Id}\""));
             }
 
             var result = await userManager.DeleteAsync(user);
@@ -164,7 +163,7 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found for password change: {Id}", request.UserId);
-                return new ChangePasswordResponse { IsSuccess = false, Message = "User not found." };
+                return new ChangePasswordResponse { IsSuccess = false, Message = $"Không tìm thấy người dùng với ID \"{request.UserId}\"" };
             }
 
             var result = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
@@ -176,7 +175,7 @@ namespace HumanResource.Grpc.Services
             return new ChangePasswordResponse
             {
                 IsSuccess = result.Succeeded,
-                Message = result.Succeeded ? "Password changed" : string.Join(", ", result.Errors.Select(e => e.Description))
+                Message = result.Succeeded ? "Mật khẩu đã thay đổi." : "Mật khẩu hiện tại chưa chính xác hoặc mật khẩu mới không hợp lệ, vui lòng thử lại."
             };
         }
 
@@ -188,25 +187,27 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found for reset: {Email}", request.Email);
-                return new ResetPasswordResponse { IsSuccess = false, Message = "User not found." };
+                return new ResetPasswordResponse { IsSuccess = false, Message = $"Không tìm thấy người dùng với email \"{request.Email}\"" };
             }
 
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
-            var newPassword = Guid.NewGuid().ToString("N")[..12];
+            var newPassword = PasswordGenerator.GenerateSecurePassword();
 
             var result = await userManager.ResetPasswordAsync(user, token, newPassword);
             if (!result.Succeeded)
             {
                 logger.LogWarning("Failed to reset password for user {Email}: {Errors}", user.Email, string.Join("; ", result.Errors.Select(e => e.Description)));
-                return new ResetPasswordResponse { IsSuccess = false, Message = "Reset failed." };
+                return new ResetPasswordResponse { IsSuccess = false, Message = "Đặt lại mật khẩu không thành công. Vui lòng thử lại." };
             }
 
             logger.LogInformation("Password for user {Email} reset to: {Password}", user.Email, newPassword);
 
+            // Send Email
+
             return new ResetPasswordResponse
             {
                 IsSuccess = true,
-                Message = $"Password reset successfully. Please check your email."
+                Message = $"Đã đặt lại mật khẩu thành công. Vui lòng kiểm tra email của bạn."
             };
         }
         public override async Task<FindApplicationUserByNameResponse> FindApplicationUserByName(FindApplicationUserByNameRequest request, ServerCallContext context)
@@ -266,7 +267,7 @@ namespace HumanResource.Grpc.Services
                 return new LoginResponse
                 {
                     IsSuccess = false,
-                    Message = "Invalid username or password."
+                    Message = "Tên người dùng hoặc mật khẩu không chính xác, vui lòng thử lại."
                 };
             }
 
@@ -277,7 +278,7 @@ namespace HumanResource.Grpc.Services
                 return new LoginResponse
                 {
                     IsSuccess = false,
-                    Message = "Invalid username or password."
+                    Message = "Tên người dùng hoặc mật khẩu không chính xác, vui lòng thử lại."
                 };
             }
 
@@ -290,7 +291,7 @@ namespace HumanResource.Grpc.Services
             return new LoginResponse
             {
                 IsSuccess = true,
-                Message = "Login successful.",
+                Message = "Đăng nhập thành công.",
                 User = userModel
             };
         }

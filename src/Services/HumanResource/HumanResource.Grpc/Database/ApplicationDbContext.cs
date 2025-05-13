@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.Reflection;
 
 namespace HumanResource.Grpc.Database
 {
@@ -14,6 +15,8 @@ namespace HumanResource.Grpc.Database
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
             base.OnModelCreating(builder);
 
             foreach (IMutableEntityType entityType in builder.Model.GetEntityTypes())

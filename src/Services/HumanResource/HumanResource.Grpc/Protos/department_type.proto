@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "HumanResource.Grpc";
+
+package department_type;
+
+// ---------- gRPC Service ----------
+
+
+// ---------- Request & Response ----------
+
+
+// ---------- Data Models ----------
+message DepartmentTypeModel {
+  int32 id = 1;
+  string code = 2;
+  string name = 3;
+}
