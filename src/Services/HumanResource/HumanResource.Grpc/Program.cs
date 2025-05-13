@@ -1,4 +1,5 @@
-﻿using HumanResource.Grpc.Database;
+﻿using Google.Protobuf.Collections;
+using HumanResource.Grpc.Database;
 using HumanResource.Grpc.Interceptors;
 using HumanResource.Grpc.Mapping;
 using HumanResource.Grpc.Services;
@@ -29,6 +30,10 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 .AddDefaultTokenProviders();
 
 TypeAdapterConfig.GlobalSettings.Scan(AppDomain.CurrentDomain.GetAssemblies());
+TypeAdapterConfig.GlobalSettings.Default
+    .UseDestinationValue(member => member.SetterModifier == AccessModifier.None &&
+                                   member.Type.IsGenericType &&
+                                   member.Type.GetGenericTypeDefinition() == typeof(RepeatedField<>));
 builder.Services.AddSingleton<IRegister, MapsterConfig>();
 
 builder.Services.AddSingleton<ICurrentUserHelper, CurrentUserHelper>();

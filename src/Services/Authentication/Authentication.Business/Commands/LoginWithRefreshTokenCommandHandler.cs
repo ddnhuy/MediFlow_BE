@@ -28,7 +28,7 @@
 
             var user = await applicationUserProto.GetApplicationUserAsync(new GetApplicationUserRequest { Id = userId }, cancellationToken: cancellationToken);
 
-            var accessToken = tokenProvider.GenerateAccessToken(user);
+            var accessToken = tokenProvider.GenerateAccessToken(user, string.Join(",", user.Departments.Select(d => d.Name)));
 
             return new LoginWithRefreshTokenResult(accessToken, command.RefreshToken);
         }

@@ -23,7 +23,7 @@ namespace Infrastructure.Database
                 user = new ApplicationUser
                 {
                     UserName = userName,
-                    Email = "admin@mediflow.com",
+                    Email = "admin@mediflow.health.vn",
                     Name = "MediFlow Admin",
                     Code = "MEDIFLOW000",
                     CreatedAt = DateTime.UtcNow,
@@ -68,7 +68,21 @@ namespace Infrastructure.Database
 
             if (!await dbContext.Departments.AnyAsync())
             {
-                var departments = new List<Department>();
+                var departments = new List<Department>
+                {
+                    new Department
+                    {
+                        Code = $"DEPT-000",
+                        Name = $"Examination",
+                        DepartmentTypeId = 1,
+                        IsSuspended = false,
+                        IsCancelled = false,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = 1,
+                        LastUpdatedAt = DateTime.UtcNow,
+                        LastUpdatedBy = 1
+                    }
+                };
 
                 for (int i = 1; i <= 10; i++)
                 {
@@ -88,6 +102,17 @@ namespace Infrastructure.Database
 
                 await dbContext.Departments.AddRangeAsync(departments);
                 await dbContext.SaveChangesAsync();
+
+                var adminUser = await dbContext.Users.FirstOrDefaultAsync(x => x.UserName == "mediflow");
+                if (adminUser is not null)
+                {
+                    var department = await dbContext.Departments.FirstOrDefaultAsync(x => x.Name == "Examination");
+                    if (department is not null)
+                    {
+                        adminUser.Departments = [department];
+                        await dbContext.SaveChangesAsync();
+                    }
+                }
             }
         }
     }

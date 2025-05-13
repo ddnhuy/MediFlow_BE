@@ -50,7 +50,9 @@ namespace HumanResource.Grpc.Services
         {
             logger.LogInformation("Getting user by ID: {Id}", request.Id);
 
-            var user = await userManager.FindByIdAsync(request.Id.ToString());
+            var user = await dbContext.Users
+                .Include(x => x.Departments)
+                .FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsCancelled);
             if (user == null)
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
@@ -260,7 +262,10 @@ namespace HumanResource.Grpc.Services
         {
             logger.LogInformation("Login attempt for user: {UserName}", request.UserName);
 
-            var user = await userManager.FindByNameAsync(request.UserName);
+            var user = await dbContext.Users
+                .Include(x => x.Departments)
+                .ThenInclude(x => x.DepartmentType)
+                .FirstOrDefaultAsync(x => x.UserName == request.UserName && !x.IsCancelled);
             if (user == null)
             {
                 logger.LogWarning("User not found: {UserName}", request.UserName);

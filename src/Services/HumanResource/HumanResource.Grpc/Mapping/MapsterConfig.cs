@@ -52,7 +52,7 @@
                 .Map(dest => dest.CreatedBy, src => src.CreatedBy)
                 .Map(dest => dest.LastUpdatedAt, src => Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(src.LastUpdatedAt.ToUniversalTime()))
                 .Map(dest => dest.LastUpdatedBy, src => src.LastUpdatedBy)
-                .Map(dest => dest.Departments, src => src.Departments.Adapt<List<DepartmentSummaryModel>>())
+                .Map(dest => dest.Departments, src => src.Departments)
                 .TwoWays();
 
             // ApplicationUser -> ApplicationUserSummaryModel

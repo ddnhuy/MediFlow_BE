@@ -9,13 +9,13 @@ namespace Authentication.Business.Helpers
 {
     public interface ITokenProvider
     {
-        string GenerateAccessToken(ApplicationUserDetailModel user);
+        string GenerateAccessToken(ApplicationUserDetailModel user, string? department = null);
         string GenerateRefreshToken();
     }
 
     public class TokenProvider(IConfiguration configuration) : ITokenProvider
     {
-        public string GenerateAccessToken(ApplicationUserDetailModel user)
+        public string GenerateAccessToken(ApplicationUserDetailModel user, string? department = null)
         {
             IEnumerable<string> roles = user.Roles.Split(',');
 
@@ -25,10 +25,15 @@ namespace Authentication.Business.Helpers
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-        };
+            {
+                new(ClaimTypes.NameIdentifier, user.Id.ToString())
+            };
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+
+            if (!string.IsNullOrEmpty(department))
+            {
+                claims.Add(new Claim("Department", department));
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

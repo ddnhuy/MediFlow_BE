@@ -1,4 +1,7 @@
-﻿namespace Authentication.API.Endpoints
+﻿using BuildingBlocks.Authorization;
+using Microsoft.AspNetCore.Authorization;
+
+namespace Authentication.API.Endpoints
 {
     public record ChangePasswordRequest(int UserId, string CurrentPassword, string NewPassword);
     public record ChangePasswordResponse(bool IsSuccess, string Message);
