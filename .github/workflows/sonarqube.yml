@@ -97,7 +97,7 @@ jobs:
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
               /p:CoverletOutput=TestResults/coverage/${name}.cobertura.xml \
-              /p:Exclude="[*]*.Program,[*]*.Startup,[*]*.Migrations.*,[*]*.SeedData" \
+              /p:ExcludeByFile="**/Program.cs,**/Startup.cs,**/Migrations/**" \
               /p:Include="[*]*" \
               /p:MergeWith=TestResults/coverage/coverage.cobertura.xml \
               || echo "❌ Test thất bại hoặc không sinh coverage cho $proj"
