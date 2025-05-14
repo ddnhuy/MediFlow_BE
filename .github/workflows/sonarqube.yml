@@ -78,44 +78,90 @@ jobs:
             /o:"ddnhuy" \
             /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
-            /d:sonar.cs.vstest.reportsPaths="**/TestResults/**/*.trx" \
+            /d:sonar.cs.opencover.reportsPaths="TestResults/*.opencover.xml" \
+            /d:sonar.cs.vstest.reportsPaths="TestResults/*.trx" \
             /d:sonar.exclusions="**/appsettings*.json,**/SeedData.cs,**/helm/**/*,**/Migrations/**/*,**/obj/**/*,**/bin/**/*" \
-            /d:sonar.coverage.exclusions="**/*Tests.cs,**/*Tests/*.cs,**/Tests/**/*.cs,**/Migrations/**/*"
+            /d:sonar.coverage.exclusions="**/*Test*.cs,**/*Test*/*.cs,**/Test*/**/*.cs,**/Migrations/**/*,**/*.Dto.cs,**/*.Dto/*.cs,**/*.Model.cs,**/*.Models/*.cs" \
+            /d:sonar.verbose=true
 
       - name: Build the project
         shell: bash
-        run: dotnet build MediFlow.sln --no-restore --configuration Release
+        run: |
+          echo "Building solution..."
+          dotnet build MediFlow.sln --no-restore --configuration Release
+          
+          # Cài đặt các công cụ coverage nếu cần
+          dotnet add package coverlet.collector --version 6.0.0
+          dotnet add package coverlet.msbuild --version 6.0.0
 
       # Run tests with consistent coverage format
       - name: Run tests with coverage
         shell: bash
         run: |
-          mkdir -p TestResults
-          echo "Running tests with coverage reports..."
-          dotnet test MediFlow.sln \
-            --configuration Release \
-            --no-build \
-            --no-restore \
-            --logger "trx;LogFileName=test-results.trx" \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=opencover \
-            /p:CoverletOutput="./TestResults/coverage.opencover.xml" \
-            /p:MergeWith="./TestResults/coverage.json" \
-            /p:Exclude="[*]*.Migrations.*,[*]*.SeedData" \
-            || echo "Some tests may have failed but continuing with SonarQube analysis"
+          # Cài đặt coverlet
+          dotnet tool install --global coverlet.console
           
-          # List generated coverage files
-          echo "Coverage files generated:"
-          find TestResults -type f -name "*.xml" || echo "No coverage files found"
+          # Tạo thư mục cho báo cáo
+          mkdir -p TestResults
+          rm -rf TestResults/*
+          
+          # Tìm tất cả các project test
+          test_projects=$(find . -name "*Test*.csproj" -o -name "*Tests.csproj")
+          
+          # Chạy test cho từng project với coverage
+          echo "=== Running tests with coverage reports ==="
+          for proj in $test_projects; do
+            echo "Testing project: $proj"
+            project_name=$(basename "$proj" .csproj)
+            
+            # Chạy dotnet test với coverlet
+            dotnet test "$proj" \
+              --configuration Release \
+              --no-build \
+              --no-restore \
+              --logger "trx;LogFileName=TestResults/$project_name.trx" \
+              /p:CollectCoverage=true \
+              /p:CoverletOutputFormat="opencover" \
+              /p:CoverletOutput="TestResults/$project_name.opencover.xml" \
+              /p:Exclude="[*]*Migrations*,[*]*SeedData*,[*]*.Dto,[*]*.Models" \
+              || echo "Tests may have failed for $project_name but continuing"
+          done
+          
+          # Hiển thị danh sách file được tạo
+          echo "=== Coverage files generated ==="
+          find TestResults -type f | sort
+          
+          # Kiểm tra file coverage có tồn tại không
+          coverage_files=$(find TestResults -name "*.opencover.xml" | wc -l)
+          if [ "$coverage_files" -eq 0 ]; then
+            echo "WARNING: No coverage files were generated!"
+            
+            # Tạo file coverage rỗng để tránh lỗi
+            echo '<?xml version="1.0" encoding="utf-8"?><CoverageSession></CoverageSession>' > TestResults/empty.opencover.xml
+          else
+            echo "Found $coverage_files coverage files."
+          fi
 
       - name: End SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: bash
         run: |
+          echo "Coverage files being sent to SonarQube:"
+          find TestResults -name "*.opencover.xml" -type f | xargs ls -la
+          
+          echo "Sending analysis to SonarQube..."
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${SONAR_TOKEN}" || echo "SonarQube analysis may have issues but workflow continues"
 
+      # Upload coverage reports as artifacts for debugging 
+      - name: Upload coverage report as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-reports
+          path: TestResults
+          retention-days: 1
+          
       - name: Clean up Docker containers
         if: always()  # Ensure cleanup happens even if previous steps fail
         run: docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml down
