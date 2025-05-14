@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     name: Build, test and analyze
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Set up JDK 17
@@ -29,7 +29,7 @@ jobs:
       - name: Cache SonarQube Cloud packages
         uses: actions/cache@v4
         with:
-          path: ~\sonar\cache
+          path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
@@ -37,61 +37,69 @@ jobs:
         id: cache-sonar-scanner
         uses: actions/cache@v4
         with:
-          path: .\.sonar\scanner
+          path: ./.sonar/scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
 
       - name: Install SonarQube Cloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-        shell: powershell
+        shell: bash
         run: |
-          New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+          mkdir -p ./.sonar/scanner
+          dotnet tool update dotnet-sonarscanner --tool-path ./.sonar/scanner
 
       - name: Restore NuGet packages
-        shell: powershell
+        shell: bash
         run: |
           dotnet restore MediFlow.sln
 
       - name: Begin SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
+        shell: bash
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin `
-            /k:"ddnhuy_MediFlow_BE" `
-            /o:"ddnhuy" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**" `
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage.cobertura.xml" `
+          ./.sonar/scanner/dotnet-sonarscanner begin \
+            /k:"ddnhuy_MediFlow_BE" \
+            /o:"ddnhuy" \
+            /d:sonar.token="${SONAR_TOKEN}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**" \
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/coverage.cobertura.xml" \
             /d:sonar.secret.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**"
 
       - name: Build the project
-        shell: powershell
+        shell: bash
         run: |
-          dotnet build MediFlow.sln --no-restore --configuration Release
-          if ($LASTEXITCODE -ne 0) {
-            Write-Host "Build failed, continuing with SonarQube analysis."
-          }
+          dotnet build MediFlow.sln --no-restore --configuration Release || echo "Build failed, continuing with SonarQube analysis."
 
       - name: Pull PostgreSQL image
-        shell: powershell
+        shell: bash
         run: |
           docker pull postgres:14
 
-      - name: Run tests and generate coverage report
-        shell: powershell
+      - name: Start Docker Compose services
+        shell: bash
         run: |
-          dotnet test MediFlow.sln `
-            --no-restore --no-build --configuration Release `
-            /p:CollectCoverage=true `
-            /p:CoverletOutputFormat=cobertura `
+          docker-compose -f docker-compose.yml up -d
+
+      - name: Run tests and generate coverage report
+        shell: bash
+        run: |
+          dotnet test MediFlow.sln \
+            --no-restore --no-build --configuration Release \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=cobertura \
             /p:CoverletOutput=TestResults/coverage/
 
       - name: End SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
+        shell: bash
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
+
+      - name: Stop Docker Compose services
+        if: always()
+        shell: bash
+        run: |
+          docker-compose -f docker-compose.yml down -v
