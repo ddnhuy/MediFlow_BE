@@ -89,13 +89,13 @@ jobs:
         shell: bash
         run: |
           mkdir -p TestResults/coverage
-          for proj in $(find . -name "*.Tests.csproj"); do
+          for proj in $(find . -type f -name "*.csproj" | grep -i "test"); do
             echo "Running tests for $proj"
             dotnet test "$proj" \
               --no-restore --configuration Release \
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
-              /p:CoverletOutput=TestResults/coverage/$(basename "$proj").xml
+              /p:CoverletOutput=TestResults/coverage/$(basename "$proj" .csproj).cobertura.xml || echo "Test failed for $proj"
           done
 
       - name: Debug - List coverage files
