@@ -81,6 +81,8 @@ jobs:
       - name: Build and start Docker Compose
         run: docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up -d
 
+# ... các bước trước giữ nguyên
+
       - name: Run tests and generate coverage report
         shell: bash
         run: |
@@ -92,28 +94,42 @@ jobs:
             echo "➡️  Running tests for $proj"
             name=$(basename "$proj" .csproj)
             output="TestResults/coverage/${name}.cobertura.xml"
+            output_dir="TestResults/coverage/${name}"
+
+            mkdir -p "$output_dir"
 
             dotnet test "$proj" \
               --no-restore --configuration Release \
               /p:CollectCoverage=true \
-              /p:CoverletOutput="$output" \
-              /p:CoverletOutputFormat=cobertura \
+              /p:CoverletOutput="${output_dir}/" \
+              /p:CoverletOutputFormat="json,cobertura" \
               /p:Include="[MediFlow.*]*" \
               /p:Exclude="[*.Tests]*" \
               /p:IncludeTestAssembly=false \
               --logger "console;verbosity=detailed"
 
-            if [[ -f "$output" ]]; then
+            echo "🔎 Kiểm tra tồn tại của file coverage.json:"
+            if [[ -f "${output_dir}/coverage.json" ]]; then
+              echo "✅ Đã sinh ra file coverage.json"
+              cat "${output_dir}/coverage.json" | head -n 100
+            else
+              echo "❌ Không có file coverage.json nào được sinh!"
+            fi
+
+            echo "🔍 Kiểm tra file cobertura:"
+            if [[ -f "${output_dir}/coverage.cobertura.xml" ]]; then
+              mv "${output_dir}/coverage.cobertura.xml" "$output"
               echo "✅ Đã tạo file coverage: $output"
             else
-              echo "❌ Không tạo được file coverage cho $proj – có thể test không gọi code, hoặc cấu hình sai."
-              echo "🔎 Nội dung thư mục TestResults/coverage:"
-              ls -l TestResults/coverage
+              echo "❌ Không tạo được file cobertura cho $proj – có thể test không gọi code thực tế, hoặc cấu hình sai."
+              echo "📁 Nội dung thư mục ${output_dir}:"
+              ls -lah "$output_dir"
             fi
           done
 
           echo "📂 Danh sách file coverage được tạo:"
           find TestResults/coverage -name "*.cobertura.xml" || echo "⚠️ Không có file coverage nào!"
+
 
 
       - name: End SonarQube analysis
