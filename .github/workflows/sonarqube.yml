@@ -64,7 +64,7 @@ jobs:
             /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="TestResults/coverage/coverage.cobertura.xml" \
+            /d:sonar.cs.opencover.reportsPaths="TestResults/coverage/**/*.xml" \
             /d:sonar.secret.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**"
 
       - name: Build the project
@@ -74,27 +74,29 @@ jobs:
 
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
-        
+
       - name: Set up Docker Compose
         uses: docker/setup-compose-action@v1
 
       - name: Pull PostgreSQL image
         shell: bash
-        run: |
-          docker pull postgres:14
+        run: docker pull postgres:14
 
       - name: Build and start Docker Compose
-        run: |
-          docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up -d
+        run: docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up -d
 
       - name: Run tests and generate coverage report
         shell: bash
         run: |
-          dotnet test MediFlow.sln \
-            --no-restore --configuration Release \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=TestResults/coverage/coverage.cobertura.xml
+          mkdir -p TestResults/coverage
+          for proj in $(find . -name "*.Tests.csproj"); do
+            echo "Running tests for $proj"
+            dotnet test "$proj" \
+              --no-restore --configuration Release \
+              /p:CollectCoverage=true \
+              /p:CoverletOutputFormat=cobertura \
+              /p:CoverletOutput=TestResults/coverage/$(basename "$proj").xml
+          done
 
       - name: Debug - List coverage files
         run: ls -R TestResults/coverage
