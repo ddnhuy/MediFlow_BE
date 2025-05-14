@@ -97,9 +97,6 @@ jobs:
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
               /p:CoverletOutput=TestResults/coverage/${name}.cobertura.xml \
-              /p:ExcludeByFile="**/Program.cs,**/Startup.cs,**/Migrations/**" \
-              /p:Include="[*]*" \
-              /p:MergeWith=TestResults/coverage/coverage.cobertura.xml \
               || echo "❌ Test thất bại hoặc không sinh coverage cho $proj"
           done
           echo "📂 Danh sách file coverage được tạo:"
