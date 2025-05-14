@@ -84,6 +84,7 @@ jobs:
       - name: Run tests and generate coverage report
         shell: bash
         run: |
+          set -e
           echo "=== 🧪 Bắt đầu chạy test và sinh báo cáo coverage ==="
           mkdir -p TestResults/coverage
 
@@ -91,7 +92,7 @@ jobs:
             echo "➡️  Running tests for $proj"
             name=$(basename "$proj" .csproj)
             output="TestResults/coverage/${name}.cobertura.xml"
-            
+
             dotnet test "$proj" \
               --no-restore --configuration Release \
               /p:CollectCoverage=true \
@@ -99,17 +100,21 @@ jobs:
               /p:CoverletOutputFormat=cobertura \
               /p:Include="[MediFlow.*]*" \
               /p:Exclude="[*.Tests]*" \
-              /p:IncludeTestAssembly=false
+              /p:IncludeTestAssembly=false \
+              --logger "console;verbosity=detailed"
 
             if [[ -f "$output" ]]; then
               echo "✅ Đã tạo file coverage: $output"
             else
-              echo "❌ Không tạo được file coverage cho $proj – kiểm tra lại cấu hình hoặc nội dung test."
+              echo "❌ Không tạo được file coverage cho $proj – có thể test không gọi code, hoặc cấu hình sai."
+              echo "🔎 Nội dung thư mục TestResults/coverage:"
+              ls -l TestResults/coverage
             fi
           done
 
           echo "📂 Danh sách file coverage được tạo:"
           find TestResults/coverage -name "*.cobertura.xml" || echo "⚠️ Không có file coverage nào!"
+
 
       - name: End SonarQube analysis
         env:
