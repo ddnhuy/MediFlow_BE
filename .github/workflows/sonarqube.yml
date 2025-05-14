@@ -50,8 +50,7 @@ jobs:
 
       - name: Restore NuGet packages
         shell: bash
-        run: |
-          dotnet restore MediFlow.sln
+        run: dotnet restore MediFlow.sln
 
       - name: Begin SonarQube analysis
         env:
@@ -64,7 +63,7 @@ jobs:
             /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="TestResults/coverage/**/*.xml" \
+            /d:sonar.cs.opencover.reportsPaths="TestResults/coverage/*.cobertura.xml" \
             /d:sonar.secret.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**"
 
       - name: Build the project
@@ -89,22 +88,19 @@ jobs:
         shell: bash
         run: |
           mkdir -p TestResults/coverage
+          echo "=== Bắt đầu chạy test và sinh báo cáo coverage ==="
           for proj in $(find . -type f -name "*.csproj" | grep -i "test"); do
-            echo "Running tests for $proj"
+            echo "➡️  Running tests for $proj"
+            name=$(basename "$proj" .csproj)
             dotnet test "$proj" \
               --no-restore --configuration Release \
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
-              /p:CoverletOutput=TestResults/coverage/$(basename "$proj" .csproj).cobertura.xml || echo "Test thất bại cho $proj"
+              /p:CoverletOutput=TestResults/coverage/${name}.cobertura.xml \
+              || echo "❌ Test thất bại hoặc không sinh coverage cho $proj"
           done
-          
-          echo "Kiểm tra tệp báo cáo coverage:"
-          ls -R TestResults/coverage
-
-      - name: Debug - List file coverage
-        run: |
-          echo "List file coverage:"
-          ls -R TestResults/coverage
+          echo "📂 Danh sách file coverage được tạo:"
+          find TestResults/coverage -name "*.cobertura.xml" || echo "❗ Không tìm thấy file coverage nào!"
 
       - name: End SonarQube analysis
         env:
@@ -114,5 +110,4 @@ jobs:
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
 
       - name: Clean up Docker containers
-        run: |
-          docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml down
+        run: docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml down
