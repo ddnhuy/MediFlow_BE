@@ -8,7 +8,9 @@
         public LoginWithUserNameCommandValidator()
         {
             RuleFor(x => x.UserName).NotEmpty().WithMessage(ValidationStrings.REQUIRED_USERNAME);
-            RuleFor(x => x.Password).NotEmpty().WithMessage(ValidationStrings.REQUIRED_PASSWORD);
+            RuleFor(x => x.Password)
+                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_PASSWORD)
+                .MinimumLength(8).WithMessage(ValidationStrings.INVALID_PASSWORD_LENGTH);
         }
     }
 

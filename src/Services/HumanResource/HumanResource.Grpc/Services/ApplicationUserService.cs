@@ -1,4 +1,6 @@
-﻿using Grpc.Core;
+﻿using BuildingBlocks.Strings.Exceptions;
+using BuildingBlocks.Strings.SuccessStrings;
+using Grpc.Core;
 using HumanResource.Grpc.Database;
 
 namespace HumanResource.Grpc.Services
@@ -56,7 +58,7 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, $"Không tìm thấy người dùng với ID \"{request.Id}\"."));
+                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.Id)));
             }
 
             var userModel = user.Adapt<ApplicationUserDetailModel>();
@@ -109,7 +111,7 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, $"Không tìm thấy người dùng với ID \"{request.Id}\"."));
+                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.Id)));
             }
 
             user.UserName = request.UserName;
@@ -129,7 +131,7 @@ namespace HumanResource.Grpc.Services
             if (!result.Succeeded)
             {
                 logger.LogWarning("Failed to update user {Id}: {Errors}", user.Id, string.Join("; ", result.Errors.Select(e => e.Description)));
-                throw new RpcException(new Status(StatusCode.Internal, $"Cập nhật thông tin người dùng với ID \"{request.Id}\" thất bại."));
+                throw new RpcException(new Status(StatusCode.Internal, HumanResourceExceptionStrings.FAILED_UPDATE_USER_WITH_ID(request.Id)));
             }
 
             logger.LogInformation("User updated successfully: {Id}", user.Id);
@@ -144,7 +146,7 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, $"Không tìm thấy người dùng với ID \"{request.Id}\""));
+                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.Id)));
             }
 
             var result = await userManager.DeleteAsync(user);
@@ -165,7 +167,7 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found for password change: {Id}", request.UserId);
-                return new ChangePasswordResponse { IsSuccess = false, Message = $"Không tìm thấy người dùng với ID \"{request.UserId}\"" };
+                return new ChangePasswordResponse { IsSuccess = false, Message = HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.UserId) };
             }
 
             var result = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
@@ -177,7 +179,7 @@ namespace HumanResource.Grpc.Services
             return new ChangePasswordResponse
             {
                 IsSuccess = result.Succeeded,
-                Message = result.Succeeded ? "Mật khẩu đã thay đổi." : "Mật khẩu hiện tại chưa chính xác hoặc mật khẩu mới không hợp lệ, vui lòng thử lại."
+                Message = result.Succeeded ? HumanResourceSuccessStrings.SUCCESS_CHANGE_PASSWORD : HumanResourceExceptionStrings.FAILED_CHANGE_PASSWORD
             };
         }
 
@@ -189,7 +191,7 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found for reset: {Email}", request.Email);
-                return new ResetPasswordResponse { IsSuccess = false, Message = $"Không tìm thấy người dùng với email \"{request.Email}\"" };
+                return new ResetPasswordResponse { IsSuccess = false, Message = HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_EMAIL(request.Email) };
             }
 
             var token = await userManager.GeneratePasswordResetTokenAsync(user);
@@ -199,7 +201,7 @@ namespace HumanResource.Grpc.Services
             if (!result.Succeeded)
             {
                 logger.LogWarning("Failed to reset password for user {Email}: {Errors}", user.Email, string.Join("; ", result.Errors.Select(e => e.Description)));
-                return new ResetPasswordResponse { IsSuccess = false, Message = "Đặt lại mật khẩu không thành công. Vui lòng thử lại." };
+                return new ResetPasswordResponse { IsSuccess = false, Message = HumanResourceExceptionStrings.FAILED_RESET_PASSWORD };
             }
 
             logger.LogInformation("Password for user {Email} reset to: {Password}", user.Email, newPassword);
@@ -209,7 +211,7 @@ namespace HumanResource.Grpc.Services
             return new ResetPasswordResponse
             {
                 IsSuccess = true,
-                Message = $"Đã đặt lại mật khẩu thành công. Vui lòng kiểm tra email của bạn."
+                Message = HumanResourceSuccessStrings.SUCCESS_RESET_PASSWORD
             };
         }
         public override async Task<FindApplicationUserByNameResponse> FindApplicationUserByName(FindApplicationUserByNameRequest request, ServerCallContext context)
@@ -272,7 +274,7 @@ namespace HumanResource.Grpc.Services
                 return new LoginResponse
                 {
                     IsSuccess = false,
-                    Message = "Tên người dùng hoặc mật khẩu không chính xác, vui lòng thử lại."
+                    Message = HumanResourceExceptionStrings.INVALID_LOGIN_CREDENTIAL
                 };
             }
 
@@ -283,7 +285,7 @@ namespace HumanResource.Grpc.Services
                 return new LoginResponse
                 {
                     IsSuccess = false,
-                    Message = "Tên người dùng hoặc mật khẩu không chính xác, vui lòng thử lại."
+                    Message = HumanResourceExceptionStrings.INVALID_LOGIN_CREDENTIAL
                 };
             }
 
@@ -296,7 +298,7 @@ namespace HumanResource.Grpc.Services
             return new LoginResponse
             {
                 IsSuccess = true,
-                Message = "Đăng nhập thành công.",
+                Message = HumanResourceSuccessStrings.SUCCESS_LOGIN,
                 User = userModel
             };
         }

@@ -9,7 +9,9 @@ namespace Authentication.Business.Commands
     {
         public ResetPasswordCommandValidator()
         {
-            RuleFor(x => x.Email).NotEmpty().WithMessage(ValidationStrings.REQUIRED_EMAIL);
+            RuleFor(x => x.Email)
+                .EmailAddress().WithMessage(ValidationStrings.INVALID_EMAIL)
+                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_EMAIL);
         }
     }
 

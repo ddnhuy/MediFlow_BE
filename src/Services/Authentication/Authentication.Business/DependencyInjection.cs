@@ -1,8 +1,11 @@
-﻿using BuildingBlocks.Behaviors;
+﻿using Authentication.Business.Commands;
+using BuildingBlocks.Behaviors;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Authentication.Business
 {
@@ -10,13 +13,14 @@ namespace Authentication.Business
     {
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            var assembly = typeof(DependencyInjection).Assembly;
             services.AddMediatR(config =>
             {
-                config.RegisterServicesFromAssembly(assembly);
+                config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
                 config.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             });
+
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), includeInternalTypes: true);
 
             services.AddSingleton<ITokenProvider, TokenProvider>();
 
