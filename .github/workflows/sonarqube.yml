@@ -97,6 +97,8 @@ jobs:
               /p:CoverletOutputFormat=cobertura \
               /p:CoverletOutput=TestResults/coverage/$(basename "$proj" .csproj).cobertura.xml || echo "Test failed for $proj"
           done
+          
+          ls -R TestResults/coverage
 
       - name: Debug - List coverage files
         run: ls -R TestResults/coverage
