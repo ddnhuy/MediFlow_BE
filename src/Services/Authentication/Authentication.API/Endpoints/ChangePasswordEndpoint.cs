@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Authorization;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 
 namespace Authentication.API.Endpoints
 {
@@ -10,7 +9,7 @@ namespace Authentication.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/authentication/change-password", async (ChangePasswordRequest request, ISender sender) =>
+            app.MapPost("/authentication/change-password", [Authorize] async (ChangePasswordRequest request, ISender sender) =>
             {
                 var command = request.Adapt<ChangePasswordCommand>();
 

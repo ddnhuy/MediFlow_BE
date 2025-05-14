@@ -1,17 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
+using AuthenticationService.FunctionalTests.Helpers;
 
 namespace AuthenticationService.FunctionalTests.Tests
 {
     public class ChangePasswordTests : BaseFunctionalTest
     {
+        private string _testToken;
+
         public ChangePasswordTests(FunctionalTestWebAppFactory factory) : base(factory)
         {
+            _testToken = TokenHelper.GenerateTestToken();
+        }
+
+        private void SetAuthHeader()
+        {
+            _client.DefaultRequestHeaders.Authorization = 
+                new AuthenticationHeaderValue("Bearer", _testToken);
         }
 
         [Fact]
         public async Task ChangePassword_WithValidCredentials_ReturnsSuccessMessage()
         {
             // Arrange
+            SetAuthHeader();
             var request = new Authentication.API.Endpoints.ChangePasswordRequest(1, "Mediflow@123", "Mediflow@1234");
 
             var grpcResponse = new HumanResource.Grpc.ChangePasswordResponse
@@ -42,6 +54,7 @@ namespace AuthenticationService.FunctionalTests.Tests
         public async Task ChangePassword_WithWrongCurrentPassword_ReturnsBadRequest()
         {
             // Arrange
+            SetAuthHeader();
             var request = new Authentication.API.Endpoints.ChangePasswordRequest(1, "Mediflow@123", "Mediflow@1234");
 
             var grpcResponse = new HumanResource.Grpc.ChangePasswordResponse
@@ -71,6 +84,7 @@ namespace AuthenticationService.FunctionalTests.Tests
         public async Task ChangePassword_WithSameNewAndCurrentPassword_ReturnsBadRequest()
         {
             // Arrange
+            SetAuthHeader();
             var request = new Authentication.API.Endpoints.ChangePasswordRequest(1, "Mediflow@123", "Mediflow@123");
 
             // Act
@@ -89,6 +103,7 @@ namespace AuthenticationService.FunctionalTests.Tests
         public async Task ChangePassword_WithInvalidPasswordLength_ReturnsBadRequest()
         {
             // Arrange
+            SetAuthHeader();
             var request = new Authentication.API.Endpoints.ChangePasswordRequest(1, "Med@123", "Mediflow@123");
 
             // Act
