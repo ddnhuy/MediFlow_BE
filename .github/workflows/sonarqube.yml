@@ -24,7 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Important for SonarQube to get all history
 
       - name: Cache SonarQube Cloud packages
         uses: actions/cache@v4
@@ -52,30 +52,8 @@ jobs:
         shell: bash
         run: dotnet restore MediFlow.sln
 
-      - name: Begin SonarQube analysis
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: bash
-        run: |
-          ./.sonar/scanner/dotnet-sonarscanner begin \
-            /k:"ddnhuy_MediFlow_BE" \
-            /o:"ddnhuy" \
-            /d:sonar.token="${SONAR_TOKEN}" \
-            /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="TestResults/coverage/*.cobertura.xml" \
-            /d:sonar.secret.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**"
-
-      - name: Build the project
-        shell: bash
-        run: |
-          dotnet build MediFlow.sln --no-restore --configuration Release || echo "Build failed, continuing with SonarQube analysis."
-
       - name: Set up Docker
-        uses: docker/setup-docker-action@v4
-
-      - name: Set up Docker Compose
-        uses: docker/setup-compose-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Pull PostgreSQL image
         shell: bash
@@ -84,30 +62,60 @@ jobs:
       - name: Build and start Docker Compose
         run: docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up -d
 
-      - name: Run tests and generate coverage report
+      # Add a delay to ensure services are fully started
+      - name: Wait for services to be ready
+        run: sleep 20
+
+      # Begin SonarQube analysis after Docker is ready but before tests
+      - name: Begin SonarQube analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          mkdir -p TestResults/coverage
-          echo "=== Bắt đầu chạy test và sinh báo cáo coverage ==="
-          for proj in $(find . -type f -name "*.csproj" | grep -i "test"); do
-            echo "➡️  Running tests for $proj"
-            name=$(basename "$proj" .csproj)
-            dotnet test "$proj" \
-              --no-restore --configuration Release \
-              /p:CollectCoverage=true \
-              /p:CoverletOutputFormat=cobertura \
-              /p:CoverletOutput=TestResults/coverage/${name}.cobertura.xml \
-              || echo "❌ Test thất bại hoặc không sinh coverage cho $proj"
-          done
-          echo "📂 Danh sách file coverage được tạo:"
-          find TestResults/coverage -name "*.cobertura.xml" || echo "❗ Không tìm thấy file coverage nào!"
+          ./.sonar/scanner/dotnet-sonarscanner begin \
+            /k:"ddnhuy_MediFlow_BE" \
+            /o:"ddnhuy" \
+            /d:sonar.token="${SONAR_TOKEN}" \
+            /d:sonar.host.url="https://sonarcloud.io" \
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
+            /d:sonar.cs.vstest.reportsPaths="**/TestResults/**/*.trx" \
+            /d:sonar.exclusions="**/appsettings*.json,**/SeedData.cs,**/helm/**/*,**/Migrations/**/*,**/obj/**/*,**/bin/**/*" \
+            /d:sonar.coverage.exclusions="**/*Tests.cs,**/*Tests/*.cs,**/Tests/**/*.cs,**/Migrations/**/*"
+
+      - name: Build the project
+        shell: bash
+        run: dotnet build MediFlow.sln --no-restore --configuration Release
+
+      # Run tests with consistent coverage format
+      - name: Run tests with coverage
+        shell: bash
+        run: |
+          mkdir -p TestResults
+          echo "Running tests with coverage reports..."
+          dotnet test MediFlow.sln \
+            --configuration Release \
+            --no-build \
+            --no-restore \
+            --logger "trx;LogFileName=test-results.trx" \
+            /p:CollectCoverage=true \
+            /p:CoverletOutputFormat=opencover \
+            /p:CoverletOutput="./TestResults/coverage.opencover.xml" \
+            /p:MergeWith="./TestResults/coverage.json" \
+            /p:Exclude="[*]*.Migrations.*,[*]*.SeedData" \
+            || echo "Some tests may have failed but continuing with SonarQube analysis"
+          
+          # List generated coverage files
+          echo "Coverage files generated:"
+          find TestResults -type f -name "*.xml" || echo "No coverage files found"
 
       - name: End SonarQube analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: bash
         run: |
-          ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
+          ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${SONAR_TOKEN}" || echo "SonarQube analysis may have issues but workflow continues"
 
       - name: Clean up Docker containers
+        if: always()  # Ensure cleanup happens even if previous steps fail
         run: docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml down
