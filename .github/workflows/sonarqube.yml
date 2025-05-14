@@ -1,4 +1,4 @@
-name: SonarQube
+﻿name: SonarQube
 
 on:
   push:
@@ -89,24 +89,22 @@ jobs:
         shell: bash
         run: |
           mkdir -p TestResults/coverage
-          # Run tests for all projects that match the pattern and generate cobertura coverage reports
           for proj in $(find . -type f -name "*.csproj" | grep -i "test"); do
             echo "Running tests for $proj"
             dotnet test "$proj" \
               --no-restore --configuration Release \
               /p:CollectCoverage=true \
               /p:CoverletOutputFormat=cobertura \
-              /p:CoverletOutput=TestResults/coverage/$(basename "$proj" .csproj).cobertura.xml || echo "Test failed for $proj"
+              /p:CoverletOutput=TestResults/coverage/$(basename "$proj" .csproj).cobertura.xml || echo "Test thất bại cho $proj"
           done
           
-          # List coverage files to verify
+          echo "Kiểm tra tệp báo cáo coverage:"
           ls -R TestResults/coverage
-          
-          # Verify if the cobertura xml files are correctly created
-          cat TestResults/coverage/*.cobertura.xml
 
-      - name: Debug - List coverage files
-        run: ls -R TestResults/coverage
+      - name: Debug - List file coverage
+        run: |
+          echo "List file coverage:"
+          ls -R TestResults/coverage
 
       - name: End SonarQube analysis
         env:
