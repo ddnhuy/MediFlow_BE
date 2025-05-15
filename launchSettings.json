@@ -6,7 +6,8 @@
       "serviceActions": {
         "postgres_db": "StartWithoutDebugging",
         "authentication.api": "StartDebugging",
-        "humanresource.grpc": "StartDebugging"
+        "humanresource.grpc": "StartDebugging",
+        "yarpapigateway": "StartDebugging"
       }
     }
   }

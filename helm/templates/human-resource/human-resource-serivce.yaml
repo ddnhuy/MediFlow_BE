@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: human-resource-grpc
+spec:
+  selector:
+    app: human-resource-grpc
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      name: http
+      targetPort: 8080
+  type: {{ .Values.service.type }}

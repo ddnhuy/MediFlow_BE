@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: human-resource-config
+data:
+  appsettings.json: |
+    {
+      "ConnectionStrings": {
+        "Database": "Data Source=/app/data/discount.db"
+      },
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Information"
+        }
+      },
+      "AllowedHosts": "*",
+      "Kestrel": {
+        "EndpointDefaults": {
+          "Protocols": "Http2"
+        }
+      }
+    }

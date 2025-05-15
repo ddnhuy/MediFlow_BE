@@ -4,6 +4,12 @@ services:
   postgres_db:
     image: postgres:14
 
+  yarpapigateway:
+    image: ${DOCKER_REGISTRY-}yarpapigateway
+    build:
+      context: .
+      dockerfile: src/ApiGateways/YarpApiGateWay/Dockerfile
+
   humanresource.grpc:
     image: ${DOCKER_REGISTRY-}humanresourcegrpc
     build:
@@ -18,3 +24,4 @@ services:
 
 volumes:
   postgres_db:
+

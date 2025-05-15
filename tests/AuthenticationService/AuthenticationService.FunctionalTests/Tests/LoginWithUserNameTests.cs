@@ -29,7 +29,7 @@ namespace AuthenticationService.FunctionalTests.Tests
                 .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
 
             // Act
-            var response = await _client.PostAsJsonAsync("/authentication/login", request);
+            var response = await _client.PostAsJsonAsync("/login", request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -51,7 +51,7 @@ namespace AuthenticationService.FunctionalTests.Tests
                 .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
 
             // Act
-            var response = await _client.PostAsJsonAsync("/authentication/login", request);
+            var response = await _client.PostAsJsonAsync("/login", request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -69,7 +69,7 @@ namespace AuthenticationService.FunctionalTests.Tests
                 .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
 
             // Act
-            var response = await _client.PostAsJsonAsync("/authentication/login", request);
+            var response = await _client.PostAsJsonAsync("/login", request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -91,7 +91,7 @@ namespace AuthenticationService.FunctionalTests.Tests
                 .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
 
             // Act
-            var response = await _client.PostAsJsonAsync("/authentication/login", request);
+            var response = await _client.PostAsJsonAsync("/login", request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

@@ -45,7 +45,7 @@ namespace AuthenticationService.FunctionalTests.Tests
 
             // Act
             var response = await _client.PostAsJsonAsync(
-                "/authentication/login/refresh-token",
+                "/login/refresh-token",
                 request
             );
 
@@ -65,7 +65,7 @@ namespace AuthenticationService.FunctionalTests.Tests
 
             // Act
             var response = await _client.PostAsJsonAsync(
-                "/authentication/login/refresh-token",
+                "/login/refresh-token",
                 request
             );
 
@@ -86,7 +86,7 @@ namespace AuthenticationService.FunctionalTests.Tests
 
             // Act
             var response = await _client.PostAsJsonAsync(
-                "/authentication/login/refresh-token",
+                "/login/refresh-token",
                 request
             );
 
@@ -117,7 +117,7 @@ namespace AuthenticationService.FunctionalTests.Tests
 
             // Act
             var response = await _client.PostAsJsonAsync(
-                "/authentication/login/refresh-token",
+                "/login/refresh-token",
                 request
             );
 

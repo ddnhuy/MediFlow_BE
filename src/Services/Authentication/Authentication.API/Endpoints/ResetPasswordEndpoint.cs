@@ -7,7 +7,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/authentication/reset-password", async (ResetPasswordRequest request, ISender sender) =>
+            app.MapPost("/reset-password", async (ResetPasswordRequest request, ISender sender) =>
             {
                 var command = request.Adapt<ResetPasswordCommand>();
 
