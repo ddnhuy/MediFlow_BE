@@ -9,8 +9,8 @@ env:
   GRPC_SERVICES: "HumanResource"
   GATEWAYS: "YarpApiGateWay"
   CHART_DIR: ./helm
-  RELEASE_NAME: MediFlow
-  NAMESPACE: MediFlow
+  RELEASE_NAME: mediflow
+  NAMESPACE: mediflow
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
   DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
   VERSION_TAG: ${{ github.sha }}
