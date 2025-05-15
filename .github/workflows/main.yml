@@ -84,7 +84,7 @@ jobs:
           for SERVICE in $GRPC_SERVICES; do
             SERVICE_LOWER=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')
             IMAGE="$DOCKER_HUB_USERNAME/${SERVICE_LOWER}-grpc"
-            docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.Grpc/Dockerfile ./src
+            docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.Grpc/Dockerfile .
             docker push $IMAGE:$VERSION_TAG
           done
 
@@ -97,7 +97,7 @@ jobs:
           for SERVICE in $API_SERVICES; do
             SERVICE_LOWER=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')
             IMAGE="$DOCKER_HUB_USERNAME/${SERVICE_LOWER}-service"
-            docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.API/Dockerfile ./src
+            docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.API/Dockerfile .
             docker push $IMAGE:$VERSION_TAG
           done
 
