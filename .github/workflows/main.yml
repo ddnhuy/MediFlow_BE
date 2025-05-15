@@ -2,7 +2,7 @@
 
 on:
   push:
-    branches: ["main", "develop", "feature/*"]
+    branches: ["main", "develop", "feature/**"]
 
 env:
   API_SERVICES: "Authentication"
@@ -31,7 +31,7 @@ jobs:
           -X POST \
           -d "{\"content\": \"🚀 **mediflow » mediflow-be - #${{ github.run_number }}** Started by \`${{ github.actor }}\` ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
           ${{ secrets.DISCORD_WEBHOOK_URL }}
-          
+
   build-and-test:
     runs-on: ubuntu-latest
 
@@ -39,9 +39,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
-        
+
       - name: Set up Docker Compose
         uses: docker/setup-compose-action@v1
 
@@ -49,13 +54,9 @@ jobs:
         run: |
           docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up -d
 
-      # - name: Wait for containers to be ready
-      #   run: |
-      #     sleep 10
-
-      # - name: Run tests
-      #   run: |
-      #     dotnet test ./tests/ArchitectureTests/ArchitectureTests.csproj
+      - name: Run tests
+        run: |
+          dotnet test MediFlow.sln --configuration Release
 
       - name: Clean up Docker containers
         run: |
