@@ -71,7 +71,7 @@ ingress:
   hosts:
     - host: api.ddnhuy.tech
       paths:
-        - path: /
+        - path: /mediflow
           pathType: Prefix
   tls:
     - hosts:
