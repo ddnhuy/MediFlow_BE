@@ -64,7 +64,7 @@ jobs:
             /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**" \
-            /d:"sonar.cs.dotcover.reportsPaths=TestResults/**/*.xml" \
+            /d:"sonar.cs.vscoveragexml.reportsPaths=TestResults/**/*.xml" \
             /d:sonar.secret.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**"
 
       - name: Build the project
