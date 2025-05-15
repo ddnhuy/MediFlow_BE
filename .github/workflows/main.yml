@@ -110,7 +110,7 @@ jobs:
           for GATEWAY in $GATEWAYS; do
             GATEWAY_LOWER=$(echo $GATEWAY | tr '[:upper:]' '[:lower:]')
             IMAGE="$DOCKER_HUB_USERNAME/$GATEWAY_LOWER"
-            docker build -t $IMAGE:$VERSION_TAG -f ./src/ApiGateways/$GATEWAY/Dockerfile ./src
+            docker build -t $IMAGE:$VERSION_TAG -f ./src/ApiGateways/$GATEWAY/Dockerfile .
             docker push $IMAGE:$VERSION_TAG
           done
 
