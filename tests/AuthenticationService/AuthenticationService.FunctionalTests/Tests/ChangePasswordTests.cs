@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
-using AuthenticationService.FunctionalTests.Helpers;
 
 namespace AuthenticationService.FunctionalTests.Tests
 {

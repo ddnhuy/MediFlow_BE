@@ -8,8 +8,7 @@ namespace Authentication.DataAccess.Repositories
     {
         Task AddAsync(string token, int userId);
         Task<int> FindAsync(string token);
-        Task DeleteAsync(string token, int userId);
-        Task DeleteAllForUserAsync(int userId);
+        Task DeleteAllForUserAsync(int userId, string currentToken);
     }
 
     public class RefreshTokenRepository(ApplicationDbContext dbContext) : IRefreshTokenRepository
@@ -40,22 +39,10 @@ namespace Authentication.DataAccess.Repositories
             return refreshToken.UserId;
         }
 
-        public async Task DeleteAsync(string token, int userId)
-        {
-            var existingToken = await dbContext.RefreshTokens
-                .FirstOrDefaultAsync(rt => rt.Token == token && rt.UserId == userId);
-
-            if (existingToken != null)
-            {
-                dbContext.RefreshTokens.Remove(existingToken);
-                await dbContext.SaveChangesAsync();
-            }
-        }
-
-        public async Task DeleteAllForUserAsync(int userId)
+        public async Task DeleteAllForUserAsync(int userId, string currentToken)
         {
             var tokens = await dbContext.RefreshTokens
-                .Where(rt => rt.UserId == userId)
+                .Where(rt => rt.UserId == userId && rt.Token != currentToken)
                 .ToListAsync();
 
             dbContext.RefreshTokens.RemoveRange(tokens);
