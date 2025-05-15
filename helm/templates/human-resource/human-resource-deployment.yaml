@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: human-resource-grpc
-          image: "ddnhuy/human-resource-grpc:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "ddnhuy/humanresource-grpc:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080

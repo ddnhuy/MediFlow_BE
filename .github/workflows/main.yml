@@ -6,7 +6,7 @@ on:
 
 env:
   API_SERVICES: "Authentication"
-  GRPC_SERVICES: "Human-Resource"
+  GRPC_SERVICES: "HumanResource"
   GATEWAYS: "YarpApiGateway"
   CHART_DIR: ./helm
   RELEASE_NAME: MediFlow
