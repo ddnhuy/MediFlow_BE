@@ -5,16 +5,16 @@ metadata:
 data:
   appsettings.json: |
     {
-      "ConnectionStrings": {
-        "Database": "Data Source=/app/data/discount.db"
-      },
       "Logging": {
         "LogLevel": {
           "Default": "Information",
-          "Microsoft.AspNetCore": "Information"
+          "Microsoft.AspNetCore": "Warning"
         }
       },
       "AllowedHosts": "*",
+      "ConnectionStrings": {
+        "Database": "Server=postgres;Port=5432;Database=HumanResourceDb;User Id=postgres;Password=postgres;Include Error Detail=true;Pooling=true;MinPoolSize=5;MaxPoolSize=100;CommandTimeout=30;"
+      },
       "Kestrel": {
         "EndpointDefaults": {
           "Protocols": "Http2"
