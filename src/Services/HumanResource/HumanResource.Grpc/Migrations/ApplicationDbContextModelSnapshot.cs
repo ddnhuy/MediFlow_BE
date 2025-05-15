@@ -24,15 +24,15 @@ namespace HumanResource.Grpc.Migrations
 
             modelBuilder.Entity("ApplicationUserDepartment", b =>
                 {
-                    b.Property<int>("ApplicationUserId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("DepartmentsId")
                         .HasColumnType("integer");
 
-                    b.HasKey("ApplicationUserId", "DepartmentsId");
+                    b.Property<int>("UsersId")
+                        .HasColumnType("integer");
 
-                    b.HasIndex("DepartmentsId");
+                    b.HasKey("DepartmentsId", "UsersId");
+
+                    b.HasIndex("UsersId");
 
                     b.ToTable("ApplicationUserDepartment");
                 });
@@ -355,15 +355,15 @@ namespace HumanResource.Grpc.Migrations
 
             modelBuilder.Entity("ApplicationUserDepartment", b =>
                 {
-                    b.HasOne("HumanResource.Grpc.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("HumanResource.Grpc.Models.Department", null)
                         .WithMany()
                         .HasForeignKey("DepartmentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HumanResource.Grpc.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

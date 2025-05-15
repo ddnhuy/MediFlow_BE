@@ -1,0 +1,9 @@
+﻿global using Authentication.Business.Exceptions;
+global using Authentication.Business.Helpers;
+global using Authentication.DataAccess.Data;
+global using Authentication.DataAccess.Repositories;
+global using BuildingBlocks.CQRS;
+global using BuildingBlocks.Strings;
+global using FluentValidation;
+global using HumanResource.Grpc;
+global using Mapster;

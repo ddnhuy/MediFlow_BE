@@ -78,9 +78,3 @@ message DepartmentDetailModel {
   google.protobuf.Timestamp lastUpdatedAt = 10;
   int32 lastUpdatedBy = 11;
 }
-
-message DepartmentTypeModel {
-  int32 id = 1;
-  string code = 2;
-  string name = 3;
-}
