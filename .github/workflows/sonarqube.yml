@@ -64,7 +64,7 @@ jobs:
             /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**" \
-            /d:sonar.cs.opencover.reportsPaths="testresults/coverage/*.xml" \
+            /d:sonar.cs.dotcover.reportsPaths="TestResults/**/*.xml" \
             /d:sonar.secret.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**"
 
       - name: Build the project
@@ -92,7 +92,7 @@ jobs:
 
       - name: Run tests and generate coverage report
         shell: bash
-        run: dotnet-coverage collect "dotnet test MediFlow.sln" -f xml -o "testresults/coverage/test-coverage.xml"
+        run: dotnet-coverage collect "dotnet test MediFlow.sln" -f xml -o "TestResults/Coverages/test-coverage.xml"
 
       - name: End SonarQube analysis
         env:
