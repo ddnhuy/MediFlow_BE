@@ -64,7 +64,7 @@ jobs:
             /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**" \
-            /d:sonar.cs.dotcover.reportsPaths="TestResults/**/*.xml" \
+            /d:"sonar.cs.dotcover.reportsPaths=TestResults/**/*.xml" \
             /d:sonar.secret.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**"
 
       - name: Build the project
@@ -82,9 +82,6 @@ jobs:
         shell: bash
         run: docker pull postgres:14
 
-      - name: Build and start Docker Compose
-        run: docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up -d
-
       - name: Install dotnet-coverage tool
         run: |
           dotnet tool install --global dotnet-coverage
@@ -100,7 +97,3 @@ jobs:
         shell: bash
         run: |
           ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
-
-      - name: Clean up Docker containers
-        run: |
-          docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml down
