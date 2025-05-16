@@ -10,16 +10,13 @@ namespace HumanResource.Grpc.Database
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             await dbContext.Database.MigrateAsync();
 
-            if (environment.IsDevelopment())
-            {
-                // Seed user & roles
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-                await SeedData.InitializeUserData(userManager, roleManager);
+            // Seed user & roles
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+            await SeedData.InitializeUserData(userManager, roleManager);
 
-                // Seed departments
-                await SeedData.InitializeDepartmentData(dbContext);
-            }
+            // Seed departments
+            await SeedData.InitializeDepartmentData(dbContext);
 
             return app;
         }

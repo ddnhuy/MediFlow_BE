@@ -7,7 +7,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/authentication/login/refresh-token", async (LoginWithRefreshTokenRequest request, ISender sender) =>
+            app.MapPost("/login/refresh-token", async (LoginWithRefreshTokenRequest request, ISender sender) =>
             {
                 var command = request.Adapt<LoginWithRefreshTokenCommand>();
 

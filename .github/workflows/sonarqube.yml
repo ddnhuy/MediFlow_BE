@@ -63,7 +63,7 @@ jobs:
             /o:"ddnhuy" \
             /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**" \
+            /d:sonar.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**, **/ApiGateways/**" \
             /d:"sonar.cs.vscoveragexml.reportsPaths=TestResults/**/*.xml" \
             /d:sonar.secret.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**"
 

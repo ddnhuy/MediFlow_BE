@@ -54,6 +54,7 @@ namespace HumanResource.Grpc.Services
 
             var user = await dbContext.Users
                 .Include(x => x.Departments)
+                .ThenInclude(x => x.DepartmentType)
                 .FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsCancelled);
             if (user == null)
             {
@@ -214,6 +215,7 @@ namespace HumanResource.Grpc.Services
                 Message = HumanResourceSuccessStrings.SUCCESS_RESET_PASSWORD
             };
         }
+
         public override async Task<FindApplicationUserByNameResponse> FindApplicationUserByName(FindApplicationUserByNameRequest request, ServerCallContext context)
         {
             logger.LogInformation("Searching for application users with name containing: {Name}", request.Name);

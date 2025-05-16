@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "RateLimiting": {
+        "PermitLimit": 100,
+        "Window": 60,
+        "SegmentsPerWindow": 4,
+        "QueueLimit": 0
+      },
+      "ReverseProxy": {
+        "Routes": {
+          "authentication-route": {
+            "ClusterId": "authentication-cluster",
+            "Match": {
+              "Path": "/authentication/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          }
+        },
+        "Clusters": {
+          "authentication-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://authentication-service:80"
+              }
+            }
+          }
+        }
+      }
+    }

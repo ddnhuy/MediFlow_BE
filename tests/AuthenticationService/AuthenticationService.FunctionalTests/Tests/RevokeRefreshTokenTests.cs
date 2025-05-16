@@ -32,7 +32,7 @@ namespace AuthenticationService.FunctionalTests.Tests
 
             // Act
             var response = await _client.PostAsJsonAsync(
-                "/authentication/revoke-refresh-token",
+                "/revoke-refresh-token",
                 request
             );
 
@@ -51,7 +51,7 @@ namespace AuthenticationService.FunctionalTests.Tests
 
             // Act
             var response = await _client.PostAsJsonAsync(
-                "/authentication/revoke-refresh-token",
+                "/revoke-refresh-token",
                 request
             );
 

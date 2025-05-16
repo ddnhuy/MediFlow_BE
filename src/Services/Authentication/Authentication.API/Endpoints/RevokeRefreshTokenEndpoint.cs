@@ -10,7 +10,7 @@ namespace Authentication.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/authentication/revoke-refresh-token", [Authorize] async (RevokeRefreshTokenRequest request, ISender sender, HttpContext context) =>
+            app.MapPost("/revoke-refresh-token", [Authorize] async (RevokeRefreshTokenRequest request, ISender sender, HttpContext context) =>
             {
                 int.TryParse(
                     context.User.FindFirst(claim => claim.Type == ClaimTypes.NameIdentifier)!.Value,

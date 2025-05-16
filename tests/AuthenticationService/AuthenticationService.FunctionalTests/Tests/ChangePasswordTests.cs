@@ -37,7 +37,7 @@ namespace AuthenticationService.FunctionalTests.Tests
 
             // Act
             var response = await _client.PostAsJsonAsync(
-                "/authentication/change-password",
+                "/change-password",
                 request
             );
 
@@ -68,7 +68,7 @@ namespace AuthenticationService.FunctionalTests.Tests
 
             // Act
             var response = await _client.PostAsJsonAsync(
-                "/authentication/change-password",
+                "/change-password",
                 request
             );
 
@@ -88,7 +88,7 @@ namespace AuthenticationService.FunctionalTests.Tests
 
             // Act
             var response = await _client.PostAsJsonAsync(
-                "/authentication/change-password",
+                "/change-password",
                 request
             );
 
@@ -107,7 +107,7 @@ namespace AuthenticationService.FunctionalTests.Tests
 
             // Act
             var response = await _client.PostAsJsonAsync(
-                "/authentication/change-password",
+                "/change-password",
                 request
             );
 

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: human-resource-config
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "ConnectionStrings": {
+        "Database": "Server=postgres;Port=5432;Database=HumanResourceDb;User Id=postgres;Password=postgres;Include Error Detail=true;Pooling=true;MinPoolSize=5;MaxPoolSize=100;CommandTimeout=30;"
+      },
+      "Kestrel": {
+        "EndpointDefaults": {
+          "Protocols": "Http2"
+        }
+      }
+    }

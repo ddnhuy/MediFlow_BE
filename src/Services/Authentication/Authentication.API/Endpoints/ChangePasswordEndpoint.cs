@@ -9,7 +9,7 @@ namespace Authentication.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/authentication/change-password", [Authorize] async (ChangePasswordRequest request, ISender sender) =>
+            app.MapPost("/change-password", [Authorize] async (ChangePasswordRequest request, ISender sender) =>
             {
                 var command = request.Adapt<ChangePasswordCommand>();
 

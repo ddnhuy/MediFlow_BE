@@ -35,6 +35,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AuthenticationService", "Au
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthenticationService.FunctionalTests", "tests\AuthenticationService\AuthenticationService.FunctionalTests\AuthenticationService.FunctionalTests.csproj", "{6C0E7588-ED29-4FBB-977C-B6EE6A6727D0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiGateways", "ApiGateways", "{188698B4-1493-43AD-8F9D-51C10F71BFD7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YarpApiGateWay", "src\ApiGateways\YarpApiGateWay\YarpApiGateWay.csproj", "{6746F0A4-490C-4F2E-BBE1-8E455F413FBE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +81,10 @@ Global
 		{6C0E7588-ED29-4FBB-977C-B6EE6A6727D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C0E7588-ED29-4FBB-977C-B6EE6A6727D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C0E7588-ED29-4FBB-977C-B6EE6A6727D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6746F0A4-490C-4F2E-BBE1-8E455F413FBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6746F0A4-490C-4F2E-BBE1-8E455F413FBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6746F0A4-490C-4F2E-BBE1-8E455F413FBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6746F0A4-490C-4F2E-BBE1-8E455F413FBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +103,8 @@ Global
 		{7DE4A4D3-F3A1-41CD-AB2D-B886E60DC836} = {3D9091D3-6ADD-4C79-B34A-67DFF08A645A}
 		{EE1DE71C-DE5A-4DD4-B5C9-CF0903AF1278} = {98F9921B-E87B-4C90-B143-AA200048969A}
 		{6C0E7588-ED29-4FBB-977C-B6EE6A6727D0} = {EE1DE71C-DE5A-4DD4-B5C9-CF0903AF1278}
+		{188698B4-1493-43AD-8F9D-51C10F71BFD7} = {EF24FD40-10EC-41D2-9A29-0C8A39C656C4}
+		{6746F0A4-490C-4F2E-BBE1-8E455F413FBE} = {188698B4-1493-43AD-8F9D-51C10F71BFD7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2884E0BB-6D4B-4805-A636-1BD7EFB9A61B}

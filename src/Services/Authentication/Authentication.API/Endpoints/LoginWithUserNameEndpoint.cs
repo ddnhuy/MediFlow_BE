@@ -7,7 +7,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/authentication/login", async (LoginWithUserNameRequest request, ISender sender) =>
+            app.MapPost("/login", async (LoginWithUserNameRequest request, ISender sender) =>
             {
                 var command = request.Adapt<LoginWithUserNameCommand>();
 
