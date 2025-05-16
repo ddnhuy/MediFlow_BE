@@ -5,23 +5,23 @@ metadata:
 data:
   appsettings.json: |
     {
-      "ConnectionStrings": {
-        "Database": "Server=postgres;Port=5432;Database=AuthenticationDb;User Id=postgres;Password=postgres;Include Error Detail=true;",
-        "Redis": "redis:6379"
-      },
-      "GrpcSettings": {
-        "DiscountUrl": "http://discount-grpc:80"
-      },
-      "MessageBroker": {
-        "Host": "amqp://rabbitmq:5672",
-        "UserName": "guest",
-        "Password": "guest"
-      },
       "Logging": {
         "LogLevel": {
           "Default": "Information",
           "Microsoft.AspNetCore": "Warning"
         }
       },
-      "AllowedHosts": "*"
+      "AllowedHosts": "*",
+      "ConnectionStrings": {
+        "Database": "Server=postgres;Port=5432;Database=AuthenticationDb;User Id=postgres;Password=postgres;Include Error Detail=true;Pooling=true;MinPoolSize=5;MaxPoolSize=100;CommandTimeout=30;"
+      },
+      "GrpcSettings": {
+        "HumanResourceUrl": "http://human-resource-grpc:80"
+      },
+      "Jwt": {
+        "Secret": "super-duper-secret-value-that-should-be-in-user-secrets",
+        "Issuer": "MediFlowIssuer",
+        "Audience": "MediFlowAudience",
+        "ExpirationInMinutes": 60
+      }
     }

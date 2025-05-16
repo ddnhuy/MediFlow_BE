@@ -3,8 +3,10 @@ kind: Service
 metadata:
   name: postgres
 spec:
-  clusterIP: None
-  ports:
-    - port: 5432
+  type: NodePort
   selector:
     app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+      nodePort: 30000
