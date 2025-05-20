@@ -1,0 +1,11 @@
+﻿global using Microsoft.EntityFrameworkCore;
+global using Inventory.Domain.Models;
+global using BuildingBlocks.Behaviors;
+global using FluentValidation;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.FeatureManagement;
+global using System.Reflection;
+global using BuildingBlocks.CQRS;
+global using BuildingBlocks.Pagination;
+global using Inventory.Application.DTOs;

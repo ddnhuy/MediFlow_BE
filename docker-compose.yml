@@ -22,6 +22,11 @@ services:
       context: .
       dockerfile: src/Services/Authentication/Authentication.API/Dockerfile
 
+  inventory.api:
+    image: ${DOCKER_REGISTRY-}inventoryapi
+    build: 
+      context: .
+      dockerfile: src/Services/Inventory/Inventory.API/Dockerfile
+
 volumes:
   postgres_db:
-
