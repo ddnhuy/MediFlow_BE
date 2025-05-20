@@ -1,0 +1,10 @@
+﻿global using Inventory.Infrastructure.Data;
+global using Inventory.Infrastructure.Data.Interceptors;
+global using Inventory.Application.Data;
+global using Microsoft.EntityFrameworkCore;
+global using Inventory.Domain.Models;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.EntityFrameworkCore.Diagnostics;
+global using Microsoft.Extensions.Configuration;

@@ -46,3 +46,12 @@ services:
       - postgres_db
     ports:
       - "6062:8080"
+  
+  inventory.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+    depends_on:
+      - postgres_db
+    ports:
+      - "6063:8080"
