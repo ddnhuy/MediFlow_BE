@@ -55,18 +55,6 @@ builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 builder.Services
     .AddHealthChecks();
 
-// Add CORS policy
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAllOrigins",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        });
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
