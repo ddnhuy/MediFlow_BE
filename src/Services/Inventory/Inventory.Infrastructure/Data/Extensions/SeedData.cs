@@ -1,6 +1,6 @@
 ﻿namespace Inventory.Infrastructure.Data.Extensions
 {
-    public static class DatabaseExtension
+    public static class SeedData
     {
         public static async Task<IApplicationBuilder> UseMigrationAsync(this IApplicationBuilder app)
         {

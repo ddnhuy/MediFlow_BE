@@ -17,3 +17,4 @@ global using System.Security.Claims;
 global using Inventory.Application.Data;
 global using Inventory.Application.Exceptions;
 global using BuildingBlocks.Strings;
+global using Inventory.Application.ValidationHelper;
