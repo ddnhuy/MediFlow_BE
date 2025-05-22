@@ -32,7 +32,7 @@
             var accessToken = tokenProvider.GenerateAccessToken(loginResponse.User, string.Join(",", loginResponse.User.Departments.Select(d => d.Name)));
             var refreshToken = tokenProvider.GenerateRefreshToken();
 
-            _ = refreshTokenRepository.AddAsync(refreshToken, loginResponse.User.Id);
+            await refreshTokenRepository.AddAsync(refreshToken, loginResponse.User.Id);
 
             return new LoginWithUserNameResult(accessToken, refreshToken);
         }

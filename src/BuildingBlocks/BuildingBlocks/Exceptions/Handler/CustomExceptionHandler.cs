@@ -68,7 +68,8 @@ namespace BuildingBlocks.Exceptions.Handler
 
             if (exception is ValidationException validationException)
             {
-                problemDetails.Extensions.Add("ValidationErrors", validationException.Errors);
+                //problemDetails.Extensions.Add("ValidationErrors", validationException.Errors);
+                problemDetails.Detail = validationException.Errors.First().ErrorMessage;
             }
 
             await context.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
