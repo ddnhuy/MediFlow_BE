@@ -15,6 +15,6 @@ app.UseApiServices();
 
 await app.UseMigrationAsync();
 
-await app.SeedWarehouseAsync();
-
 app.Run();
+
+public partial class Program { }

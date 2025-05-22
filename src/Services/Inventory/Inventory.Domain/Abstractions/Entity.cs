@@ -1,6 +1,4 @@
-﻿using BuildingBlocks.DomainEvents;
-
-namespace Inventory.Domain.Abstractions
+﻿namespace Inventory.Domain.Abstractions
 {
     public abstract class Entity : IEntity
     {

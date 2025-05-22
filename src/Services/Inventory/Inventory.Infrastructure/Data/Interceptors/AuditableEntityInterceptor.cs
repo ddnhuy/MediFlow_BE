@@ -1,12 +1,16 @@
-﻿using Inventory.Domain.Abstractions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+﻿using Inventory.Application.Extensions;
+using Inventory.Domain.Abstractions;
+
 
 namespace Inventory.Infrastructure.Data.Interceptors
 {
     public class AuditableEntityInterceptor : SaveChangesInterceptor
     {
+        private readonly ICurrentUserService _currentUserService;
+        public AuditableEntityInterceptor(ICurrentUserService currentUserService)
+        {
+            _currentUserService = currentUserService;
+        }
         public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
         {
             UpdateEntity(eventData.Context);
@@ -28,13 +32,13 @@ namespace Inventory.Infrastructure.Data.Interceptors
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.CreatedAt = DateTime.UtcNow;
-                    // Todo: CreateBy
+                    entry.Entity.CreatedBy = _currentUserService.UserId;
                 }
 
                 if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
                 {
                     entry.Entity.LastUpdatedAt = DateTime.UtcNow;
-                    // Todo: Last Update By
+                    entry.Entity.LastUpdatedBy = _currentUserService.UserId;
                 }
 
             }

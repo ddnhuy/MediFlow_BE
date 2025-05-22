@@ -13,6 +13,11 @@ namespace Inventory.Infrastructure.Data
         }
 
         public DbSet<Warehouse> Warehouses => Set<Warehouse>();
+        public DbSet<WarehouseType> WarehouseTypes => Set<WarehouseType>();
+        public DbSet<Medicine> Medicines => Set<Medicine>();
+        public DbSet<MedicineType> MedicineTypes => Set<MedicineType>();
+        public DbSet<VaccineType> VaccineTypes => Set<VaccineType>();
+        public DbSet<MedicineInteraction> MedicineInteractions => Set<MedicineInteraction>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

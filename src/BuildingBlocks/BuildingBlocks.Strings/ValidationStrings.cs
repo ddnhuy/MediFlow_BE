@@ -15,5 +15,69 @@
 
         public const string REQUIRED_EMAIL = "Email là bắt buộc.";
         public const string INVALID_EMAIL = "Email không hợp lệ.";
+
+        // Warehouse validation
+        public const string REQUIRED_WAREHOUSE_CODE = "Mã kho là bắt buộc.";
+        public const string REQUIRED_WAREHOUSE_NAME = "Tên kho là bắt buộc.";
+        public const string INVALID_WAREHOUSE_CODE_FORMAT = "Mã kho không đúng định dạng.";
+        public const string REQUIRED_WAREHOUSE_TYPE = "Loại kho là bắt buộc.";
+        public const string INVALID_WAREHOUSE_TYPE = "Loại kho không hợp lệ.";
+
+        // Supplier validation
+        public const string REQUIRED_SUPPLIER_CODE = "Mã nhà cung cấp là bắt buộc.";
+        public const string REQUIRED_SUPPLIER_NAME = "Tên nhà cung cấp là bắt buộc.";
+        public const string INVALID_SUPPLIER_CODE_FORMAT = "Mã nhà cung cấp không đúng định dạng.";
+        public const string INVALID_SUPPLIER_PHONE = "Số điện thoại nhà cung cấp không hợp lệ.";
+        public const string INVALID_SUPPLIER_EMAIL = "Email nhà cung cấp không hợp lệ.";
+        public const string INVALID_SUPPLIER_TAX_CODE = "Mã số thuế không hợp lệ.";
+
+        // Medicine validation
+        public const string REQUIRED_MEDICINE_CODE = "Mã thuốc là bắt buộc.";
+        public const string REQUIRED_MEDICINE_NAME = "Tên thuốc là bắt buộc.";
+        public const string INVALID_MEDICINE_CODE_FORMAT = "Mã thuốc không đúng định dạng.";
+        public const string REQUIRED_MEDICINE_UNIT = "Đơn vị tính là bắt buộc.";
+        public const string REQUIRED_MEDICINE_CATEGORY = "Nhóm thuốc là bắt buộc.";
+        public const string INVALID_MEDICINE_PRICE = "Giá thuốc không hợp lệ.";
+        public const string INVALID_MEDICINE_QUANTITY = "Số lượng thuốc không hợp lệ.";
+        public const string INVALID_MEDICINE_EXPIRY_DATE = "Ngày hết hạn không hợp lệ.";
+        public const string INVALID_MEDICINE_MANUFACTURE_DATE = "Ngày sản xuất không hợp lệ.";
+        public const string INVALID_DATE_RANGE = "Ngày sản xuất phải trước ngày hết hạn.";
+        public const string REQUIRED_MEDICINE_ROUTE = "Đường dùng thuốc là bắt buộc.";
+        public const string REQUIRED_MEDICINE_DOSAGE_FORM = "Dạng bào chế là bắt buộc.";
+        public const string REQUIRED_MANUFACTURER = "Nhà sản xuất là bắt buộc.";
+        public const string REQUIRED_ACTIVE_INGREDIENT = "Hoạt chất là bắt buộc.";
+        public const string REQUIRED_USAGE_INSTRUCTIONS = "Hướng dẫn sử dụng là bắt buộc.";
+        public const string REQUIRED_CONCENTRATION = "Nồng độ/Hàm lượng là bắt buộc.";
+        public const string REQUIRED_INDICATIONS = "Chỉ định là bắt buộc.";
+        public const string REQUIRED_MEDICINE_CLASSIFICATION = "Phân loại thuốc là bắt buộc.";
+        public const string REQUIRED_ROUTE_OF_ADMINISTRATION = "Đường dùng là bắt buộc.";
+        public const string REQUIRED_NATIONAL_MEDICINE_CODE = "Mã thuốc quốc gia là bắt buộc.";
+        public const string REQUIRED_REGISTRATION_NUMBER = "Số đăng ký là bắt buộc.";
+        public const string REQUIRED_VALID_MEDICINE_TYPE = "Loại thuốc hợp lệ phải được chọn.";
+        public const string REQUIRED_VALID_VACCINE_TYPE = "Loại vaccine hợp lệ phải được chọn.";
+
+        // Medicine interaction validation
+        public const string REQUIRED_FIRST_MEDICINE = "Thuốc thứ nhất là bắt buộc.";
+        public const string REQUIRED_SECOND_MEDICINE = "Thuốc thứ hai là bắt buộc.";
+        public const string SAME_MEDICINE_INTERACTION = "Không thể tạo tương tác giữa cùng một loại thuốc.";
+        public const string REQUIRED_INTERACTION_SEVERITY = "Mức độ nghiêm trọng là bắt buộc.";
+        public const string REQUIRED_INTERACTION_EFFECT = "Tác dụng tương tác là bắt buộc.";
+        public const string INVALID_SEVERITY_LEVEL = "Mức độ nghiêm trọng không hợp lệ.";
+
+        // Inventory operation validation
+        public const string REQUIRED_QUANTITY = "Số lượng là bắt buộc.";
+        public const string INVALID_QUANTITY = "Số lượng không hợp lệ.";
+        public const string REQUIRED_OPERATION_DATE = "Ngày thực hiện là bắt buộc.";
+        public const string INVALID_OPERATION_DATE = "Ngày thực hiện không hợp lệ.";
+        public const string REQUIRED_OPERATION_TYPE = "Loại thao tác là bắt buộc.";
+        public const string REQUIRED_SOURCE_WAREHOUSE = "Kho nguồn là bắt buộc.";
+        public const string REQUIRED_DESTINATION_WAREHOUSE = "Kho đích là bắt buộc.";
+        public const string SAME_WAREHOUSE_TRANSFER = "Không thể chuyển kho trong cùng một kho.";
+
+        // String length validation
+        public static string MAX_LENGTH(string fieldName, int maxLength) => $"{fieldName} không được vượt quá {maxLength} kí tự.";
+        public static string MIN_LENGTH(string fieldName, int minLength) => $"{fieldName} phải có ít nhất {minLength} kí tự.";
+        public static string EXACT_LENGTH(string fieldName, int length) => $"{fieldName} phải có đúng {length} kí tự.";
+        public static string LENGTH_RANGE(string fieldName, int minLength, int maxLength) => $"{fieldName} phải có từ {minLength} đến {maxLength} kí tự.";
     }
 }

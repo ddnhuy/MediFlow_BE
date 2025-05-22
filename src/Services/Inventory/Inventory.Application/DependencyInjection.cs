@@ -10,6 +10,8 @@
                 config.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 config.AddOpenBehavior(typeof(LoggingBehavior<,>));
             });
+            services.AddHttpContextAccessor();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddFeatureManagement();
 
