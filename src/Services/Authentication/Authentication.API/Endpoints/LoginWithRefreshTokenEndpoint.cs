@@ -1,4 +1,6 @@
-﻿namespace Authentication.API.Endpoints
+﻿using Authentication.API.Helpers;
+
+namespace Authentication.API.Endpoints
 {
     public record LoginWithRefreshTokenRequest(string RefreshToken);
     public record LoginWithRefreshTokenResponse(bool IsSuccess, string Message);
@@ -7,27 +9,13 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/login/refresh-token", async (LoginWithRefreshTokenRequest request, ISender sender, HttpResponse httpResponse) =>
+            app.MapPost("/login/refresh-token", async (LoginWithRefreshTokenRequest request, ISender sender, HttpContext context) =>
             {
                 var command = request.Adapt<LoginWithRefreshTokenCommand>();
 
                 var result = await sender.Send(command);
 
-                // Send cookies HttpOnly
-                httpResponse.Cookies.Append("access_token", result.AccessToken, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTimeOffset.UtcNow.AddHours(1)
-                });
-                httpResponse.Cookies.Append("refresh_token", result.RefreshToken, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTimeOffset.UtcNow.AddDays(7)
-                });
+                HttpCookiesHelper.AppendAuthCookies(context.Response, result.AccessToken, result.RefreshToken);
 
                 return Results.Ok(new LoginWithUserNameResponse(true, "Đăng nhập thành công."));
             })
