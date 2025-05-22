@@ -8,3 +8,6 @@ global using Microsoft.AspNetCore.Builder;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.EntityFrameworkCore.Diagnostics;
 global using Microsoft.Extensions.Configuration;
+global using Inventory.Application.Extensions;
+global using Inventory.Domain.Abstractions;
+global using Microsoft.EntityFrameworkCore.ChangeTracking;

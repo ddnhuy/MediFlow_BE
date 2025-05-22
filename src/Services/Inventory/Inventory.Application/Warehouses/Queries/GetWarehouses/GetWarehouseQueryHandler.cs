@@ -1,12 +1,6 @@
-﻿using BuildingBlocks.CQRS;
-using BuildingBlocks.Pagination;
-using Inventory.Application.Data;
-using Inventory.Application.DTOs;
-using Mapster;
-
-namespace Inventory.Application.Warehouses.Queries.GetWarehouses
+﻿namespace Inventory.Application.Warehouses.Queries.GetWarehouses
 {
-    public class GetWarehouseHandler(IApplicationDbContext dbContext) : IQueryHandler<GetWarehouseQuery, GetWarehouseResult>
+    public class GetWarehouseQueryHandler(IApplicationDbContext dbContext) : IQueryHandler<GetWarehouseQuery, GetWarehouseResult>
     {
         public async Task<GetWarehouseResult> Handle(GetWarehouseQuery query, CancellationToken cancellationToken)
         {

@@ -22,6 +22,222 @@ namespace Inventory.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Inventory.Domain.Models.Medicine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ActiveIngredient")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Concentration")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Indications")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Manufacturer")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MedicineClassification")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MedicineCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MedicineName")
+                        .HasColumnType("text");
+
+                    b.Property<int>("MedicineTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("NationalMedicineCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RegistrationNumber")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RouteOfAdministration")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UsageInstructions")
+                        .HasColumnType("text");
+
+                    b.Property<int>("VaccineTypeId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MedicineTypeId");
+
+                    b.HasIndex("VaccineTypeId");
+
+                    b.ToTable("Medicines");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.MedicineInteraction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("HarmfulEffects")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Mechanism")
+                        .HasColumnType("text");
+
+                    b.Property<int>("MedicineId1")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MedicineId2")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("text");
+
+                    b.Property<string>("PreventiveActions")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ReferenceInfo")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MedicineId1");
+
+                    b.HasIndex("MedicineId2");
+
+                    b.ToTable("MedicineInteractions");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.MedicineType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("MedicineTypeCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MedicineTypeName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MedicineTypes");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.VaccineType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<string>("VaccineTypeCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("VaccineTypeName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VaccineTypes");
+                });
+
             modelBuilder.Entity("Inventory.Domain.Models.Warehouse", b =>
                 {
                     b.Property<int>("Id")
@@ -54,9 +270,100 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<string>("WarehouseName")
                         .HasColumnType("text");
 
+                    b.Property<int>("WarehouseTypeId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("WarehouseTypeId");
+
                     b.ToTable("Warehouses");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.WarehouseType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("WarehouseTypeCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WarehouseTypeName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WarehouseTypes");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.Medicine", b =>
+                {
+                    b.HasOne("Inventory.Domain.Models.MedicineType", "MedicineType")
+                        .WithMany()
+                        .HasForeignKey("MedicineTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Inventory.Domain.Models.VaccineType", "VaccineType")
+                        .WithMany()
+                        .HasForeignKey("VaccineTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("MedicineType");
+
+                    b.Navigation("VaccineType");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.MedicineInteraction", b =>
+                {
+                    b.HasOne("Inventory.Domain.Models.Medicine", "Medicine1")
+                        .WithMany()
+                        .HasForeignKey("MedicineId1")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Inventory.Domain.Models.Medicine", "Medicine2")
+                        .WithMany()
+                        .HasForeignKey("MedicineId2")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Medicine1");
+
+                    b.Navigation("Medicine2");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.Warehouse", b =>
+                {
+                    b.HasOne("Inventory.Domain.Models.WarehouseType", "WarehouseType")
+                        .WithMany()
+                        .HasForeignKey("WarehouseTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("WarehouseType");
                 });
 #pragma warning restore 612, 618
         }
