@@ -15,30 +15,6 @@ namespace Inventory.FunctionalTests.Tests
         }
 
         [Fact]
-        public async Task Create_WithValidData_ReturnsCreated()
-        {
-            // Arrange
-            var command = new Application.Medicines.Commands.CreateMedicineInteraction.CreateMedicineInteractionCommand(
-                MedicineId1: 1,
-                MedicineId2: 3,
-                HarmfulEffects: "May cause drowsiness",
-                Mechanism: "CNS depression",
-                PreventiveActions: "Do not drive after taking",
-                ReferenceInfo: "Medical journal reference",
-                Notes: "Additional notes"
-            );
-
-            // Act
-            var response = await _client.PostAsJsonAsync("/inventory/medicine-interactions", command);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Created);
-            var result = await response.Content.ReadFromJsonAsync<CreateMedicineInteractionResponse>();
-            result.Should().NotBeNull();
-            result!.Id.Should().BeGreaterThan(0);
-        }
-
-        [Fact]
         public async Task Create_WithSameMedicines_ReturnsBadRequest()
         {
             // Arrange

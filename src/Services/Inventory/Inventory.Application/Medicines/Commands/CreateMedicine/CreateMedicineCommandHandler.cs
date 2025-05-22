@@ -26,7 +26,7 @@
                 IsCancelled = false,
             };
 
-            var newMedicine = dbContext.Medicines.Add(medicine);
+            var newMedicine = await dbContext.Medicines.AddAsync(medicine);
             await dbContext.SaveChangesAsync(cancellationToken);
 
             return new CreateMedicineResult(newMedicine.Entity.Id);
