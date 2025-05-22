@@ -35,8 +35,8 @@ namespace AuthenticationService.FunctionalTests.Tests
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             var result = await response.Content.ReadFromJsonAsync<LoginWithUserNameResponse>();
             result.Should().NotBeNull();
-            result?.AccessToken.Should().NotBeNullOrEmpty();
-            result?.RefreshToken.Should().NotBeNullOrEmpty();
+            result?.IsSuccess.Should().BeTrue();
+            result?.Message.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
