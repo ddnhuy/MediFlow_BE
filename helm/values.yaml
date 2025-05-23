@@ -148,6 +148,7 @@ affinity: {}
 deployments:
   human-resource-grpc: {}
   authentication-service: {}
+  inventory-service: {}
   gateway: {}
 
 strategy:

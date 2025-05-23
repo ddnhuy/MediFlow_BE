@@ -5,7 +5,7 @@ on:
     branches: ["main", "develop"]
 
 env:
-  API_SERVICES: "Authentication"
+  API_SERVICES: "Authentication Inventory"
   GRPC_SERVICES: "HumanResource"
   GATEWAYS: "YarpApiGateWay"
   CHART_DIR: ./helm

@@ -6,7 +6,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/inventory/medicine-interactions", async (CreateMedicineInteractionCommand command, ISender sender) =>
+            app.MapPost("/medicine-interactions", async (CreateMedicineInteractionCommand command, ISender sender) =>
             {
                 var result = await sender.Send(command);
                 return Results.Created($"/inventory/medicine-interactions/{result.Id}", new CreateMedicineInteractionResponse(result.Id));

@@ -40,7 +40,7 @@ namespace Inventory.FunctionalTests.Tests
             );
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/inventory/medicines/{1}", updateCommand);
+            var response = await _client.PutAsJsonAsync($"/medicines/{1}", updateCommand);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -73,7 +73,7 @@ namespace Inventory.FunctionalTests.Tests
             );
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/inventory/medicines/1", updateCommand);
+            var response = await _client.PutAsJsonAsync($"/medicines/1", updateCommand);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -107,7 +107,7 @@ namespace Inventory.FunctionalTests.Tests
             );
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/inventory/medicines/{999}", updateCommand);
+            var response = await _client.PutAsJsonAsync($"/medicines/{999}", updateCommand);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);

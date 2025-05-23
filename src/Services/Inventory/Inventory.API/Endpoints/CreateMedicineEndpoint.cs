@@ -5,7 +5,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("inventory/medicines", async (CreateMedicineCommand command, ISender sender) =>
+            app.MapPost("/medicines", async (CreateMedicineCommand command, ISender sender) =>
             {
                 var result = await sender.Send(command);
 

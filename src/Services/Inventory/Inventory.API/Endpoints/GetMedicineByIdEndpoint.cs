@@ -5,7 +5,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/inventory/medicines/{id}", async (int id, ISender sender) =>
+            app.MapGet("/medicines/{id}", async (int id, ISender sender) =>
             {
                 var query = new GetMedicineByIdQuery(id);
                 var result = await sender.Send(query);

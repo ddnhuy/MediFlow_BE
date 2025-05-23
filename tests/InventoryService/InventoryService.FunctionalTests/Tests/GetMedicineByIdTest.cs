@@ -19,7 +19,7 @@ namespace Inventory.FunctionalTests.Tests
             var medicineId = 1; 
 
             // Act
-            var response = await _client.GetAsync($"/inventory/medicines/{medicineId}");
+            var response = await _client.GetAsync($"/medicines/{medicineId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -32,7 +32,7 @@ namespace Inventory.FunctionalTests.Tests
             var medicineId = 999; // ID that doesn't exist
 
             // Act
-            var response = await _client.GetAsync($"/inventory/medicines/{medicineId}");
+            var response = await _client.GetAsync($"/medicines/{medicineId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);

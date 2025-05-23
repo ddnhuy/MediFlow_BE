@@ -20,7 +20,7 @@ namespace Inventory.FunctionalTests.Tests
             var request = new PaginationRequest { PageIndex = 1, PageSize = 10 };
 
             // Act
-            var response = await _client.GetAsync($"/inventory/medicines?pageIndex={request.PageIndex}&pageSize={request.PageSize}");
+            var response = await _client.GetAsync($"/medicines?pageIndex={request.PageIndex}&pageSize={request.PageSize}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);

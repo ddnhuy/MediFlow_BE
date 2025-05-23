@@ -33,7 +33,7 @@ namespace Inventory.FunctionalTests.Tests
             );
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/inventory/medicine-interactions/{command.Id}", command);
+            var response = await _client.PutAsJsonAsync($"/medicine-interactions/{command.Id}", command);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -60,7 +60,7 @@ namespace Inventory.FunctionalTests.Tests
             );
 
             // Act - Using different ID in route
-            var response = await _client.PutAsJsonAsync($"/inventory/medicine-interactions/1001", command);
+            var response = await _client.PutAsJsonAsync($"/medicine-interactions/1001", command);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

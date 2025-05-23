@@ -6,7 +6,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/inventory/medicine-interactions", async ([AsParameters] PaginationRequest request, ISender sender) =>
+            app.MapGet("/medicine-interactions", async ([AsParameters] PaginationRequest request, ISender sender) =>
             {
                 var result = await sender.Send(new GetMedicineInteractionsQuery(request));
                 var response = result.Adapt<GetMedicineInteractionsResponse>();

@@ -18,7 +18,7 @@ namespace Inventory.FunctionalTests.Tests
             var interactionId = 1; // Using the seeded interaction
 
             // Act
-            var response = await _client.DeleteAsync($"/inventory/medicine-interactions/{interactionId}");
+            var response = await _client.DeleteAsync($"/medicine-interactions/{interactionId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -34,7 +34,7 @@ namespace Inventory.FunctionalTests.Tests
             var invalidId = 999; // Non-existent ID
 
             // Act
-            var response = await _client.DeleteAsync($"/inventory/medicine-interactions/{invalidId}");
+            var response = await _client.DeleteAsync($"/medicine-interactions/{invalidId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);

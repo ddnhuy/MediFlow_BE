@@ -17,7 +17,7 @@ namespace Inventory.FunctionalTests.Tests
             var medicineId = 1; // Paracetamol, which has an interaction with Ibuprofen (ID 2)
 
             // Act
-            var response = await _client.GetAsync($"/inventory/medicine-interactions/medicines/{medicineId}");
+            var response = await _client.GetAsync($"/medicine-interactions/medicines/{medicineId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -30,7 +30,7 @@ namespace Inventory.FunctionalTests.Tests
             var medicineId = 3;
 
             // Act
-            var response = await _client.GetAsync($"/inventory/medicine-interactions/medicines/{medicineId}");
+            var response = await _client.GetAsync($"/medicine-interactions/medicines/{medicineId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -43,7 +43,7 @@ namespace Inventory.FunctionalTests.Tests
             var medicineId = 999; // ID that doesn't exist
 
             // Act
-            var response = await _client.GetAsync($"/inventory/medicine-interactions/medicines/{medicineId}");
+            var response = await _client.GetAsync($"/medicine-interactions/medicines/{medicineId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);

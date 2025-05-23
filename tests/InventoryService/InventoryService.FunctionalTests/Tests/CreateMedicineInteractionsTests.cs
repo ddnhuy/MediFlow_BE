@@ -29,7 +29,7 @@ namespace Inventory.FunctionalTests.Tests
             );
 
             // Act
-            var response = await _client.PostAsJsonAsync("/inventory/medicine-interactions", command);
+            var response = await _client.PostAsJsonAsync("/medicine-interactions", command);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -52,7 +52,7 @@ namespace Inventory.FunctionalTests.Tests
             );
 
             // Act
-            var response = await _client.PostAsJsonAsync("/inventory/medicine-interactions", command);
+            var response = await _client.PostAsJsonAsync("/medicine-interactions", command);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

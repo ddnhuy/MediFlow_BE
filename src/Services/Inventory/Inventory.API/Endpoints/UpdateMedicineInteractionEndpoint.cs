@@ -6,7 +6,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPut("/inventory/medicine-interactions/{id}", async (int id, UpdateMedicineInteractionCommand command, ISender sender) =>
+            app.MapPut("/medicine-interactions/{id}", async (int id, UpdateMedicineInteractionCommand command, ISender sender) =>
             {
                 if (id != command.Id)
                 {

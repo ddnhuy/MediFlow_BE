@@ -19,7 +19,7 @@ namespace Inventory.FunctionalTests.Tests
             var medicineId = 3;
 
             // Act
-            var response = await _client.DeleteAsync($"/inventory/medicines/{medicineId}");
+            var response = await _client.DeleteAsync($"/medicines/{medicineId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -35,7 +35,7 @@ namespace Inventory.FunctionalTests.Tests
             var invalidId = 999; // Non-existent ID
 
             // Act
-            var response = await _client.DeleteAsync($"/inventory/medicines/{invalidId}");
+            var response = await _client.DeleteAsync($"/medicines/{invalidId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
