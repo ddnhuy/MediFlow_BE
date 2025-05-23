@@ -55,7 +55,8 @@ builder.Services.AddGrpcClient<ApplicationUserProtoService.ApplicationUserProtoS
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 builder.Services
-    .AddHealthChecks();
+    .AddHealthChecks()
+    .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
 
 var app = builder.Build();
 

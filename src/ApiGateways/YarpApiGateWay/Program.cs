@@ -73,7 +73,7 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// Middleware: Wrap response thành BaseResponse
+// Middleware: Wrap response from services to BaseResponse
 app.Use(async (context, next) =>
 {
     // Capture original response
@@ -88,10 +88,19 @@ app.Use(async (context, next) =>
     context.Response.Body.Seek(0, SeekOrigin.Begin);
 
     // Build BaseResponse
-    var message = context.Response.StatusCode == 200
-        ? "Success"
-        : (!string.IsNullOrWhiteSpace(rawBody) ? JsonSerializer.Deserialize<ProblemDetails>(rawBody)?.Detail : "Error");
-    var data = context.Response.StatusCode == 200 && !string.IsNullOrWhiteSpace(rawBody)
+    var isSuccessStatusCode = context.Response.StatusCode is >= 200 and < 300;
+    var message = isSuccessStatusCode
+        ? context.Response.StatusCode switch
+        {
+            200 => "Success",
+            201 => "Created",
+            204 => "No Content",
+            _ => "Success"
+        }
+        : (!string.IsNullOrWhiteSpace(rawBody)
+            ? JsonSerializer.Deserialize<ProblemDetails>(rawBody)?.Detail ?? "Error"
+            : "Error");
+    var data = isSuccessStatusCode && context.Response.StatusCode != 204 && !string.IsNullOrWhiteSpace(rawBody)
         ? JsonSerializer.Deserialize<object>(rawBody)
         : null;
 
