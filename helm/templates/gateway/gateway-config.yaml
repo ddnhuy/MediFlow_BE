@@ -12,6 +12,12 @@ data:
         }
       },
       "AllowedHosts": "*",
+      "Jwt": {
+        "Secret": "super-duper-secret-value-that-should-be-in-user-secrets",
+        "Issuer": "MediFlowIssuer",
+        "Audience": "MediFlowAudience",
+        "ExpirationInMinutes": 60
+      },
       "RateLimiting": {
         "PermitLimit": 100,
         "Window": 60,
@@ -26,6 +32,13 @@ data:
               "Path": "/authentication/{**catch-all}"
             },
             "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          },
+          "inventory-route": {
+            "ClusterId": "inventory-cluster",
+            "Match": {
+              "Path": "/inventory/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
           }
         },
         "Clusters": {
@@ -33,6 +46,13 @@ data:
             "Destinations": {
               "default": {
                 "Address": "http://authentication-service:80"
+              }
+            }
+          },
+          "inventory-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://inventory-service:80"
               }
             }
           }
