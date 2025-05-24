@@ -53,6 +53,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InventoryService", "Invento
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryService.FunctionalTests", "tests\InventoryService\InventoryService.FunctionalTests\InventoryService.FunctionalTests.csproj", "{8723772C-FB69-4695-8A71-1E10F9B1DCAA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CustomerInfo", "CustomerInfo", "{175E0039-F004-438F-AE5F-4DE9AF272022}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerInfo.Grpc", "src\Services\CustomerInfo\CustomerInfo.Grpc\CustomerInfo.Grpc.csproj", "{8209F4CE-98B6-4FBC-9170-69CAB2FB693E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +123,10 @@ Global
 		{8723772C-FB69-4695-8A71-1E10F9B1DCAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8723772C-FB69-4695-8A71-1E10F9B1DCAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8723772C-FB69-4695-8A71-1E10F9B1DCAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8209F4CE-98B6-4FBC-9170-69CAB2FB693E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8209F4CE-98B6-4FBC-9170-69CAB2FB693E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8209F4CE-98B6-4FBC-9170-69CAB2FB693E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8209F4CE-98B6-4FBC-9170-69CAB2FB693E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -146,6 +154,8 @@ Global
 		{C20EE26A-55CE-4367-9ED5-01BD154593EA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{4047BCCD-7C4B-400C-9212-70997E3A8411} = {98F9921B-E87B-4C90-B143-AA200048969A}
 		{8723772C-FB69-4695-8A71-1E10F9B1DCAA} = {4047BCCD-7C4B-400C-9212-70997E3A8411}
+		{175E0039-F004-438F-AE5F-4DE9AF272022} = {5391C725-5909-4CDD-A052-2F5C800F972B}
+		{8209F4CE-98B6-4FBC-9170-69CAB2FB693E} = {175E0039-F004-438F-AE5F-4DE9AF272022}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2884E0BB-6D4B-4805-A636-1BD7EFB9A61B}
