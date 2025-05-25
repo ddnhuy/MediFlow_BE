@@ -3,6 +3,7 @@ using CustomerInfo.Grpc.Helpers;
 using CustomerInfo.Grpc.Interceptors;
 using CustomerInfo.Grpc.Mapping;
 using CustomerInfo.Grpc.Services;
+using Google.Protobuf.Collections;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,11 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        TypeAdapterConfig.GlobalSettings.Scan(AppDomain.CurrentDomain.GetAssemblies());
+        TypeAdapterConfig.GlobalSettings.Default
+            .UseDestinationValue(member => member.SetterModifier == AccessModifier.None &&
+                                           member.Type.IsGenericType &&
+                                           member.Type.GetGenericTypeDefinition() == typeof(RepeatedField<>));
         builder.Services.AddSingleton<IRegister, MapsterConfig>();
 
         // Add services to the container.

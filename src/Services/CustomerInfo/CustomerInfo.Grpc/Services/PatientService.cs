@@ -1,4 +1,5 @@
-﻿using CustomerInfo.Grpc.Consts;
+﻿using BuildingBlocks.Pagination;
+using CustomerInfo.Grpc.Consts;
 using CustomerInfo.Grpc.Database;
 using CustomerInfo.Grpc.Helpers;
 using CustomerInfo.Grpc.Models;
@@ -9,6 +10,7 @@ using Mapster;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using static CustomerInfo.Grpc.Consts.PatientMessages;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CustomerInfo.Grpc.Services
 {
@@ -25,16 +27,11 @@ namespace CustomerInfo.Grpc.Services
 
         public override async Task<ListPatientsResponse> ListPatients(ListPatientsRequest request, ServerCallContext context)
         {
-            _logger.LogInformation(PatientLogMessages.ListingPatients, request.Keyword, request.PageIndex, request.PageSize);
+            _logger.LogInformation(PatientLogMessages.ListingPatients, request.PageIndex, request.PageSize);
 
             var query = _context.Patients
                 .Where(x => !x.IsCancelled)
                 .AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(request.Keyword))
-            {
-                query = query.Where(p => p.Name.Contains(request.Keyword) || p.Code.Contains(request.Keyword));
-            }
 
             var count = await query.CountAsync();
             _logger.LogInformation(PatientLogMessages.FoundPatients, count);
@@ -42,7 +39,7 @@ namespace CustomerInfo.Grpc.Services
             var patients = await query
                 .Skip((request.PageIndex - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .ToListAsync();
+                .ToListAsync(context.CancellationToken);
 
             var data = patients.Adapt<List<PatientSummaryModel>>();
 
@@ -52,7 +49,7 @@ namespace CustomerInfo.Grpc.Services
             {
                 PageIndex = request.PageIndex,
                 PageSize = request.PageSize,
-                Count = count,
+                TotalItem = count,
                 Data = { data }
             };
         }
@@ -62,7 +59,7 @@ namespace CustomerInfo.Grpc.Services
             _logger.LogInformation(PatientLogMessages.GettingPatient, request.Id);
 
             var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled)
+                .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled, context.CancellationToken)
                 ?? throw new RpcException(
                     new Status(
                         StatusCode.NotFound,
@@ -86,7 +83,7 @@ namespace CustomerInfo.Grpc.Services
             try
             {
                 _context.Patients.Add(patient);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(context.CancellationToken);
 
                 _logger.LogInformation(PatientLogMessages.CreatedPatient, patient.Name, patient.Id);
 
@@ -120,7 +117,7 @@ namespace CustomerInfo.Grpc.Services
             try
             {
                 var patient = await _context.Patients
-                    .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled);
+                    .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled, context.CancellationToken);
 
                 if (patient == null)
                 {
@@ -134,7 +131,7 @@ namespace CustomerInfo.Grpc.Services
 
                 ValidatePatientModel(patient);
 
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(context.CancellationToken);
 
                 _logger.LogInformation(PatientLogMessages.UpdatedPatient, patient.Name, patient.Id);
 
@@ -165,7 +162,7 @@ namespace CustomerInfo.Grpc.Services
             _logger.LogInformation(PatientLogMessages.DeletingPatient, request.Id);
 
             var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled);
+                .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled, context.CancellationToken);
 
             if (patient == null)
             {
@@ -175,7 +172,7 @@ namespace CustomerInfo.Grpc.Services
 
             patient.IsCancelled = true;
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(context.CancellationToken);
 
             _logger.LogInformation(PatientLogMessages.DeletedPatient, patient.Name, patient.Id);
 

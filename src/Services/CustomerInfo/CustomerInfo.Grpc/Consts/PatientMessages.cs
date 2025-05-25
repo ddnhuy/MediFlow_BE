@@ -14,7 +14,7 @@
 
         public static class PatientLogMessages
         {
-            public const string ListingPatients = "Listing patients with keyword: {Keyword}, page: {PageIndex}, size: {PageSize}";
+            public const string ListingPatients = "Listing patients: page: {PageIndex}, size: {PageSize}";
             public const string FoundPatients = "Found {Count} patients matching criteria";
             public const string ReturningPatients = "Returning {Count} patients for page {PageIndex}";
 

@@ -8,7 +8,8 @@
         "authentication.api": "StartDebugging",
         "humanresource.grpc": "StartDebugging",
         "yarpapigateway": "StartDebugging",
-        "customerinfo.grpc": "StartDebugging"
+        "customerinfo.grpc": "StartDebugging",
+        "vaccinationreception.api": "StartDebugging"
       }
     }
   }
