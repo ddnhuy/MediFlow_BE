@@ -4,3 +4,5 @@ global using HumanResource.Grpc.Models;
 global using Microsoft.EntityFrameworkCore;
 global using Mapster;
 global using Microsoft.AspNetCore.Identity;
+global using BuildingBlocks.Strings;
+global using BuildingBlocks.Strings.Enums;

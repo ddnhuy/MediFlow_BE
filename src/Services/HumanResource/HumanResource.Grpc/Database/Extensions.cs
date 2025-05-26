@@ -1,6 +1,4 @@
-﻿using Infrastructure.Database;
-
-namespace HumanResource.Grpc.Database
+﻿namespace HumanResource.Grpc.Database
 {
     public static class Extensions
     {
@@ -10,13 +8,9 @@ namespace HumanResource.Grpc.Database
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             await dbContext.Database.MigrateAsync();
 
-            // Seed user & roles
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
-            await SeedData.InitializeUserData(userManager, roleManager);
-
-            // Seed departments
-            await SeedData.InitializeDepartmentData(dbContext);
+            await SeedData.InitializeDataAsync(userManager, roleManager, dbContext);
 
             return app;
         }

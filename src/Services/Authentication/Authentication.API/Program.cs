@@ -32,11 +32,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     };
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    AuthorizationPolicies.RegisterPolicies(options);
-});
-
 // gRPC Services
 builder.Services.AddGrpcClient<ApplicationUserProtoService.ApplicationUserProtoServiceClient>(options =>
 {

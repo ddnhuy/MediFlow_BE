@@ -55,6 +55,8 @@ namespace HumanResource.Grpc.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Code = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    Gender = table.Column<string>(type: "text", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false),
                     IsSuspended = table.Column<bool>(type: "boolean", nullable: false),
                     IsCancelled = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -215,7 +217,7 @@ namespace HumanResource.Grpc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApplicationUserDepartment",
+                name: "UserDepartments",
                 columns: table => new
                 {
                     DepartmentsId = table.Column<int>(type: "integer", nullable: false),
@@ -223,25 +225,20 @@ namespace HumanResource.Grpc.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApplicationUserDepartment", x => new { x.DepartmentsId, x.UsersId });
+                    table.PrimaryKey("PK_UserDepartments", x => new { x.DepartmentsId, x.UsersId });
                     table.ForeignKey(
-                        name: "FK_ApplicationUserDepartment_Departments_DepartmentsId",
+                        name: "FK_UserDepartments_Departments_DepartmentsId",
                         column: x => x.DepartmentsId,
                         principalTable: "Departments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ApplicationUserDepartment_Users_UsersId",
+                        name: "FK_UserDepartments_Users_UsersId",
                         column: x => x.UsersId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ApplicationUserDepartment_UsersId",
-                table: "ApplicationUserDepartment",
-                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Departments_Code",
@@ -273,6 +270,11 @@ namespace HumanResource.Grpc.Migrations
                 name: "IX_UserClaims_UserId",
                 table: "UserClaims",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserDepartments_UsersId",
+                table: "UserDepartments",
+                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLogins_UserId",
@@ -310,13 +312,13 @@ namespace HumanResource.Grpc.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ApplicationUserDepartment");
-
-            migrationBuilder.DropTable(
                 name: "RoleClaims");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
+
+            migrationBuilder.DropTable(
+                name: "UserDepartments");
 
             migrationBuilder.DropTable(
                 name: "UserLogins");

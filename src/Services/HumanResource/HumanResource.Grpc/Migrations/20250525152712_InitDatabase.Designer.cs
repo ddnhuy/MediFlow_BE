@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HumanResource.Grpc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250513140226_InitDatabase")]
+    [Migration("20250525152712_InitDatabase")]
     partial class InitDatabase
     {
         /// <inheritdoc />
@@ -25,21 +25,6 @@ namespace HumanResource.Grpc.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("ApplicationUserDepartment", b =>
-                {
-                    b.Property<int>("DepartmentsId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("DepartmentsId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ApplicationUserDepartment");
-                });
-
             modelBuilder.Entity("HumanResource.Grpc.Models.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
@@ -50,6 +35,10 @@ namespace HumanResource.Grpc.Migrations
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -71,6 +60,10 @@ namespace HumanResource.Grpc.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsCancelled")
                         .HasColumnType("boolean");
@@ -356,19 +349,19 @@ namespace HumanResource.Grpc.Migrations
                     b.ToTable("UserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ApplicationUserDepartment", b =>
+            modelBuilder.Entity("UserDepartments", b =>
                 {
-                    b.HasOne("HumanResource.Grpc.Models.Department", null)
-                        .WithMany()
-                        .HasForeignKey("DepartmentsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("DepartmentsId")
+                        .HasColumnType("integer");
 
-                    b.HasOne("HumanResource.Grpc.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("UsersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("DepartmentsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("UserDepartments");
                 });
 
             modelBuilder.Entity("HumanResource.Grpc.Models.Department", b =>
@@ -429,6 +422,21 @@ namespace HumanResource.Grpc.Migrations
                     b.HasOne("HumanResource.Grpc.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserDepartments", b =>
+                {
+                    b.HasOne("HumanResource.Grpc.Models.Department", null)
+                        .WithMany()
+                        .HasForeignKey("DepartmentsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HumanResource.Grpc.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

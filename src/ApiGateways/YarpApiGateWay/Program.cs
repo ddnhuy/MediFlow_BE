@@ -12,7 +12,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.AllowCredentials().WithOrigins("http://localhost:3000", "https://mediflow-cvs.netlify.app/")
               .AllowAnyMethod()
               .AllowAnyHeader();
     });

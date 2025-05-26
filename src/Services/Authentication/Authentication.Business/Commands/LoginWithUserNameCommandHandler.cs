@@ -29,7 +29,7 @@
                 throw new InvalidLoginException(loginResponse.Message);
             }
 
-            var accessToken = tokenProvider.GenerateAccessToken(loginResponse.User, string.Join(",", loginResponse.User.Departments.Select(d => d.Name)));
+            var accessToken = tokenProvider.GenerateAccessToken(loginResponse.User, string.Join(",", loginResponse.User.Departments.Select(d => d.DepartmentTypeName)));
             var refreshToken = tokenProvider.GenerateRefreshToken();
 
             await refreshTokenRepository.AddAsync(refreshToken, loginResponse.User.Id);
