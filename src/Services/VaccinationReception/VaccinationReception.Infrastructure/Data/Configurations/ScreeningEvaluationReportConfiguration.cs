@@ -24,27 +24,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                    .ValueGeneratedOnAdd()
                    .HasComment("Khóa chính");
 
-            builder.Property(x => x.IsSuspended)
-                   .IsRequired()
-                   .HasDefaultValue(false)
-                   .HasComment("Trạng thái tạm ngưng")
-                   .HasColumnType("boolean");
-
-            builder.Property(x => x.IsCancelled)
-                   .IsRequired()
-                   .HasDefaultValue(false)
-                   .HasComment("Trạng thái hủy")
-                   .HasColumnType("boolean");
-
-            builder.Property(x => x.CreatedAt)
-                   .IsRequired()
-                   .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                   .HasComment("Ngày tạo");
-
-            builder.Property(x => x.CreatedBy)
-                   .IsRequired()
-                   .HasComment("Người tạo");
-
             builder.Property(x => x.LastUpdatedAt)
                    .IsRequired()
                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
@@ -66,6 +45,15 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                    .IsRequired()
                    .HasColumnType("character varying(20)")
                    .HasComment("Số điện thoại phụ huynh");
+
+            builder.Property(x => x.CreatedAt)
+                   .IsRequired()
+                   .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                   .HasComment("Ngày tạo");
+
+            builder.Property(x => x.CreatedBy)
+                   .IsRequired()
+                   .HasComment("Người tạo");
 
             // Screening info
             builder.Property(x => x.WeightKg)
@@ -95,6 +83,19 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
             builder.Property(x => x.IsContraindicatedForVaccination).HasComment("Chống chỉ định");
             builder.Property(x => x.IsVaccinationDeferred).HasComment("Tạm hoãn");
             builder.Property(x => x.IsReferredToHospital).HasComment("Chuyển viện");
+
+
+            builder.Property(x => x.IsSuspended)
+                  .IsRequired()
+                  .HasDefaultValue(false)
+                  .HasComment("Trạng thái tạm ngưng")
+                  .HasColumnType("boolean");
+
+            builder.Property(x => x.IsCancelled)
+                   .IsRequired()
+                   .HasDefaultValue(false)
+                   .HasComment("Trạng thái hủy")
+                   .HasColumnType("boolean");
 
             // Relation: 1-1 với Reception
             builder.HasOne(x => x.Reception)

@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Services\CustomerInfo\CustomerInfo.Grpc\CustomerInfo.Grpc.csproj" />
     <ProjectReference Include="..\..\..\src\Services\VaccinationReception\VaccinationReception.API\VaccinationReception.API.csproj" />
   </ItemGroup>
 

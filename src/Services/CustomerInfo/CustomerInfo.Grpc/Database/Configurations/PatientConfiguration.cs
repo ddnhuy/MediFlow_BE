@@ -18,6 +18,20 @@ namespace CustomerInfo.Grpc.Database.Configurations
                 .HasComment("Primary key");
 
             // Base Entity Properties
+
+            builder.Property(x => x.CreatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasComment("Ngày tạo bản ghi");
+
+            builder.Property(x => x.LastUpdatedBy)
+                .IsRequired()
+                .HasComment("Người cập nhật bản ghi cuối cùng");
+
+            builder.Property(x => x.CreatedBy)
+                .IsRequired()
+                .HasComment("Người tạo bản ghi");
+
             builder.Property(x => x.IsSuspended)
                 .IsRequired()
                 .HasDefaultValue(false)
@@ -30,23 +44,10 @@ namespace CustomerInfo.Grpc.Database.Configurations
                 .HasComment("Trạng thái hủy")
                 .HasColumnType("boolean");
 
-            builder.Property(x => x.CreatedAt)
-                .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasComment("Ngày tạo bản ghi");
-
-            builder.Property(x => x.CreatedBy)
-                .IsRequired()
-                .HasComment("Người tạo bản ghi");
-
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
-
-            builder.Property(x => x.LastUpdatedBy)
-                .IsRequired()
-                .HasComment("Người cập nhật bản ghi cuối cùng");
 
             // Code
             builder.Property(x => x.Code)
