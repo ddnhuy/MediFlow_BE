@@ -1,9 +1,4 @@
-﻿using Carter;
-using MediatR;
-using VaccinationReception.Application.DTOs.PatientDTOs;
-using VaccinationReception.Application.Patients.Queries.GetPatient;
-
-namespace VaccinationReception.API.EndPoints.PatientEndPoints
+﻿namespace VaccinationReception.API.EndPoints.PatientEndPoints
 {
     public record GetPatientByIdResponse(PatientDetailDTO Patient);
     public class GetPatientByIdEndpoint : ICarterModule
@@ -12,6 +7,11 @@ namespace VaccinationReception.API.EndPoints.PatientEndPoints
         {
             app.MapGet("/patients/{id}", async (int id, ISender sender) =>
             {
+                if(id <= 0)
+                {
+                    return Results.BadRequest("Id không hợp lệ");
+                }
+
                 var query = new GetPatientQuery(id);
                 var result = await sender.Send(query);
 

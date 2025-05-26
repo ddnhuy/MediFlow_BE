@@ -15,25 +15,8 @@ namespace CustomerInfo.Grpc.Mapping
                 .Map(dest => dest.Name, src => src.Name)
                 .Map(dest => dest.Gender, src => src.Gender)
                 .Map(dest => dest.DOB, src => src.Dob != null ? src.Dob.ToDateTime() : (DateTime?)null)
-                .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)
                 .Map(dest => dest.IdentityCard, src => src.IdentityCard)
-                .Map(dest => dest.AddressDetail, src => src.AddressDetail)
-                .Map(dest => dest.Province, src => src.Province)
-                .Map(dest => dest.District, src => src.District)
-                .Map(dest => dest.Ward, src => src.Ward)
-                .Map(dest => dest.IsPregnant, src => src.IsPregnant)
-                .Map(dest => dest.IsForeigner, src => src.IsForeigner)
-                .IgnoreNullValues(true);
-
-            // UpdatePatientRequest -> Patient
-            config.NewConfig<UpdatePatientRequest, Patient>()
-                .Map(dest => dest.Id, src => src.Id)
-                .Map(dest => dest.Code, src => src.Code)
-                .Map(dest => dest.Name, src => src.Name)
-                .Map(dest => dest.Gender, src => src.Gender)
-                .Map(dest => dest.DOB, src => src.Dob != null ? src.Dob.ToDateTime() : (DateTime?)null)
                 .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)
-                .Map(dest => dest.IdentityCard, src => src.IdentityCard)
                 .Map(dest => dest.AddressDetail, src => src.AddressDetail)
                 .Map(dest => dest.Province, src => src.Province)
                 .Map(dest => dest.District, src => src.District)
@@ -79,6 +62,23 @@ namespace CustomerInfo.Grpc.Mapping
                 .Map(dest => dest.Ward, src => src.Ward)
                 .Map(dest => dest.IsPregnant, src => src.IsPregnant)
                 .Map(dest => dest.IsForeigner, src => src.IsForeigner);
+
+            // UpdatePatientRequest -> Patient
+            config.NewConfig<UpdatePatientRequest, Patient>()
+                .Map(dest => dest.Id, src => src.Id)
+                .Map(dest => dest.Code, src => src.Code)
+                .Map(dest => dest.Name, src => src.Name)
+                .Map(dest => dest.Gender, src => src.Gender)
+                .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)
+                .Map(dest => dest.IdentityCard, src => src.IdentityCard)
+                .Map(dest => dest.DOB, src => src.Dob != null ? src.Dob.ToDateTime() : (DateTime?)null)
+                .Map(dest => dest.AddressDetail, src => src.AddressDetail)
+                .Map(dest => dest.Province, src => src.Province)
+                .Map(dest => dest.District, src => src.District)
+                .Map(dest => dest.Ward, src => src.Ward)
+                .Map(dest => dest.IsPregnant, src => src.IsPregnant)
+                .Map(dest => dest.IsForeigner, src => src.IsForeigner)
+                .IgnoreNullValues(true);
         }
     }
 }

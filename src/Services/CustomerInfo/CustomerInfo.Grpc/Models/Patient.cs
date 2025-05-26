@@ -1,44 +1,43 @@
 ﻿using CustomerInfo.Grpc.Abstractions;
-using CustomerInfo.Grpc.Consts;
 using System.ComponentModel.DataAnnotations;
 
 namespace CustomerInfo.Grpc.Models
 {
     public class Patient : BaseEntity
     {
-        [Required(ErrorMessage = ValidationMessages.Code_Required)]
-        [StringLength(50, ErrorMessage = ValidationMessages.Code_MaxLength)]
+        [Required(ErrorMessage = "Mã bệnh nhân là bắt buộc.")]
+        [StringLength(50, ErrorMessage = "Mã bệnh nhân không được vượt quá {1} ký tự.")]
         public string Code { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = ValidationMessages.Name_Required)]
-        [StringLength(100, ErrorMessage = ValidationMessages.Name_MaxLength)]
+        [Required(ErrorMessage = "Tên bệnh nhân là bắt buộc.")]
+        [StringLength(100, ErrorMessage = "Tên bệnh nhân không được vượt quá {1} ký tự.")]
         public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = ValidationMessages.Gender_Required)]
-        [Range(0, 1, ErrorMessage = ValidationMessages.InvalidGender)]
+        [Required(ErrorMessage = "Giới tính là bắt buộc.")]
+        [Range(0, 1, ErrorMessage = "Giới tính không hợp lệ. (0: Nữ, 1: Nam)")]
         public int Gender { get; set; }
 
-        [Required(ErrorMessage = ValidationMessages.DOB_Required)]
-        [DataType(DataType.Date, ErrorMessage = ValidationMessages.InvalidDate)]
+        [Required(ErrorMessage = "Ngày sinh là bắt buộc.")]
+        [DataType(DataType.Date, ErrorMessage = "Ngày sinh không hợp lệ.")]
         public DateTime DOB { get; set; }
 
-        [Phone(ErrorMessage = ValidationMessages.Phone_Invalid)]
-        [StringLength(20, ErrorMessage = ValidationMessages.Phone_MaxLength)]
+        [Phone(ErrorMessage = "Số điện thoại không hợp lệ.")]
+        [StringLength(20, ErrorMessage = "Số điện thoại không được vượt quá {1} ký tự.")]
         public string? PhoneNumber { get; set; }
 
-        [StringLength(50, ErrorMessage = ValidationMessages.IdentityCard_MaxLength)]
+        [StringLength(50, ErrorMessage = "CMND/CCCD không được vượt quá {1} ký tự.")]
         public string? IdentityCard { get; set; }
 
-        [StringLength(200, ErrorMessage = ValidationMessages.Address_MaxLength)]
+        [StringLength(200, ErrorMessage = "Địa chỉ chi tiết không được vượt quá {1} ký tự.")]
         public string? AddressDetail { get; set; }
 
-        [StringLength(100, ErrorMessage = ValidationMessages.Province_MaxLength)]
+        [StringLength(100, ErrorMessage = "Tỉnh/Thành phố không được vượt quá {1} ký tự.")]
         public string? Province { get; set; }
 
-        [StringLength(100, ErrorMessage = ValidationMessages.District_MaxLength)]
+        [StringLength(100, ErrorMessage = "Quận/Huyện không được vượt quá {1} ký tự.")]
         public string? District { get; set; }
 
-        [StringLength(100, ErrorMessage = ValidationMessages.Ward_MaxLength)]
+        [StringLength(100, ErrorMessage = "Xã/Phường không được vượt quá {1} ký tự.")]
         public string? Ward { get; set; }
 
         public bool IsPregnant { get; set; }

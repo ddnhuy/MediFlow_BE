@@ -1,4 +1,7 @@
-﻿using CustomerInfo.Grpc.Protos;
+﻿using BuildingBlocks.Behaviors;
+using CustomerInfo.Grpc.Protos;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.Configs;
@@ -29,6 +33,17 @@ namespace VaccinationReception.Application
 
                 return handler;
             });
+
+            services.AddMediatR(config =>
+            {
+                config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                config.AddOpenBehavior(typeof(ValidationBehavior<,>));
+                config.AddOpenBehavior(typeof(LoggingBehavior<,>));
+            });
+
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+            services.AddFluentValidationAutoValidation();
 
             services.TryAddScoped<IPatientGrpcClient, PatientGrpcClient>();
 

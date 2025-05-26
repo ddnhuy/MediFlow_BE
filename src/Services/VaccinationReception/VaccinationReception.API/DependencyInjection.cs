@@ -1,10 +1,4 @@
-﻿using BuildingBlocks.Authorization;
-using BuildingBlocks.Exceptions.Handler;
-using Carter;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-
-namespace VaccinationReception.API
+﻿namespace VaccinationReception.API
 {
     public static class DependencyInjection
     {

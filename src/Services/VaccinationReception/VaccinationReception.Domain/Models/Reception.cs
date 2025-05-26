@@ -12,6 +12,6 @@ namespace VaccinationReception.Domain.Models
         public int PatientId { get; set; }
         public DateTime ReceptionDate { get; set; }
 
-        public ScreeningEvaluation? ScreeningEvaluation { get; set; }
+        public ScreeningEvaluationReport? ScreeningEvaluationReport { get; set; }
     }
 }

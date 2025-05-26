@@ -1,10 +1,4 @@
-﻿using Carter;
-using Mapster;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using VaccinationReception.Application.Patients.Commands.UpdatePatient;
-
-namespace VaccinationReception.API.EndPoints.PatientEndPoints
+﻿namespace VaccinationReception.API.EndPoints.PatientEndPoints
 {
     public record UpdatePatientResponse(bool IsSuccess);
     public class UpdatePatientEndpoint : ICarterModule

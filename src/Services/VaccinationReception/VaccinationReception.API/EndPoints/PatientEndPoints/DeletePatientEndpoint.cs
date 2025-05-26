@@ -1,9 +1,4 @@
-﻿using Carter;
-using Mapster;
-using MediatR;
-using VaccinationReception.Application.Patients.Commands.DeletePatient;
-
-namespace VaccinationReception.API.EndPoints.PatientEndPoints
+﻿namespace VaccinationReception.API.EndPoints.PatientEndPoints
 {
     public record DeletePatientResponse(bool IsSuccess);
     public class DeletePatientEndpoint : ICarterModule

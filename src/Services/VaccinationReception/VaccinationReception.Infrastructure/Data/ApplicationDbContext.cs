@@ -27,12 +27,12 @@ namespace VaccinationReception.Infrastructure.Data
         }
 
         public virtual DbSet<Reception> Receptions { get; set; }
-        public virtual DbSet<ScreeningEvaluation> ScreeningEvaluations { get; set; }
+        public virtual DbSet<ScreeningEvaluationReport> ScreeningEvaluationReports { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            base.OnModelCreating(builder);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            base.OnModelCreating(modelBuilder);
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -42,21 +42,21 @@ namespace VaccinationReception.Infrastructure.Data
                 SetUpdatedAt();
                 return await base.SaveChangesAsync(cancellationToken);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                _logger.LogError(ex, "Error saving changes to database");
+                _logger.LogError(exception, "Error saving changes to database");
                 throw;
             }
         }
 
         private void SetUpdatedAt()
         {
+            var userId = _userHelper.UserId;
+            _logger.LogDebug("Current user ID: {UserId}", userId);
+
             var entries = ChangeTracker.Entries()
                 .Where(e => e.Entity is IEntity &&
                        (e.State == EntityState.Added || e.State == EntityState.Modified));
-
-            var userId = _userHelper.UserId;
-            _logger.LogDebug("Current user ID: {UserId}", userId);
 
             foreach (var entry in entries)
             {
@@ -70,8 +70,7 @@ namespace VaccinationReception.Infrastructure.Data
                     entity.CreatedBy = userId == 0 ? 1 : userId;
                 }
 
-                _logger.LogDebug(
-                    "Updated entity {EntityType} (ID: {EntityId}) - State: {State}, CreatedBy: {CreatedBy}, LastUpdatedBy: {LastUpdatedBy}",
+                _logger.LogDebug( "Updated entity {EntityType} (ID: {EntityId}) - State: {State}, CreatedBy: {CreatedBy}, LastUpdatedBy: {LastUpdatedBy}",
                     entry.Entity.GetType().Name,
                     entry.Property("Id").CurrentValue,
                     entry.State,

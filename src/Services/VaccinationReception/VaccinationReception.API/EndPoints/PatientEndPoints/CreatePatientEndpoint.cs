@@ -1,10 +1,4 @@
-﻿using BuildingBlocks.Exceptions;
-using Carter;
-using Mapster;
-using MediatR;
-using VaccinationReception.Application.Patients.Commands.CreatePatient;
-
-namespace VaccinationReception.API.EndPoints.PatientEndPoints
+﻿namespace VaccinationReception.API.EndPoints.PatientEndPoints
 {
     public record CreatePatientResponse(int Id);
     public class CreatePatientEndpoint : ICarterModule

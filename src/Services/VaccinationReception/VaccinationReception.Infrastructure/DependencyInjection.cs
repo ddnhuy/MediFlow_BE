@@ -16,6 +16,8 @@ namespace VaccinationReception.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddHttpContextAccessor();
+
             services.AddSingleton<ICurrentUserHelper, CurrentUserHelper>();
 
             return services;

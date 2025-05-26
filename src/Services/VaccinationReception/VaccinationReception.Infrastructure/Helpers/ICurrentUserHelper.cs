@@ -1,34 +1,38 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace VaccinationReception.Infrastructure.Helpers
 {
     public interface ICurrentUserHelper
     {
         int UserId { get; }
-        void SetUserId(int userId);
     }
 
     public class CurrentUserHelper : ICurrentUserHelper
     {
-        private int _userId;
         private readonly ILogger<CurrentUserHelper> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CurrentUserHelper(ILogger<CurrentUserHelper> logger)
+        public CurrentUserHelper(ILogger<CurrentUserHelper> logger, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public int UserId => _userId;
-
-        public void SetUserId(int userId)
+        public int UserId
         {
-            _userId = userId;
-            _logger.LogDebug("User ID set to: {UserId}", userId);
+            get
+            {
+                var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (int.TryParse(userIdClaim, out var id))
+                {
+                    return id;
+                }
+
+                _logger.LogWarning("Unable to retrieve valid UserId from claims.");
+                return 0;
+            }
         }
     }
 }

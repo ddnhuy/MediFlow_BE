@@ -1,9 +1,11 @@
-﻿using BuildingBlocks.Pagination;
+﻿using BuildingBlocks.Exceptions;
+using BuildingBlocks.Pagination;
 using CustomerInfo.Grpc.Protos;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Mapster;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -66,6 +68,11 @@ namespace VaccinationReception.Application.Services.PatientServices
 
         public async Task<PatientDetailDTO> GetPatientAsync(int id, CancellationToken cancellationToken)
         {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Invalid patient ID", nameof(id));
+            }
+
             try
             {
                 _logger.LogInformation(PatientLogMessages.GetPatient_SendingRequest, id);
@@ -77,12 +84,17 @@ namespace VaccinationReception.Application.Services.PatientServices
 
                 return response.Adapt<PatientDetailDTO>();
             }
+            catch (RpcException rpcEx) when (rpcEx.StatusCode == StatusCode.NotFound)
+            {
+                throw new NotFoundException("Patient", id);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, PatientLogMessages.GetPatient_Error, id);
                 throw;
             }
         }
+
 
         public async Task<CreatePatientResult> CreatePatientAsync(CreatePatientCommand command, CancellationToken cancellationToken)
         {
@@ -91,6 +103,11 @@ namespace VaccinationReception.Application.Services.PatientServices
                 var request = command.Adapt<CreatePatientRequest>();
                 var response = await _client.CreatePatientAsync(request, cancellationToken: cancellationToken);
 
+                if(response is null)
+                {
+                    _logger.LogError(PatientLogMessages.CreatePatient_Error);
+                    throw new InternalServerException("Tạo bệnh nhân thất bại");
+                }
                 _logger.LogInformation(PatientLogMessages.CreatePatient_Success, response.Id);
 
                 return new CreatePatientResult(response.Id);

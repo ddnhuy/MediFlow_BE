@@ -23,10 +23,10 @@ namespace CustomerInfo.Grpc.Database
 
         public virtual DbSet<Patient> Patients { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            base.OnModelCreating(builder);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            base.OnModelCreating(modelBuilder);
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -36,9 +36,9 @@ namespace CustomerInfo.Grpc.Database
                 SetUpdatedAt();
                 return await base.SaveChangesAsync(cancellationToken);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                _logger.LogError(ex, "Error saving changes to database");
+                _logger.LogError(exception, "Error saving changes to database");
                 throw;
             }
         }

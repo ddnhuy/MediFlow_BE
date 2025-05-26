@@ -1,12 +1,6 @@
-using Carter;
-using Google.Protobuf.Collections;
-using HealthChecks.UI.Client;
-using Mapster;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using VaccinationReception.Application;
-using VaccinationReception.Application.Configs;
-using VaccinationReception.Application.Patients.Commands.CreatePatient;
-using VaccinationReception.Infrastructure;
+using BuildingBlocks.Behaviors;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 
 namespace VaccinationReception.API
 {
@@ -20,6 +14,8 @@ namespace VaccinationReception.API
             .AddApplicationService()
             .AddInfrastructureServices(builder.Configuration)
             .AddApiServices(builder.Configuration);
+
+            builder.Services.AddFluentValidationAutoValidation();
 
             builder.Services
                 .AddHealthChecks()
