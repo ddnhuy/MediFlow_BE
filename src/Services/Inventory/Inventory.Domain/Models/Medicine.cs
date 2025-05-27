@@ -17,10 +17,10 @@
         public string? Note { get; set; } = string.Empty;
         public string? RegistrationNumber { get; set; } = string.Empty;     
         
-        public int MedicineTypeId { get; set; }
+        public int? MedicineTypeId { get; set; }
         public MedicineType? MedicineType { get; set; } = default!;
 
-        public int VaccineTypeId { get; set; }
+        public int? VaccineTypeId { get; set; }
         public VaccineType? VaccineType { get; set; } = default!;
     }
 }

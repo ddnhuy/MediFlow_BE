@@ -32,13 +32,13 @@ namespace Inventory.Infrastructure.Data.Interceptors
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.CreatedAt = DateTime.UtcNow;
-                    entry.Entity.CreatedBy = _currentUserService.UserId;
+                    entry.Entity.CreatedBy = _currentUserService.UserId != 0 ? _currentUserService.UserId : 1;
                 }
 
                 if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
                 {
                     entry.Entity.LastUpdatedAt = DateTime.UtcNow;
-                    entry.Entity.LastUpdatedBy = _currentUserService.UserId;
+                    entry.Entity.LastUpdatedBy = _currentUserService.UserId != 0 ? _currentUserService.UserId : 1;
                 }
 
             }

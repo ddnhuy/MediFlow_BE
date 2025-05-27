@@ -44,6 +44,109 @@
             };
         }
 
+        // Add this method to the SeedData class
+        private static List<Supplier> CreateNewSuppliers()
+        {
+            return new List<Supplier>
+            {
+                new Supplier
+                {
+                    SupplierCode = "SUP-001",
+                    SupplierName = "MediPharma Supplies",
+                    Address = "123 Medical Plaza, New York, NY 10001",
+                    Phone = "0981995925",
+                    Fax = "+1-212-555-0102",
+                    Email = "contact@medipharma.com",
+                    TaxCode = "MP12345678",
+                    Director = "John Smith",
+                    ContactPerson = "Sarah Johnson",
+                    NormalizedName = "MEDIPHARMA SUPPLIES",
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = 1,
+                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedBy = 1
+                },
+                new Supplier
+                {
+                    SupplierCode = "SUP-002",
+                    SupplierName = "VaccineWorld",
+                    Address = "456 Immunization Drive, Boston, MA 02110",
+                    Phone = "0981995925",
+                    Fax = "+1-617-555-0202",
+                    Email = "info@vaccineworld.com",
+                    TaxCode = "VW87654321",
+                    Director = "Emma Davis",
+                    ContactPerson = "Michael Brown",
+                    NormalizedName = "VACCINEWORLD",
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = 1,
+                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedBy = 1
+                },
+                new Supplier
+                {
+                    SupplierCode = "SUP-003",
+                    SupplierName = "Global Medical Supplies",
+                    Address = "789 Healthcare Blvd, Chicago, IL 60601",
+                    Phone = "0981995925",
+                    Fax = "+1-312-555-0302",
+                    Email = "sales@globalmedical.com",
+                    TaxCode = "GM24680135",
+                    Director = "Robert Wilson",
+                    ContactPerson = "Jennifer Lee",
+                    NormalizedName = "GLOBAL MEDICAL SUPPLIES",
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = 1,
+                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedBy = 1
+                },
+                new Supplier
+                {
+                    SupplierCode = "SUP-004",
+                    SupplierName = "PharmaTech Innovations",
+                    Address = "101 Research Way, San Francisco, CA 94107",
+                    Phone = "0981995925",
+                    Fax = "+1-415-555-0402",
+                    Email = "inquiries@pharmatech.com",
+                    TaxCode = "PT13579246",
+                    Director = "David Chen",
+                    ContactPerson = "Amanda Rodriguez",
+                    NormalizedName = "PHARMATECH INNOVATIONS",
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = 1,
+                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedBy = 1
+                },
+                new Supplier
+                {
+                    SupplierCode = "SUP-005",
+                    SupplierName = "MediEquip Solutions",
+                    Address = "202 Hospital Street, Seattle, WA 98101",
+                    Phone = "0981995925",
+                    Fax = "+1-206-555-0502",
+                    Email = "support@mediequip.com",
+                    TaxCode = "ME97531086",
+                    Director = "Elizabeth Taylor",
+                    ContactPerson = "Thomas Martin",
+                    NormalizedName = "MEDIEQUIP SOLUTIONS",
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = 1,
+                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedBy = 1
+                }
+            };
+        }
+
         private static MedicineType CreateNewMedicineType()
         {
             return new MedicineType
@@ -335,88 +438,88 @@
         private static List<MedicineInteraction> CreateNewMedicineInteractions()
         {
             return new List<MedicineInteraction>
-    {
-        new MedicineInteraction
-        {
-            MedicineId1 = 1, // COVID-19 Vaccine
-            MedicineId2 = 2, // Influenza Vaccine
-            HarmfulEffects = "Potential increased risk of inflammatory response",
-            Mechanism = "Overlapping immune system activation pathways",
-            PreventiveActions = "Separate administration by at least 14 days",
-            ReferenceInfo = "CDC Vaccine Administration Guidelines 2023",
-            Notes = "Recommendation may change as more data becomes available",
-            IsSuspended = false,
-            IsCancelled = false,
-            CreatedAt = DateTime.UtcNow,
-            CreatedBy = 1,
-            LastUpdatedAt = DateTime.UtcNow,
-            LastUpdatedBy = 1
-        },
-        new MedicineInteraction
-        {
-            MedicineId1 = 3, // Hepatitis B Vaccine
-            MedicineId2 = 5, // MMR Vaccine
-            HarmfulEffects = "Reduced efficacy of both vaccines",
-            Mechanism = "Interference with immune response generation",
-            PreventiveActions = "Administer at different injection sites if given simultaneously",
-            ReferenceInfo = "Immunization Action Coalition Guidelines",
-            Notes = "If possible, schedule at least 4 weeks apart for optimal immune response",
-            IsSuspended = false,
-            IsCancelled = false,
-            CreatedAt = DateTime.UtcNow,
-            CreatedBy = 1,
-            LastUpdatedAt = DateTime.UtcNow,
-            LastUpdatedBy = 1
-        },
-        new MedicineInteraction
-        {
-            MedicineId1 = 6, // Tdap Vaccine
-            MedicineId2 = 7, // Varicella Vaccine
-            HarmfulEffects = "Increased risk of local injection site reactions",
-            Mechanism = "Cumulative inflammatory response at administration sites",
-            PreventiveActions = "Use different limbs for administration",
-            ReferenceInfo = "National Immunization Program Technical Guide",
-            Notes = "Monitor patient for 30 minutes after administration",
-            IsSuspended = false,
-            IsCancelled = false,
-            CreatedAt = DateTime.UtcNow,
-            CreatedBy = 1,
-            LastUpdatedAt = DateTime.UtcNow,
-            LastUpdatedBy = 1
-        },
-        new MedicineInteraction
-        {
-            MedicineId1 = 8, // HPV Vaccine
-            MedicineId2 = 10, // Meningococcal Vaccine
-            HarmfulEffects = "Increased incidence of fever and malaise",
-            Mechanism = "Additive systemic inflammatory response",
-            PreventiveActions = "Prophylactic antipyretic administration may be considered",
-            ReferenceInfo = "Vaccine Safety Handbook, 5th Edition",
-            Notes = "Effects more common in adolescents than adults",
-            IsSuspended = false,
-            IsCancelled = false,
-            CreatedAt = DateTime.UtcNow,
-            CreatedBy = 1,
-            LastUpdatedAt = DateTime.UtcNow,
-            LastUpdatedBy = 1
-        },
-        new MedicineInteraction
-        {
-            MedicineId1 = 4, // Pneumococcal Vaccine
-            MedicineId2 = 9, // Polio Vaccine
-            HarmfulEffects = "Potential for diminished antibody response",
-            Mechanism = "Competition for immune system resources",
-            PreventiveActions = "Consider separating by 8 weeks in immunocompromised patients",
-            ReferenceInfo = "International Vaccine Safety Coalition Report 2022",
-            Notes = "Interaction is more theoretical than clinically proven",
-            IsSuspended = false,
-            IsCancelled = false,
-            CreatedAt = DateTime.UtcNow,
-            CreatedBy = 1,
-            LastUpdatedAt = DateTime.UtcNow,
-            LastUpdatedBy = 1
-        }
-    };
+            {
+                new MedicineInteraction
+                {
+                    MedicineId1 = 1, // COVID-19 Vaccine
+                    MedicineId2 = 2, // Influenza Vaccine
+                    HarmfulEffects = "Potential increased risk of inflammatory response",
+                    Mechanism = "Overlapping immune system activation pathways",
+                    PreventiveActions = "Separate administration by at least 14 days",
+                    ReferenceInfo = "CDC Vaccine Administration Guidelines 2023",
+                    Notes = "Recommendation may change as more data becomes available",
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = 1,
+                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedBy = 1
+                },
+                new MedicineInteraction
+                {
+                    MedicineId1 = 3, // Hepatitis B Vaccine
+                    MedicineId2 = 5, // MMR Vaccine
+                    HarmfulEffects = "Reduced efficacy of both vaccines",
+                    Mechanism = "Interference with immune response generation",
+                    PreventiveActions = "Administer at different injection sites if given simultaneously",
+                    ReferenceInfo = "Immunization Action Coalition Guidelines",
+                    Notes = "If possible, schedule at least 4 weeks apart for optimal immune response",
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = 1,
+                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedBy = 1
+                },
+                new MedicineInteraction
+                {
+                    MedicineId1 = 6, // Tdap Vaccine
+                    MedicineId2 = 7, // Varicella Vaccine
+                    HarmfulEffects = "Increased risk of local injection site reactions",
+                    Mechanism = "Cumulative inflammatory response at administration sites",
+                    PreventiveActions = "Use different limbs for administration",
+                    ReferenceInfo = "National Immunization Program Technical Guide",
+                    Notes = "Monitor patient for 30 minutes after administration",
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = 1,
+                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedBy = 1
+                },
+                new MedicineInteraction
+                {
+                    MedicineId1 = 8, // HPV Vaccine
+                    MedicineId2 = 10, // Meningococcal Vaccine
+                    HarmfulEffects = "Increased incidence of fever and malaise",
+                    Mechanism = "Additive systemic inflammatory response",
+                    PreventiveActions = "Prophylactic antipyretic administration may be considered",
+                    ReferenceInfo = "Vaccine Safety Handbook, 5th Edition",
+                    Notes = "Effects more common in adolescents than adults",
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = 1,
+                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedBy = 1
+                },
+                new MedicineInteraction
+                {
+                    MedicineId1 = 4, // Pneumococcal Vaccine
+                    MedicineId2 = 9, // Polio Vaccine
+                    HarmfulEffects = "Potential for diminished antibody response",
+                    Mechanism = "Competition for immune system resources",
+                    PreventiveActions = "Consider separating by 8 weeks in immunocompromised patients",
+                    ReferenceInfo = "International Vaccine Safety Coalition Report 2022",
+                    Notes = "Interaction is more theoretical than clinically proven",
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = 1,
+                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedBy = 1
+                }
+            };
         }
 
         private static async Task SeedAsync(ApplicationDbContext context)
@@ -462,6 +565,14 @@
             {
                 var interactions = CreateNewMedicineInteractions();
                 await context.MedicineInteractions.AddRangeAsync(interactions);
+                await context.SaveChangesAsync();
+            }
+
+            // Seed Suppliers
+            if (!await context.Suppliers.AnyAsync())
+            {
+                var suppliers = CreateNewSuppliers();
+                await context.Suppliers.AddRangeAsync(suppliers);
                 await context.SaveChangesAsync();
             }
         }
