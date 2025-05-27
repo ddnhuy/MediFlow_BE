@@ -36,6 +36,9 @@ spec:
               mountPath: /app/appsettings.json
               subPath: appsettings.json
       initContainers:
+        - name: wait-for-redis
+          image: busybox
+          command: ['sh', '-c', "until nc -z redis 6379; do echo waiting for redis; sleep 2; done"]
         - name: wait-for-human-resource-grpc
           image: busybox
           command: ['sh', '-c', "until nc -z human-resource-grpc {{ .Values.service.port }}; do echo waiting for human-resource-grpc; sleep 2; done"]
