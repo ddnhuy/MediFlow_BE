@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HumanResource.Grpc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250526141954_AddPoliciesTable")]
-    partial class AddPoliciesTable
+    [Migration("20250527130143_InitDatabase")]
+    partial class InitDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -168,6 +168,10 @@ namespace HumanResource.Grpc.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("NameInEnglish")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Code");
@@ -210,6 +214,10 @@ namespace HumanResource.Grpc.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameInEnglish")
                         .IsRequired()
                         .HasColumnType("text");
 

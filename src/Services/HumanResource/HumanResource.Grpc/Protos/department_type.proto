@@ -15,4 +15,5 @@ message DepartmentTypeModel {
   int32 id = 1;
   string code = 2;
   string name = 3;
+  string nameInEnglish = 4;
 }

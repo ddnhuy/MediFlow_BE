@@ -9,10 +9,9 @@
     {
         private int GetUserIdFromContext(ServerCallContext context)
         {
-            var httpContext = context.GetHttpContext();
-            var claimValue = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = context.RequestHeaders.FirstOrDefault(x => x.Key == "x-user-id")?.Value;
 
-            return int.TryParse(claimValue, out var userId) ? userId : 0;
+            return int.TryParse(userId, out var result) ? result : 0;
         }
 
         public override async Task<ListApplicationUsersResponse> ListApplicationUsers(ListApplicationUsersRequest request, ServerCallContext context)
@@ -171,6 +170,8 @@
         public override async Task<ChangePasswordResponse> ChangePassword(ChangePasswordRequest request, ServerCallContext context)
         {
             logger.LogInformation("Changing password for user: {Id}", request.UserId);
+
+            currentUserHelper.SetUserId(GetUserIdFromContext(context));
 
             var user = await userManager.FindByIdAsync(request.UserId.ToString());
             if (user == null)

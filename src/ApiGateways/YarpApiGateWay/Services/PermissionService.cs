@@ -27,7 +27,7 @@ namespace YarpApiGateWay.Services
             var result = await policyProto.CheckIfHasPermissionAsync(new CheckIfHasPermissionRequest
             {
                 RoleName = role,
-                DepartmentName = department,
+                DepartmentNameInEnglish = department.Replace('_', ' '),
                 ResourceType = resourceType
             });
 

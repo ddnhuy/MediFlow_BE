@@ -80,20 +80,20 @@
             {
                 var departmentTypes = new List<DepartmentType>
                 {
-                    new() { Code = nameof(DepartmentTypes.CLINIC), Name = DepartmentTypes.CLINIC },
-                    new() { Code = nameof(DepartmentTypes.LAB), Name = DepartmentTypes.LAB },
-                    new() { Code = nameof(DepartmentTypes.VACCINE), Name = DepartmentTypes.VACCINE },
-                    new() { Code = nameof(DepartmentTypes.VACCINE_RECEPTION), Name = DepartmentTypes.VACCINE_RECEPTION },
-                    new() { Code = nameof(DepartmentTypes.BILLING), Name = DepartmentTypes.BILLING },
-                    new() { Code = nameof(DepartmentTypes.PHARMACY), Name = DepartmentTypes.PHARMACY },
-                    new() { Code = nameof(DepartmentTypes.STORAGE), Name = DepartmentTypes.STORAGE },
-                    new() { Code = nameof(DepartmentTypes.IMAGING), Name = DepartmentTypes.IMAGING },
-                    new() { Code = nameof(DepartmentTypes.EMERGENCY), Name = DepartmentTypes.EMERGENCY },
-                    new() { Code = nameof(DepartmentTypes.INPATIENT), Name = DepartmentTypes.INPATIENT },
-                    new() { Code = nameof(DepartmentTypes.ADMIN), Name = DepartmentTypes.ADMIN },
-                    new() { Code = nameof(DepartmentTypes.MANAGEMENT), Name = DepartmentTypes.MANAGEMENT },
-                    new() { Code = nameof(DepartmentTypes.HR), Name = DepartmentTypes.HR },
-                    new() { Code = nameof(DepartmentTypes.FINANCE), Name = DepartmentTypes.FINANCE }
+                    new() { Code = nameof(DepartmentTypes.CLINIC), Name = DepartmentTypes.CLINIC, NameInEnglish = nameof(DepartmentTypes.CLINIC).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.LAB), Name = DepartmentTypes.LAB, NameInEnglish = nameof(DepartmentTypes.LAB).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.VACCINE), Name = DepartmentTypes.VACCINE, NameInEnglish = nameof(DepartmentTypes.VACCINE).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.VACCINE_RECEPTION), Name = DepartmentTypes.VACCINE_RECEPTION, NameInEnglish = nameof(DepartmentTypes.VACCINE_RECEPTION).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.BILLING), Name = DepartmentTypes.BILLING, NameInEnglish = nameof(DepartmentTypes.BILLING).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.PHARMACY), Name = DepartmentTypes.PHARMACY, NameInEnglish = nameof(DepartmentTypes.PHARMACY).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.STORAGE), Name = DepartmentTypes.STORAGE, NameInEnglish = nameof(DepartmentTypes.STORAGE).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.IMAGING), Name = DepartmentTypes.IMAGING, NameInEnglish = nameof(DepartmentTypes.IMAGING).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.EMERGENCY), Name = DepartmentTypes.EMERGENCY, NameInEnglish = nameof(DepartmentTypes.EMERGENCY).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.INPATIENT), Name = DepartmentTypes.INPATIENT, NameInEnglish = nameof(DepartmentTypes.INPATIENT).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.ADMIN), Name = DepartmentTypes.ADMIN, NameInEnglish = nameof(DepartmentTypes.ADMIN).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.MANAGEMENT), Name = DepartmentTypes.MANAGEMENT, NameInEnglish = nameof(DepartmentTypes.MANAGEMENT).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.HR), Name = DepartmentTypes.HR, NameInEnglish = nameof(DepartmentTypes.HR).ToLower() },
+                    new() { Code = nameof(DepartmentTypes.FINANCE), Name = DepartmentTypes.FINANCE, NameInEnglish = nameof(DepartmentTypes.FINANCE).ToLower() }
                 };
 
                 await dbContext.DepartmentTypes.AddRangeAsync(departmentTypes);
@@ -115,6 +115,7 @@
                         {
                             Code = $"DEPT-000",
                             Name = $"Phòng khám tổng quát",
+                            NameInEnglish = "General Clinic",
                             DepartmentTypeId = departmentTypeMap["CLINIC"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -127,6 +128,7 @@
                         {
                             Code = $"DEPT-001",
                             Name = $"Phòng xét nghiệm huyết học",
+                            NameInEnglish = "Hematology Lab",
                             DepartmentTypeId = departmentTypeMap["LAB"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -139,6 +141,7 @@
                         {
                             Code = $"DEPT-002",
                             Name = $"Phòng tiêm chủng trẻ em",
+                            NameInEnglish = "Child Vaccination Room",
                             DepartmentTypeId = departmentTypeMap["VACCINE"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -151,6 +154,7 @@
                         {
                             Code = $"DEPT-003",
                             Name = $"Phòng tiếp nhận tiêm chủng",
+                            NameInEnglish = "Vaccination Reception",
                             DepartmentTypeId = departmentTypeMap["VACCINE_RECEPTION"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -163,6 +167,7 @@
                         {
                             Code = $"DEPT-004",
                             Name = $"Phòng tài chính – thanh toán",
+                            NameInEnglish = "Billing Department",
                             DepartmentTypeId = departmentTypeMap["BILLING"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -175,6 +180,7 @@
                         {
                             Code = $"DEPT-005",
                             Name = $"Phòng dược – cấp phát thuốc",
+                            NameInEnglish = "Pharmacy Department",
                             DepartmentTypeId = departmentTypeMap["PHARMACY"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -187,6 +193,7 @@
                         {
                             Code = $"DEPT-006",
                             Name = $"Kho vật tư y tế",
+                            NameInEnglish = "Medical Supplies Storage",
                             DepartmentTypeId = departmentTypeMap["STORAGE"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -199,6 +206,7 @@
                         {
                             Code = $"DEPT-007",
                             Name = $"Phòng chẩn đoán hình ảnh",
+                            NameInEnglish = "Imaging Department",
                             DepartmentTypeId = departmentTypeMap["IMAGING"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -211,6 +219,7 @@
                         {
                             Code = $"DEPT-008",
                             Name = $"Phòng cấp cứu",
+                            NameInEnglish = "Emergency Department",
                             DepartmentTypeId = departmentTypeMap["EMERGENCY"],
                             IsSuspended = true,
                             IsCancelled = false,
@@ -223,6 +232,7 @@
                         {
                             Code = $"DEPT-009",
                             Name = $"Phòng nội trú",
+                            NameInEnglish = "Inpatient Department",
                             DepartmentTypeId = departmentTypeMap["INPATIENT"],
                             IsSuspended = false,
                             IsCancelled = true,
@@ -235,6 +245,7 @@
                         {
                             Code = $"DEPT-010",
                             Name = $"Phòng quản trị hệ thống",
+                            NameInEnglish = "System Administration",
                             DepartmentTypeId = departmentTypeMap["ADMIN"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -247,6 +258,7 @@
                         {
                             Code = $"DEPT-011",
                             Name = $"Phòng ban giám đốc",
+                            NameInEnglish = "Management Department",
                             DepartmentTypeId = departmentTypeMap["MANAGEMENT"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -259,6 +271,7 @@
                         {
                             Code = $"DEPT-012",
                             Name = $"Phòng nhân sự",
+                            NameInEnglish = "Human Resources",
                             DepartmentTypeId = departmentTypeMap["HR"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -271,6 +284,7 @@
                         {
                             Code = $"DEPT-013",
                             Name = $"Phòng kế toán – tài chính",
+                            NameInEnglish = "Finance and Accounting",
                             DepartmentTypeId = departmentTypeMap["FINANCE"],
                             IsSuspended = false,
                             IsCancelled = false,
@@ -320,10 +334,20 @@
             int userIndex = 1;
             foreach (var kvp in departmentRoleMap)
             {
+                var departmentTypeCode = kvp.Key;
+                var roleName = kvp.Value;
+
                 var userName = $"user{userIndex:D3}";
                 var email = $"user{userIndex:D3}@mediflow.health.vn";
 
                 if (await userManager.FindByNameAsync(userName) is not null)
+                {
+                    userIndex++;
+                    continue;
+                }
+
+                var department = await dbContext.Departments.Include(d => d.DepartmentType).FirstOrDefaultAsync(d => d.DepartmentType.Code == departmentTypeCode);
+                if (department is null)
                 {
                     userIndex++;
                     continue;
@@ -342,13 +366,14 @@
                     LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1,
                     EmailConfirmed = true,
-                    PhoneNumberConfirmed = true
+                    PhoneNumberConfirmed = true,
+                    Departments = new List<Department> { department }
                 };
 
                 var result = await userManager.CreateAsync(user, commonPassword);
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, kvp.Value);
+                    await userManager.AddToRoleAsync(user, roleName);
                 }
                 else
                 {

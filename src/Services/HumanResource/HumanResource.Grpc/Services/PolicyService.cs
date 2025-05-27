@@ -55,24 +55,28 @@
         public override async Task<CheckIfHasPermissionResponse> CheckIfHasPermission(CheckIfHasPermissionRequest request, ServerCallContext context)
         {
             logger.LogInformation("Checking permissions for RoleName: {RoleName}, DepartmentName: {DepartmentName}, ResourceType: {ResourceType}",
-                request.RoleName, request.DepartmentName, request.ResourceType);
+                request.RoleName, request.DepartmentNameInEnglish, request.ResourceType);
 
             var permission = await dbContext.RoleDepartmentPolicies
                 .Include(rdp => rdp.Role)
                 .Include(rdp => rdp.Department)
                 .Include(rdp => rdp.Policy)
-                .FirstOrDefaultAsync(rdp => rdp.Role.Name! == request.RoleName &&
-                            rdp.Department.Name == request.DepartmentName &&
-                            rdp.Policy.ResourceType == request.ResourceType);
+                .Where(rdp => rdp.Role.Name! == request.RoleName &&
+                            rdp.Department.NameInEnglish == request.DepartmentNameInEnglish &&
+                            rdp.Policy.ResourceType == request.ResourceType)
+                .ToListAsync();
 
-            var hasPermission = permission is not null;
+            var hasPermission = permission.Any();
+            var hasWriteAction = permission.Any(p => p.Policy.Actions.Contains("write", StringComparer.OrdinalIgnoreCase));
 
             logger.LogInformation("Permission check result: {HasPermission}", hasPermission);
 
             return new CheckIfHasPermissionResponse
             {
                 HasPermission = hasPermission,
-                Actions = hasPermission ? string.Join("_", permission!.Policy.Actions) : string.Empty
+                Actions = hasPermission ?
+                    hasWriteAction ? "read_write" : "read"
+                    : string.Empty
             };
         }
 

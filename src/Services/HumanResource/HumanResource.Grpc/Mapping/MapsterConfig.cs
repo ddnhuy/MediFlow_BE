@@ -9,6 +9,7 @@
                 .Map(dest => dest.Id, src => src.Id)
                 .Map(dest => dest.Code, src => src.Code ?? "")
                 .Map(dest => dest.Name, src => src.Name ?? "")
+                .Map(dest => dest.NameInEnglish, src => src.NameInEnglish ?? "")
                 .TwoWays();
 
             // Department -> DepartmentDetailModel
@@ -16,8 +17,10 @@
                 .Map(dest => dest.Id, src => src.Id)
                 .Map(dest => dest.Code, src => src.Code ?? "")
                 .Map(dest => dest.Name, src => src.Name ?? "")
+                .Map(dest => dest.NameInEnglish, src => src.NameInEnglish ?? "")
                 .Map(dest => dest.DepartmentTypeId, src => src.DepartmentTypeId)
                 .Map(dest => dest.DepartmentTypeName, src => src.DepartmentType.Name)
+                .Map(dest => dest.DepartmentTypeNameInEnglish, src => src.DepartmentType.NameInEnglish ?? "")
                 .Map(dest => dest.IsSuspended, src => src.IsSuspended)
                 .Map(dest => dest.IsCancelled, src => src.IsCancelled)
                 .Map(dest => dest.CreatedAt, src => Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(src.CreatedAt.ToUniversalTime()))
@@ -31,7 +34,9 @@
                 .Map(dest => dest.Id, src => src.Id)
                 .Map(dest => dest.Code, src => src.Code ?? "")
                 .Map(dest => dest.Name, src => src.Name ?? "")
+                .Map(dest => dest.NameInEnglish, src => src.NameInEnglish ?? "")
                 .Map(dest => dest.DepartmentTypeName, src => src.DepartmentType.Name)
+                .Map(dest => dest.DepartmentTypeNameInEnglish, src => src.DepartmentType.NameInEnglish ?? "")
                 .Map(dest => dest.IsSuspended, src => src.IsSuspended)
                 .TwoWays();
 

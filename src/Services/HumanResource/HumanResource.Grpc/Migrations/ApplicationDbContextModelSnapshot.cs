@@ -165,6 +165,10 @@ namespace HumanResource.Grpc.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("NameInEnglish")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Code");
@@ -207,6 +211,10 @@ namespace HumanResource.Grpc.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameInEnglish")
                         .IsRequired()
                         .HasColumnType("text");
 

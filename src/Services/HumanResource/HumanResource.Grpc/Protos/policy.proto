@@ -36,9 +36,9 @@ message GetPoliciesResponse {
 }
 
 message CheckIfHasPermissionRequest {
-  string roleName = 3;
-  string departmentName = 4;
-  string resourceType = 5;
+  string roleName = 1;
+  string departmentNameInEnglish = 2;
+  string resourceType = 3;
 }
 
 message CheckIfHasPermissionResponse {

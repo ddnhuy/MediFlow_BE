@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Grpc.Core;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 
 namespace AuthenticationService.FunctionalTests.Tests
@@ -32,8 +33,14 @@ namespace AuthenticationService.FunctionalTests.Tests
             };
 
             _grpcClientMock?
-                .ChangePasswordAsync(Arg.Any<HumanResource.Grpc.ChangePasswordRequest>())
+                .ChangePasswordAsync(
+                    Arg.Any<HumanResource.Grpc.ChangePasswordRequest>(),
+                    Arg.Any<Metadata>(),
+                    Arg.Any<DateTime?>(),
+                    Arg.Any<CancellationToken>()
+                )
                 .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
+
 
             // Act
             var response = await _client.PostAsJsonAsync(
@@ -63,7 +70,12 @@ namespace AuthenticationService.FunctionalTests.Tests
             };
 
             _grpcClientMock?
-                .ChangePasswordAsync(Arg.Any<HumanResource.Grpc.ChangePasswordRequest>())
+                .ChangePasswordAsync(
+                    Arg.Any<HumanResource.Grpc.ChangePasswordRequest>(),
+                    Arg.Any<Metadata>(),
+                    Arg.Any<DateTime?>(),
+                    Arg.Any<CancellationToken>()
+                )
                 .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
 
             // Act

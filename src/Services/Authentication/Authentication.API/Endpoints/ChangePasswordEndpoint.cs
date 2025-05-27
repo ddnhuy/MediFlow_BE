@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Authentication.API.Endpoints
 {
@@ -9,11 +10,14 @@ namespace Authentication.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/change-password", [Authorize] async (ChangePasswordRequest request, ISender sender) =>
+            app.MapPost("/change-password", [Authorize] async (ChangePasswordRequest request, ISender sender, HttpContext context) =>
             {
-                var command = request.Adapt<ChangePasswordCommand>();
-
-                var result = await sender.Send(command);
+                var result = await sender.Send(
+                    new ChangePasswordCommand(
+                        request.UserId,
+                        request.CurrentPassword,
+                        request.NewPassword,
+                        context.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value));
 
                 var response = result.Adapt<ChangePasswordResponse>();
 

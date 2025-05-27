@@ -72,5 +72,4 @@ namespace YarpApiGateWay.Middlewares
             await _next(context);
         }
     }
-
 }
