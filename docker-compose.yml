@@ -4,6 +4,9 @@ services:
   postgres_db:
     image: postgres:14
 
+  redis:
+    image: redis:8.0
+
   yarpapigateway:
     image: ${DOCKER_REGISTRY-}yarpapigateway
     build:
@@ -30,3 +33,4 @@ services:
 
 volumes:
   postgres_db:
+  redis_data:

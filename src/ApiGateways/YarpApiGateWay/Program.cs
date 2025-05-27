@@ -1,77 +1,25 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using System.Threading.RateLimiting;
 using YarpApiGateWay;
-using YarpApiGateWay.RateLimitOptions;
+using YarpApiGateWay.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.AllowCredentials().WithOrigins("http://localhost:3000", "https://mediflow-cvs.netlify.app/")
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
-
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
-{
-    options.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
-        {
-            // Get token from cookie
-            var accessToken = context.Request.Cookies["access_token"];
-            if (!string.IsNullOrEmpty(accessToken))
-            {
-                context.Token = accessToken;
-            }
-            return Task.CompletedTask;
-        }
-    };
-});
-
 // Add services to the container.
-builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
-
-var myOptions = new CustomRateLimitOptions();
-builder.Configuration.GetSection(CustomRateLimitOptions.MyRateLimit).Bind(myOptions);
-var slidingPolicy = "sliding";
-
-builder.Services.AddRateLimiter(_ => _
-    .AddSlidingWindowLimiter(policyName: slidingPolicy, options =>
-    {
-        options.PermitLimit = myOptions.PermitLimit;
-        options.Window = TimeSpan.FromSeconds(myOptions.Window);
-        options.SegmentsPerWindow = myOptions.SegmentsPerWindow;
-        options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        options.QueueLimit = myOptions.QueueLimit;
-    }));
+builder.Services
+    .AddServices(builder.Configuration)
+    .AddCors();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseCors();
-app.UseRateLimiter();
+app.UseServices();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.Use(async (context, next) =>
-{
-    var token = context.Request.Cookies["access_token"];
-    if (!string.IsNullOrEmpty(token))
-    {
-        context.Request.Headers.Authorization = $"Bearer {token}";
-    }
-
-    await next();
-});
+app.UseMiddleware<GetUserInfoMiddleware>();
+app.UseMiddleware<PermissionCheckMiddleware>();
 
 // Middleware: Wrap response from services to BaseResponse
 app.Use(async (context, next) =>
@@ -117,9 +65,4 @@ app.Use(async (context, next) =>
     await context.Response.WriteAsync(JsonSerializer.Serialize(baseResponse));
 });
 
-// Route test
-static string GetTicks() => (DateTime.Now.Ticks & 0x11111).ToString("00000");
-app.MapGet("/", () => Results.Ok($"Sliding Window Limiter {GetTicks()}")).RequireRateLimiting(slidingPolicy);
-
-app.MapReverseProxy();
 app.Run();

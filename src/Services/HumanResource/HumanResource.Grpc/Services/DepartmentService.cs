@@ -1,6 +1,4 @@
 ﻿using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
-using HumanResource.Grpc.Database;
 
 namespace HumanResource.Grpc.Services
 {

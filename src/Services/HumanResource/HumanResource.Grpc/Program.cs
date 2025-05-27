@@ -1,6 +1,4 @@
 ﻿using Google.Protobuf.Collections;
-using HumanResource.Grpc.Database;
-using HumanResource.Grpc.Interceptors;
 using HumanResource.Grpc.Mapping;
 using HumanResource.Grpc.Services;
 
@@ -36,11 +34,8 @@ TypeAdapterConfig.GlobalSettings.Default
                                    member.Type.GetGenericTypeDefinition() == typeof(RepeatedField<>));
 builder.Services.AddSingleton<IRegister, MapsterConfig>();
 
-builder.Services.AddSingleton<ICurrentUserHelper, CurrentUserHelper>();
-builder.Services.AddGrpc(options =>
-{
-    options.Interceptors.Add<GrpcUserInterceptor>();
-});
+builder.Services.AddScoped<ICurrentUserHelper, CurrentUserHelper>();
+builder.Services.AddGrpc();
 
 var app = builder.Build();
 
@@ -49,6 +44,7 @@ await app.UseMigrationAsync(builder.Environment);
 
 app.MapGrpcService<DepartmentService>();
 app.MapGrpcService<ApplicationUserService>();
+app.MapGrpcService<PolicyService>();
 
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 

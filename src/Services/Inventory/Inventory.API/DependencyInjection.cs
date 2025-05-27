@@ -6,19 +6,6 @@
         {
             services.AddCarter();
             services.AddExceptionHandler<CustomExceptionHandler>();
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.SaveToken = true;
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]!)),
-                    ValidIssuer = configuration["Jwt:Issuer"],
-                    ValidAudience = configuration["Jwt:Audience"],
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
             return services;
         }
 
@@ -26,8 +13,6 @@
         {
             app.MapCarter();
             app.UseExceptionHandler(options => { });
-            app.UseAuthentication();
-            app.UseAuthorization();
             return app;
         }
 

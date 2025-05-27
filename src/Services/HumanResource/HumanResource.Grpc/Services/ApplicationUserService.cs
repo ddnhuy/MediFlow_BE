@@ -1,16 +1,20 @@
-﻿using BuildingBlocks.Strings.Exceptions;
-using BuildingBlocks.Strings.SuccessStrings;
-using Grpc.Core;
-using HumanResource.Grpc.Database;
-
-namespace HumanResource.Grpc.Services
+﻿namespace HumanResource.Grpc.Services
 {
     public class ApplicationUserService(
+        ICurrentUserHelper currentUserHelper,
         UserManager<ApplicationUser> userManager,
         ApplicationDbContext dbContext,
         ILogger<ApplicationUserService> logger)
         : ApplicationUserProtoService.ApplicationUserProtoServiceBase
     {
+        private int GetUserIdFromContext(ServerCallContext context)
+        {
+            var httpContext = context.GetHttpContext();
+            var claimValue = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            return int.TryParse(claimValue, out var userId) ? userId : 0;
+        }
+
         public override async Task<ListApplicationUsersResponse> ListApplicationUsers(ListApplicationUsersRequest request, ServerCallContext context)
         {
             logger.LogInformation("Listing application users. Keyword: {Keyword}, Page: {PageIndex}, Size: {PageSize}", request.Keyword, request.PageIndex, request.PageSize);
@@ -74,6 +78,8 @@ namespace HumanResource.Grpc.Services
         {
             logger.LogInformation("Creating new user: {UserName} ({Email})", request.UserName, request.Email);
 
+            currentUserHelper.SetUserId(GetUserIdFromContext(context));
+
             var user = new ApplicationUser
             {
                 UserName = request.UserName,
@@ -107,6 +113,8 @@ namespace HumanResource.Grpc.Services
         public override async Task<ApplicationUserDetailModel> UpdateApplicationUser(UpdateApplicationUserRequest request, ServerCallContext context)
         {
             logger.LogInformation("Updating user: {Id}", request.Id);
+
+            currentUserHelper.SetUserId(GetUserIdFromContext(context));
 
             var user = await userManager.FindByIdAsync(request.Id.ToString());
             if (user == null)

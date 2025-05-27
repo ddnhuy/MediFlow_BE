@@ -8,6 +8,7 @@
             await CreateAdminUserAsync(userManager);
             await CreateDepartmentsAsync(dbContext);
             await CreateDepartmentUsersAsync(userManager, dbContext);
+            await CreateDepartmentPoliciesAsync(dbContext);
         }
 
         private static async Task EnsureRolesAsync(RoleManager<IdentityRole<int>> roleManager)
@@ -405,5 +406,92 @@
                 }
             }
         }
+
+        private static async Task CreateDepartmentPoliciesAsync(ApplicationDbContext dbContext)
+        {
+            var departments = await dbContext.Departments
+                .Include(d => d.DepartmentType)
+                .Where(d => !d.IsCancelled)
+                .ToListAsync();
+
+            var roles = await dbContext.Roles.ToListAsync();
+
+            // Ensure all policies exist
+            foreach (var group in PredefinedPolicies)
+            {
+                foreach (var policy in group.Value)
+                {
+                    if (!await dbContext.Policies.AnyAsync(p => p.ResourceType == policy.ResourceType))
+                    {
+                        await dbContext.Policies.AddAsync(policy);
+                    }
+                }
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            var allPolicies = await dbContext.Policies.ToListAsync();
+
+            foreach (var (resourceType, roleDeptList) in RoleDepartmentMappings)
+            {
+                var relatedPolicies = allPolicies.Where(p => p.ResourceType == resourceType).ToList();
+                if (!relatedPolicies.Any()) continue;
+
+                foreach (var (roleName, deptTypeName) in roleDeptList)
+                {
+                    var role = roles.FirstOrDefault(r => r.Name == roleName);
+                    var department = departments.FirstOrDefault(d => d.DepartmentType.Name == deptTypeName);
+
+                    if (role == null || department == null) continue;
+
+                    foreach (var policy in relatedPolicies)
+                    {
+                        bool alreadyMapped = await dbContext.RoleDepartmentPolicies.AnyAsync(rdp =>
+                            rdp.RoleId == role.Id &&
+                            rdp.DepartmentId == department.Id &&
+                            rdp.PolicyId == policy.Id);
+
+                        if (!alreadyMapped)
+                        {
+                            await dbContext.RoleDepartmentPolicies.AddAsync(new RoleDepartmentPolicy
+                            {
+                                RoleId = role.Id,
+                                DepartmentId = department.Id,
+                                PolicyId = policy.Id
+                            });
+                        }
+                    }
+                }
+            }
+
+            await dbContext.SaveChangesAsync();
+        }
+
+        private static readonly Dictionary<string, List<Policy>> PredefinedPolicies = new()
+        {
+            ["inventory"] = new()
+            {
+                new Policy { ResourceType = "inventory", Actions = ["read", "write"] }
+            },
+            ["user"] = new()
+            {
+                new Policy { ResourceType = "user", Actions = ["read", "write"] }
+            }
+        };
+
+        private static readonly Dictionary<string, List<(string roleName, string departmentType)>> RoleDepartmentMappings = new()
+        {
+            ["inventory"] = new()
+            {
+                (Roles.WAREHOUSE_STAFF, DepartmentTypes.STORAGE),
+                (Roles.ADMIN, DepartmentTypes.ADMIN),
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
+            },
+            ["user"] = new()
+            {
+                (Roles.ADMIN, DepartmentTypes.ADMIN),
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
+            }
+        };
     }
 }
