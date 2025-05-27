@@ -1,9 +1,10 @@
 ﻿using BuildingBlocks.Exceptions;
+using Grpc.Core;
 
 namespace Authentication.Business.Commands
 {
     public record ChangePasswordResult(bool IsSuccess, string Message);
-    public record ChangePasswordCommand(int UserId, string CurrentPassword, string NewPassword) : ICommand<ChangePasswordResult>;
+    public record ChangePasswordCommand(int UserId, string CurrentPassword, string NewPassword, string ChangerId) : ICommand<ChangePasswordResult>;
 
     internal class ChangePasswordCommandValidator : AbstractValidator<ChangePasswordCommand>
     {
@@ -26,7 +27,11 @@ namespace Authentication.Business.Commands
     {
         public async Task<ChangePasswordResult> Handle(ChangePasswordCommand command, CancellationToken cancellationToken)
         {
-            var result = await applicationUserProto.ChangePasswordAsync(command.Adapt<ChangePasswordRequest>(), cancellationToken: cancellationToken);
+            var metadata = new Metadata
+            {
+                { "x-user-id", command.ChangerId }
+            };
+            var result = await applicationUserProto.ChangePasswordAsync(command.Adapt<ChangePasswordRequest>(), metadata, cancellationToken: cancellationToken);
 
             if (!result.IsSuccess)
             {

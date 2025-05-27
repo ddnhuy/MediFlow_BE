@@ -11,6 +11,15 @@ services:
       - "5432:5432"
     volumes:
       - postgres_db:/var/lib/postgresql/data
+      
+  redis:
+    container_name: Redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --save 20 1 --loglevel warning --requirepass Mediflow@123
 
   yarpapigateway:
     environment:
@@ -20,6 +29,9 @@ services:
     ports:
       - "6060:8080"
       - "8081"
+    depends_on:
+      - humanresource.grpc
+      - redis
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
@@ -44,6 +56,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
     depends_on:
       - postgres_db
+      - humanresource.grpc
     ports:
       - "6062:8080"
   

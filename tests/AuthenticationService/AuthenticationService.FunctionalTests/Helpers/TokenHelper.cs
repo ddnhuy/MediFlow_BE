@@ -12,7 +12,8 @@ namespace AuthenticationService.FunctionalTests.Helpers
             {
                 new Claim(ClaimTypes.NameIdentifier, "1"),
                 new Claim(ClaimTypes.Name, "testuser"),
-                new Claim(ClaimTypes.Role, "User")
+                new Claim(ClaimTypes.Role, "User"),
+                new Claim("department", "testing")
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("super-duper-secret-value-that-should-be-in-user-secrets"));

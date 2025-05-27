@@ -1,6 +1,4 @@
 ﻿using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
-using HumanResource.Grpc.Database;
 
 namespace HumanResource.Grpc.Services
 {
@@ -39,7 +37,9 @@ namespace HumanResource.Grpc.Services
                 Id = department.Id,
                 Code = department.Code,
                 Name = department.Name,
+                NameInEnglish = department.NameInEnglish,
                 DepartmentTypeName = department.DepartmentType.Name,
+                DepartmentTypeNameInEnglish = department.DepartmentType.NameInEnglish,
                 IsSuspended = department.IsSuspended
             }));
 
@@ -68,8 +68,10 @@ namespace HumanResource.Grpc.Services
                 Id = department.Id,
                 Code = department.Code,
                 Name = department.Name,
+                NameInEnglish = department.NameInEnglish,
                 DepartmentTypeId = department.DepartmentType.Id,
                 DepartmentTypeName = department.DepartmentType.Name,
+                DepartmentTypeNameInEnglish = department.DepartmentType.NameInEnglish,
                 IsSuspended = department.IsSuspended,
                 IsCancelled = department.IsCancelled,
                 CreatedAt = Timestamp.FromDateTime(department.CreatedAt),
@@ -106,8 +108,10 @@ namespace HumanResource.Grpc.Services
                 Id = department.Id,
                 Code = department.Code,
                 Name = department.Name,
+                NameInEnglish = department.NameInEnglish,
                 DepartmentTypeId = department.DepartmentType.Id,
                 DepartmentTypeName = department.DepartmentType.Name,
+                DepartmentTypeNameInEnglish = department.DepartmentType.NameInEnglish,
                 IsSuspended = department.IsSuspended,
                 IsCancelled = department.IsCancelled,
                 CreatedAt = Timestamp.FromDateTime(department.CreatedAt),
@@ -143,6 +147,7 @@ namespace HumanResource.Grpc.Services
             department.DepartmentType = departmentType;
             department.Code = request.Code;
             department.Name = request.Name;
+            department.NameInEnglish = request.NameInEnglish;
             department.IsSuspended = request.IsSuspended;
             department.IsCancelled = request.IsCancelled;
 
@@ -156,8 +161,10 @@ namespace HumanResource.Grpc.Services
                 Id = department.Id,
                 Code = department.Code,
                 Name = department.Name,
+                NameInEnglish = department.NameInEnglish,
                 DepartmentTypeId = department.DepartmentType.Id,
                 DepartmentTypeName = department.DepartmentType.Name,
+                DepartmentTypeNameInEnglish = department.DepartmentType.NameInEnglish,
                 IsSuspended = department.IsSuspended,
                 IsCancelled = department.IsCancelled,
                 CreatedAt = Timestamp.FromDateTime(department.CreatedAt),

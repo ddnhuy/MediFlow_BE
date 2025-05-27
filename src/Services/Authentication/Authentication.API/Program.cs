@@ -1,5 +1,4 @@
 ﻿using Authentication.Business;
-using BuildingBlocks.Authorization;
 using BuildingBlocks.Exceptions.Handler;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -32,11 +31,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     };
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    AuthorizationPolicies.RegisterPolicies(options);
-});
-
 // gRPC Services
 builder.Services.AddGrpcClient<ApplicationUserProtoService.ApplicationUserProtoServiceClient>(options =>
 {
@@ -57,6 +51,8 @@ builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 builder.Services
     .AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 

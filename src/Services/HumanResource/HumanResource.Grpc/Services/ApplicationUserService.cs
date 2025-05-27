@@ -1,16 +1,19 @@
-﻿using BuildingBlocks.Strings.Exceptions;
-using BuildingBlocks.Strings.SuccessStrings;
-using Grpc.Core;
-using HumanResource.Grpc.Database;
-
-namespace HumanResource.Grpc.Services
+﻿namespace HumanResource.Grpc.Services
 {
     public class ApplicationUserService(
+        ICurrentUserHelper currentUserHelper,
         UserManager<ApplicationUser> userManager,
         ApplicationDbContext dbContext,
         ILogger<ApplicationUserService> logger)
         : ApplicationUserProtoService.ApplicationUserProtoServiceBase
     {
+        private int GetUserIdFromContext(ServerCallContext context)
+        {
+            var userId = context.RequestHeaders.FirstOrDefault(x => x.Key == "x-user-id")?.Value;
+
+            return int.TryParse(userId, out var result) ? result : 0;
+        }
+
         public override async Task<ListApplicationUsersResponse> ListApplicationUsers(ListApplicationUsersRequest request, ServerCallContext context)
         {
             logger.LogInformation("Listing application users. Keyword: {Keyword}, Page: {PageIndex}, Size: {PageSize}", request.Keyword, request.PageIndex, request.PageSize);
@@ -74,6 +77,8 @@ namespace HumanResource.Grpc.Services
         {
             logger.LogInformation("Creating new user: {UserName} ({Email})", request.UserName, request.Email);
 
+            currentUserHelper.SetUserId(GetUserIdFromContext(context));
+
             var user = new ApplicationUser
             {
                 UserName = request.UserName,
@@ -107,6 +112,8 @@ namespace HumanResource.Grpc.Services
         public override async Task<ApplicationUserDetailModel> UpdateApplicationUser(UpdateApplicationUserRequest request, ServerCallContext context)
         {
             logger.LogInformation("Updating user: {Id}", request.Id);
+
+            currentUserHelper.SetUserId(GetUserIdFromContext(context));
 
             var user = await userManager.FindByIdAsync(request.Id.ToString());
             if (user == null)
@@ -163,6 +170,8 @@ namespace HumanResource.Grpc.Services
         public override async Task<ChangePasswordResponse> ChangePassword(ChangePasswordRequest request, ServerCallContext context)
         {
             logger.LogInformation("Changing password for user: {Id}", request.UserId);
+
+            currentUserHelper.SetUserId(GetUserIdFromContext(context));
 
             var user = await userManager.FindByIdAsync(request.UserId.ToString());
             if (user == null)

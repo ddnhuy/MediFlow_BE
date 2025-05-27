@@ -19,10 +19,7 @@
                     ClockSkew = TimeSpan.Zero
                 };
             });
-            services.AddAuthorization(options =>
-            {
-                AuthorizationPolicies.RegisterPolicies(options);
-            });
+            services.AddAuthorization();
             return services;
         }
 

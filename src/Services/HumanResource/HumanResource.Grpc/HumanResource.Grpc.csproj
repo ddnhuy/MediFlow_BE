@@ -35,7 +35,12 @@
   <ItemGroup>
     <Protobuf Include="Protos/application_user.proto" />
     <Protobuf Include="Protos/department.proto" />
+    <Protobuf Include="Protos\policy.proto" />
     <Protobuf Include="Protos\department_type.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,6 @@
-﻿namespace Authentication.Business.Commands
+﻿using Grpc.Core;
+
+namespace Authentication.Business.Commands
 {
     public record LoginWithUserNameResult(string AccessToken, string RefreshToken);
     public record LoginWithUserNameCommand(string UserName, string Password) : ICommand<LoginWithUserNameResult>;
@@ -29,7 +31,7 @@
                 throw new InvalidLoginException(loginResponse.Message);
             }
 
-            var accessToken = tokenProvider.GenerateAccessToken(loginResponse.User, string.Join(",", loginResponse.User.Departments.Select(d => d.Name)));
+            var accessToken = tokenProvider.GenerateAccessToken(loginResponse.User, string.Join(",", loginResponse.User.Departments.Select(d => d.NameInEnglish)));
             var refreshToken = tokenProvider.GenerateRefreshToken();
 
             await refreshTokenRepository.AddAsync(refreshToken, loginResponse.User.Id);

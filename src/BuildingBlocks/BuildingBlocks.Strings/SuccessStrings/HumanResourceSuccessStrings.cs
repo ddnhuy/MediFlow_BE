@@ -5,5 +5,9 @@
         public const string SUCCESS_LOGIN = "Đăng nhập thành công.";
         public const string SUCCESS_RESET_PASSWORD = "Đã đặt lại mật khẩu thành công. Vui lòng kiểm tra email của bạn.";
         public const string SUCCESS_CHANGE_PASSWORD = "Mật khẩu đã thay đổi.";
+
+        public const string SUCCESS_DELETE_POLICY = "Xoá chính sách thành công.";
+
+        public const string SUCCESS_REVOKE_PERMISSION = "Xoá quyền truy cập thành công.";
     }
 }

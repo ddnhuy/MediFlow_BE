@@ -12,6 +12,12 @@ data:
         }
       },
       "AllowedHosts": "*",
+      "ConnectionStrings": {
+        "Redis": "redis:6379,password=Mediflow@123,allowAdmin=true"
+      },
+      "GrpcSettings": {
+        "HumanResourceUrl": "http://human-resource-grpc:80"
+      },
       "Jwt": {
         "Secret": "super-duper-secret-value-that-should-be-in-user-secrets",
         "Issuer": "MediFlowIssuer",

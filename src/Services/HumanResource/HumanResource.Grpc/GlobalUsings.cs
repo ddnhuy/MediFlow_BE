@@ -1,6 +1,13 @@
-﻿global using HumanResource.Grpc.Abstractions;
+﻿global using BuildingBlocks.Strings;
+global using BuildingBlocks.Strings.Enums;
+global using BuildingBlocks.Strings.Exceptions;
+global using BuildingBlocks.Strings.SuccessStrings;
+global using Grpc.Core;
+global using HumanResource.Grpc.Abstractions;
+global using HumanResource.Grpc.Database;
 global using HumanResource.Grpc.Helpers;
 global using HumanResource.Grpc.Models;
-global using Microsoft.EntityFrameworkCore;
 global using Mapster;
 global using Microsoft.AspNetCore.Identity;
+global using Microsoft.EntityFrameworkCore;
+global using System.Security.Claims;

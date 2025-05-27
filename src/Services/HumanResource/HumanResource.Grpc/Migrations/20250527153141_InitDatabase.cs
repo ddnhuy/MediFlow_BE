@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -20,6 +21,7 @@ namespace HumanResource.Grpc.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Code = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    NameInEnglish = table.Column<string>(type: "text", nullable: false),
                     IsSuspended = table.Column<bool>(type: "boolean", nullable: false),
                     IsCancelled = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -30,6 +32,20 @@ namespace HumanResource.Grpc.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DepartmentTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Policies",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ResourceType = table.Column<string>(type: "text", nullable: false),
+                    Actions = table.Column<List<string>>(type: "text[]", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Policies", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -55,6 +71,9 @@ namespace HumanResource.Grpc.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Code = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    Gender = table.Column<string>(type: "text", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false),
+                    ProfilePictureUrl = table.Column<string>(type: "text", nullable: true),
                     IsSuspended = table.Column<bool>(type: "boolean", nullable: false),
                     IsCancelled = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -89,6 +108,7 @@ namespace HumanResource.Grpc.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Code = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    NameInEnglish = table.Column<string>(type: "text", nullable: false),
                     DepartmentTypeId = table.Column<int>(type: "integer", nullable: false),
                     IsSuspended = table.Column<bool>(type: "boolean", nullable: false),
                     IsCancelled = table.Column<bool>(type: "boolean", nullable: false),
@@ -215,7 +235,40 @@ namespace HumanResource.Grpc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApplicationUserDepartment",
+                name: "RoleDepartmentPolicies",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    RoleId = table.Column<int>(type: "integer", nullable: false),
+                    DepartmentId = table.Column<int>(type: "integer", nullable: false),
+                    PolicyId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoleDepartmentPolicies", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RoleDepartmentPolicies_Departments_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Departments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RoleDepartmentPolicies_Policies_PolicyId",
+                        column: x => x.PolicyId,
+                        principalTable: "Policies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RoleDepartmentPolicies_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserDepartments",
                 columns: table => new
                 {
                     DepartmentsId = table.Column<int>(type: "integer", nullable: false),
@@ -223,25 +276,20 @@ namespace HumanResource.Grpc.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApplicationUserDepartment", x => new { x.DepartmentsId, x.UsersId });
+                    table.PrimaryKey("PK_UserDepartments", x => new { x.DepartmentsId, x.UsersId });
                     table.ForeignKey(
-                        name: "FK_ApplicationUserDepartment_Departments_DepartmentsId",
+                        name: "FK_UserDepartments_Departments_DepartmentsId",
                         column: x => x.DepartmentsId,
                         principalTable: "Departments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ApplicationUserDepartment_Users_UsersId",
+                        name: "FK_UserDepartments_Users_UsersId",
                         column: x => x.UsersId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ApplicationUserDepartment_UsersId",
-                table: "ApplicationUserDepartment",
-                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Departments_Code",
@@ -264,6 +312,21 @@ namespace HumanResource.Grpc.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RoleDepartmentPolicies_DepartmentId",
+                table: "RoleDepartmentPolicies",
+                column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoleDepartmentPolicies_PolicyId",
+                table: "RoleDepartmentPolicies",
+                column: "PolicyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoleDepartmentPolicies_RoleId",
+                table: "RoleDepartmentPolicies",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "Roles",
                 column: "NormalizedName",
@@ -273,6 +336,11 @@ namespace HumanResource.Grpc.Migrations
                 name: "IX_UserClaims_UserId",
                 table: "UserClaims",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserDepartments_UsersId",
+                table: "UserDepartments",
+                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLogins_UserId",
@@ -310,13 +378,16 @@ namespace HumanResource.Grpc.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ApplicationUserDepartment");
-
-            migrationBuilder.DropTable(
                 name: "RoleClaims");
 
             migrationBuilder.DropTable(
+                name: "RoleDepartmentPolicies");
+
+            migrationBuilder.DropTable(
                 name: "UserClaims");
+
+            migrationBuilder.DropTable(
+                name: "UserDepartments");
 
             migrationBuilder.DropTable(
                 name: "UserLogins");
@@ -326,6 +397,9 @@ namespace HumanResource.Grpc.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Policies");
 
             migrationBuilder.DropTable(
                 name: "Departments");

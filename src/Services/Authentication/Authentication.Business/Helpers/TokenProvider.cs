@@ -32,7 +32,7 @@ namespace Authentication.Business.Helpers
 
             if (!string.IsNullOrEmpty(department))
             {
-                claims.Add(new Claim("Department", department));
+                claims.Add(new Claim("department", department.Replace(' ', '_')));
             }
 
             var tokenDescriptor = new SecurityTokenDescriptor
