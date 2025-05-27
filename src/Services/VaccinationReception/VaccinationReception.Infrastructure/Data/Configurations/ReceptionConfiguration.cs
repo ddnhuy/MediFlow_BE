@@ -1,0 +1,88 @@
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using VaccinationReception.Domain.Models;
+
+namespace VaccinationReception.Infrastructure.Data.Configurations
+{
+    public class ReceptionConfiguration : IEntityTypeConfiguration<Reception>
+    {
+        public void Configure(EntityTypeBuilder<Reception> builder)
+        {
+            builder.ToTable("Receptions", schema: "public");
+
+            // Primary Key
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id)
+                .UseIdentityColumn()
+                .ValueGeneratedOnAdd()
+                .HasComment("Primary key");
+
+            // BaseEntity Properties
+            builder.Property(x => x.IsSuspended)
+                .IsRequired()
+                .HasDefaultValue(false)
+                .HasComment("Trạng thái tạm ngưng")
+                .HasColumnType("boolean");
+
+            builder.Property(x => x.IsCancelled)
+                .IsRequired()
+                .HasDefaultValue(false)
+                .HasComment("Trạng thái hủy")
+                .HasColumnType("boolean");
+
+            builder.Property(x => x.CreatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasComment("Ngày tạo bản ghi");
+
+            builder.Property(x => x.CreatedBy)
+                .IsRequired()
+                .HasComment("Người tạo bản ghi");
+
+            builder.Property(x => x.LastUpdatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasComment("Ngày cập nhật bản ghi cuối cùng");
+
+            builder.Property(x => x.LastUpdatedBy)
+                .IsRequired()
+                .HasComment("Người cập nhật bản ghi cuối cùng");
+
+            // PatientId
+            builder.Property(x => x.PatientId)
+                .IsRequired()
+                .HasComment("Mã bệnh nhân")
+                .HasColumnType("integer");
+
+            // ReceptionDate
+            builder.Property(x => x.ReceptionDate)
+                .IsRequired()
+                .HasComment("Ngày tiếp nhận")
+                .HasColumnType("timestamp without time zone");
+
+            // Relationships
+            builder.HasOne(x => x.ScreeningEvaluationReport)
+                .WithOne()
+                .HasForeignKey<ScreeningEvaluationReport>(x => x.ReceptionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes
+            builder.HasIndex(x => x.PatientId)
+                .HasDatabaseName("IX_Receptions_PatientId");
+
+            builder.HasIndex(x => x.ReceptionDate)
+                .HasDatabaseName("IX_Receptions_ReceptionDate");
+
+            // Global Query Filter
+            builder.HasQueryFilter(x => !x.IsSuspended && !x.IsCancelled);
+
+            // Table Comment
+            builder.ToTable(t => t.HasComment("Bảng tiếp nhận bệnh nhân"));
+        }
+    }
+}

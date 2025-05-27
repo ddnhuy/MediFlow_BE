@@ -28,5 +28,17 @@ services:
       context: .
       dockerfile: src/Services/Inventory/Inventory.API/Dockerfile
 
+  customerinfo.grpc:
+    image: ${DOCKER_REGISTRY-}customerinfogrpc
+    build:
+      context: .
+      dockerfile: src/Services/CustomerInfo/CustomerInfo.Grpc/Dockerfile
+
+  vaccinationreception.api:
+    image: ${DOCKER_REGISTRY-}vaccinationreceptionapi
+    build:
+      context: .
+      dockerfile: src/Services/VaccinationReception/VaccinationReception.API/Dockerfile
+
 volumes:
   postgres_db:
