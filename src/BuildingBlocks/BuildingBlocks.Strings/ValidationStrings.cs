@@ -26,6 +26,10 @@
         // Supplier validation
         public const string REQUIRED_SUPPLIER_CODE = "Mã nhà cung cấp là bắt buộc.";
         public const string REQUIRED_SUPPLIER_NAME = "Tên nhà cung cấp là bắt buộc.";
+        public const string REQUIRED_SUPPLIER_ADDRESS = "Địa chỉ nhà cung cấp là bắt buộc.";
+        public const string REQUIRED_SUPPLIER_CONTACT_PERSON = "Thông tin người liên hệ là bắt buộc.";
+        public const string REQUIRED_SUPPLIER_DIRECTOR = "Thông tin giám đốc là bắt buộc.";
+        public const string REQUIRED_SUPPLIER_FAX = "Số Fax là bắt buộc.";
         public const string INVALID_SUPPLIER_CODE_FORMAT = "Mã nhà cung cấp không đúng định dạng.";
         public const string INVALID_SUPPLIER_PHONE = "Số điện thoại nhà cung cấp không hợp lệ.";
         public const string INVALID_SUPPLIER_EMAIL = "Email nhà cung cấp không hợp lệ.";

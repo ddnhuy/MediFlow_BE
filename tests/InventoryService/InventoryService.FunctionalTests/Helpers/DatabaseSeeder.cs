@@ -153,7 +153,61 @@ namespace InventoryService.FunctionalTests.Helpers
                 dbContext.Warehouses.AddRange(warehouses);
                 dbContext.SaveChanges();
             }
+            // Add test suppliers if they don't exist
+            if (!dbContext.Suppliers.Any())
+            {
+                var suppliers = new List<Supplier>
+                {
+                    new Supplier
+                    {
+                        Id = 1,
+                        SupplierCode = "SUP001",
+                        SupplierName = "MedPharm Supply Co.",
+                        Address = "123 Medical Plaza, Suite 100",
+                        Phone = "555-123-4567",
+                        Fax = "555-123-4568",
+                        Email = "info@medpharm.example",
+                        TaxCode = "MP12345",
+                        Director = "Sarah Johnson",
+                        ContactPerson = "Michael Lewis",
+                        IsSuspended = false,
+                        IsCancelled = false
+                    },
+                    new Supplier
+                    {
+                        Id = 2,
+                        SupplierCode = "SUP002",
+                        SupplierName = "Healthcare Distributors Inc.",
+                        Address = "456 Hospital Drive",
+                        Phone = "555-987-6543",
+                        Fax = "555-987-6544",
+                        Email = "sales@healthdist.example",
+                        TaxCode = "HD67890",
+                        Director = "Robert Chen",
+                        ContactPerson = "Emma Wilson",
+                        IsSuspended = false,
+                        IsCancelled = false
+                    },
+                    new Supplier
+                    {
+                        Id = 3,
+                        SupplierCode = "SUP003",
+                        SupplierName = "Global Meds Ltd.",
+                        Address = "789 Pharmacy Road",
+                        Phone = "555-246-8135",
+                        Fax = "555-246-8136",
+                        Email = "contact@globalmeds.example",
+                        TaxCode = "GM24680",
+                        Director = "James Taylor",
+                        ContactPerson = "Olivia Martinez",
+                        IsSuspended = false,
+                        IsCancelled = false
+                    }
+                };
+                dbContext.Suppliers.AddRange(suppliers);
+                dbContext.SaveChanges();
+            }
         }
-    }
+    }   
 }
 

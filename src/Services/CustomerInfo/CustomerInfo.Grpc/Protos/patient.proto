@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "CustomerInfo.Grpc.Protos";
+
+package patient;
+
+service PatientProtoService {
+  rpc ListPatients (ListPatientsRequest) returns (ListPatientsResponse);
+  rpc GetPatient (GetPatientRequest) returns (PatientDetailModel);
+  rpc CreatePatient (CreatePatientRequest) returns (PatientDetailModel);
+  rpc UpdatePatient (UpdatePatientRequest) returns (PatientDetailModel);
+  rpc DeletePatient (DeletePatientRequest) returns (DeletePatientResponse);
+}
+
+message ListPatientsRequest {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+}
+
+message ListPatientsResponse {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  int64 totalItem = 3;
+  repeated PatientSummaryModel data = 4;
+}
+
+message GetPatientRequest {
+  int32 id = 1;
+}
+
+message CreatePatientRequest {
+  string code = 1;
+  string name = 2;
+  int32 gender = 3;
+  google.protobuf.Timestamp dob = 4;
+  string phoneNumber = 5;
+  string identityCard = 6;
+  string addressDetail = 7;
+  string province = 8;
+  string district = 9;
+  string ward = 10;
+  bool isPregnant = 11;
+  bool isForeigner = 12;
+  bool isSuspended = 13;
+  bool isCancelled = 14;
+}
+
+message UpdatePatientRequest {
+  int32 id = 1;
+  string code = 2;
+  string name = 3;
+  int32 gender = 4;
+  google.protobuf.Timestamp dob = 5;
+  string phoneNumber = 6;
+  string identityCard = 7;
+  string addressDetail = 8;
+  string province = 9;
+  string district = 10;
+  string ward = 11;
+  bool isPregnant = 12;
+  bool isForeigner = 13;
+  bool isSuspended = 14;
+  bool isCancelled = 15;
+}
+
+message DeletePatientRequest {
+  int32 id = 1;
+}
+
+message DeletePatientResponse {
+  bool isSuccess = 1;
+}
+
+message PatientSummaryModel {
+  int32 id = 1;
+  string code = 2;
+  string name = 3;
+  int32 gender = 4;
+  google.protobuf.Timestamp dob = 5;
+  string phoneNumber = 6;
+  string identityCard = 7;
+  string addressDetail = 8;
+  string province = 9;
+  string district = 10;
+  string ward = 11;
+  bool isPregnant = 12;
+  bool isForeigner = 13;
+}
+
+message PatientDetailModel {
+  int32 id = 1;
+  string code = 2;
+  string name = 3;
+  int32 gender = 4;
+  google.protobuf.Timestamp dob = 5;
+  string phoneNumber = 6;
+  string identityCard = 7;
+  string addressDetail = 8;
+  string province = 9;
+  string district = 10;
+  string ward = 11;
+  bool isPregnant = 12;
+  bool isForeigner = 13;
+  bool isSuspended = 14;
+  bool isCancelled = 15;
+  google.protobuf.Timestamp createdAt = 16;
+  int32 createdBy = 17;
+  google.protobuf.Timestamp lastUpdatedAt = 18;
+  int32 lastUpdatedBy = 19;
+}

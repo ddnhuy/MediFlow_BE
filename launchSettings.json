@@ -7,7 +7,9 @@
         "postgres_db": "StartWithoutDebugging",
         "authentication.api": "StartDebugging",
         "humanresource.grpc": "StartDebugging",
-        "yarpapigateway": "StartDebugging"
+        "yarpapigateway": "StartDebugging",
+        "customerinfo.grpc": "StartDebugging",
+        "vaccinationreception.api": "StartDebugging"
       }
     }
   }

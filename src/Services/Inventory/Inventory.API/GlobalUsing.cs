@@ -20,3 +20,7 @@ global using BuildingBlocks.Authorization;
 global using Microsoft.AspNetCore.Authentication.JwtBearer;
 global using Microsoft.IdentityModel.Tokens;
 global using BuildingBlocks.Strings.ExceptionStrings;
+global using Inventory.Application.Suppliers.Commands.CreateSupplier;
+global using Inventory.Application.Suppliers.Commands.DeleteSupplier;
+global using Inventory.Application.Suppliers.Queries;
+global using Inventory.Application.Suppliers.Commands.UpdateSupplier;

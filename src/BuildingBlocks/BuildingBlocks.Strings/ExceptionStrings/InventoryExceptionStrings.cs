@@ -16,6 +16,7 @@
         // Supplier exceptions
         public static string NOT_FOUND_SUPPLIER_WITH_ID(int id) => $"Không tìm thấy nhà cung cấp với ID \"{id}\".";
         public static string NOT_FOUND_SUPPLIER_WITH_CODE(string code) => $"Không tìm thấy nhà cung cấp với mã \"{code}\".";
+        public static string FAILED_CREATE_SUPPLIER_WITH_ID => $"Tạo thông tin nhà cung cấp thất bại.";
         public static string FAILED_UPDATE_SUPPLIER_WITH_ID(int id) => $"Cập nhật thông tin nhà cung cấp với ID \"{id}\" thất bại.";
         public static string FAILED_DELETE_SUPPLIER_WITH_ID(int id) => $"Xóa nhà cung cấp với ID \"{id}\" thất bại.";
         public const string DUPLICATE_SUPPLIER_CODE = "Mã nhà cung cấp đã tồn tại trong hệ thống.";

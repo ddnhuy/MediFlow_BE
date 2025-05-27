@@ -8,6 +8,7 @@
         DbSet<MedicineType> MedicineTypes { get; }
         DbSet<VaccineType> VaccineTypes { get; }
         DbSet<MedicineInteraction> MedicineInteractions { get; }
+        DbSet<Supplier> Suppliers { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

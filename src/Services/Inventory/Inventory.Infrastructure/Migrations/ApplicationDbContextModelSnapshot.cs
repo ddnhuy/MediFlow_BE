@@ -72,7 +72,7 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<string>("MedicineName")
                         .HasColumnType("text");
 
-                    b.Property<int>("MedicineTypeId")
+                    b.Property<int?>("MedicineTypeId")
                         .HasColumnType("integer");
 
                     b.Property<string>("NationalMedicineCode")
@@ -93,7 +93,7 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<string>("UsageInstructions")
                         .HasColumnType("text");
 
-                    b.Property<int>("VaccineTypeId")
+                    b.Property<int?>("VaccineTypeId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -196,6 +196,67 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MedicineTypes");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.Supplier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContactPerson")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Director")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Fax")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("NormalizedName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SupplierCode")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SupplierName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TaxCode")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Models.VaccineType", b =>
@@ -322,14 +383,12 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasOne("Inventory.Domain.Models.MedicineType", "MedicineType")
                         .WithMany()
                         .HasForeignKey("MedicineTypeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Inventory.Domain.Models.VaccineType", "VaccineType")
                         .WithMany()
                         .HasForeignKey("VaccineTypeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("MedicineType");
 
