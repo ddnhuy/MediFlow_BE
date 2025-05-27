@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HumanResource.Grpc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250527130143_InitDatabase")]
+    [Migration("20250527153141_InitDatabase")]
     partial class InitDatabase
     {
         /// <inheritdoc />
@@ -104,6 +104,9 @@ namespace HumanResource.Grpc.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("ProfilePictureUrl")
+                        .HasColumnType("text");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");

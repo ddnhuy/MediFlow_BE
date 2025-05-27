@@ -48,6 +48,7 @@
                 .Map(dest => dest.PhoneNumber, src => src.PhoneNumber ?? "")
                 .Map(dest => dest.Code, src => src.Code ?? "")
                 .Map(dest => dest.Name, src => src.Name ?? "")
+                .Map(dest => dest.ProfilePictureUrl, src => src.ProfilePictureUrl ?? "")
                 .Map(dest => dest.EmailConfirmed, src => src.EmailConfirmed)
                 .Map(dest => dest.PhoneNumberConfirmed, src => src.PhoneNumberConfirmed)
                 .Map(dest => dest.TwoFactorEnabled, src => src.TwoFactorEnabled)
@@ -67,6 +68,7 @@
                 .Map(dest => dest.Email, src => src.Email ?? "")
                 .Map(dest => dest.Code, src => src.Code ?? "")
                 .Map(dest => dest.Name, src => src.Name ?? "")
+                .Map(dest => dest.ProfilePictureUrl, src => src.ProfilePictureUrl ?? "")
                 .Map(dest => dest.IsSuspended, src => src.IsSuspended)
                 .TwoWays();
         }

@@ -6,6 +6,7 @@
         public string Name { get; set; } = default!;
         public Gender Gender { get; set; } = Gender.Male;
         public string Address { get; set; } = default!;
+        public string? ProfilePictureUrl { get; set; } = default!;
         public bool IsSuspended { get; set; }
         public bool IsCancelled { get; set; }
         public DateTime CreatedAt { get; set; }

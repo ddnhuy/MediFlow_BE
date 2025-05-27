@@ -25,10 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Queries\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Protobuf Include="..\..\HumanResource\HumanResource.Grpc\Protos\application_user.proto" AdditionalImportDirs="..\..\HumanResource\HumanResource.Grpc" GrpcServices="Client">
       <Link>Protos\application_user.proto</Link>
     </Protobuf>

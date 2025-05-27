@@ -129,6 +129,7 @@ message ApplicationUserSummaryModel {
   string name = 5;
   bool isSuspended = 6;
   string roles = 7;
+  string profilePictureUrl = 8;
 }
 
 message ApplicationUserDetailModel {
@@ -149,4 +150,5 @@ message ApplicationUserDetailModel {
   int32 lastUpdatedBy = 15;
   string roles = 16;
   repeated department.DepartmentSummaryModel departments = 17;
+  string profilePictureUrl = 18;
 }

@@ -73,6 +73,7 @@ namespace HumanResource.Grpc.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Gender = table.Column<string>(type: "text", nullable: false),
                     Address = table.Column<string>(type: "text", nullable: false),
+                    ProfilePictureUrl = table.Column<string>(type: "text", nullable: true),
                     IsSuspended = table.Column<bool>(type: "boolean", nullable: false),
                     IsCancelled = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
