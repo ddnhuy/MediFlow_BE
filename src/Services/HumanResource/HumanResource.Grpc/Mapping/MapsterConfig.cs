@@ -48,6 +48,7 @@
                 .Map(dest => dest.PhoneNumber, src => src.PhoneNumber ?? "")
                 .Map(dest => dest.Code, src => src.Code ?? "")
                 .Map(dest => dest.Name, src => src.Name ?? "")
+                .Map(dest => dest.Address, src => src.Address ?? "")
                 .Map(dest => dest.ProfilePictureUrl, src => src.ProfilePictureUrl ?? "")
                 .Map(dest => dest.EmailConfirmed, src => src.EmailConfirmed)
                 .Map(dest => dest.PhoneNumberConfirmed, src => src.PhoneNumberConfirmed)

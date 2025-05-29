@@ -9,7 +9,8 @@
         "humanresource.grpc": "StartDebugging",
         "yarpapigateway": "StartDebugging",
         "customerinfo.grpc": "StartDebugging",
-        "vaccinationreception.api": "StartDebugging"
+        "vaccinationreception.api": "StartDebugging",
+        "management.api": "StartDebugging"
       }
     }
   }

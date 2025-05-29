@@ -9,6 +9,7 @@
         public static string FAILED_UPDATE_USER_WITH_ID(int id) => $"Cập nhật thông tin người dùng với ID \"{id}\" thất bại.";
         public const string FAILED_RESET_PASSWORD = "Đặt lại mật khẩu không thành công. Vui lòng thử lại.";
         public const string FAILED_CHANGE_PASSWORD = "Mật khẩu hiện tại chưa chính xác hoặc mật khẩu mới không hợp lệ, vui lòng thử lại.";
+        public const string FAILED_ASSIGN_ROLE_TO_USER = "Gán vai trò cho người dùng không thành công, vui lòng thử lại.";
 
         public static string NOT_FOUND_ROLE_WITH_ID(int id) => $"Không tìm thấy vai trò với ID \"{id}\".";
         public static string NOT_FOUND_DEPARTMENT_WITH_ID(int id) => $"Không tìm thấy phòng ban với ID \"{id}\".";

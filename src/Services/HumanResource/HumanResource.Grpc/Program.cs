@@ -1,4 +1,6 @@
 ﻿using Google.Protobuf.Collections;
+using HumanResource.Grpc;
+using HumanResource.Grpc.ErrorDescribers;
 using HumanResource.Grpc.Mapping;
 using HumanResource.Grpc.Services;
 
@@ -25,6 +27,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<int>>(options =>
 .AddSignInManager<SignInManager<ApplicationUser>>()
 .AddRoleManager<RoleManager<IdentityRole<int>>>()
 .AddEntityFrameworkStores<ApplicationDbContext>()
+.AddErrorDescriber<VietnameseIdentityErrorDescriber>()
 .AddDefaultTokenProviders();
 
 TypeAdapterConfig.GlobalSettings.Scan(AppDomain.CurrentDomain.GetAssemblies());
@@ -45,6 +48,7 @@ await app.UseMigrationAsync(builder.Environment);
 app.MapGrpcService<DepartmentService>();
 app.MapGrpcService<ApplicationUserService>();
 app.MapGrpcService<PolicyService>();
+app.MapGrpcService<RoleService>();
 
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 

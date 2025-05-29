@@ -498,9 +498,9 @@
             {
                 new Policy { ResourceType = "inventory", Actions = ["read", "write"] }
             },
-            ["user"] = new()
+            ["management"] = new()
             {
-                new Policy { ResourceType = "user", Actions = ["read", "write"] }
+                new Policy { ResourceType = "management", Actions = ["read", "write"] }
             }
         };
 
@@ -512,7 +512,7 @@
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
                 (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
             },
-            ["user"] = new()
+            ["management"] = new()
             {
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
                 (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
