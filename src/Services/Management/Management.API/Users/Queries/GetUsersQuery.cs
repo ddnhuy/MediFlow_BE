@@ -1,8 +1,9 @@
-﻿using Management.API.Helpers;
+﻿using Management.API.Dtos.User;
+using Management.API.Helpers;
 
 namespace Management.API.Users.Queries
 {
-    public record GetUsersResult(PaginatedResult<ApplicationUserSummaryModel> Users);
+    public record GetUsersResult(PaginatedResult<UserSummaryDto> Users);
     public record GetUsersQuery(int PageIndex, int PageSize, string? Keyword, string Roles) : IQuery<GetUsersResult>;
 
     internal class GetUsersQueryHandler(
@@ -19,12 +20,24 @@ namespace Management.API.Users.Queries
                 Keyword = query.Keyword ?? string.Empty
             }, metadata, cancellationToken: cancellationToken);
 
+            var data = result.Data.Select(user => new UserSummaryDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Code = user.Code,
+                Name = user.Name,
+                IsSuspended = user.IsSuspended,
+                Roles = user.Roles.Split(',').ToList(),
+                ProfilePictureUrl = user.ProfilePictureUrl
+            }).ToList();
+
             return new GetUsersResult(
-                new PaginatedResult<ApplicationUserSummaryModel>(
+                new PaginatedResult<UserSummaryDto>(
                     result.PageIndex,
                     result.PageSize,
                     result.Count,
-                    result.Data));
+                    data));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Exceptions;
 using Management.API.Users.Commands;
 using Management.API.Users.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -8,6 +9,7 @@ namespace Management.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize(Roles = $"{BuildingBlocks.Strings.Roles.ADMIN},{BuildingBlocks.Strings.Roles.HEAD_OF_DEPARTMENT}")]
     public class UsersController(
         ISender sender) : ControllerBase
     {
@@ -94,14 +96,16 @@ namespace Management.API.Controllers
         public async Task<IActionResult> DeleteUserAsync(int userId)
         {
             var command = new DeleteUserCommand(userId, int.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value));
+
             var result = await sender.Send(command);
+
             if (result.IsSuccess)
             {
                 return Ok(result);
             }
             else
             {
-                throw new NotFoundException(result.Message);
+                throw new BadRequestException(result.Message);
             }
         }
     }

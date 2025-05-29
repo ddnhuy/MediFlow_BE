@@ -1,10 +1,12 @@
 ﻿using Management.API.Roles.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Management.API.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize(Roles = $"{BuildingBlocks.Strings.Roles.ADMIN},{BuildingBlocks.Strings.Roles.HEAD_OF_DEPARTMENT}")]
     public class RolesController(
         ISender sender)
         : ControllerBase

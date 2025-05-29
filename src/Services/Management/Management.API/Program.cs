@@ -50,6 +50,18 @@ builder.Services.AddGrpcClient<DepartmentProtoService.DepartmentProtoServiceClie
 
     return handler;
 });
+builder.Services.AddGrpcClient<DepartmentTypeProtoService.DepartmentTypeProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration["GrpcSettings:HumanResourceUrl"]!);
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+
+    return handler;
+});
 
 // Cross-Cutting Services
 builder.Services.AddMediatR(config =>

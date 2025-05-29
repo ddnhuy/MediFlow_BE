@@ -19,5 +19,9 @@
         public static string CANNOT_DELETE_POLICY_WITH_RELATIONSHIPS(int id) => $"Không thể xoá chính sách với ID \"{id}\", vui lòng thử lại.";
 
         public static string POLICY_ASSIGNMENT_ALREADY_EXISTS => $"Chính sách đã được gán cho vai trò và phòng ban mà bạn đã chọn.";
+        public const string EXISTED_DEPARTMENT_CODE = "Mã phòng ban đã tồn tại.";
+
+        public const string INVALID_REQUEST = "Yêu cầu không hợp lệ.";
+        public const string INVALID_DEPARTMENT_TYPE = "Loại phòng ban không hợp lệ.";
     }
 }

@@ -254,7 +254,9 @@
                 throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.Id)));
             }
 
+            user.IsSuspended = true;
             user.IsCancelled = true;
+
             var result = await userManager.UpdateAsync(user);
 
             if (result.Succeeded)

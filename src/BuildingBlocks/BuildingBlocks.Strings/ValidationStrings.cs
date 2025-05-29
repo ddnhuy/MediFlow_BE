@@ -28,6 +28,13 @@
 
         public const string INVALID_USER_DATA = "Dữ liệu người dùng không hợp lệ.";
 
+        // Department validation
+        public const string REQUIRED_DEPARTMENT_ID = "Mã phòng ban là bắt buộc.";
+        public const string REQUIRED_DEPARTMENT_CODE = "Mã phòng ban là bắt buộc.";
+        public const string REQUIRED_DEPARTMENT_NAME = "Tên phòng ban là bắt buộc.";
+        public const string REQUIRED_DEPARTMENT_NAME_IN_ENGLISH = "Tên phòng ban bằng tiếng Anh là bắt buộc.";
+        public const string REQUIRED_DEPARTMENT_TYPE = "Loại phòng ban là bắt buộc.";
+
         // Warehouse validation
         public const string REQUIRED_WAREHOUSE_CODE = "Mã kho là bắt buộc.";
         public const string REQUIRED_WAREHOUSE_NAME = "Tên kho là bắt buộc.";
