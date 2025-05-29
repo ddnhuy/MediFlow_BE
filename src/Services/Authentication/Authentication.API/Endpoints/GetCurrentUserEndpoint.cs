@@ -12,8 +12,9 @@ namespace Authentication.API.Endpoints
             app.MapGet("/current-user", [Authorize] async (ISender sender, HttpContext context) =>
             {
                 var userId = context.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)!.Value;
+                var roles = context.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)!.Value;
 
-                var result = await sender.Send(new GetCurrentUserQuery(int.Parse(userId)));
+                var result = await sender.Send(new GetCurrentUserQuery(int.Parse(userId), roles));
 
                 return Results.Ok(result.Adapt<GetCurrentUserResponse>());
             })

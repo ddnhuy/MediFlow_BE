@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services
     .AddServices(builder.Configuration)
-    .AddCors();
+    .AddCorsPolicy();
 
 var app = builder.Build();
 
