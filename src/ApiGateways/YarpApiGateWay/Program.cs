@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services
     .AddServices(builder.Configuration)
-    .AddCors();
+    .AddCorsPolicy();
 
 var app = builder.Build();
 
@@ -48,9 +48,24 @@ app.Use(async (context, next) =>
         : (!string.IsNullOrWhiteSpace(rawBody)
             ? JsonSerializer.Deserialize<ProblemDetails>(rawBody)?.Detail ?? "Error"
             : "Error");
-    var data = isSuccessStatusCode && context.Response.StatusCode != 204 && !string.IsNullOrWhiteSpace(rawBody)
-        ? JsonSerializer.Deserialize<object>(rawBody)
-        : null;
+
+    object? data = null;
+    if (isSuccessStatusCode && context.Response.StatusCode != 204 && !string.IsNullOrWhiteSpace(rawBody))
+    {
+        using var doc = JsonDocument.Parse(rawBody);
+        var root = doc.RootElement;
+
+        if (root.ValueKind == JsonValueKind.Object && root.EnumerateObject().Count() == 1)
+        {
+            // Chỉ có đúng 1 property → unwrap
+            var onlyProperty = root.EnumerateObject().First();
+            data = JsonSerializer.Deserialize<object>(onlyProperty.Value.GetRawText());
+        }
+        else
+        {
+            data = JsonSerializer.Deserialize<object>(rawBody);
+        }
+    }
 
     var baseResponse = new BaseResponse<object>
     {

@@ -93,7 +93,7 @@ namespace YarpApiGateWay
                 options.AddDefaultPolicy(policy =>
                 {
                     policy.AllowCredentials()
-                          .WithOrigins("http://localhost:3000", "https://mediflow-cvs.netlify.app/")
+                          .WithOrigins("http://localhost:3000", "https://mediflow-cvs.netlify.app")
                           .AllowAnyMethod()
                           .AllowAnyHeader();
                 });

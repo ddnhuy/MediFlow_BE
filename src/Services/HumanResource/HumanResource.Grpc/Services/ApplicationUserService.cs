@@ -14,22 +14,59 @@
             return int.TryParse(userId, out var result) ? result : 0;
         }
 
+        private string GetRolesFromContext(ServerCallContext context)
+        {
+            return context.RequestHeaders.FirstOrDefault(x => x.Key == "x-roles")!.Value;
+        }
+
         public override async Task<ListApplicationUsersResponse> ListApplicationUsers(ListApplicationUsersRequest request, ServerCallContext context)
         {
             logger.LogInformation("Listing application users. Keyword: {Keyword}, Page: {PageIndex}, Size: {PageSize}", request.Keyword, request.PageIndex, request.PageSize);
 
+            var currentUserRoles = GetRolesFromContext(context);
+
             var query = userManager.Users.AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(request.Keyword))
+            if (!string.IsNullOrEmpty(request.Keyword))
             {
-                query = query.Where(x => x.UserName!.Contains(request.Keyword) || x.Email!.Contains(request.Keyword));
+                query = query.Where(x => x.UserName!.Contains(request.Keyword) || x.Name!.Contains(request.Keyword) || x.Email!.Contains(request.Keyword));
+            }
+
+            var rolesToExclude = new List<string>();
+            if (currentUserRoles.Contains(Roles.ADMIN))
+            {
+                rolesToExclude.Add(Roles.ADMIN);
+            }
+            if (currentUserRoles.Contains(Roles.HEAD_OF_DEPARTMENT))
+            {
+                rolesToExclude.Add(Roles.ADMIN);
+                rolesToExclude.Add(Roles.HEAD_OF_DEPARTMENT);
+            }
+
+            if (rolesToExclude.Any())
+            {
+                var usersList = await query.ToListAsync();
+
+                var userIdsToExclude = new List<int>();
+                foreach (var user in usersList)
+                {
+                    var roles = await userManager.GetRolesAsync(user);
+                    if (roles.Any(r => rolesToExclude.Contains(r)))
+                    {
+                        userIdsToExclude.Add(user.Id);
+                    }
+                }
+
+                query = query.Where(u => !userIdsToExclude.Contains(u.Id));
             }
 
             var totalItems = await query.CountAsync();
 
             var users = await query
+                .Where(x => !x.IsCancelled)
                 .Skip((request.PageIndex - 1) * request.PageSize)
                 .Take(request.PageSize)
+                .OrderBy(x => x.Code)
                 .ToListAsync();
 
             logger.LogInformation("Found {Count} users.", totalItems);
@@ -45,7 +82,7 @@
             for (int i = 0; i < users.Count; i++)
             {
                 var roles = await userManager.GetRolesAsync(users[i]);
-                result.Data[i].Roles = string.Join(",", [.. roles]);
+                result.Data[i].Roles = string.Join(",", roles);
             }
 
             return result;
@@ -55,11 +92,13 @@
         {
             logger.LogInformation("Getting user by ID: {Id}", request.Id);
 
+            var currentUserRoles = GetRolesFromContext(context);
+
             var user = await dbContext.Users
                 .Include(x => x.Departments)
                 .ThenInclude(x => x.DepartmentType)
                 .FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsCancelled);
-            if (user == null)
+            if (user == null || (string.Join(",", (await userManager.GetRolesAsync(user))).Contains(Roles.ADMIN) && currentUserRoles != Roles.ADMIN))
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
                 throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.Id)));
@@ -86,6 +125,8 @@
                 PhoneNumber = request.PhoneNumber,
                 Code = request.Code,
                 Name = request.Name,
+                Address = request.Address,
+                ProfilePictureUrl = request.ProfilePictureUrl,
                 IsSuspended = false,
                 IsCancelled = false,
             };
@@ -97,16 +138,32 @@
                 throw new RpcException(new Status(StatusCode.InvalidArgument, string.Join(", ", result.Errors.Select(x => x.Description))));
             }
 
+            var roles = request.RoleNames.Distinct().ToList();
+            if (roles.Count > 0)
+            {
+                var roleResult = await userManager.AddToRolesAsync(user, roles);
+                if (!roleResult.Succeeded)
+                {
+                    logger.LogWarning("Failed to assign roles to user {UserName}: {Errors}", request.UserName, string.Join("; ", roleResult.Errors.Select(e => e.Description)));
+                    throw new RpcException(new Status(StatusCode.Internal, HumanResourceExceptionStrings.FAILED_ASSIGN_ROLE_TO_USER));
+                }
+            }
+
             var departments = await dbContext.Departments
                 .Where(d => request.DepartmentIds.Contains(d.Id))
+                .Include(d => d.DepartmentType)
                 .ToListAsync();
 
             user.Departments = departments;
 
             await dbContext.SaveChangesAsync();
 
-            logger.LogInformation("User created successfully: {UserId}", user.Id);
-            return user.Adapt<ApplicationUserDetailModel>();
+            logger.LogInformation("User created successfully with ID: {UserId}", user.Id);
+
+            var response = user.Adapt<ApplicationUserDetailModel>();
+            response.Roles = string.Join(",", roles);
+
+            return response;
         }
 
         public override async Task<ApplicationUserDetailModel> UpdateApplicationUser(UpdateApplicationUserRequest request, ServerCallContext context)
@@ -115,8 +172,11 @@
 
             currentUserHelper.SetUserId(GetUserIdFromContext(context));
 
-            var user = await userManager.FindByIdAsync(request.Id.ToString());
-            if (user == null)
+            var user = await userManager.Users
+                .Include(u => u.Departments)
+                .FirstOrDefaultAsync(u => u.Id == request.Id);
+
+            if (user is null)
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
                 throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.Id)));
@@ -125,25 +185,62 @@
             user.UserName = request.UserName;
             user.Email = request.Email;
             user.PhoneNumber = request.PhoneNumber;
+            user.Code = request.Code;
             user.Name = request.Name;
+            user.Address = request.Address;
+            user.ProfilePictureUrl = request.ProfilePictureUrl;
             user.IsSuspended = request.IsSuspended;
-            user.IsCancelled = request.IsCancelled;
 
+            // Update Departments
             var departments = await dbContext.Departments
                 .Where(d => request.DepartmentIds.Contains(d.Id))
+                .Include(d => d.DepartmentType)
                 .ToListAsync();
-
             user.Departments = departments;
 
-            var result = await userManager.UpdateAsync(user);
-            if (!result.Succeeded)
+            // Update Roles
+            var existingRoles = await userManager.GetRolesAsync(user);
+            var newRoles = request.RoleNames.Distinct().ToList();
+
+            var rolesToAdd = newRoles.Except(existingRoles).ToList();
+            var rolesToRemove = existingRoles.Except(newRoles).ToList();
+
+            if (rolesToRemove.Any())
             {
-                logger.LogWarning("Failed to update user {Id}: {Errors}", user.Id, string.Join("; ", result.Errors.Select(e => e.Description)));
-                throw new RpcException(new Status(StatusCode.Internal, HumanResourceExceptionStrings.FAILED_UPDATE_USER_WITH_ID(request.Id)));
+                var removeResult = await userManager.RemoveFromRolesAsync(user, rolesToRemove);
+                if (!removeResult.Succeeded)
+                {
+                    logger.LogWarning("Failed to remove roles from user {Id}: {Errors}", user.Id, string.Join("; ", removeResult.Errors.Select(e => e.Description)));
+                    throw new RpcException(new Status(StatusCode.Internal, HumanResourceExceptionStrings.FAILED_ASSIGN_ROLE_TO_USER));
+                }
             }
 
+            if (rolesToAdd.Any())
+            {
+                var addResult = await userManager.AddToRolesAsync(user, rolesToAdd);
+                if (!addResult.Succeeded)
+                {
+                    logger.LogWarning("Failed to assign roles to user {Id}: {Errors}", user.Id, string.Join("; ", addResult.Errors.Select(e => e.Description)));
+                    throw new RpcException(new Status(StatusCode.Internal, HumanResourceExceptionStrings.FAILED_ASSIGN_ROLE_TO_USER));
+                }
+            }
+
+            // Update user entity
+            var updateResult = await userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                logger.LogWarning("Failed to update user {Id}: {Errors}", user.Id, string.Join("; ", updateResult.Errors.Select(e => e.Description)));
+                throw new RpcException(new Status(StatusCode.InvalidArgument, string.Join(", ", updateResult.Errors.Select(x => x.Description))));
+            }
+
+            await dbContext.SaveChangesAsync();
+
             logger.LogInformation("User updated successfully: {Id}", user.Id);
-            return user.Adapt<ApplicationUserDetailModel>();
+
+            var response = user.Adapt<ApplicationUserDetailModel>();
+            response.Roles = string.Join(",", newRoles);
+
+            return response;
         }
 
         public override async Task<DeleteApplicationUserResponse> DeleteApplicationUser(DeleteApplicationUserRequest request, ServerCallContext context)
@@ -151,20 +248,23 @@
             logger.LogInformation("Deleting user: {Id}", request.Id);
 
             var user = await userManager.FindByIdAsync(request.Id.ToString());
-            if (user == null)
+            if (user is null)
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
                 throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.Id)));
             }
 
-            var result = await userManager.DeleteAsync(user);
+            user.IsSuspended = true;
+            user.IsCancelled = true;
+
+            var result = await userManager.UpdateAsync(user);
 
             if (result.Succeeded)
                 logger.LogInformation("User deleted: {Id}", user.Id);
             else
                 logger.LogWarning("Failed to delete user {Id}", user.Id);
 
-            return new DeleteApplicationUserResponse { Success = result.Succeeded };
+            return new DeleteApplicationUserResponse { IsSuccess = result.Succeeded };
         }
 
         public override async Task<ChangePasswordResponse> ChangePassword(ChangePasswordRequest request, ServerCallContext context)
@@ -223,52 +323,6 @@
                 IsSuccess = true,
                 Message = HumanResourceSuccessStrings.SUCCESS_RESET_PASSWORD
             };
-        }
-
-        public override async Task<FindApplicationUserByNameResponse> FindApplicationUserByName(FindApplicationUserByNameRequest request, ServerCallContext context)
-        {
-            logger.LogInformation("Searching for application users with name containing: {Name}", request.Name);
-
-            var users = await userManager.Users
-                .Where(u => u.Name.Contains(request.Name))
-                .ToListAsync();
-
-            logger.LogInformation("Found {Count} users matching the name {Name}.", users.Count, request.Name);
-
-            var response = new FindApplicationUserByNameResponse();
-
-            foreach (var user in users)
-            {
-                var userModel = user.Adapt<ApplicationUserSummaryModel>();
-                var roles = await userManager.GetRolesAsync(user);
-                userModel.Roles = string.Join(",", roles);
-                response.Users.Add(userModel);
-            }
-
-            return response;
-        }
-
-        public override async Task<FindApplicationUserByUserNameResponse> FindApplicationUserByUserName(FindApplicationUserByUserNameRequest request, ServerCallContext context)
-        {
-            logger.LogInformation("Searching for application users with username: {UserName}", request.UserName);
-
-            var users = await userManager.Users
-                .Where(u => u.UserName!.Contains(request.UserName))
-                .ToListAsync();
-
-            logger.LogInformation("Found {Count} users matching the username {UserName}.", users.Count, request.UserName);
-
-            var response = new FindApplicationUserByUserNameResponse();
-
-            foreach (var user in users)
-            {
-                var userModel = user.Adapt<ApplicationUserSummaryModel>();
-                var roles = await userManager.GetRolesAsync(user);
-                userModel.Roles = string.Join(",", roles);
-                response.Users.Add(userModel);
-            }
-
-            return response;
         }
 
         public override async Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)

@@ -43,6 +43,12 @@ services:
       context: .
       dockerfile: src/Services/VaccinationReception/VaccinationReception.API/Dockerfile
 
+  management.api:
+    image: ${DOCKER_REGISTRY-}managementapi
+    build:
+      context: .
+      dockerfile: src/Services/Management/Management.API/Dockerfile
+
 volumes:
   postgres_db:
   redis_data:

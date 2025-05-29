@@ -45,6 +45,13 @@ data:
               "Path": "/inventory/{**catch-all}"
             },
             "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          },
+          "management-route": {
+            "ClusterId": "management-cluster",
+            "Match": {
+              "Path": "/management/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
           }
         },
         "Clusters": {
@@ -59,6 +66,13 @@ data:
             "Destinations": {
               "default": {
                 "Address": "http://inventory-service:80"
+              }
+            }
+          },
+          "management-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://management-service:80"
               }
             }
           }

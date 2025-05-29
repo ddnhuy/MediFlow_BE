@@ -29,6 +29,12 @@ namespace YarpApiGateWay.Middlewares
             };
 
             var path = context.Request.Path.Value ?? string.Empty;
+            if (!string.IsNullOrEmpty(path) && path.Contains("health"))
+            {
+                await _next(context);
+                return;
+            }
+
             var segments = path.Trim('/').Split('/');
             var resourceType = segments.Length > 0 ? segments[0] : "unknown";
 
