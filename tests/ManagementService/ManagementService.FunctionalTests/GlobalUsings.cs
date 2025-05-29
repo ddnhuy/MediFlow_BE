@@ -1,0 +1,16 @@
+﻿global using BuildingBlocks.Strings;
+global using FluentAssertions;
+global using Grpc.Core;
+global using Management.API.Roles.Queries;
+global using ManagementService.FunctionalTests.Abstractions;
+global using ManagementService.FunctionalTests.Helpers;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Microsoft.Extensions.DependencyInjection;
+global using NSubstitute;
+global using System.Net;
+global using System.Net.Http.Headers;
+global using System.Net.Http.Json;
+global using static HumanResource.Grpc.ApplicationUserProtoService;
+global using static HumanResource.Grpc.DepartmentProtoService;
+global using static HumanResource.Grpc.DepartmentTypeProtoService;
+global using static HumanResource.Grpc.RoleProtoService;
