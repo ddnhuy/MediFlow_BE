@@ -9,6 +9,14 @@
         DbSet<VaccineType> VaccineTypes { get; }
         DbSet<MedicineInteraction> MedicineInteractions { get; }
         DbSet<Supplier> Suppliers { get; }
+        DbSet<SupplierImportDocument> SupplierImportDocuments { get; }
+        DbSet<SupplierImportDocumentDetail> SupplierImportDocumentDetails { get; }
+        DbSet<Country> Countries { get; }
+        DbSet<Manufacturer> Manufacturers { get; }
+        DbSet<MedicineBatch> MedicineBatches { get; }
+        DbSet<MedicinePrice> MedicinePrices { get; }    
+        DbSet<InventoryDetail> InventoryDetails { get; }
+        DbSet<InventoryHistory> InventoryHistories { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

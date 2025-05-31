@@ -78,6 +78,23 @@
         public const string REQUIRED_DESTINATION_WAREHOUSE = "Kho đích là bắt buộc.";
         public const string SAME_WAREHOUSE_TRANSFER = "Không thể chuyển kho trong cùng một kho.";
 
+        // Import medicine validation
+        public const string REQUIRED_WAREHOUSE_ID = "Mã kho là bắt buộc.";
+        public const string REQUIRED_SUPPLIER_ID = "Mã nhà cung cấp là bắt buộc.";
+        public const string REQUIRED_RECEIVER_ID = "Mã người nhận là bắt buộc.";
+        public const string REQUIRED_DOCUMENT_CODE = "Mã tài liệu là bắt buộc.";
+        public const string REQUIRED_DOCUMENT_NUMBER = "Số tài liệu là bắt buộc.";
+        public const string REQUIRED_IMPORT_DATE = "Ngày nhập là bắt buộc.";
+        public const string REQUIRED_MEDICINE_DETAIL = "Cần ít nhất một chi tiết thuốc.";
+        public const string REQUIRED_MEDICINE_ID = "ID thuốc là bắt buộc.";
+        public const string REQUIRED_BATCH_NUMBER = "Số lô là bắt buộc.";
+        public const string QUANTITY_GREATER_THAN_ZERO = "Số lượng phải lớn hơn không.";
+        public const string UNIT_PRICE_NON_NEGATIVE = "Đơn giá phải lớn hơn hoặc bằng không.";
+        public const string REQUIRED_EXPIRY_DATE = "Ngày hết hạn là bắt buộc.";
+        public const string EXPIRY_DATE_FUTURE = "Ngày hết hạn phải trong tương lai.";
+        public const string REQUIRED_MANUFACTURER_ID = "ID nhà sản xuất là bắt buộc.";
+        public const string REQUIRED_COUNTRY_ID = "ID quốc gia là bắt buộc.";
+
         // String length validation
         public static string MAX_LENGTH(string fieldName, int maxLength) => $"{fieldName} không được vượt quá {maxLength} kí tự.";
         public static string MIN_LENGTH(string fieldName, int minLength) => $"{fieldName} phải có ít nhất {minLength} kí tự.";

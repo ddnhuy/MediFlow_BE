@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Inventory.API.Endpoints;
 using InventoryService.FunctionalTests.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;

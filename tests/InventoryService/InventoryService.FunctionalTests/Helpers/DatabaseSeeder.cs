@@ -207,6 +207,30 @@ namespace InventoryService.FunctionalTests.Helpers
                 dbContext.Suppliers.AddRange(suppliers);
                 dbContext.SaveChanges();
             }
+            // Check if manufacturer with ID 1 exists, if not add it
+            if (!dbContext.Manufacturers.Any(m => m.Id == 1))
+            {
+                dbContext.Manufacturers.Add(new Manufacturer
+                {
+                    Id = 1,
+                    ManufacturerName = "Test Manufacturer",
+                    IsCancelled = false,
+                    IsSuspended = false
+                });
+                dbContext.SaveChanges();
+            }
+            // Check if country with ID 1 exists, if not add it
+            if (!dbContext.Countries.Any(c => c.Id == 1))
+            {
+                dbContext.Countries.Add(new Country
+                {
+                    Id = 1,
+                    CountryName = "Test Country",
+                    IsSuspended = false,
+                    IsCancelled = false
+                });
+                dbContext.SaveChanges();
+            }
         }
     }   
 }
