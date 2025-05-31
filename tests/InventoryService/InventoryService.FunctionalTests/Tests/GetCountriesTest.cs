@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http.Json;
 using Xunit;
 
-namespace InventoryService.FunctionalTests.Tests
+namespace Inventory.FunctionalTests.Tests
 {
     public class GetCountriesTests : BaseFunctionalTest
     {
