@@ -69,20 +69,6 @@
 
                     await dbContext.SupplierImportDocumentDetails.AddAsync(supplierImportDocumentDetail);
 
-                    // Raise domain events
-
-                    //medicineBatch.Raise(new MedicineImportedEvent(
-                    //    supplierImportDocument.Id,
-                    //    supplierImportDocumentDetail.Id,
-                    //    detail.MedicineId,
-                    //    medicineBatch.Id,
-                    //    request.WarehouseId,
-                    //    detail.Quantity,
-                    //    detail.UnitPrice,
-                    //    detail.BatchNumber,
-                    //    detail.ExpiryDate
-                    //)); Handler later
-
                     medicineBatch.Raise(new InventoryUpdatedEvent(
                         detail.MedicineId,
                         medicineBatch.Id,

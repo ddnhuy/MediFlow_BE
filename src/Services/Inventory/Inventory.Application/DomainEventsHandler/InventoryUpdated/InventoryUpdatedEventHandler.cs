@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Inventory.Application.DomainEventsHandler.InventoryUpdated
 {
-    internal class InventoryUpdatedEventHandler(IApplicationDbContext dbContext, ILogger<InventoryUpdatedEventHandler> logger) : INotificationHandler<InventoryUpdatedEvent>
+    public class InventoryUpdatedEventHandler(IApplicationDbContext dbContext, ILogger<InventoryUpdatedEventHandler> logger) : INotificationHandler<InventoryUpdatedEvent>
     {
         public async Task Handle(InventoryUpdatedEvent notification, CancellationToken cancellationToken)
         {

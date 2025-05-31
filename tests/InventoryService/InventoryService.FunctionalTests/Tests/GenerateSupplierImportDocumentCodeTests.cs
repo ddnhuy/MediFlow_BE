@@ -1,14 +1,23 @@
-﻿using Inventory.Application.Data;
+﻿using FluentAssertions;
+using Inventory.API.Endpoints;
+using Inventory.Application.Data;
 using Inventory.Application.Suppliers.Queries;
 using Inventory.Domain.Models;
+using InventoryService.FunctionalTests.Abstractions;
 using Moq;
 using Moq.EntityFrameworkCore;
+using System.Net;
+using System.Net.Http.Json;
 using Xunit;
 
 namespace Inventory.FunctionalTests.Tests
 {
-    public class GenerateSupplierImportDocumentCodeQueryHandlerTests
+    public class GenerateSupplierImportDocumentCodeQueryHandlerTests : BaseFunctionalTest
     {
+        public GenerateSupplierImportDocumentCodeQueryHandlerTests(FunctionalTestWebAppFactory factory) : base(factory)
+        {
+        }        
+
         [Fact]
         public async Task Handle_WithNoExistingDocuments_ShouldReturnFirstSequence()
         {
@@ -162,6 +171,44 @@ namespace Inventory.FunctionalTests.Tests
             Assert.NotNull(result);
             Assert.Equal($"{codePrefix}-003", result.DocumentCode);
             Assert.Equal($"{yearPrefix}003", result.DocumentNumber);
+        }
+
+        [Fact]
+        public async Task GenerateSupplierImportDocumentCode_WhenAuthorized_ReturnsOk()
+        {
+            // Act
+            var response = await _client.GetAsync("/supplier-import-documents/generate-code");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GenerateSupplierImportDocumentCodeResponse>();
+            result.Should().NotBeNull();
+            result!.DocumentCode.Should().NotBeNullOrEmpty();
+            result.DocumentNumber.Should().NotBeNullOrEmpty();
+
+            // Verify format: PN[YYYYMMDD]-[Sequence]
+            var today = DateTime.Now;
+            string dateString = $"{today.Year}{today.Month:D2}{today.Day:D2}";
+            result.DocumentCode.Should().StartWith($"PN{dateString}");
+            result.DocumentCode.Should().MatchRegex(@"^PN\d{8}-\d{3}$");
+
+            // Verify format: NK[YYYY]_[Sequence]
+            result.DocumentNumber.Should().StartWith($"NK{today.Year}_");
+            result.DocumentNumber.Should().MatchRegex(@"^NK\d{4}_\d{3}$");
+        }
+
+        [Fact]
+        public async Task GenerateSupplierImportDocumentCode_WhenUnauthorized_ReturnsUnauthorized()
+        {
+            // Arrange
+            // Remove authorization header
+            _client.DefaultRequestHeaders.Authorization = null;
+
+            // Act
+            var response = await _client.GetAsync("/supplier-import-documents/generate-code");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
     }
 }
