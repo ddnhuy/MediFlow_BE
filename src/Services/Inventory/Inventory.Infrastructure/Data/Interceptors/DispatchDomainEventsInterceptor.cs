@@ -1,7 +1,5 @@
 ﻿using BuildingBlocks.DomainEvents;
-using Inventory.Domain.Abstractions;
 using MediatR;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Inventory.Infrastructure.Data.Interceptors
 {

@@ -19,3 +19,5 @@ global using Inventory.Application.Exceptions;
 global using BuildingBlocks.Strings;
 global using Inventory.Application.ValidationHelper;
 global using BuildingBlocks.Strings.ExceptionStrings;
+global using Inventory.Domain.DomainEvents;
+global using MediatR;
