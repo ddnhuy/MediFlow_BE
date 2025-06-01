@@ -75,12 +75,6 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
                 .MaximumLength(100)
                 .WithMessage("Phường/Xã không được vượt quá 100 ký tự");
 
-            // Validate CreateReceptionDTO
-            RuleFor(x => x.createReceptionDTO.PatientId)
-                .GreaterThan(0)
-                .When(x => x.patientId > 0)
-                .WithMessage("Mã bệnh nhân không hợp lệ");
-
             RuleFor(x => x.createReceptionDTO.ReceptionDate)
                 .NotEmpty()
                 .WithMessage("Ngày tiếp đón không được để trống")

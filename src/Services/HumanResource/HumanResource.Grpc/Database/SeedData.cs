@@ -501,6 +501,10 @@
             ["management"] = new()
             {
                 new Policy { ResourceType = "management", Actions = ["read", "write"] }
+            },
+            ["vaccination-reception"] = new()
+            {
+                new Policy { ResourceType = "vaccination-reception", Actions = ["read", "write"] }
             }
         };
 
@@ -516,6 +520,11 @@
             {
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
                 (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
+            },
+            ["vaccination-reception"] = new()
+            {
+                (Roles.ADMIN, DepartmentTypes.ADMIN),
+                (Roles.RECEPTIONIST, DepartmentTypes.VACCINE_RECEPTION)
             }
         };
     }
