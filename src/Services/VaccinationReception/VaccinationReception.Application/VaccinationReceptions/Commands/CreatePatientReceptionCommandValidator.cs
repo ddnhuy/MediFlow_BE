@@ -30,8 +30,8 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
                 .WithMessage("Tên bệnh nhân không được vượt quá 100 ký tự");
 
             RuleFor(x => x.createPatientCommand.Gender)
-                .IsInEnum()
-                .WithMessage("Giới tính không hợp lệ");
+                .InclusiveBetween(0, 1)
+                .WithMessage("Giới tính không hợp lệ. Chỉ chấp nhận 0 (Nam) hoặc 1 (Nữ).");
 
             RuleFor(x => x.createPatientCommand.Dob)
                 .NotEmpty()

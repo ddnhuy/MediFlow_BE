@@ -10,7 +10,6 @@ using Mapster;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using static CustomerInfo.Grpc.Consts.PatientMessages;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CustomerInfo.Grpc.Services
 {
@@ -18,16 +17,32 @@ namespace CustomerInfo.Grpc.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<PatientService> _logger;
+        private readonly ICurrentUserHelper _currentUserHelper;
 
-        public PatientService(ApplicationDbContext context, ILogger<PatientService> logger)
+        public PatientService(ApplicationDbContext context, ILogger<PatientService> logger, ICurrentUserHelper currentUserHelper)
         {
             _context = context;
             _logger = logger;
+            _currentUserHelper = currentUserHelper;
         }
-
+        private void ExtractUserIdFromMetadata(ServerCallContext context)
+        {
+            var userIdEntry = context.RequestHeaders.Get("user-id");
+            if (userIdEntry != null && int.TryParse(userIdEntry.Value, out int userId))
+            {
+                _currentUserHelper.SetUserId(userId);
+                _logger.LogInformation("User ID set from metadata: {UserId}", userId);
+            }
+            else
+            {
+                _logger.LogWarning("User ID not found or invalid in metadata");
+            }
+        }
         public override async Task<ListPatientsResponse> ListPatients(ListPatientsRequest request, ServerCallContext context)
         {
             _logger.LogInformation(PatientLogMessages.ListingPatients, request.PageIndex, request.PageSize);
+
+            ExtractUserIdFromMetadata(context);
 
             var query = _context.Patients
                 .Where(x => !x.IsCancelled)
@@ -58,6 +73,8 @@ namespace CustomerInfo.Grpc.Services
         {
             _logger.LogInformation(PatientLogMessages.GettingPatient, request.Id);
 
+            ExtractUserIdFromMetadata(context);
+
             var patient = await _context.Patients
                 .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled, context.CancellationToken)
                 ?? throw new RpcException(
@@ -75,6 +92,8 @@ namespace CustomerInfo.Grpc.Services
         public override async Task<PatientDetailModel> CreatePatient(CreatePatientRequest request, ServerCallContext context)
         {
             _logger.LogInformation(PatientLogMessages.CreatingPatient, request.Code);
+
+            ExtractUserIdFromMetadata(context);
 
             var patient = request.Adapt<Patient>();
 
@@ -113,6 +132,8 @@ namespace CustomerInfo.Grpc.Services
         public override async Task<PatientDetailModel> UpdatePatient(UpdatePatientRequest request, ServerCallContext context)
         {
             _logger.LogInformation(PatientLogMessages.UpdatingPatient, request.Id);
+
+            ExtractUserIdFromMetadata(context);
 
             try
             {
@@ -160,6 +181,8 @@ namespace CustomerInfo.Grpc.Services
         public override async Task<DeletePatientResponse> DeletePatient(DeletePatientRequest request, ServerCallContext context)
         {
             _logger.LogInformation(PatientLogMessages.DeletingPatient, request.Id);
+
+            ExtractUserIdFromMetadata(context);
 
             var patient = await _context.Patients
                 .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled, context.CancellationToken);

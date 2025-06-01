@@ -111,9 +111,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 VaccineId: TestVaccineId,
                 Quantity: 1,
                 IsReadyToUse: true,
-                ScheduledDate: DateTime.Now,
+                ScheduledDate: DateTime.Now.AddDays(7),
                 InvoiceDate: DateTime.Now,
-                AppointmentDate: DateTime.Now,
+                AppointmentDate: DateTime.Now.AddDays(7),
                 IsPaid: false,
                 IsConfirmed: false,
                 Note: null,
@@ -125,7 +125,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var response = await _client.PostAsJsonAsync("/reception-vaccinations", command);
 
             var content = await response.Content.ReadAsStringAsync();
-           
+
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
             var result = await response.Content.ReadFromJsonAsync<CreateReceptionVaccinationResponse>();

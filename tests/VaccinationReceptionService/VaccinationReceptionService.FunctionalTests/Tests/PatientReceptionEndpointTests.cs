@@ -77,10 +77,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             // Act
             var response = await _client.PostAsJsonAsync("/patient-reception", command);
 
-            // Debug log
             var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response Status: {response.StatusCode}");
-            Console.WriteLine($"Response Content: {content}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
