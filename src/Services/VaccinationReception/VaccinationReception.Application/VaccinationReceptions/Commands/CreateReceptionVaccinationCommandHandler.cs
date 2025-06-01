@@ -1,0 +1,59 @@
+﻿using BuildingBlocks.CQRS;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using VaccinationReception.Domain.Models;
+using VaccinationReception.Infrastructure.Data;
+
+namespace VaccinationReception.Application.VaccinationReceptions.Commands
+{
+    public class CreateReceptionVaccinationCommandHandler : ICommandHandler<CreateReceptionVaccinationCommand, CreateReceptionVaccinationResult>
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<CreateReceptionVaccinationCommandHandler> _logger;
+
+        public CreateReceptionVaccinationCommandHandler(
+            ApplicationDbContext context,
+            ILogger<CreateReceptionVaccinationCommandHandler> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
+
+        public async Task<CreateReceptionVaccinationResult> Handle(CreateReceptionVaccinationCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var reception = await _context.Receptions
+                    .FirstOrDefaultAsync(r => r.Id == request.ReceptionId && !r.IsCancelled, cancellationToken);
+
+                if (reception == null)
+                {
+                    _logger.LogWarning("Không tìm thấy Reception với Id: {ReceptionId}", request.ReceptionId);
+                    throw new InvalidOperationException($"Không tìm thấy lần tiếp nhận với Id: {request.ReceptionId}");
+                }
+
+                var receptionVaccination = request.Adapt<ReceptionVaccination>();
+
+                _context.ReceptionVaccinations.Add(receptionVaccination);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                _logger.LogInformation("Đã tạo mới ReceptionVaccination với Id: {Id} cho ReceptionId: {ReceptionId}",
+                    receptionVaccination.Id, request.ReceptionId);
+
+                return new CreateReceptionVaccinationResult(receptionVaccination.Id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi tạo mới ReceptionVaccination cho ReceptionId: {ReceptionId}",
+                    request.ReceptionId);
+                throw;
+            }
+        }
+    }
+}

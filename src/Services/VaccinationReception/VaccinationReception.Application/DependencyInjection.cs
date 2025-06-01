@@ -14,6 +14,8 @@ using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.Configs;
 using VaccinationReception.Application.Services.PatientServices;
+using VaccinationReception.Application.VaccinationReceptions.Commands;
+using VaccinationReception.Application.VaccinationReceptions.Validators;
 
 namespace VaccinationReception.Application
 {
@@ -48,6 +50,10 @@ namespace VaccinationReception.Application
             services.TryAddScoped<IPatientGrpcClient, PatientGrpcClient>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            // Validator
+            services.AddScoped<IValidator<AddServiceToRequestFormCommand>, AddServiceToRequestFormCommandValidator>();
+            services.AddScoped<IValidator<CreateReceptionVaccinationCommand>, CreateReceptionVaccinationCommandValidator>();
 
             return services;
         }

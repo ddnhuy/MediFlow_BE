@@ -1,14 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using VaccinationReception.Domain.Models;
 
 namespace VaccinationReception.Infrastructure.Data.Configurations
 {
-    public class ReceptionConfiguration : IEntityTypeConfiguration<Reception>
+    public class ServiceRequestDetailConfiguration : IEntityTypeConfiguration<ServiceRequestDetail>
     {
-        public void Configure(EntityTypeBuilder<Reception> builder)
+        public void Configure(EntityTypeBuilder<ServiceRequestDetail> builder)
         {
-            builder.ToTable("Receptions", schema: "public");
+            builder.ToTable("ServiceRequestDetails", schema: "public");
 
             // Primary Key
             builder.HasKey(x => x.Id);
@@ -50,56 +55,57 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasComment("Người cập nhật bản ghi cuối cùng");
 
-            // PatientId
-            builder.Property(x => x.PatientId)
+            // Properties
+            builder.Property(x => x.RequestFormId)
                 .IsRequired()
-                .HasComment("Mã bệnh nhân")
-                .HasColumnType("integer");
+                .HasComment("Mã phiếu yêu cầu");
 
-            // ReceptionDate
-            builder.Property(x => x.ReceptionDate)
+            builder.Property(x => x.ServiceId)
                 .IsRequired()
-                .HasComment("Ngày tiếp nhận")
+                .HasComment("Mã dịch vụ");
+
+            builder.Property(x => x.Quantity)
+                .IsRequired()
+                .HasComment("Số lượng");
+
+            builder.Property(x => x.UnitPrice)
+                .IsRequired()
+                .HasPrecision(18, 2)
+                .HasComment("Đơn giá");
+
+            builder.Property(x => x.InvoiceDate)
+                .IsRequired()
+                .HasComment("Ngày xuất hóa đơn")
                 .HasColumnType("timestamp without time zone");
 
-            // ServiceTypeId
-            builder.Property(x => x.ServiceTypeId)
+            builder.Property(x => x.IsPaid)
                 .IsRequired()
-                .HasComment("Loại dịch vụ");
+                .HasComment("Đã thanh toán")
+                .HasColumnType("boolean");
 
             // Relationships
-            builder.HasOne(x => x.ScreeningEvaluationReport)
-                .WithOne(x => x.Reception)
-                .HasForeignKey<ScreeningEvaluationReport>(x => x.ReceptionId)
+            builder.HasOne(x => x.RequestForm)
+                .WithMany(x => x.ServiceRequestDetails)
+                .HasForeignKey(x => x.RequestFormId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.ServiceType)
-                .WithMany(x => x.Receptions)
-                .HasForeignKey(x => x.ServiceTypeId)
+            builder.HasOne(x => x.Service)
+                .WithMany(x => x.ServiceRequestDetails)
+                .HasForeignKey(x => x.ServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(x => x.RequestForms)
-               .WithOne(x => x.Reception)
-               .HasForeignKey(x => x.ReceptionId)
-               .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(x => x.ReceptionVaccinations)
-               .WithOne(x => x.Reception)
-               .HasForeignKey(x => x.ReceptionId)
-               .OnDelete(DeleteBehavior.Cascade);
-
             // Indexes
-            builder.HasIndex(x => x.PatientId)
-                .HasDatabaseName("IX_Receptions_PatientId");
+            builder.HasIndex(x => x.RequestFormId)
+                .HasDatabaseName("IX_ServiceRequestDetails_RequestFormId");
 
-            builder.HasIndex(x => x.ReceptionDate)
-                .HasDatabaseName("IX_Receptions_ReceptionDate");
+            builder.HasIndex(x => x.ServiceId)
+                .HasDatabaseName("IX_ServiceRequestDetails_ServiceId");
 
             // Global Query Filter
             builder.HasQueryFilter(x => !x.IsCancelled);
 
             // Table Comment
-            builder.ToTable(t => t.HasComment("Bảng tiếp nhận bệnh nhân"));
+            builder.ToTable(t => t.HasComment("Bảng chi tiết yêu cầu dịch vụ"));
         }
     }
 }

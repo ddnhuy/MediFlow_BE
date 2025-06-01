@@ -1,14 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using VaccinationReception.Domain.Models;
 
 namespace VaccinationReception.Infrastructure.Data.Configurations
 {
-    public class ReceptionConfiguration : IEntityTypeConfiguration<Reception>
+    public class ServiceGroupServiceConfiguration : IEntityTypeConfiguration<ServiceGroupService>
     {
-        public void Configure(EntityTypeBuilder<Reception> builder)
+        public void Configure(EntityTypeBuilder<ServiceGroupService> builder)
         {
-            builder.ToTable("Receptions", schema: "public");
+            builder.ToTable("ServiceGroupServices", schema: "public");
 
             // Primary Key
             builder.HasKey(x => x.Id);
@@ -50,56 +55,38 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasComment("Người cập nhật bản ghi cuối cùng");
 
-            // PatientId
-            builder.Property(x => x.PatientId)
+            // Properties
+            builder.Property(x => x.ServiceGroupId)
                 .IsRequired()
-                .HasComment("Mã bệnh nhân")
-                .HasColumnType("integer");
+                .HasComment("Mã nhóm dịch vụ");
 
-            // ReceptionDate
-            builder.Property(x => x.ReceptionDate)
+            builder.Property(x => x.ServiceId)
                 .IsRequired()
-                .HasComment("Ngày tiếp nhận")
-                .HasColumnType("timestamp without time zone");
-
-            // ServiceTypeId
-            builder.Property(x => x.ServiceTypeId)
-                .IsRequired()
-                .HasComment("Loại dịch vụ");
+                .HasComment("Mã dịch vụ");
 
             // Relationships
-            builder.HasOne(x => x.ScreeningEvaluationReport)
-                .WithOne(x => x.Reception)
-                .HasForeignKey<ScreeningEvaluationReport>(x => x.ReceptionId)
+            builder.HasOne(x => x.ServiceGroup)
+                .WithMany(x => x.ServiceGroupServices)
+                .HasForeignKey(x => x.ServiceGroupId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(x => x.ServiceType)
-                .WithMany(x => x.Receptions)
-                .HasForeignKey(x => x.ServiceTypeId)
+            builder.HasOne(x => x.Service)
+                .WithMany(x => x.ServiceGroupServices)
+                .HasForeignKey(x => x.ServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(x => x.RequestForms)
-               .WithOne(x => x.Reception)
-               .HasForeignKey(x => x.ReceptionId)
-               .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(x => x.ReceptionVaccinations)
-               .WithOne(x => x.Reception)
-               .HasForeignKey(x => x.ReceptionId)
-               .OnDelete(DeleteBehavior.Cascade);
-
             // Indexes
-            builder.HasIndex(x => x.PatientId)
-                .HasDatabaseName("IX_Receptions_PatientId");
+            builder.HasIndex(x => x.ServiceGroupId)
+                .HasDatabaseName("IX_ServiceGroupServices_ServiceGroupId");
 
-            builder.HasIndex(x => x.ReceptionDate)
-                .HasDatabaseName("IX_Receptions_ReceptionDate");
+            builder.HasIndex(x => x.ServiceId)
+                .HasDatabaseName("IX_ServiceGroupServices_ServiceId");
 
             // Global Query Filter
             builder.HasQueryFilter(x => !x.IsCancelled);
 
             // Table Comment
-            builder.ToTable(t => t.HasComment("Bảng tiếp nhận bệnh nhân"));
+            builder.ToTable(t => t.HasComment("Bảng liên kết nhóm dịch vụ và dịch vụ"));
         }
     }
 }
