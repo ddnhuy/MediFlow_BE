@@ -1,7 +1,4 @@
-﻿using Inventory.Application.Data;
-using Inventory.Domain.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Inventory.Infrastructure.Data
 {
@@ -19,6 +16,14 @@ namespace Inventory.Infrastructure.Data
         public DbSet<VaccineType> VaccineTypes => Set<VaccineType>();
         public DbSet<MedicineInteraction> MedicineInteractions => Set<MedicineInteraction>();
         public DbSet<Supplier> Suppliers => Set<Supplier>();
+        public DbSet<SupplierImportDocument> SupplierImportDocuments => Set<SupplierImportDocument>();
+        public DbSet<SupplierImportDocumentDetail> SupplierImportDocumentDetails => Set<SupplierImportDocumentDetail>();
+        public DbSet<Country> Countries => Set<Country>();
+        public DbSet<Manufacturer> Manufacturers => Set<Manufacturer>();
+        public DbSet<MedicineBatch> MedicineBatches => Set<MedicineBatch>();
+        public DbSet<MedicinePrice> MedicinePrices => Set<MedicinePrice>();
+        public DbSet<InventoryDetail> InventoryDetails => Set<InventoryDetail>();
+        public DbSet<InventoryHistory> InventoryHistories => Set<InventoryHistory>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

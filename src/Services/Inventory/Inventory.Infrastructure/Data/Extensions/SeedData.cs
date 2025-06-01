@@ -522,6 +522,40 @@
             };
         }
 
+        private static List<Country> CreateNewCountries()
+        {
+            return new List<Country>
+            {
+                new Country { CountryName = "United States" },
+                new Country { CountryName = "Canada" },
+                new Country { CountryName = "United Kingdom" },
+                new Country { CountryName = "Germany" },
+                new Country { CountryName = "France" },
+                new Country { CountryName = "Japan" },
+                new Country { CountryName = "Australia" },
+                new Country { CountryName = "India" },
+                new Country { CountryName = "China" },
+                new Country { CountryName = "Brazil" }
+            };
+        }
+
+        private static List<Manufacturer> CreateNewManufacturers()
+        {
+            return new List<Manufacturer>
+            {
+                new Manufacturer { ManufacturerName = "MediPharma" },
+                new Manufacturer { ManufacturerName = "FluShield" },
+                new Manufacturer { ManufacturerName = "HepGuard" },
+                new Manufacturer { ManufacturerName = "LungDefense" },
+                new Manufacturer { ManufacturerName = "TriShield" },
+                new Manufacturer { ManufacturerName = "ImmunePlus" },
+                new Manufacturer { ManufacturerName = "PoxGuard" },
+                new Manufacturer { ManufacturerName = "CancerShield" },
+                new Manufacturer { ManufacturerName = "PolioDefend" },
+                new Manufacturer { ManufacturerName = "MeningoGuard" }
+            };
+        }
+
         private static async Task SeedAsync(ApplicationDbContext context)
         {
             if (!await context.WarehouseTypes.AnyAsync())
@@ -573,6 +607,22 @@
             {
                 var suppliers = CreateNewSuppliers();
                 await context.Suppliers.AddRangeAsync(suppliers);
+                await context.SaveChangesAsync();
+            }
+
+            // Seed Countries
+            if (!await context.Countries.AnyAsync())
+            {
+                var countries = CreateNewCountries();
+                await context.Countries.AddRangeAsync(countries);
+                await context.SaveChangesAsync();
+            }
+
+            // Seed Manufacturers
+            if (!await context.Manufacturers.AnyAsync())
+            {
+                var manufacturers = CreateNewManufacturers();
+                await context.Manufacturers.AddRangeAsync(manufacturers);
                 await context.SaveChangesAsync();
             }
         }
