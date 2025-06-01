@@ -20,6 +20,14 @@ namespace VaccinationReception.Infrastructure
 
             services.AddSingleton<ICurrentUserHelper, CurrentUserHelper>();
 
+            var connectionString = configuration.GetConnectionString("Database");
+
+            services.AddDbContext<ApplicationDbContext>((sp, options) =>
+            {
+                options.UseNpgsql(connectionString);
+                options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
+            });
+
             return services;
         }
     }

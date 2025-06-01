@@ -22,7 +22,9 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
             builder.Property(x => x.Id)
                    .UseIdentityColumn()
                    .ValueGeneratedOnAdd()
-                   .HasComment("Khóa chính");
+                   .HasComment("Khóa chính")
+                   .HasAnnotation("Npgsql:IdentityIncrement", 1)
+                   .HasAnnotation("Npgsql:IdentityStartValue", 1);
 
             builder.Property(x => x.LastUpdatedAt)
                    .IsRequired()
@@ -112,7 +114,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                    .HasDatabaseName("IX_ScreeningEvaluationReports_ReceptionId");
 
             // Global query filter
-            builder.HasQueryFilter(x => !x.IsSuspended && !x.IsCancelled);
+            builder.HasQueryFilter(x => !x.IsCancelled);
         }
     }
 }

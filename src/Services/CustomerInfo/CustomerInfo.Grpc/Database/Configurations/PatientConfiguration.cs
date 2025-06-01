@@ -141,7 +141,7 @@ namespace CustomerInfo.Grpc.Database.Configurations
                 .HasDatabaseName("IX_Patients_IdentityCard");
 
             // Global Query Filter
-            builder.HasQueryFilter(x => !x.IsSuspended && !x.IsCancelled);
+            builder.HasQueryFilter(x => !x.IsCancelled);
 
             // Table Comment
             builder.ToTable(t => t.HasComment("Bảng thông tin bệnh nhân"));

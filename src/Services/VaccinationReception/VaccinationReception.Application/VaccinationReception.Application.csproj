@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks\BuildingBlocks.csproj" />
+    <ProjectReference Include="..\VaccinationReception.Infrastructure\VaccinationReception.Infrastructure.csproj" />
   </ItemGroup>
 	<ItemGroup>
 		<Protobuf Include="..\..\CustomerInfo\CustomerInfo.Grpc\Protos\patient.proto" AdditionalImportDirs="..\..\CustomerInfo\CustomerInfo.Grpc" GrpcServices="Client">

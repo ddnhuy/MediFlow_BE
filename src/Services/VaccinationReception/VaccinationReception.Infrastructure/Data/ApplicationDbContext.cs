@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Domain.Abstractions;
 using VaccinationReception.Domain.Models;
+using VaccinationReception.Infrastructure.Data.Extensions;
 using VaccinationReception.Infrastructure.Helpers;
 
 namespace VaccinationReception.Infrastructure.Data
@@ -28,10 +29,20 @@ namespace VaccinationReception.Infrastructure.Data
 
         public virtual DbSet<Reception> Receptions { get; set; }
         public virtual DbSet<ScreeningEvaluationReport> ScreeningEvaluationReports { get; set; }
+        public virtual DbSet<ServiceType> ServiceTypes { get; set; }
+        public virtual DbSet<ReceptionVaccination> ReceptionVaccinations { get; set; }
+        public virtual DbSet<DiseaseGroup> DiseaseGroups { get; set; }
+        public virtual DbSet<DiseaseGroupService> DiseaseGroupServices { get; set; }
+        public virtual DbSet<ServiceGroup> ServiceGroups { get; set; }
+        public virtual DbSet<ServiceGroupService> ServiceGroupServices { get; set; }
+        public virtual DbSet<Service> Services { get; set; }
+        public virtual DbSet<ServiceRequestDetail> ServiceRequestDetails { get; set; }
+        public virtual DbSet<RequestForm> RequestForms { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.SeedData();
             base.OnModelCreating(modelBuilder);
         }
 

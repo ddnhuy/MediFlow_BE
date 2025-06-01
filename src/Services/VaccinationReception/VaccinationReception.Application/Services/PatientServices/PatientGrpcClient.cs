@@ -19,6 +19,7 @@ using VaccinationReception.Application.Patients.Commands;
 using VaccinationReception.Application.Patients.Commands.CreatePatient;
 using VaccinationReception.Application.Patients.Commands.DeletePatient;
 using VaccinationReception.Application.Patients.Commands.UpdatePatient;
+using VaccinationReception.Infrastructure.Helpers;
 using static VaccinationReception.Application.Const.LogMessages;
 
 namespace VaccinationReception.Application.Services.PatientServices
@@ -26,14 +27,22 @@ namespace VaccinationReception.Application.Services.PatientServices
     public class PatientGrpcClient : IPatientGrpcClient
     {
         private readonly PatientProtoService.PatientProtoServiceClient _client;
+        private readonly ICurrentUserHelper _currentUserHelper;
         private readonly ILogger<PatientGrpcClient> _logger;
+        private readonly Metadata _metadata;
 
         public PatientGrpcClient(
             PatientProtoService.PatientProtoServiceClient client,
-            ILogger<PatientGrpcClient> logger)
+            ILogger<PatientGrpcClient> logger,
+            ICurrentUserHelper currentUserHelper)
         {
             _client = client;
             _logger = logger;
+            _currentUserHelper = currentUserHelper;
+            _metadata = new Metadata
+            {
+                { "user-id", _currentUserHelper.UserId.ToString() }
+            };
         }
 
         public async Task<PaginatedResult<PatientSummaryDTO>> ListPatientsAsync(PaginationRequest request, CancellationToken cancellationToken)
@@ -41,14 +50,14 @@ namespace VaccinationReception.Application.Services.PatientServices
             try
             {
                 _logger.LogInformation(PatientLogMessages.ListPatients_SendingRequest, request.PageIndex, request.PageSize);
-
+                
                 var grpcRequest = new ListPatientsRequest
                 {
                     PageIndex = request.PageIndex,
                     PageSize = request.PageSize
                 };
 
-                var response = await _client.ListPatientsAsync(grpcRequest, cancellationToken: cancellationToken);
+                var response = await _client.ListPatientsAsync(grpcRequest, _metadata, cancellationToken: cancellationToken);
 
                 _logger.LogInformation(PatientLogMessages.ListPatients_Received, response.Data.Count);
 
@@ -78,7 +87,7 @@ namespace VaccinationReception.Application.Services.PatientServices
                 _logger.LogInformation(PatientLogMessages.GetPatient_SendingRequest, id);
 
                 var request = new GetPatientRequest { Id = id };
-                var response = await _client.GetPatientAsync(request, cancellationToken: cancellationToken);
+                var response = await _client.GetPatientAsync(request, _metadata, cancellationToken: cancellationToken);
 
                 _logger.LogInformation(PatientLogMessages.GetPatient_Success, id);
 
@@ -101,7 +110,7 @@ namespace VaccinationReception.Application.Services.PatientServices
             try
             {
                 var request = command.Adapt<CreatePatientRequest>();
-                var response = await _client.CreatePatientAsync(request, cancellationToken: cancellationToken);
+                var response = await _client.CreatePatientAsync(request, _metadata, cancellationToken: cancellationToken);
 
                 if(response is null)
                 {
@@ -126,7 +135,7 @@ namespace VaccinationReception.Application.Services.PatientServices
                 _logger.LogInformation(PatientLogMessages.UpdatePatient_SendingRequest, command.Id);
 
                 var request = command.Adapt<UpdatePatientRequest>();
-                var response = await _client.UpdatePatientAsync(request, cancellationToken: cancellationToken);
+                var response = await _client.UpdatePatientAsync(request, _metadata, cancellationToken: cancellationToken);
 
                 _logger.LogInformation(PatientLogMessages.UpdatePatient_Success, command.Id);
 
@@ -146,7 +155,7 @@ namespace VaccinationReception.Application.Services.PatientServices
                 _logger.LogInformation(PatientLogMessages.DeletePatient_SendingRequest, id);
 
                 var request = new DeletePatientRequest { Id = id };
-                var response = await _client.DeletePatientAsync(request, cancellationToken: cancellationToken);
+                var response = await _client.DeletePatientAsync(request, _metadata, cancellationToken: cancellationToken);
 
                 _logger.LogInformation(PatientLogMessages.DeletePatient_Success, id);
 

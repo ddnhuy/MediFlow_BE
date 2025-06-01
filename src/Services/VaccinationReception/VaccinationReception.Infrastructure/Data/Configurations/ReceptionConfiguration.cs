@@ -1,10 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using VaccinationReception.Domain.Models;
 
 namespace VaccinationReception.Infrastructure.Data.Configurations
@@ -20,7 +15,9 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
             builder.Property(x => x.Id)
                 .UseIdentityColumn()
                 .ValueGeneratedOnAdd()
-                .HasComment("Primary key");
+                .HasComment("Primary key")
+                .HasAnnotation("Npgsql:IdentityIncrement", 1)
+                .HasAnnotation("Npgsql:IdentityStartValue", 1);
 
             // BaseEntity Properties
             builder.Property(x => x.IsSuspended)
@@ -65,11 +62,31 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasComment("Ngày tiếp nhận")
                 .HasColumnType("timestamp without time zone");
 
+            // ServiceTypeId
+            builder.Property(x => x.ServiceTypeId)
+                .IsRequired()
+                .HasComment("Loại dịch vụ");
+
             // Relationships
             builder.HasOne(x => x.ScreeningEvaluationReport)
-                .WithOne()
+                .WithOne(x => x.Reception)
                 .HasForeignKey<ScreeningEvaluationReport>(x => x.ReceptionId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x => x.ServiceType)
+                .WithMany(x => x.Receptions)
+                .HasForeignKey(x => x.ServiceTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(x => x.RequestForms)
+               .WithOne(x => x.Reception)
+               .HasForeignKey(x => x.ReceptionId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.ReceptionVaccinations)
+               .WithOne(x => x.Reception)
+               .HasForeignKey(x => x.ReceptionId)
+               .OnDelete(DeleteBehavior.Cascade);
 
             // Indexes
             builder.HasIndex(x => x.PatientId)
@@ -79,7 +96,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasDatabaseName("IX_Receptions_ReceptionDate");
 
             // Global Query Filter
-            builder.HasQueryFilter(x => !x.IsSuspended && !x.IsCancelled);
+            builder.HasQueryFilter(x => !x.IsCancelled);
 
             // Table Comment
             builder.ToTable(t => t.HasComment("Bảng tiếp nhận bệnh nhân"));
