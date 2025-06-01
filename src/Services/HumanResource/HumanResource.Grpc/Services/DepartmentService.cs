@@ -58,7 +58,7 @@ namespace HumanResource.Grpc.Services
             if (department is null)
             {
                 logger.LogWarning("Department with id={Id} not found.", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, $"Department with id={request.Id} is not found."));
+                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_DEPARTMENT_WITH_ID(request.Id)));
             }
 
             logger.LogInformation("Department with id={Id} retrieved successfully.", request.Id);
@@ -87,13 +87,20 @@ namespace HumanResource.Grpc.Services
         {
             logger.LogInformation("Creating new department with name={Name}", request.Name);
 
-            var department = request.Adapt<Department>() ?? throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid request object."));
+            var department = request.Adapt<Department>() ?? throw new RpcException(new Status(StatusCode.InvalidArgument, HumanResourceExceptionStrings.INVALID_REQUEST));
+
+            var checkIfDepartmentCodeExist = await dbContext.Departments.AnyAsync(x => x.Code == request.Code && !x.IsCancelled);
+            if (checkIfDepartmentCodeExist)
+            {
+                logger.LogWarning("Department code {Code} already exists.", request.Code);
+                throw new RpcException(new Status(StatusCode.AlreadyExists, HumanResourceExceptionStrings.EXISTED_DEPARTMENT_CODE));
+            }
 
             var departmentType = await dbContext.DepartmentTypes.FirstOrDefaultAsync(x => x.Id == request.DepartmentTypeId);
             if (departmentType is null)
             {
                 logger.LogWarning("Invalid department type id={Id} during creation.", request.DepartmentTypeId);
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid department type."));
+                throw new RpcException(new Status(StatusCode.InvalidArgument, HumanResourceExceptionStrings.INVALID_DEPARTMENT_TYPE));
             }
 
             department.DepartmentType = departmentType;
@@ -134,14 +141,21 @@ namespace HumanResource.Grpc.Services
             if (department == null)
             {
                 logger.LogWarning("Department with id={Id} not found for update.", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, $"Department with id={request.Id} is not found."));
+                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_DEPARTMENT_WITH_ID(request.Id)));
+            }
+
+            var checkIfDepartmentCodeExist = await dbContext.Departments.AnyAsync(x => x.Id != request.Id && (x.Code == request.Code && !x.IsCancelled));
+            if (checkIfDepartmentCodeExist)
+            {
+                logger.LogWarning("Department code {Code} already exists.", request.Code);
+                throw new RpcException(new Status(StatusCode.AlreadyExists, HumanResourceExceptionStrings.EXISTED_DEPARTMENT_CODE));
             }
 
             var departmentType = await dbContext.DepartmentTypes.FirstOrDefaultAsync(x => x.Id == request.DepartmentTypeId);
             if (departmentType is null)
             {
                 logger.LogWarning("Invalid department type id={Id} during update.", request.DepartmentTypeId);
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid department type."));
+                throw new RpcException(new Status(StatusCode.InvalidArgument, HumanResourceExceptionStrings.INVALID_DEPARTMENT_TYPE));
             }
 
             department.DepartmentType = departmentType;
@@ -180,12 +194,12 @@ namespace HumanResource.Grpc.Services
         {
             logger.LogInformation("Deleting department with id={Id}", request.Id);
 
-            var department = await dbContext.Departments.FirstOrDefaultAsync(x => x.Id == request.Id);
+            var department = await dbContext.Departments.FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsCancelled);
 
             if (department is null)
             {
                 logger.LogWarning("Department with id={Id} not found for deletion.", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, $"Department with id={request.Id} is not found."));
+                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_DEPARTMENT_WITH_ID(request.Id)));
             }
 
             department.IsSuspended = true;

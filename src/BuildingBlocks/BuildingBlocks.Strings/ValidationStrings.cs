@@ -2,6 +2,7 @@
 {
     public static class ValidationStrings
     {
+        // User validation
         public const string REQUIRED_USERNAME = "Tên người dùng là bắt buộc.";
         public const string REQUIRED_PASSWORD = "Mật khẩu là bắt buộc.";
         public const string INVALID_PASSWORD_LENGTH = "Mật khẩu phải dài ít nhất 8 kí tự, bao gồm ít nhất 1 kí tự in hoa, 1 kí tự thường, 1 chữ số và 1 kí tự đặc biệt.";
@@ -15,6 +16,24 @@
 
         public const string REQUIRED_EMAIL = "Email là bắt buộc.";
         public const string INVALID_EMAIL = "Email không hợp lệ.";
+
+        public const string REQUIRED_NAME = "Họ và tên là bắt buộc.";
+        public const string REQUIRED_PHONE = "Số điện thoại là bắt buộc.";
+        public const string REQUIRED_CODE = "Mã là bắt buộc.";
+        public const string REQUIRED_ADDRESS = "Địa chỉ là bắt buộc.";
+        public const string REQUIRED_PROFILE_PICTURE_URL = "Hình ảnh đại diện là bắt buộc.";
+
+        public const string REQUIRED_ROLE = "Cần có ít nhất một vai trò.";
+        public const string REQUIRED_DEPARTMENT_IDS = "Cần có ít nhất một phòng ban.";
+
+        public const string INVALID_USER_DATA = "Dữ liệu người dùng không hợp lệ.";
+
+        // Department validation
+        public const string REQUIRED_DEPARTMENT_ID = "Mã phòng ban là bắt buộc.";
+        public const string REQUIRED_DEPARTMENT_CODE = "Mã phòng ban là bắt buộc.";
+        public const string REQUIRED_DEPARTMENT_NAME = "Tên phòng ban là bắt buộc.";
+        public const string REQUIRED_DEPARTMENT_NAME_IN_ENGLISH = "Tên phòng ban bằng tiếng Anh là bắt buộc.";
+        public const string REQUIRED_DEPARTMENT_TYPE = "Loại phòng ban là bắt buộc.";
 
         // Warehouse validation
         public const string REQUIRED_WAREHOUSE_CODE = "Mã kho là bắt buộc.";
