@@ -14,6 +14,7 @@
     <None Remove="Protos\application_user.proto" />
     <None Remove="Protos\department.proto" />
     <None Remove="Protos\department_type.proto" />
+    <None Remove="Protos\role.proto" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +38,7 @@
     <Protobuf Include="Protos/department.proto" />
     <Protobuf Include="Protos\policy.proto" />
     <Protobuf Include="Protos\department_type.proto" />
+    <Protobuf Include="Protos\role.proto" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,9 +5,17 @@ option csharp_namespace = "HumanResource.Grpc";
 package department_type;
 
 // ---------- gRPC Service ----------
-
+service DepartmentTypeProtoService {
+  rpc ListDepartmentTypes (ListDepartmentTypesRequest) returns (ListDepartmentTypesResponse);
+}
 
 // ---------- Request & Response ----------
+message ListDepartmentTypesRequest {
+}
+
+message ListDepartmentTypesResponse {
+  repeated DepartmentTypeModel data = 1;
+}
 
 
 // ---------- Data Models ----------

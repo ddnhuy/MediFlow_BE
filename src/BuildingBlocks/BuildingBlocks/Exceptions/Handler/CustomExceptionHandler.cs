@@ -44,9 +44,11 @@ namespace BuildingBlocks.Exceptions.Handler
                 ),
                 RpcException =>
                 (
-                    exception.Message,
+                    ((RpcException)exception).Status.Detail,
                     exception.GetType().Name,
-                    context.Response.StatusCode = StatusCodes.Status400BadRequest
+                    context.Response.StatusCode = ((RpcException)exception).Status.StatusCode == StatusCode.NotFound
+                        ? StatusCodes.Status404NotFound
+                        : StatusCodes.Status400BadRequest
                 ),
                 _ =>
                 (

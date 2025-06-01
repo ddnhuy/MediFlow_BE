@@ -149,6 +149,7 @@ deployments:
   human-resource-grpc: {}
   authentication-service: {}
   inventory-service: {}
+  management-service: {}
   gateway: {}
 
 strategy:

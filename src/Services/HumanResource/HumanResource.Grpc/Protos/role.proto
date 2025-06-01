@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option csharp_namespace = "HumanResource.Grpc";
+
+package role;
+
+// ---------- gRPC Service Definition ----------
+service RoleProtoService {
+  rpc ListRoleNames (ListRoleNamesRequest) returns (ListRoleNamesResponse);
+}
+
+// ---------- Requests & Responses ----------
+message ListRoleNamesRequest {
+}
+
+message ListRoleNamesResponse {
+  repeated string roleNames = 1;
+}
+
+// ---------- Data Models ----------
