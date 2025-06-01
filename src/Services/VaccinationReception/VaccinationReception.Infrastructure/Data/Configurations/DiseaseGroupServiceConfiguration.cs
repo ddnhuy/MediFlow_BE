@@ -25,18 +25,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasAnnotation("Npgsql:IdentityStartValue", 1);
 
             // BaseEntity Properties
-            builder.Property(x => x.IsSuspended)
-                .IsRequired()
-                .HasDefaultValue(false)
-                .HasComment("Trạng thái tạm ngưng")
-                .HasColumnType("boolean");
-
-            builder.Property(x => x.IsCancelled)
-                .IsRequired()
-                .HasDefaultValue(false)
-                .HasComment("Trạng thái hủy")
-                .HasColumnType("boolean");
-
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
@@ -46,6 +34,12 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasComment("Người tạo bản ghi");
 
+            builder.Property(x => x.IsCancelled)
+                .IsRequired()
+                .HasDefaultValue(false)
+                .HasComment("Trạng thái hủy")
+                .HasColumnType("boolean");
+
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
@@ -54,6 +48,12 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
             builder.Property(x => x.LastUpdatedBy)
                 .IsRequired()
                 .HasComment("Người cập nhật bản ghi cuối cùng");
+
+            builder.Property(x => x.IsSuspended)
+               .IsRequired()
+               .HasDefaultValue(false)
+               .HasComment("Trạng thái tạm ngưng")
+               .HasColumnType("boolean");
 
             // Properties
             builder.Property(x => x.DiseaseGroupId)

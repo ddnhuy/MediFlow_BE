@@ -24,36 +24,14 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasAnnotation("Npgsql:IdentityIncrement", 1)
                 .HasAnnotation("Npgsql:IdentityStartValue", 1);
 
-            // BaseEntity Properties
-            builder.Property(x => x.IsSuspended)
+            builder.Property(x => x.LastUpdatedBy)
                 .IsRequired()
-                .HasDefaultValue(false)
-                .HasComment("Trạng thái tạm ngưng")
-                .HasColumnType("boolean");
-
-            builder.Property(x => x.IsCancelled)
-                .IsRequired()
-                .HasDefaultValue(false)
-                .HasComment("Trạng thái hủy")
-                .HasColumnType("boolean");
-
-            builder.Property(x => x.CreatedAt)
-                .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasComment("Ngày tạo bản ghi");
-
-            builder.Property(x => x.CreatedBy)
-                .IsRequired()
-                .HasComment("Người tạo bản ghi");
+                .HasComment("Người cập nhật bản ghi cuối cùng");
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
-
-            builder.Property(x => x.LastUpdatedBy)
-                .IsRequired()
-                .HasComment("Người cập nhật bản ghi cuối cùng");
 
             // Properties
             builder.Property(x => x.RequestFormId)
@@ -82,6 +60,27 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasComment("Đã thanh toán")
                 .HasColumnType("boolean");
+
+            builder.Property(x => x.IsSuspended)
+                .IsRequired()
+                .HasDefaultValue(false)
+                .HasComment("Trạng thái tạm ngưng")
+                .HasColumnType("boolean");
+
+            builder.Property(x => x.IsCancelled)
+                .IsRequired()
+                .HasDefaultValue(false)
+                .HasComment("Trạng thái hủy")
+                .HasColumnType("boolean");
+
+            builder.Property(x => x.CreatedBy)
+                .IsRequired()
+                .HasComment("Người tạo bản ghi");
+
+            builder.Property(x => x.CreatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasComment("Ngày tạo bản ghi");
 
             // Relationships
             builder.HasOne(x => x.RequestForm)

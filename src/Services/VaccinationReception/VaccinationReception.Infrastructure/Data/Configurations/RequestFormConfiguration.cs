@@ -24,12 +24,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasAnnotation("Npgsql:IdentityIncrement", 1)
                 .HasAnnotation("Npgsql:IdentityStartValue", 1);
 
-            builder.Property(x => x.IsSuspended)
-                .IsRequired()
-                .HasDefaultValue(false)
-                .HasComment("Trạng thái tạm ngưng")
-                .HasColumnType("boolean");
-
             builder.Property(x => x.IsCancelled)
                 .IsRequired()
                 .HasDefaultValue(false)
@@ -54,6 +48,12 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
             builder.Property(x => x.ReceptionId)
                 .IsRequired()
                 .HasComment("Mã tiếp nhận");
+
+            builder.Property(x => x.IsSuspended)
+                .IsRequired()
+                .HasDefaultValue(false)
+                .HasComment("Trạng thái tạm ngưng")
+                .HasColumnType("boolean");
 
             builder.Property(x => x.CreatedAt)
                .IsRequired()

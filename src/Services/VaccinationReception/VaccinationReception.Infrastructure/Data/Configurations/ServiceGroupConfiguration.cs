@@ -25,11 +25,9 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasAnnotation("Npgsql:IdentityStartValue", 1);
 
             // BaseEntity Properties
-            builder.Property(x => x.IsSuspended)
+            builder.Property(x => x.CreatedBy)
                 .IsRequired()
-                .HasDefaultValue(false)
-                .HasComment("Trạng thái tạm ngưng")
-                .HasColumnType("boolean");
+                .HasComment("Người tạo bản ghi");
 
             builder.Property(x => x.IsCancelled)
                 .IsRequired()
@@ -42,24 +40,20 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày tạo bản ghi");
 
-            builder.Property(x => x.CreatedBy)
+            builder.Property(x => x.IsSuspended)
                 .IsRequired()
-                .HasComment("Người tạo bản ghi");
-
-            builder.Property(x => x.LastUpdatedAt)
-                .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasComment("Ngày cập nhật bản ghi cuối cùng");
+                .HasDefaultValue(false)
+                .HasComment("Trạng thái tạm ngưng")
+                .HasColumnType("boolean");
 
             builder.Property(x => x.LastUpdatedBy)
                 .IsRequired()
                 .HasComment("Người cập nhật bản ghi cuối cùng");
 
-            // Properties
-            builder.Property(x => x.GroupName)
+            builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasMaxLength(255)
-                .HasComment("Tên nhóm dịch vụ");
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
             // Relationships
             builder.HasMany(x => x.ServiceGroupServices)
@@ -70,6 +64,12 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
             // Indexes
             builder.HasIndex(x => x.GroupName)
                 .HasDatabaseName("IX_ServiceGroups_GroupName");
+
+            // Properties
+            builder.Property(x => x.GroupName)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasComment("Tên nhóm dịch vụ");
 
             // Global Query Filter
             builder.HasQueryFilter(x => !x.IsCancelled);
