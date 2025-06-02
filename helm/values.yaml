@@ -150,6 +150,8 @@ deployments:
   authentication-service: {}
   inventory-service: {}
   management-service: {}
+  customer-info-grpc: {}
+  vaccination-reception-service: {}
   gateway: {}
 
 strategy:

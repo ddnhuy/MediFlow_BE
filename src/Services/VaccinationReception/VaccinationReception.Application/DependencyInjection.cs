@@ -2,30 +2,22 @@
 using CustomerInfo.Grpc.Protos;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Mapster;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using VaccinationReception.Application.Configs;
 using VaccinationReception.Application.Services.PatientServices;
-using VaccinationReception.Application.VaccinationReceptions.Commands;
-using VaccinationReception.Application.VaccinationReceptions.Validators;
 
 namespace VaccinationReception.Application
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddApplicationService(this IServiceCollection services)
+        public static IServiceCollection AddApplicationService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddGrpcClient<PatientProtoService.PatientProtoServiceClient>(options =>
             {
-                options.Address = new Uri("https://customerinfo.grpc:8081");
+                options.Address = new Uri(configuration["GrpcSettings:CustomerInfoUrl"]!);
             }).ConfigurePrimaryHttpMessageHandler(() =>
             {
                 var handler = new HttpClientHandler
@@ -50,10 +42,6 @@ namespace VaccinationReception.Application
             services.TryAddScoped<IPatientGrpcClient, PatientGrpcClient>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            // Validator
-            services.AddScoped<IValidator<AddServiceToRequestFormCommand>, AddServiceToRequestFormCommandValidator>();
-            services.AddScoped<IValidator<CreateReceptionVaccinationCommand>, CreateReceptionVaccinationCommandValidator>();
 
             return services;
         }

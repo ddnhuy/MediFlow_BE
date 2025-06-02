@@ -13,7 +13,7 @@ namespace VaccinationReception.API
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services
-            .AddApplicationService()
+            .AddApplicationService(builder.Configuration)
             .AddInfrastructureServices(builder.Configuration)
             .AddApiServices(builder.Configuration);
 
