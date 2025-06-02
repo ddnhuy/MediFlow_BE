@@ -119,5 +119,11 @@
         public static string MIN_LENGTH(string fieldName, int minLength) => $"{fieldName} phải có ít nhất {minLength} kí tự.";
         public static string EXACT_LENGTH(string fieldName, int length) => $"{fieldName} phải có đúng {length} kí tự.";
         public static string LENGTH_RANGE(string fieldName, int minLength, int maxLength) => $"{fieldName} phải có từ {minLength} đến {maxLength} kí tự.";
+
+        // Pagination validation
+        public const string PAGE_SIZE_TOO_SMALL = "Kích thước trang phải lớn hơn 0.";
+        public const string PAGE_SIZE_TOO_LARGE = "Kích thước trang không được vượt quá 1000.";
+        public const string PAGE_INDEX_TOO_SMALL = "Chỉ mục trang phải lớn hơn 0.";
+        public const string PAGE_INDEX_TOO_LARGE = "Chỉ mục trang không được vượt quá 1000000.";
     }
 }

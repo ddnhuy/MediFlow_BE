@@ -61,8 +61,8 @@ namespace YarpApiGateWay.Middlewares
 
             if (role is null || department is null)
             {
-                context.Response.StatusCode = 403;
-                await context.Response.WriteAsync("Missing role or department");
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                await context.Response.WriteAsync("Forbidden: Missing role or department");
                 return;
             }
 
@@ -70,7 +70,7 @@ namespace YarpApiGateWay.Middlewares
 
             if (!permission.ToLower().Contains(action.ToLower()))
             {
-                context.Response.StatusCode = 403;
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
                 await context.Response.WriteAsync("Forbidden: Missing permission");
                 return;
             }
