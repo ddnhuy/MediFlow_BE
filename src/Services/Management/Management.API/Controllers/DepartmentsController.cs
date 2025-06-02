@@ -22,6 +22,8 @@ namespace Management.API.Controllers
         [EndpointDescription("Get Departments")]
         public async Task<IActionResult> GetDepartments(int pageIndex = 1, int pageSize = 100, string? keyword = null)
         {
+            PaginationHelper.VerifyPaginationRequest(pageIndex, pageSize);
+
             var query = new GetDepartmentsQuery(pageIndex, pageSize, keyword);
 
             var result = await sender.Send(query);
@@ -93,15 +95,20 @@ namespace Management.API.Controllers
         }
         public record UpdateDepartmentRequest(int Id, string Code, string Name, string NameInEnglish, int DepartmentTypeId, bool IsSuspended, bool IsCancelled);
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{departmentId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [EndpointSummary("Delete Department")]
         [EndpointDescription("Delete Department By Id")]
-        public async Task<IActionResult> DeleteDepartment(int id)
+        public async Task<IActionResult> DeleteDepartment(int departmentId)
         {
-            var command = new DeleteDepartmentCommand(id, int.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value));
+            if (departmentId <= 0)
+            {
+                throw new BadRequestException(ValidationStrings.REQUIRED_DEPARTMENT_ID);
+            }
+
+            var command = new DeleteDepartmentCommand(departmentId, int.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value));
 
             var result = await sender.Send(command);
 
@@ -123,6 +130,22 @@ namespace Management.API.Controllers
         public async Task<IActionResult> GetDepartmentTypes()
         {
             var query = new GetDepartmentTypesQuery();
+
+            var result = await sender.Send(query);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{departmentId}/employees")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [EndpointSummary("Get Employees")]
+        [EndpointDescription("Get Employees By Department Id")]
+        public async Task<IActionResult> GetEmployeesByDepartmentId([FromRoute] int departmentId, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 100)
+        {
+            PaginationHelper.VerifyPaginationRequest(pageIndex, pageSize);
+
+            var query = new GetEmployeesByDepartmentIdQuery(departmentId, pageIndex, pageSize);
 
             var result = await sender.Send(query);
 

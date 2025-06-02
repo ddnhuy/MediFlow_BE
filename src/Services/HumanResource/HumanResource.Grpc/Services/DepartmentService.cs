@@ -212,5 +212,44 @@ namespace HumanResource.Grpc.Services
 
             return new DeleteDepartmentResponse { IsSuccess = true };
         }
+
+        public override async Task<ListEmployeesResponse> ListEmployees(ListEmployeesRequest request, ServerCallContext context)
+        {
+            logger.LogInformation("Listing employees for department with id={Id}", request.Id);
+
+            var result = new ListEmployeesResponse();
+
+            var department = await dbContext.Departments
+                .Include(d => d.Users)
+                .FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsCancelled);
+
+            if (department is null)
+            {
+                logger.LogWarning("Department with id={Id} not found for employee listing.", request.Id);
+                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_DEPARTMENT_WITH_ID(request.Id)));
+            }
+
+            logger.LogInformation("Found {Count} employees in department with id={Id}.", department.Users.Count(), request.Id);
+
+            var employeeList = department.Users
+                .Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(user => new EmployeeSummaryModel
+                {
+                    Id = user.Id,
+                    Code = user.Code,
+                    Name = user.Name,
+                    IsSuspended = user.IsSuspended,
+                    ProfilePictureUrl = user.ProfilePictureUrl ?? string.Empty
+                })
+                .ToList();
+
+            result.Count = department.Users.Count();
+            result.PageIndex = request.PageIndex;
+            result.PageSize = request.PageSize;
+            result.Data.AddRange(employeeList);
+
+            return result;
+        }
     }
 }
