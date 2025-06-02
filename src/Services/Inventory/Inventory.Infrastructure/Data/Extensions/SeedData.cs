@@ -556,6 +556,201 @@
             };
         }
 
+        private static List<MedicinePrice> CreateMedicinePrices()
+        {
+            var now = DateTime.UtcNow;
+            return new List<MedicinePrice>
+            {
+                // COVID-19 Vaccine
+                new MedicinePrice
+                {
+                    MedicineId = 1,
+                    UnitPrice = 625000m,
+                    Currency = "VND",
+                    VatRate = 0.05,
+                    VatAmount = 31250m,
+                    OriginalPriceBeforeVat = 625000m,
+                    OriginalPriceAfterVat = 656250m,
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = now,
+                    CreatedBy = 1,
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1
+                },
+                // Influenza Vaccine
+                new MedicinePrice
+                {
+                    MedicineId = 2,
+                    UnitPrice = 387500m,
+                    Currency = "VND",
+                    VatRate = 0.05,
+                    VatAmount = 19375m,
+                    OriginalPriceBeforeVat = 387500m,
+                    OriginalPriceAfterVat = 406875m,
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = now,
+                    CreatedBy = 1,
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1
+                },
+                // Hepatitis B Vaccine
+                new MedicinePrice
+                {
+                    MedicineId = 3,
+                    UnitPrice = 768750m,
+                    Currency = "VND",
+                    VatRate = 0.05,
+                    VatAmount = 38438m,
+                    OriginalPriceBeforeVat = 768750m,
+                    OriginalPriceAfterVat = 807188m,
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = now,
+                    CreatedBy = 1,
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1
+                },
+                // Pneumococcal Vaccine
+                new MedicinePrice
+                {
+                    MedicineId = 4,
+                    UnitPrice = 1125000m,
+                    Currency = "VND",
+                    VatRate = 0.05,
+                    VatAmount = 56250m,
+                    OriginalPriceBeforeVat = 1125000m,
+                    OriginalPriceAfterVat = 1181250m,
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = now,
+                    CreatedBy = 1,
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1
+                },
+                // MMR Vaccine
+                new MedicinePrice
+                {
+                    MedicineId = 5,
+                    UnitPrice = 562500m,
+                    Currency = "VND",
+                    VatRate = 0.05,
+                    VatAmount = 28125m,
+                    OriginalPriceBeforeVat = 562500m,
+                    OriginalPriceAfterVat = 590625m,
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = now,
+                    CreatedBy = 1,
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1
+                },
+                // Tdap Vaccine
+                new MedicinePrice
+                {
+                    MedicineId = 6,
+                    UnitPrice = 881250m,
+                    Currency = "VND",
+                    VatRate = 0.05,
+                    VatAmount = 44063m,
+                    OriginalPriceBeforeVat = 881250m,
+                    OriginalPriceAfterVat = 925313m,
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = now,
+                    CreatedBy = 1,
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1
+                },
+                // Varicella Vaccine
+                new MedicinePrice
+                {
+                    MedicineId = 7,
+                    UnitPrice = 718750m,
+                    Currency = "VND",
+                    VatRate = 0.05,
+                    VatAmount = 35938m,
+                    OriginalPriceBeforeVat = 718750m,
+                    OriginalPriceAfterVat = 754688m,
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = now,
+                    CreatedBy = 1,
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1
+                },
+                // HPV Vaccine
+                new MedicinePrice
+                {
+                    MedicineId = 8,
+                    UnitPrice = 3000000m,
+                    Currency = "VND",
+                    VatRate = 0.05,
+                    VatAmount = 150000m,
+                    OriginalPriceBeforeVat = 3000000m,
+                    OriginalPriceAfterVat = 3150000m,
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = now,
+                    CreatedBy = 1,
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1
+                },
+                // Polio Vaccine (IPV)
+                new MedicinePrice
+                {
+                    MedicineId = 9,
+                    UnitPrice = 462500m,
+                    Currency = "VND",
+                    VatRate = 0.05,
+                    VatAmount = 23125m,
+                    OriginalPriceBeforeVat = 462500m,
+                    OriginalPriceAfterVat = 485625m,
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = now,
+                    CreatedBy = 1,
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1
+                },
+                // Meningococcal Vaccine
+                new MedicinePrice
+                {
+                    MedicineId = 10,
+                    UnitPrice = 1631250m,
+                    Currency = "VND",
+                    VatRate = 0.05,
+                    VatAmount = 81563m,
+                    OriginalPriceBeforeVat = 1631250m,
+                    OriginalPriceAfterVat = 1712813m,
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = now,
+                    CreatedBy = 1,
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1
+                },
+                // Historical price for COVID-19 Vaccine
+                new MedicinePrice
+                {
+                    MedicineId = 1,
+                    UnitPrice = 575000m,
+                    Currency = "VND",
+                    VatRate = 0.05,
+                    VatAmount = 28750m,
+                    OriginalPriceBeforeVat = 575000m,
+                    OriginalPriceAfterVat = 603750m,
+                    IsSuspended = false,
+                    IsCancelled = false,
+                    CreatedAt = now.AddMonths(-3),
+                    CreatedBy = 1,
+                    LastUpdatedAt = now.AddMonths(-3),
+                    LastUpdatedBy = 1
+                }
+            };
+        }
+
         private static async Task SeedAsync(ApplicationDbContext context)
         {
             if (!await context.WarehouseTypes.AnyAsync())
@@ -623,6 +818,14 @@
             {
                 var manufacturers = CreateNewManufacturers();
                 await context.Manufacturers.AddRangeAsync(manufacturers);
+                await context.SaveChangesAsync();
+            }
+
+            // Seed Medicine Prices
+            if (!await context.MedicinePrices.AnyAsync())
+            {
+                var medicinePrices = CreateMedicinePrices();
+                await context.MedicinePrices.AddRangeAsync(medicinePrices);
                 await context.SaveChangesAsync();
             }
         }
