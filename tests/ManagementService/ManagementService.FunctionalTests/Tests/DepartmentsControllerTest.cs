@@ -22,7 +22,7 @@ public class DepartmentsControllerTest : BaseFunctionalTest
     }
 
     [Fact]
-    public async Task CallApi_NotAuthenticated_ReturnUnauthorized()
+    public async Task GetDepartments_NotAuthenticated_ReturnUnauthorized()
     {
         // Arrange
         _client.DefaultRequestHeaders.Authorization = null;
@@ -77,6 +77,34 @@ public class DepartmentsControllerTest : BaseFunctionalTest
     }
 
     [Fact]
+    public async Task GetDepartments_InvalidPaginationRequest_ReturnBadRequest()
+    {
+        // Arrange
+        SetAuthHeader();
+
+        // Act
+        var response = await _client.GetAsync("/departments?pageIndex=-1");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task GetDepartmentById_NotAuthenticated_ReturnUnauthorized()
+    {
+        // Arrange
+        _client.DefaultRequestHeaders.Authorization = null;
+
+        var departmentId = 1;
+
+        // Act
+        var response = await _client.GetAsync($"/departments/{departmentId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
     public async Task GetDepartmentById_ReturnSuccess()
     {
         // Arrange
@@ -118,6 +146,42 @@ public class DepartmentsControllerTest : BaseFunctionalTest
         var result = await response.Content.ReadFromJsonAsync<GetDepartmentByIdResult>();
         result.Should().NotBeNull();
         result.Department.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetDepartmentById_WithInvalidId_ReturnBadRequest()
+    {
+        // Arrange
+        SetAuthHeader();
+
+        var departmentId = -1;
+
+        // Act
+        var response = await _client.GetAsync($"/departments/{departmentId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task CreateDepartment_NotAuthenticated_ReturnUnauthorized()
+    {
+        // Arrange
+        _client.DefaultRequestHeaders.Authorization = null;
+
+        var request = new CreateDepartmentRequest
+        {
+            Code = "TD001",
+            Name = "Test Department",
+            NameInEnglish = "Test Department EN",
+            DepartmentTypeId = 1
+        };
+
+        // Act
+        var response = await _client.PostAsJsonAsync($"/departments", request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
@@ -191,6 +255,31 @@ public class DepartmentsControllerTest : BaseFunctionalTest
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task UpdateDepartment_NotAuthenticated_ReturnUnauthorized()
+    {
+        // Arrange
+        _client.DefaultRequestHeaders.Authorization = null;
+
+        var departmentId = 1;
+        var request = new UpdateDepartmentRequest
+        {
+            Id = departmentId,
+            Code = "TD001",
+            Name = "Test Department",
+            NameInEnglish = "Test Department EN",
+            DepartmentTypeId = 1,
+            IsSuspended = false,
+            IsCancelled = false
+        };
+
+        // Act
+        var response = await _client.PutAsJsonAsync($"/departments", request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
     [Fact]
@@ -270,6 +359,21 @@ public class DepartmentsControllerTest : BaseFunctionalTest
     }
 
     [Fact]
+    public async Task DeleteDepartment_NotAuthenticated_ReturnUnauthorized()
+    {
+        // Arrange
+        _client.DefaultRequestHeaders.Authorization = null;
+
+        var departmentId = 1;
+
+        // Act
+        var response = await _client.DeleteAsync($"/departments/{departmentId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
     public async Task DeleteDepartment_ReturnSuccess()
     {
         // Arrange
@@ -291,11 +395,6 @@ public class DepartmentsControllerTest : BaseFunctionalTest
             )
             .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
 
-        var request = new DeleteDepartmentRequest
-        {
-            Id = departmentId
-        };
-
         // Act
         var response = await _client.DeleteAsync($"/departments/{departmentId}");
 
@@ -307,7 +406,35 @@ public class DepartmentsControllerTest : BaseFunctionalTest
     }
 
     [Fact]
-    public async Task GetDepartmentTypess_ReturnSuccess()
+    public async Task DeleteDepartment_WithInvalidId_ReturnBadRequest()
+    {
+        // Arrange
+        SetAuthHeader();
+
+        var departmentId = -1;
+
+        // Act
+        var response = await _client.DeleteAsync($"/departments/{departmentId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task GetDepartmentTypes_NotAuthenticated_ReturnUnauthorized()
+    {
+        // Arrange
+        _client.DefaultRequestHeaders.Authorization = null;
+
+        // Act
+        var response = await _client.GetAsync("/departments/types");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task GetDepartmentTypes_ReturnSuccess()
     {
         // Arrange
         SetAuthHeader();
@@ -353,6 +480,19 @@ public class DepartmentsControllerTest : BaseFunctionalTest
     }
 
     [Fact]
+    public async Task GetEmployeesOfDepartment_NotAuthenticated_ReturnUnauthorized()
+    {
+        // Arrange
+        _client.DefaultRequestHeaders.Authorization = null;
+
+        // Act
+        var response = await _client.GetAsync("/departments/1/employees");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
     public async Task GetEmployeesOfDepartment_ReturnSuccess()
     {
         // Arrange
@@ -390,5 +530,18 @@ public class DepartmentsControllerTest : BaseFunctionalTest
         var result = await response.Content.ReadFromJsonAsync<GetEmployeesByDepartmentIdResult>();
         result.Should().NotBeNull();
         result.EmployeeList.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task GetEmployeesOfDepartment_InvalidPaginationRequest_ReturnBadRequest()
+    {
+        // Arrange
+        SetAuthHeader();
+
+        // Act
+        var response = await _client.GetAsync("/departments/1/employees?pageIndex=-1");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }
