@@ -13,6 +13,8 @@ service DepartmentProtoService {
   rpc CreateDepartment (CreateDepartmentRequest) returns (DepartmentDetailModel);
   rpc UpdateDepartment (UpdateDepartmentRequest) returns (DepartmentDetailModel);
   rpc DeleteDepartment (DeleteDepartmentRequest) returns (DeleteDepartmentResponse);
+  
+  rpc ListEmployees (ListEmployeesRequest) returns (ListEmployeesResponse);
 }
 
 // ---------- Request & Response ----------
@@ -58,6 +60,19 @@ message DeleteDepartmentResponse {
   bool isSuccess = 1;
 }
 
+message ListEmployeesRequest {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  int32 id = 3;
+}
+
+message ListEmployeesResponse {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  int32 count = 3;
+  repeated EmployeeSummaryModel data = 4;
+}
+
 // ---------- Data Models ----------
 message DepartmentSummaryModel {
   int32 id = 1;
@@ -83,4 +98,12 @@ message DepartmentDetailModel {
   int32 createdBy = 11;
   google.protobuf.Timestamp lastUpdatedAt = 12;
   int32 lastUpdatedBy = 13;
+}
+
+message EmployeeSummaryModel {
+  int32 id = 1;
+  string code = 2;
+  string name = 3;
+  bool isSuspended = 4;
+  string profilePictureUrl = 5;
 }

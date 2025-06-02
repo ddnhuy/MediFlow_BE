@@ -351,4 +351,44 @@ public class DepartmentsControllerTest : BaseFunctionalTest
         result.Should().NotBeNull();
         result.DepartmentTypes.Should().NotBeNull();
     }
+
+    [Fact]
+    public async Task GetEmployeesOfDepartment_ReturnSuccess()
+    {
+        // Arrange
+        SetAuthHeader();
+
+        var grpcResponse = new HumanResource.Grpc.ListEmployeesResponse
+        {
+            PageIndex = 1,
+            PageSize = 100,
+            Count = 10,
+            Data = { new HumanResource.Grpc.EmployeeSummaryModel
+            {
+                Id = 1,
+                Code = "TD001",
+                Name = "Test Department",
+                IsSuspended = false,
+                ProfilePictureUrl = "https://example.com/profile.jpg",
+            } }
+        };
+
+        _grpcDepartmentClientMock?
+            .ListEmployeesAsync(
+                Arg.Any<HumanResource.Grpc.ListEmployeesRequest>(),
+                Arg.Any<Metadata>(),
+                Arg.Any<DateTime?>(),
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
+
+        // Act
+        var response = await _client.GetAsync("/departments/1/employees");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<GetEmployeesByDepartmentIdResult>();
+        result.Should().NotBeNull();
+        result.EmployeeList.Should().NotBeNull();
+    }
 }

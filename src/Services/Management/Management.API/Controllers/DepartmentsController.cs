@@ -128,5 +128,19 @@ namespace Management.API.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("{departmentId}/employees")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [EndpointSummary("Get Employees")]
+        [EndpointDescription("Get Employees By Department Id")]
+        public async Task<IActionResult> GetEmployeesByDepartmentId([FromRoute] int departmentId, [FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 100)
+        {
+            var query = new GetEmployeesByDepartmentIdQuery(departmentId, pageIndex, pageSize);
+
+            var result = await sender.Send(query);
+
+            return Ok(result);
+        }
     }
 }
