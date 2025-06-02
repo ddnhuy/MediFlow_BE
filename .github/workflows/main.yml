@@ -5,8 +5,8 @@ on:
     branches: ["main", "develop"]
 
 env:
-  API_SERVICES: "Authentication Inventory Management"
-  GRPC_SERVICES: "HumanResource"
+  API_SERVICES: "Authentication Inventory Management VaccinationReception"
+  GRPC_SERVICES: "HumanResource CustomerInfo"
   GATEWAYS: "YarpApiGateWay"
   CHART_DIR: ./helm
   RELEASE_NAME: mediflow

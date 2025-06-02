@@ -92,6 +92,7 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
     depends_on:
       - postgres_db
+      - customerinfo.grpc
     ports:
       - "6065:8080"
       - "8081"

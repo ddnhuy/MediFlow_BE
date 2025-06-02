@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-info-grpc
+spec:
+  selector:
+    app: customer-info-grpc
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      name: http
+      targetPort: 8080
+  type: {{ .Values.service.type }}
