@@ -52,6 +52,13 @@ data:
               "Path": "/management/{**catch-all}"
             },
             "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          },
+          "vaccination-reception-route": {
+            "ClusterId": "vaccination-reception-cluster",
+            "Match": {
+              "Path": "/vaccination-reception/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
           }
         },
         "Clusters": {
@@ -73,6 +80,13 @@ data:
             "Destinations": {
               "default": {
                 "Address": "http://management-service:80"
+              }
+            }
+          },
+          "vaccination-reception-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://vaccination-reception-service:80"
               }
             }
           }

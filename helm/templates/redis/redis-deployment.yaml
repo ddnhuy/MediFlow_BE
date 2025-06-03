@@ -29,10 +29,10 @@ spec:
             - "Mediflow@123"
           resources:
             requests:
-              cpu: "100m"
+              cpu: "50m"
               memory: "128Mi"
             limits:
-              cpu: "250m"
+              cpu: "100m"
               memory: "256Mi"
           volumeMounts:
             - name: redis-storage
