@@ -266,7 +266,6 @@ public class DepartmentsControllerTest : BaseFunctionalTest
         var departmentId = 1;
         var request = new UpdateDepartmentRequest
         {
-            Id = departmentId,
             Code = "TD001",
             Name = "Test Department",
             NameInEnglish = "Test Department EN",
@@ -276,7 +275,7 @@ public class DepartmentsControllerTest : BaseFunctionalTest
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync($"/departments", request);
+        var response = await _client.PutAsJsonAsync($"/departments/{departmentId}", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -292,7 +291,6 @@ public class DepartmentsControllerTest : BaseFunctionalTest
 
         var grpcResponse = new HumanResource.Grpc.DepartmentDetailModel
         {
-            Id = departmentId,
             Code = "TD001",
             Name = "Test Department",
             NameInEnglish = "Test Department EN",
@@ -328,7 +326,7 @@ public class DepartmentsControllerTest : BaseFunctionalTest
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync($"/departments", request);
+        var response = await _client.PutAsJsonAsync($"/departments/{departmentId}", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -352,7 +350,7 @@ public class DepartmentsControllerTest : BaseFunctionalTest
         };
 
         // Act
-        var response = await _client.PutAsJsonAsync($"/departments", request);
+        var response = await _client.PutAsJsonAsync($"/departments/0", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
