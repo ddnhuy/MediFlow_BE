@@ -67,25 +67,25 @@ namespace Management.API.Controllers
         }
         public record CreateUserRequest(string UserName, string Email, string Password, string PhoneNumber, string Code, string Name, string Address, string ProfilePictureUrl, List<string> RoleNames, List<int> DepartmentIds);
 
-        [HttpPut]
+        [HttpPut("{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [EndpointSummary("Update User")]
         [EndpointDescription("Update User")]
-        public async Task<IActionResult> UpdateUserAsync([FromBody] UpdateUserRequest request)
+        public async Task<IActionResult> UpdateUserAsync(int userId, [FromBody] UpdateUserRequest request)
         {
             if (!ModelState.IsValid)
             {
                 throw new BadRequestException(ValidationStrings.INVALID_USER_DATA);
             }
 
-            var command = new UpdateUserCommand(request.Id, request.UserName, request.Email, request.PhoneNumber, request.Code, request.Name, request.Address, request.ProfilePictureUrl, request.RoleNames, request.DepartmentIds, request.IsSuspended, int.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value));
+            var command = new UpdateUserCommand(userId, request.UserName, request.Email, request.PhoneNumber, request.Code, request.Name, request.Address, request.ProfilePictureUrl, request.RoleNames, request.DepartmentIds, request.IsSuspended, int.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value));
 
             var result = await sender.Send(command);
 
             return Ok(result);
         }
-        public record UpdateUserRequest(int Id, string UserName, string Email, string PhoneNumber, string Code, string Name, string Address, string ProfilePictureUrl, List<string> RoleNames, List<int> DepartmentIds, bool IsSuspended);
+        public record UpdateUserRequest(string UserName, string Email, string PhoneNumber, string Code, string Name, string Address, string ProfilePictureUrl, List<string> RoleNames, List<int> DepartmentIds, bool IsSuspended);
 
         [HttpDelete("{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

@@ -283,7 +283,6 @@ public class UsersControllerTest : BaseFunctionalTest
             .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
 
         var request = new UpdateUserRequest(
-            userId,
             "testuser",
             "testemail@gmail.com",
             "1234567890",
@@ -297,7 +296,7 @@ public class UsersControllerTest : BaseFunctionalTest
         );
 
         // Act
-        var response = await _client.PutAsJsonAsync($"/users", request);
+        var response = await _client.PutAsJsonAsync($"/users/{userId}", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -313,7 +312,6 @@ public class UsersControllerTest : BaseFunctionalTest
         SetAuthHeader();
 
         var request = new UpdateUserRequest(
-            0,
             "testuser",
             "testemail@gmail.com",
             "1234567890",
@@ -327,7 +325,7 @@ public class UsersControllerTest : BaseFunctionalTest
         );
 
         // Act
-        var response = await _client.PutAsJsonAsync($"/users", request);
+        var response = await _client.PutAsJsonAsync($"/users/0", request);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

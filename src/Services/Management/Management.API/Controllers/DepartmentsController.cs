@@ -71,16 +71,16 @@ namespace Management.API.Controllers
         }
         public record CreateDepartmentRequest(string Code, string Name, string NameInEnglish, int DepartmentTypeId);
 
-        [HttpPut]
+        [HttpPut("{departmentId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [EndpointSummary("Update Department")]
         [EndpointDescription("Update Department")]
-        public async Task<IActionResult> UpdateDepartment([FromBody] UpdateDepartmentRequest request)
+        public async Task<IActionResult> UpdateDepartment(int departmentId, [FromBody] UpdateDepartmentRequest request)
         {
             var command = new UpdateDepartmentCommand(
-                request.Id,
+                departmentId,
                 request.Code,
                 request.Name,
                 request.NameInEnglish,
@@ -93,7 +93,7 @@ namespace Management.API.Controllers
 
             return Ok(result);
         }
-        public record UpdateDepartmentRequest(int Id, string Code, string Name, string NameInEnglish, int DepartmentTypeId, bool IsSuspended, bool IsCancelled);
+        public record UpdateDepartmentRequest(string Code, string Name, string NameInEnglish, int DepartmentTypeId, bool IsSuspended, bool IsCancelled);
 
         [HttpDelete("{departmentId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]

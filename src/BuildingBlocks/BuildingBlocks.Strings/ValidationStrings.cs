@@ -87,6 +87,23 @@
         public const string REQUIRED_INTERACTION_EFFECT = "Tác dụng tương tác là bắt buộc.";
         public const string INVALID_SEVERITY_LEVEL = "Mức độ nghiêm trọng không hợp lệ.";
 
+        // Medicine price validation
+        public const string REQUIRED_MEDICINE_PRICE_ID = "Mã giá thuốc là bắt buộc.";
+        public const string INVALID_MEDICINE_PRICE_ID = "Mã giá thuốc phải lớn hơn 0.";
+        public const string REQUIRED_UNIT_PRICE = "Đơn giá là bắt buộc.";
+        public const string INVALID_UNIT_PRICE = "Đơn giá không hợp lệ.";
+        public const string REQUIRED_CURRENCY = "Loại tiền tệ là bắt buộc.";
+        public const string INVALID_CURRENCY_FORMAT = "Loại tiền tệ không đúng định dạng.";
+        public const string REQUIRED_VAT_RATE = "Tỷ lệ VAT là bắt buộc.";
+        public const string INVALID_VAT_RATE = "Tỷ lệ VAT không hợp lệ.";
+        public const string REQUIRED_VAT_AMOUNT = "Giá trị VAT là bắt buộc.";
+        public const string INVALID_VAT_AMOUNT = "Giá trị VAT không hợp lệ.";
+        public const string REQUIRED_PRICE_BEFORE_VAT = "Giá trước VAT là bắt buộc.";
+        public const string INVALID_PRICE_BEFORE_VAT = "Giá trước VAT không hợp lệ.";
+        public const string REQUIRED_PRICE_AFTER_VAT = "Giá sau VAT là bắt buộc.";
+        public const string INVALID_PRICE_AFTER_VAT = "Giá sau VAT không hợp lệ.";
+        public const string NOT_FOUND_MEDICINE_PRICE = "Không tìm thấy giá thuốc với ID {0}.";
+
         // Inventory operation validation
         public const string REQUIRED_QUANTITY = "Số lượng là bắt buộc.";
         public const string INVALID_QUANTITY = "Số lượng không hợp lệ.";
