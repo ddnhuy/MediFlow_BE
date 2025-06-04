@@ -329,13 +329,10 @@
         {
             logger.LogInformation("Login attempt for user: {UserName}", request.UserName);
 
-            var user = await dbContext.Users
-                .Include(x => x.Departments)
-                .ThenInclude(x => x.DepartmentType)
-                .FirstOrDefaultAsync(x => x.UserName == request.UserName && !x.IsCancelled);
-            if (user == null)
+            var user = await userManager.FindByNameAsync(request.UserName);
+            if (user == null || user.IsCancelled)
             {
-                logger.LogWarning("User not found: {UserName}", request.UserName);
+                logger.LogWarning("Login failed: user not found or cancelled.");
                 return new LoginResponse
                 {
                     IsSuccess = false,
@@ -346,7 +343,7 @@
             var result = await userManager.CheckPasswordAsync(user, request.Password);
             if (!result)
             {
-                logger.LogWarning("Invalid password attempt for user: {UserName}", request.UserName);
+                logger.LogWarning("Login failed: invalid password for user: {UserName}", request.UserName);
                 return new LoginResponse
                 {
                     IsSuccess = false,
@@ -354,7 +351,13 @@
                 };
             }
 
-            var userModel = user.Adapt<ApplicationUserDetailModel>();
+            var fullUser = await dbContext.Users
+                .AsNoTracking()
+                .Include(x => x.Departments)
+                .ThenInclude(x => x.DepartmentType)
+                .FirstAsync(x => x.Id == user.Id);
+
+            var userModel = fullUser.Adapt<ApplicationUserDetailModel>();
             var roles = await userManager.GetRolesAsync(user);
             userModel.Roles = string.Join(",", roles);
 
