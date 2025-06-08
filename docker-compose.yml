@@ -49,6 +49,12 @@ services:
       context: .
       dockerfile: src/Services/Management/Management.API/Dockerfile
 
+  hospitalservice.api:
+    image: ${DOCKER_REGISTRY-}hospitalserviceapi
+    build:
+      context: .
+      dockerfile: src/Services/HospitalService/HospitalService.API/Dockerfile
+
 volumes:
   postgres_db:
   redis_data:
