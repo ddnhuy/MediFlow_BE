@@ -30,12 +30,13 @@ namespace HospitalService.Infrastructure.Helpers
             get
             {
                 var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (int.TryParse(userIdClaim, out var id))
+
+                if (!string.IsNullOrWhiteSpace(userIdClaim) && int.TryParse(userIdClaim, out var userId))
                 {
-                    return id;
+                    return userId;
                 }
 
-                _logger.LogWarning("Unable to retrieve valid UserId from claims.");
+                _logger.LogWarning("Failed to parse UserId from claims. Value: {UserIdClaim}", userIdClaim);
                 return 0;
             }
         }

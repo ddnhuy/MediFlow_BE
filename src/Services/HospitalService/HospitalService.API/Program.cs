@@ -37,26 +37,28 @@ namespace HospitalService.API
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+                var logger = services.GetRequiredService<ILogger<Program>>();
+
                 try
                 {
-                    var context = services.GetRequiredService<ApplicationDbContext>();
-                    context.Database.Migrate();
+                    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+                    logger.LogInformation("Applying pending EF Core migrations...");
+                    dbContext.Database.Migrate();
+                    logger.LogInformation("Database migration completed successfully.");
                 }
                 catch (Exception ex)
                 {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while migrating the database.");
+                    logger.LogError(ex, "An error occurred during database migration.");
                     throw;
                 }
             }
 
             app.UseApiServices();
 
-            app.UseHealthChecks("/health",
-                new HealthCheckOptions
-                {
-                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                });
+            app.UseHealthChecks("/health", new HealthCheckOptions
+            {
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
 
             app.Run();
         }
