@@ -17,18 +17,18 @@ namespace HospitalService.Infrastructure.Consts
             public const bool DefaultIsCancelled = false;
         }
 
+        public static class ServiceGroups
+        {
+            public const string BasicVaccination = "Nhóm dịch vụ tiêm chủng cơ bản";
+            public const string SpecialVaccination = "Nhóm dịch vụ tiêm chủng đặc biệt";
+        }
+
         public static class DiseaseGroups
         {
             public const string Infectious = "Nhóm bệnh truyền nhiễm";
             public const string NonInfectious = "Nhóm bệnh không truyền nhiễm";
             public const string InfectiousDesc = "Các bệnh có khả năng lây truyền từ người sang người";
             public const string NonInfectiousDesc = "Các bệnh không có khả năng lây truyền";
-        }
-
-        public static class ServiceGroups
-        {
-            public const string BasicVaccination = "Nhóm dịch vụ tiêm chủng cơ bản";
-            public const string SpecialVaccination = "Nhóm dịch vụ tiêm chủng đặc biệt";
         }
 
         public static class Services
