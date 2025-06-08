@@ -12,12 +12,13 @@ namespace HospitalService.Infrastructure.SeedDatas
     {
         private static ServiceGroup SetBaseProperties(ServiceGroup entity)
         {
-            entity.CreatedAt = SeedConstants.BaseProperties.SeedDate;
-            entity.CreatedBy = SeedConstants.BaseProperties.DefaultCreatedBy;
-            entity.LastUpdatedAt = SeedConstants.BaseProperties.SeedDate;
-            entity.LastUpdatedBy = SeedConstants.BaseProperties.DefaultLastUpdatedBy;
             entity.IsSuspended = SeedConstants.BaseProperties.DefaultIsSuspended;
+            entity.LastUpdatedAt = SeedConstants.BaseProperties.SeedDate;
+            entity.CreatedBy = SeedConstants.BaseProperties.DefaultCreatedBy;
             entity.IsCancelled = SeedConstants.BaseProperties.DefaultIsCancelled;
+            entity.LastUpdatedBy = SeedConstants.BaseProperties.DefaultLastUpdatedBy;
+            entity.CreatedAt = SeedConstants.BaseProperties.SeedDate;
+
             return entity;
         }
 

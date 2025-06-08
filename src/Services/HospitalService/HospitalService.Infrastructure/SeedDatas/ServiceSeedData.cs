@@ -12,12 +12,12 @@ namespace HospitalService.Infrastructure.SeedDatas
     {
         private static Service SetBaseProperties(Service entity)
         {
-            entity.CreatedAt = SeedConstants.BaseProperties.SeedDate;
-            entity.CreatedBy = SeedConstants.BaseProperties.DefaultCreatedBy;
             entity.LastUpdatedAt = SeedConstants.BaseProperties.SeedDate;
-            entity.LastUpdatedBy = SeedConstants.BaseProperties.DefaultLastUpdatedBy;
-            entity.IsSuspended = SeedConstants.BaseProperties.DefaultIsSuspended;
             entity.IsCancelled = SeedConstants.BaseProperties.DefaultIsCancelled;
+            entity.CreatedBy = SeedConstants.BaseProperties.DefaultCreatedBy;
+            entity.IsSuspended = SeedConstants.BaseProperties.DefaultIsSuspended;
+            entity.CreatedAt = SeedConstants.BaseProperties.SeedDate;
+            entity.LastUpdatedBy = SeedConstants.BaseProperties.DefaultLastUpdatedBy;
             return entity;
         }
 

@@ -29,8 +29,8 @@ namespace HospitalService.Infrastructure
         }
 
         public virtual DbSet<DiseaseGroup> DiseaseGroups { get; set; }
-        public virtual DbSet<DiseaseGroupService> DiseaseGroupServices { get; set; }
         public virtual DbSet<ServiceGroup> ServiceGroups { get; set; }
+        public virtual DbSet<DiseaseGroupService> DiseaseGroupServices { get; set; }
         public virtual DbSet<ServiceGroupService> ServiceGroupServices { get; set; }
         public virtual DbSet<Service> Services { get; set; }
 
@@ -50,7 +50,7 @@ namespace HospitalService.Infrastructure
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, "Error saving changes to database");
+                _logger.LogError(exception, "Error save");
                 throw;
             }
         }
@@ -58,7 +58,6 @@ namespace HospitalService.Infrastructure
         private void SetUpdatedAt()
         {
             var userId = _userHelper.UserId;
-            _logger.LogDebug("Current user ID: {UserId}", userId);
 
             var entries = ChangeTracker.Entries()
                 .Where(e => e.Entity is IEntity &&
@@ -75,13 +74,6 @@ namespace HospitalService.Infrastructure
                     entity.CreatedAt = DateTime.UtcNow;
                     entity.CreatedBy = userId == 0 ? 1 : userId;
                 }
-
-                _logger.LogDebug("Updated entity {EntityType} (ID: {EntityId}) - State: {State}, CreatedBy: {CreatedBy}, LastUpdatedBy: {LastUpdatedBy}",
-                    entry.Entity.GetType().Name,
-                    entry.Property("Id").CurrentValue,
-                    entry.State,
-                    entity.CreatedBy,
-                    entity.LastUpdatedBy);
             }
         }
     }
