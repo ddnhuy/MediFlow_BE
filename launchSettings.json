@@ -10,7 +10,8 @@
         "yarpapigateway": "StartDebugging",
         "customerinfo.grpc": "StartDebugging",
         "vaccinationreception.api": "StartDebugging",
-        "management.api": "StartDebugging"
+        "management.api": "StartDebugging",
+        "workers.email": "StartDebugging"
       }
     }
   }

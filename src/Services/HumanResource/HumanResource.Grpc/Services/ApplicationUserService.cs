@@ -1,9 +1,15 @@
-﻿namespace HumanResource.Grpc.Services
+﻿using BuildingBlocks.Messaging.Contracts.Email;
+using BuildingBlocks.Messaging.Enums.BuildingBlocks.Messaging.Enums;
+using MassTransit;
+using MassTransit.Transports;
+
+namespace HumanResource.Grpc.Services
 {
     public class ApplicationUserService(
         ICurrentUserHelper currentUserHelper,
         UserManager<ApplicationUser> userManager,
         ApplicationDbContext dbContext,
+        IPublishEndpoint publishEndpoint,
         ILogger<ApplicationUserService> logger)
         : ApplicationUserProtoService.ApplicationUserProtoServiceBase
     {
@@ -317,6 +323,17 @@
             logger.LogInformation("Password for user {Email} reset to: {Password}", user.Email, newPassword);
 
             // Send Email
+            await publishEndpoint.Publish(new SendEmailMessage
+            {
+                To = user.Email!,
+                SubjectCode = EmailSubjectCode.ResetPasswordSuccess,
+                TemplateData = new Dictionary<string, string>
+                {
+                    ["FullName"] = user.Name ?? user.Email!,
+                    ["ResetTime"] = DateTime.Now.ToString("HH:mm dd/MM/yyyy"),
+                    ["NewPassword"] = newPassword,
+                }
+            }, context.CancellationToken);
 
             return new ResetPasswordResponse
             {
