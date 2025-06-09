@@ -5,7 +5,6 @@
         public string? MedicineCode { get; set; } = string.Empty;
         public string? MedicineName { get; set; } = string.Empty;
         public string? Unit { get; set; } = string.Empty;
-        public string? Manufacturer { get; set; } = string.Empty;
         public string? ActiveIngredient { get; set; } = string.Empty;
         public string? UsageInstructions { get; set; } = string.Empty;
         public string? Concentration { get; set; } = string.Empty;
@@ -16,7 +15,8 @@
         public string? Description { get; set; } = string.Empty;
         public string? Note { get; set; } = string.Empty;
         public string? RegistrationNumber { get; set; } = string.Empty;     
-        
+        public bool? IsRequiredTestingBeforeUse { get; set; } = false;
+
         public int? MedicineTypeId { get; set; }
         public MedicineType? MedicineType { get; set; } = default!;
 

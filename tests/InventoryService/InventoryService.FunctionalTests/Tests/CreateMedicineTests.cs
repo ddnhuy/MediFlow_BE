@@ -22,7 +22,7 @@ namespace Inventory.FunctionalTests.Tests
                 MedicineCode: "",
                 MedicineName: "",
                 Unit: "",
-                Manufacturer: "Test Manufacturer",
+                IsRequiredTestingBeforeUse: false,
                 ActiveIngredient: "Test Compound",
                 UsageInstructions: "Test instructions",
                 Concentration: "100mg",
