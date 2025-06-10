@@ -78,6 +78,7 @@
         public const string REQUIRED_REGISTRATION_NUMBER = "Số đăng ký là bắt buộc.";
         public const string REQUIRED_VALID_MEDICINE_TYPE = "Loại thuốc hợp lệ phải được chọn.";
         public const string REQUIRED_VALID_VACCINE_TYPE = "Loại vaccine hợp lệ phải được chọn.";
+        public const string REQUIRED_IS_REQUIRED_TESTING_BEFORE_USE = "Có cần thử trước khi tiêm hay không là bắt buộc";
 
         // Medicine interaction validation
         public const string REQUIRED_FIRST_MEDICINE = "Thuốc thứ nhất là bắt buộc.";
