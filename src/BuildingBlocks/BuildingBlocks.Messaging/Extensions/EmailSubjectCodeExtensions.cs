@@ -8,12 +8,12 @@ namespace BuildingBlocks.Messaging.Extensions
         {
             return code switch
             {
-                EmailSubjectCode.ResetPasswordSuccess => "Your password has been reset successfully",
-                EmailSubjectCode.AppointmentConfirmed => "Your vaccination appointment has been confirmed",
-                EmailSubjectCode.AppointmentReminder => "Upcoming vaccination appointment reminder",
-                EmailSubjectCode.AppointmentCancelled => "Your appointment has been cancelled",
-                EmailSubjectCode.ProfileUpdated => "Your profile has been updated",
-                _ => "Notification from MediFlow"
+                EmailSubjectCode.ResetPasswordSuccess => "Mật khẩu của bạn đã được đặt lại thành công",
+                EmailSubjectCode.AppointmentConfirmed => "Cuộc hẹn tiêm chủng của bạn đã được xác nhận",
+                EmailSubjectCode.AppointmentReminder => "Nhắc nhở cuộc hẹn tiêm chủng sắp tới",
+                EmailSubjectCode.AppointmentCancelled => "Cuộc hẹn của bạn đã bị hủy",
+                EmailSubjectCode.ProfileUpdated => "Hồ sơ của bạn đã được cập nhật",
+                _ => "Thông báo từ MediFlow"
             };
         }
     }

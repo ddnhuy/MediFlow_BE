@@ -307,22 +307,33 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found for reset: {Email}", request.Email);
-                return new ResetPasswordResponse { IsSuccess = false, Message = HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_EMAIL(request.Email) };
+                return new ResetPasswordResponse
+                {
+                    IsSuccess = false,
+                    Message = HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_EMAIL(request.Email)
+                };
             }
 
-            var token = await userManager.GeneratePasswordResetTokenAsync(user);
+            var generateTokenTask = userManager.GeneratePasswordResetTokenAsync(user);
             var newPassword = PasswordGenerator.GenerateSecurePassword();
+
+            var token = await generateTokenTask;
 
             var result = await userManager.ResetPasswordAsync(user, token, newPassword);
             if (!result.Succeeded)
             {
-                logger.LogWarning("Failed to reset password for user {Email}: {Errors}", user.Email, string.Join("; ", result.Errors.Select(e => e.Description)));
-                return new ResetPasswordResponse { IsSuccess = false, Message = HumanResourceExceptionStrings.FAILED_RESET_PASSWORD };
+                var errorDescriptions = string.Join("; ", result.Errors.Select(e => e.Description));
+                logger.LogWarning("Failed to reset password for user {Email}: {Errors}", user.Email, errorDescriptions);
+
+                return new ResetPasswordResponse
+                {
+                    IsSuccess = false,
+                    Message = HumanResourceExceptionStrings.FAILED_RESET_PASSWORD
+                };
             }
 
-            logger.LogInformation("Password for user {Email} reset to: {Password}", user.Email, newPassword);
+            logger.LogInformation("Password for user {Email} has been reset successfully.", user.Email);
 
-            // Send Email
             await publishEndpoint.Publish(new SendEmailMessage
             {
                 To = user.Email!,
@@ -346,7 +357,11 @@ namespace HumanResource.Grpc.Services
         {
             logger.LogInformation("Login attempt for user: {UserName}", request.UserName);
 
-            var user = await userManager.FindByNameAsync(request.UserName);
+            var user = await dbContext.Users
+                .Include(x => x.Departments)
+                    .ThenInclude(x => x.DepartmentType)
+                .FirstOrDefaultAsync(x => x.UserName == request.UserName);
+
             if (user == null || user.IsCancelled)
             {
                 logger.LogWarning("Login failed: user not found or cancelled.");
@@ -357,8 +372,8 @@ namespace HumanResource.Grpc.Services
                 };
             }
 
-            var result = await userManager.CheckPasswordAsync(user, request.Password);
-            if (!result)
+            var identityUser = await userManager.FindByIdAsync(user.Id.ToString());
+            if (identityUser == null || !await userManager.CheckPasswordAsync(identityUser, request.Password))
             {
                 logger.LogWarning("Login failed: invalid password for user: {UserName}", request.UserName);
                 return new LoginResponse
@@ -368,14 +383,11 @@ namespace HumanResource.Grpc.Services
                 };
             }
 
-            var fullUser = await dbContext.Users
-                .AsNoTracking()
-                .Include(x => x.Departments)
-                .ThenInclude(x => x.DepartmentType)
-                .FirstAsync(x => x.Id == user.Id);
+            var getRolesTask = userManager.GetRolesAsync(identityUser);
 
-            var userModel = fullUser.Adapt<ApplicationUserDetailModel>();
-            var roles = await userManager.GetRolesAsync(user);
+            var userModel = user.Adapt<ApplicationUserDetailModel>();
+
+            var roles = await getRolesTask;
             userModel.Roles = string.Join(",", roles);
 
             logger.LogInformation("User logged in successfully: {UserName}", user.UserName);

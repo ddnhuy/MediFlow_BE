@@ -52,6 +52,12 @@ services:
       context: .
       dockerfile: src/Services/Management/Management.API/Dockerfile
 
+  filestorage.api:
+    image: ${DOCKER_REGISTRY-}filestorageapi
+    build:
+      context: .
+      dockerfile: src/Services/FileStorage/FileStorage.API/Dockerfile
+
   workers.email:
     image: ${DOCKER_REGISTRY-}workersemail
     build:
@@ -61,4 +67,5 @@ services:
 volumes:
   postgres_db:
   redis_data:
+
 
