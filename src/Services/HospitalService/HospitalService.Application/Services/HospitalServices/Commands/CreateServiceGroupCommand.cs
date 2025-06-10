@@ -47,6 +47,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
                 };
 
                 await _serviceGroupRepository.AddAsync(serviceGroup);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
 
                 if (request.ServiceIds != null && request.ServiceIds.Any())
                 {
@@ -57,6 +58,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
                     });
 
                     await _serviceGroupServiceRepository.AddRangeAsync(serviceGroupServices);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
                 }
 
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
@@ -67,9 +69,10 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
             catch (Exception ex)
             {
                 await _unitOfWork.RollbackTransactionAsync(cancellationToken);
-                _logger.LogError(ex, "Error occurred while creating service group");
+                _logger.LogError(ex, "Error occurred while creating service group: {Message}", ex.InnerException?.Message ?? ex.Message);
                 throw;
             }
+
         }
     }
 }

@@ -22,7 +22,7 @@ namespace HospitalService.FunctionalTests.Tests
             var request = new { GroupName = "Test Group", ServiceIds = new List<int> { 1, 2 } };
 
             // Act
-            var response = await _client.PostAsJsonAsync("/servicegroups", request);
+            var response = await _client.PostAsJsonAsync("/service-groups", request);
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -34,7 +34,7 @@ namespace HospitalService.FunctionalTests.Tests
             // Arrange
             var request = new { GroupName = "", ServiceIds = new List<int> { 1 } };
             // Act
-            var response = await _client.PostAsJsonAsync("/servicegroups", request);
+            var response = await _client.PostAsJsonAsync("/service-groups", request);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -47,7 +47,7 @@ namespace HospitalService.FunctionalTests.Tests
             var request = new { GroupName = "Test Group", ServiceIds = new List<int> { 1, 2 } };
 
             // Act
-            var response = await _client.PostAsJsonAsync("/servicegroups", request);
+            var response = await _client.PostAsJsonAsync("/service-groups", request);
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);

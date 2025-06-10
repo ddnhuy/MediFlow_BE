@@ -11,7 +11,7 @@ namespace HospitalService.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/servicegroups", async (CreateServiceGroupCommand command, ISender sender) =>
+            app.MapPost("/service-groups", async (CreateServiceGroupCommand command, ISender sender) =>
             {
                 var result = await sender.Send(command);
 
@@ -21,7 +21,7 @@ namespace HospitalService.API.Endpoints
                 }
 
                 var response = result.Adapt<CreateServiceGroupResponse>();
-                return Results.Created($"/servicegroups/{response.ServiceGroupId}", response);
+                return Results.Created($"/service-groups/{response.ServiceGroupId}", response);
             })
             .RequireAuthorization()
             .WithName("CreateServiceGroup")
