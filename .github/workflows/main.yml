@@ -5,9 +5,6 @@ on:
     branches: ["main", "develop"]
 
 env:
-  API_SERVICES: "Authentication Inventory Management VaccinationReception"
-  GRPC_SERVICES: "HumanResource CustomerInfo"
-  GATEWAYS: "YarpApiGateWay"
   CHART_DIR: ./helm
   RELEASE_NAME: mediflow
   NAMESPACE: mediflow
@@ -34,7 +31,6 @@ jobs:
 
   build-and-test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -51,74 +47,109 @@ jobs:
         uses: docker/setup-compose-action@v1
 
       - name: Build and start Docker Compose
-        run: |
-          docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up -d
+        run: docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up -d
 
       - name: Run tests
-        run: |
-          dotnet test MediFlow.sln --configuration Release
+        run: dotnet test MediFlow.sln --configuration Release
 
       - name: Clean up Docker containers
-        run: |
-          docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml down
+        run: docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml down
 
-  build-and-push:
+  build-and-push-grpc:
     needs: build-and-test
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        service: [HumanResource, CustomerInfo]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Log in to Docker_Hub
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ env.DOCKER_HUB_TOKEN }}
 
-      - name: Build and Push images for GRPC Services
-        env:
-          GRPC_SERVICES: ${{ env.GRPC_SERVICES }}
-          DOCKER_HUB_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
-          VERSION_TAG: ${{ env.VERSION_TAG }}
+      - name: Build and Push GRPC Service - ${{ matrix.service }}
         run: |
-          for SERVICE in $GRPC_SERVICES; do
-            SERVICE_LOWER=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')
-            IMAGE="$DOCKER_HUB_USERNAME/${SERVICE_LOWER}-grpc"
-            docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.Grpc/Dockerfile .
-            docker push $IMAGE:$VERSION_TAG
-          done
+          SERVICE=${{ matrix.service }}
+          SERVICE_LOWER=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')
+          IMAGE="$DOCKER_HUB_USERNAME/${SERVICE_LOWER}-grpc"
+          docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.Grpc/Dockerfile .
+          docker push $IMAGE:$VERSION_TAG
 
-      - name: Build and Push images for API Services
-        env:
-          API_SERVICES: ${{ env.API_SERVICES }}
-          DOCKER_HUB_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
-          VERSION_TAG: ${{ env.VERSION_TAG }}
-        run: |
-          for SERVICE in $API_SERVICES; do
-            SERVICE_LOWER=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')
-            IMAGE="$DOCKER_HUB_USERNAME/${SERVICE_LOWER}-service"
-            docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.API/Dockerfile .
-            docker push $IMAGE:$VERSION_TAG
-          done
+  build-and-push-api:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [Authentication, Inventory, Management, VaccinationReception, FileStorage]
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Build and Push images for API Gateways
-        env:
-          GATEWAYS: ${{ env.GATEWAYS }}
-          DOCKER_HUB_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
-          VERSION_TAG: ${{ env.VERSION_TAG }}
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ env.DOCKER_HUB_TOKEN }}
+
+      - name: Build and Push API Service - ${{ matrix.service }}
         run: |
-          for GATEWAY in $GATEWAYS; do
-            GATEWAY_LOWER=$(echo $GATEWAY | tr '[:upper:]' '[:lower:]')
-            IMAGE="$DOCKER_HUB_USERNAME/$GATEWAY_LOWER"
-            docker build -t $IMAGE:$VERSION_TAG -f ./src/ApiGateways/$GATEWAY/Dockerfile .
-            docker push $IMAGE:$VERSION_TAG
-          done
+          SERVICE=${{ matrix.service }}
+          SERVICE_LOWER=$(echo $SERVICE | tr '[:upper:]' '[:lower:]')
+          IMAGE="$DOCKER_HUB_USERNAME/${SERVICE_LOWER}-service"
+          docker build -t $IMAGE:$VERSION_TAG -f ./src/Services/$SERVICE/${SERVICE}.API/Dockerfile .
+          docker push $IMAGE:$VERSION_TAG
+
+  build-and-push-workers:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        worker: [Email]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ env.DOCKER_HUB_TOKEN }}
+
+      - name: Build and Push Worker - ${{ matrix.worker }}
+        run: |
+          WORKER=${{ matrix.worker }}
+          WORKER_LOWER=$(echo $WORKER | tr '[:upper:]' '[:lower:]')
+          IMAGE="$DOCKER_HUB_USERNAME/worker-${WORKER_LOWER}"
+          docker build -t $IMAGE:$VERSION_TAG -f ./src/Workers/Workers.${WORKER}/Dockerfile .
+          docker push $IMAGE:$VERSION_TAG
+
+  build-and-push-gateways:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        gateway: [YarpApiGateWay]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ env.DOCKER_HUB_TOKEN }}
+
+      - name: Build and Push Gateway - ${{ matrix.gateway }}
+        run: |
+          GATEWAY=${{ matrix.gateway }}
+          GATEWAY_LOWER=$(echo $GATEWAY | tr '[:upper:]' '[:lower:]')
+          IMAGE="$DOCKER_HUB_USERNAME/$GATEWAY_LOWER"
+          docker build -t $IMAGE:$VERSION_TAG -f ./src/ApiGateways/$GATEWAY/Dockerfile .
+          docker push $IMAGE:$VERSION_TAG
 
   deploy:
-    needs: build-and-push
+    needs: 
+      - build-and-push-workers
+      - build-and-push-grpc
+      - build-and-push-api
+      - build-and-push-gateways
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -136,7 +167,7 @@ jobs:
         run: helm upgrade --install $RELEASE_NAME $CHART_DIR -n $NAMESPACE --create-namespace --atomic --wait --set image.tag=${{ env.VERSION_TAG }}
 
   notify-end:
-    needs: [notify-start, build-and-test, build-and-push, deploy]
+    needs: [notify-start, build-and-test, build-and-push-workers, build-and-push-grpc, build-and-push-api, build-and-push-gateways, deploy]
     runs-on: ubuntu-latest
     if: always()
     steps:

@@ -11,7 +11,9 @@
         "customerinfo.grpc": "StartDebugging",
         "vaccinationreception.api": "StartDebugging",
         "management.api": "StartDebugging",
-        "hospitalservice.api": "StartDebugging"
+        "hospitalservice.api": "StartDebugging",
+        "workers.email": "StartDebugging",
+        "filestorage.api": "StartDebugging"
       }
     }
   }

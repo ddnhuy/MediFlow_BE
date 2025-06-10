@@ -36,6 +36,9 @@ spec:
               mountPath: /app/appsettings.json
               subPath: appsettings.json
       initContainers:
+        - name: wait-for-rabbitmq
+          image: busybox
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done']
         - name: wait-for-postgres
           image: busybox
           command: ['sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done']

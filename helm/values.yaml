@@ -160,6 +160,8 @@ deployments:
   management-service: {}
   customer-info-grpc: {}
   vaccination-reception-service: {}
+  worker-email-service: {}
+  file-storage-service: {}
   gateway: {}
 
 strategy:

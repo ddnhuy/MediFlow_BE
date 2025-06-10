@@ -9,7 +9,7 @@
                 MedicineCode = request.MedicineCode,
                 MedicineName = request.MedicineName,
                 Unit = request.Unit,
-                Manufacturer = request.Manufacturer,
+                IsRequiredTestingBeforeUse = request.IsRequiredTestingBeforeUse,
                 ActiveIngredient = request.ActiveIngredient,
                 UsageInstructions = request.UsageInstructions,
                 Concentration = request.Concentration,

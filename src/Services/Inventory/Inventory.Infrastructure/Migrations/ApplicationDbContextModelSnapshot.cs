@@ -236,6 +236,9 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<bool>("IsCancelled")
                         .HasColumnType("boolean");
 
+                    b.Property<bool?>("IsRequiredTestingBeforeUse")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsSuspended")
                         .HasColumnType("boolean");
 
@@ -244,9 +247,6 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.Property<int>("LastUpdatedBy")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Manufacturer")
-                        .HasColumnType("text");
 
                     b.Property<string>("MedicineClassification")
                         .HasColumnType("text");

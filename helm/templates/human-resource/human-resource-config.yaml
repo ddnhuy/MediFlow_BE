@@ -19,5 +19,10 @@ data:
         "EndpointDefaults": {
           "Protocols": "Http2"
         }
+      },
+      "MessageBroker": {
+        "Host": "amqp://rabbitmq:5672",
+        "UserName": "mediflow",
+        "Password": "Mediflow@123"
       }
     }

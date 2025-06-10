@@ -7,6 +7,9 @@ services:
   redis:
     image: redis:8.0
 
+  messagebroker:
+    image: rabbitmq:4-management-alpine
+
   yarpapigateway:
     image: ${DOCKER_REGISTRY-}yarpapigateway
     build:
@@ -54,6 +57,18 @@ services:
     build:
       context: .
       dockerfile: src/Services/HospitalService/HospitalService.API/Dockerfile
+
+  filestorage.api:
+    image: ${DOCKER_REGISTRY-}filestorageapi
+    build:
+      context: .
+      dockerfile: src/Services/FileStorage/FileStorage.API/Dockerfile
+
+  workers.email:
+    image: ${DOCKER_REGISTRY-}workersemail
+    build:
+      context: .
+      dockerfile: src/Workers/Workers.Email/Dockerfile
 
 volumes:
   postgres_db:

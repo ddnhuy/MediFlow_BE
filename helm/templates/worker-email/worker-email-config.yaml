@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: worker-email-config
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.Hosting.Lifetime": "Information"
+        }
+      },
+      "MessageBroker": {
+        "Host": "amqp://rabbitmq:5672",
+        "UserName": "mediflow",
+        "Password": "Mediflow@123"
+      },
+      "EmailSettings": {
+        "Server": "smtp.mailgun.org",
+        "Port": 587,
+        "SenderName": "MediFlow",
+        "SenderEmail": "no-reply@ddnhuy.tech"
+      }
+    }
