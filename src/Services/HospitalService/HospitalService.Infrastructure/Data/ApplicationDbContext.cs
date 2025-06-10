@@ -12,7 +12,7 @@ using HospitalService.Infrastructure.Extensions;
 using HospitalService.Domain.Abstractions;
 using HospitalService.Infrastructure.Helpers;
 
-namespace HospitalService.Infrastructure
+namespace HospitalService.Infrastructure.Data
 {
     public class ApplicationDbContext : DbContext
     {

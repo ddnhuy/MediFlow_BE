@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using HospitalService.Infrastructure.Data;
+using HospitalService.Domain.Abstractions;
+using HospitalService.Domain.Repositories;
+using HospitalService.Infrastructure.Repositories;
 
 namespace HospitalService.Infrastructure
 {
@@ -22,6 +26,12 @@ namespace HospitalService.Infrastructure
                 options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
             });
 
+            services.AddScoped<IServiceRepository, ServiceRepository>();
+            services.AddScoped<IServiceGroupRepository, ServiceGroupRepository>();
+            services.AddScoped<IServiceGroupServiceRepository, ServiceGroupServiceRepository>();
+
+            // Add Unit of Work
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             return services;
         }
     }

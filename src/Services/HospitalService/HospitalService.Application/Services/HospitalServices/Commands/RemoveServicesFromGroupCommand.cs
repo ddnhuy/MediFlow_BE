@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
-using HospitalService.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using HospitalService.Domain.Abstractions;
+using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -17,14 +17,17 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
     public record RemoveServicesFromGroupResult(int ServiceGroupId, int RemovedServicesCount);
     public class RemoveServicesFromGroupCommandHandler : ICommandHandler<RemoveServicesFromGroupCommand, RemoveServicesFromGroupResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IServiceGroupServiceRepository _serviceGroupServiceRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<RemoveServicesFromGroupCommand> _logger;
 
         public RemoveServicesFromGroupCommandHandler(
-            ApplicationDbContext context,
+            IServiceGroupServiceRepository serviceGroupServiceRepository,
+            IUnitOfWork unitOfWork,
             ILogger<RemoveServicesFromGroupCommand> logger)
         {
-            _context = context;
+            _serviceGroupServiceRepository = serviceGroupServiceRepository;
+            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
@@ -32,22 +35,22 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         {
             try
             {
-                var serviceGroupServices = await _context.ServiceGroupServices
-                    .Where(sgs => sgs.ServiceGroupId == request.ServiceGroupId && request.ServiceIds.Contains(sgs.ServiceId))
-                    .ToListAsync(cancellationToken);
+                await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
-                foreach (var serviceGroupService in serviceGroupServices)
-                {
-                    serviceGroupService.IsCancelled = true;
-                }
+                var serviceGroupServices = await _serviceGroupServiceRepository.GetByServiceGroupIdAsync(request.ServiceGroupId);
+                var servicesToRemove = serviceGroupServices
+                    .Where(sgs => request.ServiceIds.Contains(sgs.ServiceId))
+                    .ToList();
 
-                await _context.SaveChangesAsync(cancellationToken);
+                await _serviceGroupServiceRepository.DeleteRangeAsync(servicesToRemove);
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
-                _logger.LogInformation("Removed {Count} services from group {ServiceGroupId}", serviceGroupServices.Count, request.ServiceGroupId);
-                return new RemoveServicesFromGroupResult(request.ServiceGroupId, serviceGroupServices.Count);
+                _logger.LogInformation("Removed {Count} services from group {ServiceGroupId}", servicesToRemove.Count, request.ServiceGroupId);
+                return new RemoveServicesFromGroupResult(request.ServiceGroupId, servicesToRemove.Count);
             }
             catch (Exception ex)
             {
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 _logger.LogError(ex, "Error occurred while removing services from group {ServiceGroupId}", request.ServiceGroupId);
                 throw;
             }

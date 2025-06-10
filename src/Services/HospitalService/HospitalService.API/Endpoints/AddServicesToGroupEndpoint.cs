@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings.ExceptionStrings;
 using Carter;
 using HospitalService.Application.Services.HospitalServices.Commands;
 using Mapster;
@@ -12,11 +13,11 @@ namespace HospitalService.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/servicegroups/{id}/services", async (int id, [FromBody] AddServicesToGroupCommand command, ISender sender) =>
+            app.MapPost("/service-groups/{id}/services", async (int id, [FromBody] AddServicesToGroupCommand command, ISender sender) =>
             {
                 if (command.ServiceIds == null || !command.ServiceIds.Any())
                 {
-                    return Results.BadRequest("Danh sách dịch vụ không được để trống.");
+                    throw new BadRequestException(HospitalServiceExceptionStrings.EMPTY_SERVICE_IDS);
                 }
 
                 command = command with { ServiceGroupId = id };
@@ -24,7 +25,7 @@ namespace HospitalService.API.Endpoints
 
                 if (result == null)
                 {
-                    throw new InternalServerException("Thêm dịch vụ vào nhóm thất bại");
+                    throw new InternalServerException(HospitalServiceExceptionStrings.FAILED_ADD_SERVICES_TO_GROUP);
                 }
 
                 var response = result.Adapt<AddServicesToGroupResponse>();

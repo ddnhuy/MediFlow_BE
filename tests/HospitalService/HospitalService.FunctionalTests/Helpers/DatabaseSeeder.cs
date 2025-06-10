@@ -1,5 +1,5 @@
 ﻿using HospitalService.Domain.Models;
-using HospitalService.Infrastructure;
+using HospitalService.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;

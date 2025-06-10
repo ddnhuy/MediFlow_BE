@@ -1,7 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
 using HospitalService.Application.DTOs;
-using HospitalService.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,14 +18,14 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
 
     public class GetAllServiceGroupsQueryHandler : IQueryHandler<GetAllServiceGroupsQuery, GetAllServiceGroupsResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IServiceGroupRepository _serviceGroupRepository;
         private readonly ILogger<GetAllServiceGroupsQueryHandler> _logger;
 
         public GetAllServiceGroupsQueryHandler(
-            ApplicationDbContext context,
+            IServiceGroupRepository serviceGroupRepository,
             ILogger<GetAllServiceGroupsQueryHandler> logger)
         {
-            _context = context;
+            _serviceGroupRepository = serviceGroupRepository;
             _logger = logger;
         }
 
@@ -36,21 +35,12 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
 
             try
             {
-                var query = _context.ServiceGroups.AsQueryable();
+                var serviceGroups = await _serviceGroupRepository.GetAllAsync(request.SearchTerm, cancellationToken);
 
-                if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-                {
-                    query = query.Where(sg =>
-                        sg.GroupName.ToLower().Contains(request.SearchTerm.ToLower()));
-                }
-
-                var items = await query
-                    .OrderByDescending(sg => sg.CreatedAt)
-                    .Select(sg => new ServiceGroupDTO(
-                        sg.Id,
-                        sg.GroupName
-                    ))
-                    .ToListAsync(cancellationToken);
+                var items = serviceGroups.Select(sg => new ServiceGroupDTO(
+                    sg.Id,
+                    sg.GroupName
+                )).ToList();
 
                 _logger.LogInformation("Found {Count} service groups", items.Count);
                 return new GetAllServiceGroupsResult(items);

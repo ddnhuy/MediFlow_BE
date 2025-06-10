@@ -17,7 +17,7 @@ namespace HospitalService.FunctionalTests.Tests
             var request = new { ServiceIds = new[] { 1, 2, 3 } };
 
             // Act
-            var response = await _client.PostAsJsonAsync("/servicegroups/1/services", request);
+            var response = await _client.PostAsJsonAsync("/service-groups/1/services", request);
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -30,7 +30,7 @@ namespace HospitalService.FunctionalTests.Tests
             var request = new { ServiceIds = new int[] { } }; // Empty array should be invalid
 
             // Act
-            var response = await _client.PostAsJsonAsync("/servicegroups/1/services", request);
+            var response = await _client.PostAsJsonAsync("/service-groups/1/services", request);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -43,7 +43,7 @@ namespace HospitalService.FunctionalTests.Tests
             var request = new { ServiceIds = new[] { 1, 2} };
 
             // Act
-            var response = await _client.PostAsJsonAsync("/servicegroups/1/services", request);
+            var response = await _client.PostAsJsonAsync("/service-groups/1/services", request);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

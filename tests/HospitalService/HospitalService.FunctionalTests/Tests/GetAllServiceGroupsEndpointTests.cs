@@ -23,7 +23,7 @@ namespace HospitalService.FunctionalTests.Tests
             _client.DefaultRequestHeaders.Remove("Authorization");
 
             // Act
-            var response = await _client.GetAsync("/servicegroups/all");
+            var response = await _client.GetAsync("/service-groups/all");
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -35,7 +35,7 @@ namespace HospitalService.FunctionalTests.Tests
             // Arrange
 
             // Act
-            var response = await _client.GetAsync("/servicegroups/all");
+            var response = await _client.GetAsync("/service-groups/all");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -52,7 +52,7 @@ namespace HospitalService.FunctionalTests.Tests
         public async Task GetAllServiceGroups_WithSearchTerm_ReturnsFilteredResults(string searchTerm)
         {
             // Arrange
-            var url = $"/servicegroups/all?searchTerm={searchTerm}";
+            var url = $"/service-groups/all?searchTerm={searchTerm}";
 
             // Act
             var response = await _client.GetAsync(url);
@@ -70,7 +70,7 @@ namespace HospitalService.FunctionalTests.Tests
         public async Task GetAllServiceGroups_WithEmptySearchTerm_ReturnsAllResults()
         {
             // Arrange
-            var url = "/servicegroups/all?searchTerm=";
+            var url = "/service-groups/all?searchTerm=";
 
             // Act
             var response = await _client.GetAsync(url);
@@ -89,7 +89,7 @@ namespace HospitalService.FunctionalTests.Tests
         public async Task GetAllServiceGroups_ResponseHasCorrectStructure()
         {
             // Arrange
-            var url = "/servicegroups/all";
+            var url = "/service-groups/all";
 
             // Act
             var response = await _client.GetAsync(url);
@@ -102,7 +102,6 @@ namespace HospitalService.FunctionalTests.Tests
             Assert.NotNull(node);
             Assert.NotNull(node["serviceGroups"]);
             var serviceGroups = node["serviceGroups"].AsArray();
-
         }
     }
 }

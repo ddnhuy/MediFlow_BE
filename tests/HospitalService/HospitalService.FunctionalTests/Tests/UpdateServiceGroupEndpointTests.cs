@@ -22,7 +22,7 @@ namespace HospitalService.FunctionalTests.Tests
             var request = new { GroupName = "Updated Group" };
 
             // Act
-            var response = await _client.PutAsJsonAsync("/servicegroups/1", request);
+            var response = await _client.PutAsJsonAsync("/service-groups/1", request);
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -35,7 +35,7 @@ namespace HospitalService.FunctionalTests.Tests
             var request = new { GroupName = "" }; // Empty group name invalid
 
             // Act
-            var response = await _client.PutAsJsonAsync("/servicegroups/1", request);
+            var response = await _client.PutAsJsonAsync("/service-groups/1", request);
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -48,7 +48,7 @@ namespace HospitalService.FunctionalTests.Tests
             var request = new { GroupName = "Updated Group" };
 
             // Act
-            var response = await _client.PutAsJsonAsync("/servicegroups/1", request);
+            var response = await _client.PutAsJsonAsync("/service-groups/1", request);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

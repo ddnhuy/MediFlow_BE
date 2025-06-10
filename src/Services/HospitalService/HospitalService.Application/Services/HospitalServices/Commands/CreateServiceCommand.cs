@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
+using HospitalService.Domain.Abstractions;
 using HospitalService.Domain.Models;
-using HospitalService.Infrastructure;
+using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -20,14 +21,17 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
 
     public class CreateServiceCommandHandler : ICommandHandler<CreateServiceCommand, CreateServiceResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IServiceRepository _serviceRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<CreateServiceCommand> _logger;
 
         public CreateServiceCommandHandler(
-            ApplicationDbContext context,
+            IServiceRepository serviceRepository,
+            IUnitOfWork unitOfWork,
             ILogger<CreateServiceCommand> logger)
         {
-            _context = context;
+            _serviceRepository = serviceRepository;
+            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
@@ -35,6 +39,8 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         {
             try
             {
+                await _unitOfWork.BeginTransactionAsync(cancellationToken);
+
                 var service = new Service
                 {
                     ServiceCode = request.ServiceCode,
@@ -43,14 +49,15 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
                     DepartmentId = request.DepartmentId,
                 };
 
-                _context.Services.Add(service);
-                await _context.SaveChangesAsync(cancellationToken);
+                await _serviceRepository.AddAsync(service);
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
                 _logger.LogInformation("Created new service with ID {ServiceId}", service.Id);
                 return new CreateServiceResult(service.Id);
             }
             catch (Exception ex)
             {
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 _logger.LogError(ex, "Error occurred while creating service");
                 throw;
             }

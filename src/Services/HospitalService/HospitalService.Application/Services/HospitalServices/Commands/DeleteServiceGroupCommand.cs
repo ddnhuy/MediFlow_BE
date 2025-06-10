@@ -1,7 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
-using HospitalService.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using HospitalService.Domain.Abstractions;
+using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -18,14 +18,20 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
 
     public class DeleteServiceGroupCommandHandler : ICommandHandler<DeleteServiceGroupCommand, DeleteServiceGroupResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IServiceGroupRepository _serviceGroupRepository;
+        private readonly IServiceGroupServiceRepository _serviceGroupServiceRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<DeleteServiceGroupCommand> _logger;
 
         public DeleteServiceGroupCommandHandler(
-            ApplicationDbContext context,
+            IServiceGroupRepository serviceGroupRepository,
+            IServiceGroupServiceRepository serviceGroupServiceRepository,
+            IUnitOfWork unitOfWork,
             ILogger<DeleteServiceGroupCommand> logger)
         {
-            _context = context;
+            _serviceGroupRepository = serviceGroupRepository;
+            _serviceGroupServiceRepository = serviceGroupServiceRepository;
+            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
@@ -33,28 +39,25 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         {
             try
             {
-                var serviceGroup = await _context.ServiceGroups.FindAsync(new object[] { request.Id }, cancellationToken);
+                await _unitOfWork.BeginTransactionAsync(cancellationToken);
+
+                var serviceGroup = await _serviceGroupRepository.GetByIdAsync(request.Id);
                 if (serviceGroup == null)
                     throw new NotFoundException($"ServiceGroup with ID {request.Id} not found");
 
                 serviceGroup.IsCancelled = true;
 
-                var serviceGroupServices = await _context.ServiceGroupServices
-                                        .Where(sgs => sgs.ServiceGroupId == request.Id)
-                                        .ToListAsync(cancellationToken);
+                var serviceGroupServices = await _serviceGroupServiceRepository.GetByServiceGroupIdAsync(request.Id);
+                await _serviceGroupServiceRepository.DeleteRangeAsync(serviceGroupServices);
 
-                foreach (var serviceGroupService in serviceGroupServices)
-                {
-                    serviceGroupService.IsCancelled = true;
-                }
-
-                await _context.SaveChangesAsync(cancellationToken);
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
                 _logger.LogInformation("Deleted service group {ServiceGroupId}", request.Id);
                 return new DeleteServiceGroupResult(request.Id);
             }
             catch (Exception ex)
             {
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 _logger.LogError(ex, "Error occurred while deleting service group {ServiceGroupId}", request.Id);
                 throw;
             }

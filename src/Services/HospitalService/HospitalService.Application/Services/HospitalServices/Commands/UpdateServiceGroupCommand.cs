@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
-using HospitalService.Infrastructure;
+using HospitalService.Domain.Abstractions;
+using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -17,14 +18,17 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
     public record UpdateServiceGroupResult(int ServiceGroupId);
     public class UpdateServiceGroupCommandHandler : ICommandHandler<UpdateServiceGroupCommand, UpdateServiceGroupResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IServiceGroupRepository _serviceGroupRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<UpdateServiceGroupCommand> _logger;
 
         public UpdateServiceGroupCommandHandler(
-            ApplicationDbContext context,
+            IServiceGroupRepository serviceGroupRepository,
+            IUnitOfWork unitOfWork,
             ILogger<UpdateServiceGroupCommand> logger)
         {
-            _context = context;
+            _serviceGroupRepository = serviceGroupRepository;
+            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
@@ -32,19 +36,23 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         {
             try
             {
-                var serviceGroup = await _context.ServiceGroups.FindAsync(new object[] { request.Id }, cancellationToken);
+                await _unitOfWork.BeginTransactionAsync(cancellationToken);
+
+                var serviceGroup = await _serviceGroupRepository.GetByIdAsync(request.Id);
                 if (serviceGroup == null)
                     throw new NotFoundException($"ServiceGroup with ID {request.Id} not found");
 
                 serviceGroup.GroupName = request.GroupName;
 
-                await _context.SaveChangesAsync(cancellationToken);
+                await _serviceGroupRepository.UpdateAsync(serviceGroup);
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
                 _logger.LogInformation("Updated service group {ServiceGroupId}", request.Id);
                 return new UpdateServiceGroupResult(request.Id);
             }
             catch (Exception ex)
             {
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 _logger.LogError(ex, "Error occurred while updating service group {ServiceGroupId}", request.Id);
                 throw;
             }

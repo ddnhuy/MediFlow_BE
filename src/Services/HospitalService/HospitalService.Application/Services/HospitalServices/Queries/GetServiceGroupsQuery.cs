@@ -1,8 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Pagination;
 using HospitalService.Application.DTOs;
-using HospitalService.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -21,14 +20,14 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
 
     public class GetServiceGroupsQueryHandler : IQueryHandler<GetServiceGroupsQuery, GetServiceGroupsResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IServiceGroupRepository _serviceGroupRepository;
         private readonly ILogger<GetServiceGroupsQuery> _logger;
 
         public GetServiceGroupsQueryHandler(
-            ApplicationDbContext context,
+            IServiceGroupRepository serviceGroupRepository,
             ILogger<GetServiceGroupsQuery> logger)
         {
-            _context = context;
+            _serviceGroupRepository = serviceGroupRepository;
             _logger = logger;
         }
 
@@ -36,30 +35,22 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
         {
             try
             {
-                var query = _context.ServiceGroups.AsQueryable();
+                var (items, totalCount) = await _serviceGroupRepository.GetPaginatedAsync(
+                    request.PaginationRequest.PageIndex,
+                    request.PaginationRequest.PageSize,
+                    request.SearchTerm,
+                    cancellationToken);
 
-                if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-                {
-                    query = query.Where(sg =>
-                        sg.GroupName.ToLower().Contains(request.SearchTerm.ToLower()));
-                }
-
-                var totalCount = await query.CountAsync(cancellationToken);
-                var items = await query
-                    .OrderByDescending(sg => sg.CreatedAt)
-                    .Skip((request.PaginationRequest.PageIndex - 1) * request.PaginationRequest.PageSize)
-                    .Take(request.PaginationRequest.PageSize)
-                    .Select(sg => new ServiceGroupDTO(
-                        sg.Id,
-                        sg.GroupName
-                    ))
-                    .ToListAsync(cancellationToken);
+                var serviceGroups = items.Select(sg => new ServiceGroupDTO(
+                    sg.Id,
+                    sg.GroupName
+                )).ToList();
 
                 var result = new PaginatedResult<ServiceGroupDTO>(
                     pageIndex: request.PaginationRequest.PageIndex,
                     pageSize: request.PaginationRequest.PageSize,
                     totalItems: totalCount,
-                    data: items
+                    data: serviceGroups
                 );
 
                 return new GetServiceGroupsResult(result);

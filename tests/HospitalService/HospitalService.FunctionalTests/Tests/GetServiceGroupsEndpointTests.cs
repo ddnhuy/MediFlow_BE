@@ -25,7 +25,7 @@ namespace HospitalService.FunctionalTests.Tests
             _client.DefaultRequestHeaders.Remove("Authorization");
 
             // Act
-            var response = await _client.GetAsync("/servicegroups");
+            var response = await _client.GetAsync("/service-groups");
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -39,7 +39,7 @@ namespace HospitalService.FunctionalTests.Tests
         public async Task GetServiceGroups_InvalidPagination_Returns400(int pageIndex, int pageSize)
         {
             // Arrange
-            var url = $"/servicegroups?PageIndex={pageIndex}&PageSize={pageSize}";
+            var url = $"/service-groups?PageIndex={pageIndex}&PageSize={pageSize}";
 
             // Act
             var response = await _client.GetAsync(url);
@@ -52,7 +52,7 @@ namespace HospitalService.FunctionalTests.Tests
         public async Task GetServiceGroups_ValidRequest_Returns200()
         {
             // Arrange
-            var url = "/servicegroups?PageIndex=1&PageSize=10";
+            var url = "/service-groups?PageIndex=1&PageSize=10";
 
             // Act
             var response = await _client.GetAsync(url);
@@ -73,7 +73,7 @@ namespace HospitalService.FunctionalTests.Tests
         {
             // Arrange
             var searchTerm = "bản";
-            var url = $"/servicegroups?PageIndex=1&PageSize=10&searchTerm={searchTerm}";
+            var url = $"/service-groups?PageIndex=1&PageSize=10&searchTerm={searchTerm}";
 
             // Act
             var response = await _client.GetAsync(url);

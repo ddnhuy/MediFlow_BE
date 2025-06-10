@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings.ExceptionStrings;
 using Carter;
 using HospitalService.Application.Services.HospitalServices.Commands;
 using Mapster;
@@ -12,17 +13,17 @@ namespace HospitalService.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/servicegroups/{id}/services", async (int id, [FromBody] RemoveServicesFromGroupCommand command, ISender sender) =>
+            app.MapDelete("/service-groups/{id}/services", async (int id, [FromBody] RemoveServicesFromGroupCommand command, ISender sender) =>
             {
-                if (id <= 0) return Results.BadRequest("ServiceGroupId must be greater than zero.");
-                if (command.ServiceIds?.Any() != true) return Results.BadRequest("ServiceIds cannot be null or empty.");
+                if (id <= 0) throw new BadRequestException(HospitalServiceExceptionStrings.INVALID_SERVICE_GROUP_ID);
+                if (command.ServiceIds?.Any() != true) throw new BadRequestException(HospitalServiceExceptionStrings.EMPTY_SERVICE_IDS);
 
                 command = command with { ServiceGroupId = id };
                 var result = await sender.Send(command);
 
                 if (result == null)
                 {
-                    throw new InternalServerException("Xóa dịch vụ khỏi nhóm thất bại");
+                    throw new InternalServerException(HospitalServiceExceptionStrings.FAILED_REMOVE_SERVICES_FROM_GROUP);
                 }
 
                 var response = result.Adapt<RemoveServicesFromGroupResponse>();

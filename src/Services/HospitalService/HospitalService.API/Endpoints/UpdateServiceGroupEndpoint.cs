@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings.ExceptionStrings;
 using Carter;
 using HospitalService.Application.Services.HospitalServices.Commands;
 using Mapster;
@@ -12,17 +13,17 @@ namespace HospitalService.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPut("/servicegroups/{id}", async (int id, [FromBody] UpdateServiceGroupCommand command, ISender sender) =>
+            app.MapPut("/service-groups/{id}", async (int id, [FromBody] UpdateServiceGroupCommand command, ISender sender) =>
             {
-                if (id <= 0) return Results.BadRequest("Id must be greater than zero.");
-                if (string.IsNullOrWhiteSpace(command.GroupName)) return Results.BadRequest("GroupName cannot be empty.");
+                if (id <= 0) throw new BadRequestException(HospitalServiceExceptionStrings.INVALID_SERVICE_GROUP_ID);
+                if (string.IsNullOrWhiteSpace(command.GroupName)) throw new BadRequestException(HospitalServiceExceptionStrings.EMPTY_GROUP_NAME);
 
                 command = command with { Id = id };
                 var result = await sender.Send(command);
 
                 if (result == null)
                 {
-                    throw new InternalServerException("Cập nhật nhóm dịch vụ thất bại");
+                    throw new InternalServerException(HospitalServiceExceptionStrings.FAILED_UPDATE_SERVICE_GROUP);
                 }
 
                 var response = result.Adapt<UpdateServiceGroupResponse>();

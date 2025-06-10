@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using HospitalService.Application.Services.HospitalServices.Commands;
 
 namespace HospitalService.Application
 {
@@ -21,6 +22,7 @@ namespace HospitalService.Application
                 config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
                 config.AddOpenBehavior(typeof(ValidationBehavior<,>));
                 config.AddOpenBehavior(typeof(LoggingBehavior<,>));
+              //  config.RegisterServicesFromAssembly(typeof(CreateServiceGroupCommand).Assembly);
             });
 
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());

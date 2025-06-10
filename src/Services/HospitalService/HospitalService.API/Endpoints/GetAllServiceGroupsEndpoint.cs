@@ -12,19 +12,10 @@ namespace HospitalService.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/servicegroups/all", async (string? searchTerm, ISender sender) =>
+            app.MapGet("/service-groups/all", async (string? searchTerm, ISender sender) =>
             {
                 var query = new GetAllServiceGroupsQuery(searchTerm);
                 var result = await sender.Send(query);
-
-                if (result == null || result.ServiceGroups == null || !result.ServiceGroups.Any())
-                {
-                    return Results.Problem(
-                        title: "NotFound",
-                        detail: "No service groups found.",
-                        statusCode: StatusCodes.Status404NotFound
-                    );
-                }
 
                 var response = result.Adapt<GetAllServiceGroupsResponse>();
                 return Results.Ok(response);

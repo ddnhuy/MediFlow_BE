@@ -4,6 +4,7 @@ using HealthChecks.UI.Client;
 using HospitalService.Application;
 using HospitalService.Application.Services.HospitalServices.Commands;
 using HospitalService.Infrastructure;
+using HospitalService.Infrastructure.Data;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,17 +21,11 @@ namespace HospitalService.API
             .AddInfrastructureServices(builder.Configuration)
             .AddApiServices(builder.Configuration);
 
-            builder.Services.AddFluentValidationAutoValidation();
-
             builder.Services
                 .AddHealthChecks()
                 .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddMediatR(cfg =>
-            {
-                cfg.RegisterServicesFromAssembly(typeof(CreateServiceGroupCommand).Assembly);
-            });
 
             var app = builder.Build();
 

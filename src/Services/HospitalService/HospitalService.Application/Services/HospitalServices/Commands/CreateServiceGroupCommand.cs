@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
+using HospitalService.Domain.Abstractions;
 using HospitalService.Domain.Models;
-using HospitalService.Infrastructure;
+using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -17,14 +18,20 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
     public record CreateServiceGroupResult(int ServiceGroupId);
     public class CreateServiceGroupCommandHandler : ICommandHandler<CreateServiceGroupCommand, CreateServiceGroupResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IServiceGroupRepository _serviceGroupRepository;
+        private readonly IServiceGroupServiceRepository _serviceGroupServiceRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<CreateServiceGroupCommand> _logger;
 
         public CreateServiceGroupCommandHandler(
-            ApplicationDbContext context,
+            IServiceGroupRepository serviceGroupRepository,
+            IServiceGroupServiceRepository serviceGroupServiceRepository,
+            IUnitOfWork unitOfWork,
             ILogger<CreateServiceGroupCommand> logger)
         {
-            _context = context;
+            _serviceGroupRepository = serviceGroupRepository;
+            _serviceGroupServiceRepository = serviceGroupServiceRepository;
+            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
@@ -32,41 +39,34 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         {
             try
             {
-                using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
-                try
+                await _unitOfWork.BeginTransactionAsync(cancellationToken);
+
+                var serviceGroup = new ServiceGroup
                 {
-                    var serviceGroup = new ServiceGroup
-                    {
-                        GroupName = request.GroupName,
-                    };
+                    GroupName = request.GroupName,
+                };
 
-                    _context.ServiceGroups.Add(serviceGroup);
-                    await _context.SaveChangesAsync(cancellationToken);
+                await _serviceGroupRepository.AddAsync(serviceGroup);
 
-                    if (request.ServiceIds != null && request.ServiceIds.Any())
-                    {
-                        var serviceGroupServices = request.ServiceIds.Select(serviceId => new ServiceGroupService
-                        {
-                            ServiceGroupId = serviceGroup.Id,
-                            ServiceId = serviceId,
-                        });
-
-                        _context.ServiceGroupServices.AddRange(serviceGroupServices);
-                        await _context.SaveChangesAsync(cancellationToken);
-                    }
-
-                    await transaction.CommitAsync(cancellationToken);
-                    _logger.LogInformation("Created new service group with ID {ServiceGroupId}", serviceGroup.Id);
-                    return new CreateServiceGroupResult(serviceGroup.Id);
-                }
-                catch
+                if (request.ServiceIds != null && request.ServiceIds.Any())
                 {
-                    await transaction.RollbackAsync(cancellationToken);
-                    throw;
+                    var serviceGroupServices = request.ServiceIds.Select(serviceId => new ServiceGroupService
+                    {
+                        ServiceGroupId = serviceGroup.Id,
+                        ServiceId = serviceId,
+                    });
+
+                    await _serviceGroupServiceRepository.AddRangeAsync(serviceGroupServices);
                 }
+
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
+
+                _logger.LogInformation("Created new service group with ID {ServiceGroupId}", serviceGroup.Id);
+                return new CreateServiceGroupResult(serviceGroup.Id);
             }
             catch (Exception ex)
             {
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 _logger.LogError(ex, "Error occurred while creating service group");
                 throw;
             }

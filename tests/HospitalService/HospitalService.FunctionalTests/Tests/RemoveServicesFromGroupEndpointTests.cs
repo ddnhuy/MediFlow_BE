@@ -23,7 +23,7 @@ namespace HospitalService.FunctionalTests.Tests
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Delete,
-                RequestUri = new Uri("/servicegroups/1/services", UriKind.Relative),
+                RequestUri = new Uri("/service-groups/1/services", UriKind.Relative),
                 Content = requestBody
             };
 
@@ -43,7 +43,7 @@ namespace HospitalService.FunctionalTests.Tests
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Delete,
-                RequestUri = new Uri("/servicegroups/1/services", UriKind.Relative),
+                RequestUri = new Uri("/service-groups/1/services", UriKind.Relative),
                 Content = requestBody
             };
 
@@ -63,7 +63,7 @@ namespace HospitalService.FunctionalTests.Tests
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Delete,
-                RequestUri = new Uri("/servicegroups/1/services", UriKind.Relative),
+                RequestUri = new Uri("/service-groups/1/services", UriKind.Relative),
                 Content = requestBody
             };
 
@@ -73,6 +73,5 @@ namespace HospitalService.FunctionalTests.Tests
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
-
     }
 }

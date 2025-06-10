@@ -20,7 +20,7 @@ namespace HospitalService.FunctionalTests.Tests
             _client.DefaultRequestHeaders.Remove("Authorization");
 
             // Act
-            var response = await _client.DeleteAsync("/servicegroups/1");
+            var response = await _client.DeleteAsync("/service-groups/1");
 
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -33,7 +33,7 @@ namespace HospitalService.FunctionalTests.Tests
             var invalidId = 0; // Invalid ID
 
             // Act
-            var response = await _client.DeleteAsync($"/servicegroups/{invalidId}");
+            var response = await _client.DeleteAsync($"/service-groups/{invalidId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -46,7 +46,7 @@ namespace HospitalService.FunctionalTests.Tests
             var validId = 1;
 
             // Act
-            var response = await _client.DeleteAsync($"/servicegroups/{validId}");
+            var response = await _client.DeleteAsync($"/service-groups/{validId}");
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

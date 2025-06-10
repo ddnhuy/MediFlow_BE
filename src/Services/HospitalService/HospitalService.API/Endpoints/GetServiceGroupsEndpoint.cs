@@ -13,16 +13,9 @@ namespace HospitalService.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/servicegroups", async ([AsParameters] PaginationRequest request, string? searchTerm, ISender sender) =>
+            app.MapGet("/service-groups", async ([AsParameters] PaginationRequest request, string? searchTerm, ISender sender) =>
             {
-                if (request.PageIndex <= 0 || request.PageSize <= 0)
-                {
-                    return Results.Problem(
-                        title: "BadRequest",
-                        detail: "Pagination parameters must be greater than zero.",
-                        statusCode: StatusCodes.Status400BadRequest
-                    );
-                }
+                PaginationHelper.VerifyPaginationRequest(request.PageIndex, request.PageSize);
 
                 var query = new GetServiceGroupsQuery(
                     PaginationRequest: new PaginationRequest(request.PageIndex, request.PageSize),
@@ -30,15 +23,6 @@ namespace HospitalService.API.Endpoints
                 );
 
                 var result = await sender.Send(query);
-
-                if (result == null || result.ServiceGroups.Data == null || !result.ServiceGroups.Data.Any())
-                {
-                    return Results.Problem(
-                        title: "NotFound",
-                        detail: "No service groups found.",
-                        statusCode: StatusCodes.Status404NotFound
-                    );
-                }
 
                 var response = result.Adapt<GetServiceGroupsResponse>();
                 return Results.Ok(response);

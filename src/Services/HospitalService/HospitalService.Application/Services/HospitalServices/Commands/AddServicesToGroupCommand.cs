@@ -1,8 +1,8 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
+using HospitalService.Domain.Abstractions;
 using HospitalService.Domain.Models;
-using HospitalService.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,14 +19,20 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
     public record AddServicesToGroupResult(int ServiceGroupId, int AddedServicesCount);
     public class AddServicesToGroupCommandHandler : ICommandHandler<AddServicesToGroupCommand, AddServicesToGroupResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IServiceGroupRepository _serviceGroupRepository;
+        private readonly IServiceGroupServiceRepository _serviceGroupServiceRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<AddServicesToGroupCommand> _logger;
 
         public AddServicesToGroupCommandHandler(
-            ApplicationDbContext context,
+            IServiceGroupRepository serviceGroupRepository,
+            IServiceGroupServiceRepository serviceGroupServiceRepository,
+            IUnitOfWork unitOfWork,
             ILogger<AddServicesToGroupCommand> logger)
         {
-            _context = context;
+            _serviceGroupRepository = serviceGroupRepository;
+            _serviceGroupServiceRepository = serviceGroupServiceRepository;
+            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
@@ -34,32 +40,30 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         {
             try
             {
-                var serviceGroup = await _context.ServiceGroups.FindAsync(new object[] { request.ServiceGroupId }, cancellationToken);
+                await _unitOfWork.BeginTransactionAsync(cancellationToken);
+
+                var serviceGroup = await _serviceGroupRepository.GetByIdAsync(request.ServiceGroupId);
                 if (serviceGroup == null)
                     throw new NotFoundException($"ServiceGroup with ID {request.ServiceGroupId} not found");
 
-                var existingServices = await _context.ServiceGroupServices
-                    .Where(sgs => sgs.ServiceGroupId == request.ServiceGroupId)
-                    .Select(sgs => sgs.ServiceId)
-                    .ToListAsync(cancellationToken);
+                var existingServiceIds = await _serviceGroupServiceRepository.GetExistingServiceIdsAsync(request.ServiceGroupId);
+                var newServiceIds = request.ServiceIds.Where(id => !existingServiceIds.Contains(id)).ToList();
 
-                var newServices = request.ServiceIds
-                    .Where(serviceId => !existingServices.Contains(serviceId))
-                    .Select(serviceId => new ServiceGroupService
-                    {
-                        ServiceGroupId = request.ServiceGroupId,
-                        ServiceId = serviceId,
-                    })
-                    .ToList();
+                var serviceGroupServices = newServiceIds.Select(serviceId => new ServiceGroupService
+                {
+                    ServiceGroupId = request.ServiceGroupId,
+                    ServiceId = serviceId
+                });
 
-                _context.ServiceGroupServices.AddRange(newServices);
-                await _context.SaveChangesAsync(cancellationToken);
+                await _serviceGroupServiceRepository.AddRangeAsync(serviceGroupServices);
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
-                _logger.LogInformation("Added {Count} services to group {ServiceGroupId}", newServices.Count, request.ServiceGroupId);
-                return new AddServicesToGroupResult(request.ServiceGroupId, newServices.Count);
+                _logger.LogInformation("Added {Count} services to group {ServiceGroupId}", newServiceIds.Count, request.ServiceGroupId);
+                return new AddServicesToGroupResult(request.ServiceGroupId, newServiceIds.Count);
             }
             catch (Exception ex)
             {
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 _logger.LogError(ex, "Error occurred while adding services to group {ServiceGroupId}", request.ServiceGroupId);
                 throw;
             }
