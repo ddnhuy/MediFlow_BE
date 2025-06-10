@@ -22,8 +22,8 @@
                 RuleFor(x => x.MedicineTypeId),
                 RuleFor(x => x.VaccineTypeId),
                 RuleFor(x => x.Description),
-                RuleFor(x => x.Note),
-                RuleFor(x => x.IsRequiredTestingBeforeUse)
+                ruleForIsRequiredTestingBeforeUse: RuleFor(x => x.IsRequiredTestingBeforeUse),
+                ruleForNote: RuleFor(x => x.Note)
             );
         }
     }
