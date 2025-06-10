@@ -5,7 +5,7 @@
         string MedicineCode,
         string MedicineName,
         string Unit,
-        string Manufacturer,
+        bool? IsRequiredTestingBeforeUse,
         string ActiveIngredient,
         string UsageInstructions,
         string Concentration,

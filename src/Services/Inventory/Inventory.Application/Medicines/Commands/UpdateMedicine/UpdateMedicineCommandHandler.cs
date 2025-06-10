@@ -23,7 +23,7 @@ namespace Inventory.Application.Medicines.Commands.UpdateMedicine
             medicine.MedicineCode = request.MedicineCode;
             medicine.MedicineName = request.MedicineName;
             medicine.Unit = request.Unit;
-            medicine.Manufacturer = request.Manufacturer;
+            medicine.IsRequiredTestingBeforeUse = request.IsRequiredTestingBeforeUse;
             medicine.ActiveIngredient = request.ActiveIngredient;
             medicine.UsageInstructions = request.UsageInstructions;
             medicine.Concentration = request.Concentration;

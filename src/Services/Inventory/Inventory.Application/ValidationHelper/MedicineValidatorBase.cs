@@ -5,7 +5,6 @@
         public static void AddMedicineRules<T>(IRuleBuilder<T, string> ruleForMedicineCode,
                                               IRuleBuilder<T, string> ruleForMedicineName,
                                               IRuleBuilder<T, string> ruleForUnit,
-                                              IRuleBuilder<T, string> ruleForManufacturer,
                                               IRuleBuilder<T, string> ruleForActiveIngredient,
                                               IRuleBuilder<T, string> ruleForUsageInstructions,
                                               IRuleBuilder<T, string> ruleForConcentration,
@@ -17,7 +16,8 @@
                                               IRuleBuilder<T, int> ruleForMedicineTypeId,
                                               IRuleBuilder<T, int> ruleForVaccineTypeId,
                                               IRuleBuilder<T, string> ruleForDescription,
-                                              IRuleBuilder<T, string> ruleForNote)
+                                              IRuleBuilder<T, string> ruleForNote,
+                                              IRuleBuilder<T, bool?> ruleForIsRequiredTestingBeforeUse)
         {
             ruleForMedicineCode
                 .NotEmpty().WithMessage(ValidationStrings.REQUIRED_MEDICINE_CODE)
@@ -30,10 +30,6 @@
             ruleForUnit
                 .NotEmpty().WithMessage(ValidationStrings.REQUIRED_MEDICINE_UNIT)
                 .MaximumLength(50).WithMessage(ValidationStrings.MAX_LENGTH("Đơn vị tính", 50));
-
-            ruleForManufacturer
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_MANUFACTURER)
-                .MaximumLength(100).WithMessage(ValidationStrings.MAX_LENGTH("Nhà sản xuất", 100));
 
             ruleForActiveIngredient
                 .NotEmpty().WithMessage(ValidationStrings.REQUIRED_ACTIVE_INGREDIENT)
@@ -78,6 +74,10 @@
 
             ruleForNote
                 .MaximumLength(500).WithMessage(ValidationStrings.MAX_LENGTH("Ghi chú", 500));
+
+            ruleForIsRequiredTestingBeforeUse
+                .NotNull()
+                .WithMessage(ValidationStrings.REQUIRED_IS_REQUIRED_TESTING_BEFORE_USE);              
         }
     }
 }
