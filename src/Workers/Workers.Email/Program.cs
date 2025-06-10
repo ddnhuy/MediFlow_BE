@@ -7,7 +7,7 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Configuration.AddUserSecrets<Program>();
 
-builder.Services.AddMessageBroker(builder.Configuration, Assembly.GetExecutingAssembly());
+builder.Services.AddMessageBroker(builder.Configuration, Assembly.GetExecutingAssembly(), useCompetingConsumers: true);
 
 builder.Services.AddSingleton<IEmailTemplateRenderer, RazorEmailTemplateRenderer>();
 

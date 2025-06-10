@@ -1,9 +1,8 @@
-﻿using Google.Protobuf.Collections;
-using HumanResource.Grpc;
+﻿using BuildingBlocks.Messaging.MassTransit;
+using Google.Protobuf.Collections;
 using HumanResource.Grpc.ErrorDescribers;
 using HumanResource.Grpc.Mapping;
 using HumanResource.Grpc.Services;
-using BuildingBlocks.Messaging.MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
