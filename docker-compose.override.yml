@@ -21,6 +21,17 @@ services:
       - redis_data:/data
     command: redis-server --save 20 1 --loglevel warning --requirepass Mediflow@123
 
+  messagebroker:
+    container_name: MessageBroker
+    hostname: mediflow-mq
+    environment:
+      - RABBITMQ_DEFAULT_USER=mediflow
+      - RABBITMQ_DEFAULT_PASS=Mediflow@123
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
   yarpapigateway:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -110,3 +121,26 @@ services:
       - humanresource.grpc
     ports:
       - "6066:8080"
+
+  filestorage.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    ports:
+      - "6068:8080"
+      - "8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  workers.email:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - messagebroker
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

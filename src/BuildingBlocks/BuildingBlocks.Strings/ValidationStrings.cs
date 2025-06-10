@@ -143,5 +143,14 @@
         public const string PAGE_SIZE_TOO_LARGE = "Kích thước trang không được vượt quá 1000.";
         public const string PAGE_INDEX_TOO_SMALL = "Chỉ mục trang phải lớn hơn 0.";
         public const string PAGE_INDEX_TOO_LARGE = "Chỉ mục trang không được vượt quá 1000000.";
+
+        // File Storage validation
+        public const string FILE_NOT_PROVIDED = "File không được để trống.";
+        public const string FILE_NOT_FOUND = "Không tìm thấy file.";
+        public const string FILE_TOO_LARGE = "Kích thước file không được vượt quá 5MB.";
+        public const string INVALID_IMAGE_FORMAT = "Định dạng ảnh không hợp lệ. Chỉ được phép sử dụng JPG, PNG, WEBP hoặc JPEG.";
+        public const string INVALID_PUBLIC_ID = "Public Id chỉ được chứa chữ cái, số, dấu gạch ngang và dấu gạch dưới.";
+        public const string FOLDER_NAME_TOO_LONG = "Tên thư mục không được vượt quá 100 kí tự.";
+        public const string INVALID_IMAGE_URL = "URL hình ảnh không hợp lệ.";
     }
 }

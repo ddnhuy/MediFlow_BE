@@ -505,6 +505,10 @@
             ["vaccination-reception"] = new()
             {
                 new Policy { ResourceType = "vaccination-reception", Actions = ["read", "write"] }
+            },
+            ["file-storage"] = new()
+            {
+                new Policy { ResourceType = "file-storage", Actions = ["read", "write"] }
             }
         };
 
@@ -525,6 +529,24 @@
             {
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
                 (Roles.RECEPTIONIST, DepartmentTypes.VACCINE_RECEPTION)
+            },
+            ["file-storage"] = new()
+            {
+                (Roles.ADMIN, DepartmentTypes.ADMIN),
+                (Roles.RECEPTIONIST, DepartmentTypes.VACCINE_RECEPTION),
+                (Roles.DOCTOR, DepartmentTypes.CLINIC),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE),
+                (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.NURSE, DepartmentTypes.CLINIC),
+                (Roles.NURSE, DepartmentTypes.VACCINE),
+                (Roles.NURSE, DepartmentTypes.LAB),
+                (Roles.IMAGING_TECHNICIAN, DepartmentTypes.IMAGING),
+                (Roles.LABORATORY_STAFF, DepartmentTypes.LAB),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.PHARMACY),
+                (Roles.WAREHOUSE_STAFF, DepartmentTypes.STORAGE),
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
+                (Roles.ACCOUNTANT, DepartmentTypes.FINANCE),
+                (Roles.IT_SUPPORT, DepartmentTypes.ADMIN)
             }
         };
     }

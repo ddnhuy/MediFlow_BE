@@ -1,0 +1,10 @@
+﻿global using BuildingBlocks.CQRS;
+global using BuildingBlocks.Exceptions;
+global using BuildingBlocks.Strings;
+global using Carter;
+global using FileStorage.API.Commands;
+global using FileStorage.API.Dtos;
+global using FileStorage.API.Services;
+global using FluentValidation;
+global using Mapster;
+global using MediatR;

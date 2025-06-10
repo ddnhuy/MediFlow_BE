@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text;
 using System.Text.Json;
 using YarpApiGateWay;
 using YarpApiGateWay.Middlewares;
@@ -57,7 +58,6 @@ app.Use(async (context, next) =>
 
         if (root.ValueKind == JsonValueKind.Object && root.EnumerateObject().Count() == 1)
         {
-            // Chỉ có đúng 1 property → unwrap
             var onlyProperty = root.EnumerateObject().First();
             data = JsonSerializer.Deserialize<object>(onlyProperty.Value.GetRawText());
         }
@@ -77,7 +77,10 @@ app.Use(async (context, next) =>
     // Write back BaseResponse
     context.Response.ContentType = "application/json";
     context.Response.Body = originalBodyStream;
-    await context.Response.WriteAsync(JsonSerializer.Serialize(baseResponse));
+
+    var serialized = JsonSerializer.Serialize(baseResponse);
+    context.Response.ContentLength = Encoding.UTF8.GetByteCount(serialized);
+    await context.Response.WriteAsync(serialized);
 });
 
 app.Run();

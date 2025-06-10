@@ -1,5 +1,5 @@
-﻿using Google.Protobuf.Collections;
-using HumanResource.Grpc;
+﻿using BuildingBlocks.Messaging.MassTransit;
+using Google.Protobuf.Collections;
 using HumanResource.Grpc.ErrorDescribers;
 using HumanResource.Grpc.Mapping;
 using HumanResource.Grpc.Services;
@@ -39,6 +39,8 @@ builder.Services.AddSingleton<IRegister, MapsterConfig>();
 
 builder.Services.AddScoped<ICurrentUserHelper, CurrentUserHelper>();
 builder.Services.AddGrpc();
+
+builder.Services.AddMessageBroker(builder.Configuration);
 
 var app = builder.Build();
 

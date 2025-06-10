@@ -5,8 +5,9 @@ on:
     branches: ["main", "develop"]
 
 env:
-  API_SERVICES: "Authentication Inventory Management VaccinationReception"
+  API_SERVICES: "Authentication Inventory Management VaccinationReception FileStorage"
   GRPC_SERVICES: "HumanResource CustomerInfo"
+  WORKERS: "Email"
   GATEWAYS: "YarpApiGateWay"
   CHART_DIR: ./helm
   RELEASE_NAME: mediflow
@@ -75,6 +76,19 @@ jobs:
         with:
           username: ${{ env.DOCKER_HUB_USERNAME }}
           password: ${{ env.DOCKER_HUB_TOKEN }}
+
+      - name: Build and Push images for Workers
+        env:
+          WORKERS: ${{ env.WORKERS }}
+          DOCKER_HUB_USERNAME: ${{ env.DOCKER_HUB_USERNAME }}
+          VERSION_TAG: ${{ env.VERSION_TAG }}
+        run: |
+          for WORKER in $WORKERS; do
+            WORKER_LOWER=$(echo $WORKER | tr '[:upper:]' '[:lower:]')
+            IMAGE="$DOCKER_HUB_USERNAME/worker-${WORKER_LOWER}"
+            docker build -t $IMAGE:$VERSION_TAG -f ./src/Workers/Workers.${WORKER}/Dockerfile .
+            docker push $IMAGE:$VERSION_TAG
+          done
 
       - name: Build and Push images for GRPC Services
         env:
