@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: file-storage-service
-          image: "ddnhuy/file-storage-service:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "ddnhuy/filestorage-service:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080
