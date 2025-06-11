@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using HospitalService.Domain.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VaccinationReception.Domain.Models;
 
-namespace VaccinationReception.Infrastructure.Data.Configurations
+namespace HospitalService.Infrastructure.Data.Configurations
 {
     public class DiseaseGroupServiceConfiguration : IEntityTypeConfiguration<DiseaseGroupService>
     {
@@ -71,7 +71,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.Service)
-                .WithMany()
+                .WithMany(x => x.DiseaseGroupServices)
                 .HasForeignKey(x => x.ServiceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -81,6 +81,10 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.HasIndex(x => x.ServiceId)
                 .HasDatabaseName("IX_DiseaseGroupServices_ServiceId");
+
+            builder.HasIndex(x => new { x.DiseaseGroupId, x.ServiceId })
+                .IsUnique()
+                .HasDatabaseName("IX_DiseaseGroupServices_DiseaseGroupId_ServiceId");
 
             // Global Query Filter
             builder.HasQueryFilter(x => !x.IsCancelled);

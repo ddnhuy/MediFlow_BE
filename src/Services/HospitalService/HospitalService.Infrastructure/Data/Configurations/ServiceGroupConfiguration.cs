@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using HospitalService.Domain.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VaccinationReception.Domain.Models;
 
-namespace VaccinationReception.Infrastructure.Data.Configurations
+namespace HospitalService.Infrastructure.Data.Configurations
 {
     public class ServiceGroupConfiguration : IEntityTypeConfiguration<ServiceGroup>
     {
