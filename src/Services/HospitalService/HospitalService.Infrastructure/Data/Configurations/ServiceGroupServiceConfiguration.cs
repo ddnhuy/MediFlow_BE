@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using HospitalService.Domain.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VaccinationReception.Domain.Models;
 
-namespace VaccinationReception.Infrastructure.Data.Configurations
+namespace HospitalService.Infrastructure.Data.Configurations
 {
     public class ServiceGroupServiceConfiguration : IEntityTypeConfiguration<ServiceGroupService>
     {
@@ -25,6 +25,11 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasAnnotation("Npgsql:IdentityStartValue", 1);
 
             // BaseEntity Properties
+            builder.Property(x => x.CreatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasComment("Ngày tạo bản ghi");
+
             builder.Property(x => x.IsSuspended)
                 .IsRequired()
                 .HasDefaultValue(false)
@@ -37,23 +42,18 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasComment("Trạng thái hủy")
                 .HasColumnType("boolean");
 
-            builder.Property(x => x.CreatedAt)
-                .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                .HasComment("Ngày tạo bản ghi");
-
             builder.Property(x => x.CreatedBy)
                 .IsRequired()
                 .HasComment("Người tạo bản ghi");
+
+            builder.Property(x => x.LastUpdatedBy)
+                .IsRequired()
+                .HasComment("Người cập nhật bản ghi cuối cùng");
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
-
-            builder.Property(x => x.LastUpdatedBy)
-                .IsRequired()
-                .HasComment("Người cập nhật bản ghi cuối cùng");
 
             // Properties
             builder.Property(x => x.ServiceGroupId)
@@ -81,6 +81,10 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.HasIndex(x => x.ServiceId)
                 .HasDatabaseName("IX_ServiceGroupServices_ServiceId");
+
+            builder.HasIndex(x => new { x.ServiceGroupId, x.ServiceId })
+                .IsUnique()
+                .HasDatabaseName("IX_ServiceGroupServices_ServiceGroupId_ServiceId");
 
             // Global Query Filter
             builder.HasQueryFilter(x => !x.IsCancelled);
