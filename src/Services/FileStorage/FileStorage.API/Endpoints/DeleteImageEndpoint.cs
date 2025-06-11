@@ -8,11 +8,11 @@ namespace FileStorage.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/images/delete", async ([FromQuery] string imageUrl, ISender sender) =>
+            app.MapDelete("/images", async ([FromQuery] string imageUrl, ISender sender) =>
             {
                 var result = await sender.Send(new DeleteImageCommand(imageUrl));
 
-                return Results.Ok(result);
+                return Results.Ok(result.Adapt<DeleteImageResponse>());
             })
             .WithName("DeleteImage")
             .Produces<DeleteImageResponse>(StatusCodes.Status200OK)

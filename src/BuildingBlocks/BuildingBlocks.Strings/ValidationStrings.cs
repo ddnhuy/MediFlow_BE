@@ -147,10 +147,14 @@
         // File Storage validation
         public const string FILE_NOT_PROVIDED = "File không được để trống.";
         public const string FILE_NOT_FOUND = "Không tìm thấy file.";
-        public const string FILE_TOO_LARGE = "Kích thước file không được vượt quá 5MB.";
+        public static string FILE_TOO_LARGE(int size) => $"Kích thước file không được vượt quá {size}MB.";
         public const string INVALID_IMAGE_FORMAT = "Định dạng ảnh không hợp lệ. Chỉ được phép sử dụng JPG, PNG, WEBP hoặc JPEG.";
         public const string INVALID_PUBLIC_ID = "Public Id chỉ được chứa chữ cái, số, dấu gạch ngang và dấu gạch dưới.";
         public const string FOLDER_NAME_TOO_LONG = "Tên thư mục không được vượt quá 100 kí tự.";
         public const string INVALID_IMAGE_URL = "URL hình ảnh không hợp lệ.";
+        public const string REQUIRED_FILE_NAME = "Tên file là bắt buộc.";
+        public const string REQUIRED_FILE_TYPE = "Loại file là bắt buộc.";
+        public const string INVALID_FILE_TYPE = "Loại file không hợp lệ.";
+        public const string INVALID_FILE_ID = "ID file không hợp lệ.";
     }
 }

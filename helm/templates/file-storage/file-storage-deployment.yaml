@@ -52,6 +52,26 @@ spec:
               secretKeyRef:
                 name: cloudinary-secret
                 key: CLOUDINARY_API_SECRET
+          - name: AWS__BucketName
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: BUCKET_NAME
+          - name: AWS__Region
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: REGION
+          - name: AWS__AccessKey
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: ACCESS_KEY
+          - name: AWS__SecretKey
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: SECRET_KEY
           envFrom:
             - configMapRef:
                 name: file-storage-config
@@ -63,9 +83,6 @@ spec:
         - name: wait-for-postgres
           image: busybox
           command: ['sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done']
-        - name: wait-for-human-resource-grpc
-          image: busybox
-          command: ['sh', '-c', "until nc -z human-resource-grpc {{ .Values.service.port }}; do echo waiting for human-resource-grpc; sleep 2; done"]
       volumes:
         - name: config-volume
           configMap:
