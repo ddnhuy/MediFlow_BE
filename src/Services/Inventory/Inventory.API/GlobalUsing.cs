@@ -20,6 +20,8 @@ global using Inventory.Application.Medicines.Commands.DeleteMedicinePrice;
 global using Inventory.Application.Medicines.Queries.GetMedicinePricesByMedicineId;
 global using Inventory.Application.Medicines.Queries.GetMedicinePrice;
 global using Inventory.Application.Medicines.Commands.UpdateMedicinePrice;
+global using Inventory.Application.Medicines.Queries.GetExpiredMedicineBatches;
+global using Inventory.Application.Medicines.Queries.GetMedicineQuantityStatistics;
 global using Inventory.Application.Suppliers.Commands.CreateSupplier;
 global using Inventory.Application.Suppliers.Commands.DeleteSupplier;
 global using Inventory.Application.Suppliers.Commands.UpdateSupplier;
