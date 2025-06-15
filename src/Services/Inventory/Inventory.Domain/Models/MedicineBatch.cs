@@ -3,6 +3,7 @@
     public class MedicineBatch : Entity
     {
         public int MedicineId { get; set; }
+        public Medicine? Medicine { get; set; }
         public string BatchNumber { get; set; } = default!;
         public DateOnly ImportDate { get; set; }
         public DateOnly ExpiryDate { get; set; }

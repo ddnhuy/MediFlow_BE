@@ -18,22 +18,22 @@
                 {
                     MedicineCode = m.MedicineCode ?? string.Empty,
                     MedicineName = m.MedicineName ?? string.Empty,
-                    Unit = m.Unit ?? string.Empty,                   
+                    Unit = m.Unit ?? string.Empty,
                     NumberOfBatches = dbContext.MedicineBatches
-                        .Where(mb => mb.MedicineId == m.Id 
-                        && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow) 
-                        && !mb.IsSuspended 
+                        .Where(mb => mb.MedicineId == m.Id
+                        && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)
+                        && !mb.IsSuspended
                         && !mb.IsCancelled)
                         .Count(),
                     TotalQuantity = dbContext.InventoryDetails
-                        .Where(id => id.MedicineId == m.Id
-                            && !id.IsSuspended
+                        .Where(id => !id.IsSuspended
                             && !id.IsCancelled
                             && dbContext.MedicineBatches
                                 .Any(mb => mb.Id == id.MedicineBatchId
+                                    && mb.MedicineId == m.Id
                                     && !mb.IsSuspended
                                     && !mb.IsCancelled
-                                    && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)))  
+                                    && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)))
                         .Sum(id => id.Quantity)
                 })
                 .OrderByDescending(s => s.TotalQuantity)

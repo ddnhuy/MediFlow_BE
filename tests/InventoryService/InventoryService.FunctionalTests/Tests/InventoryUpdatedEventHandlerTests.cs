@@ -55,7 +55,6 @@ namespace Inventory.FunctionalTests.Tests
             // Assert
             _mockDbContext.Verify(x => x.InventoryDetails.AddAsync(
                 It.Is<InventoryDetail>(d =>
-                    d.MedicineId == notification.MedicineId &&
                     d.MedicineBatchId == notification.MedicineBatchId &&
                     d.WarehouseId == notification.WarehouseId &&
                     d.Quantity == notification.Quantity &&
@@ -96,7 +95,6 @@ namespace Inventory.FunctionalTests.Tests
 
             var existingDetail = new InventoryDetail
             {
-                MedicineId = 1,
                 MedicineBatchId = 1,
                 WarehouseId = 1,
                 Quantity = 5,
@@ -123,7 +121,6 @@ namespace Inventory.FunctionalTests.Tests
 
             _mockDbContext.Verify(x => x.InventoryDetails.Update(
                 It.Is<InventoryDetail>(d =>
-                    d.MedicineId == notification.MedicineId &&
                     d.MedicineBatchId == notification.MedicineBatchId &&
                     d.WarehouseId == notification.WarehouseId &&
                     d.Quantity == 15 // Original 5 + new 10
