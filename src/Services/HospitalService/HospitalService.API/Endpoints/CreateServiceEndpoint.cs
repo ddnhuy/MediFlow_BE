@@ -1,8 +1,10 @@
 ﻿using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings.ExceptionStrings;
 using Carter;
 using HospitalService.Application.Services.HospitalServices.Commands;
 using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HospitalService.API.Endpoints
 {
@@ -12,13 +14,13 @@ namespace HospitalService.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/services", async (CreateServiceCommand command, ISender sender) =>
+            app.MapPost("/services", async ([FromBody] CreateServiceCommand command, [FromServices] ISender sender) =>
             {
                 var result = await sender.Send(command);
 
                 if (result == null)
                 {
-                    throw new InternalServerException("Tạo dịch vụ thất bại");
+                    throw new InternalServerException(HospitalServiceExceptionStrings.FAILED_CREATE_SERVICE);
                 }
 
                 var response = result.Adapt<CreateServiceResponse>();

@@ -29,6 +29,8 @@ namespace HospitalService.Infrastructure
             services.AddScoped<IServiceRepository, ServiceRepository>();
             services.AddScoped<IServiceGroupRepository, ServiceGroupRepository>();
             services.AddScoped<IServiceGroupServiceRepository, ServiceGroupServiceRepository>();
+            services.AddScoped<IDiseaseGroupRepository, DiseaseGroupRepository>();
+            services.AddScoped<IDiseaseGroupServiceRepository, DiseaseGroupServiceRepository>();
 
             // Add Unit of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();

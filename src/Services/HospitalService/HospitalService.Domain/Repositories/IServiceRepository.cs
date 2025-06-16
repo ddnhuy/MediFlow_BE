@@ -9,14 +9,14 @@ namespace HospitalService.Domain.Repositories
 {
     public interface IServiceRepository
     {
-        Task<Service> GetByIdAsync(int id);
-        Task<IEnumerable<Service>> GetAllAsync();
-        Task<Service> AddAsync(Service service);
-        Task<Service> UpdateAsync(Service service);
-        Task DeleteAsync(int id);
-        Task<bool> ExistsAsync(int id);
-        Task<IEnumerable<Service>> GetByDepartmentIdAsync(int departmentId);
-        Task<IEnumerable<Service>> GetBySearchTermAsync(string searchTerm);
-        Task<int> GetTotalCountAsync(string searchTerm);
+        Task<Service> GetByIdAsync(int id, CancellationToken cancellationToken);
+        Task<IEnumerable<Service>> GetAllAsync(CancellationToken cancellationToken);
+        Task<Service> AddAsync(Service service, CancellationToken cancellationToken);
+        Task<Service> UpdateAsync(Service service, CancellationToken cancellationToken);
+        Task DeleteAsync(int id, CancellationToken cancellationToken);
+        Task<bool> ExistsAsync(int id, CancellationToken cancellationToken);
+        Task<IEnumerable<Service>> GetByDepartmentIdAsync(int departmentId, CancellationToken cancellationToken);
+        Task<IEnumerable<Service>> GetBySearchTermAsync(string searchTerm, CancellationToken cancellationToken);
+        Task<int> GetTotalCountAsync(string searchTerm, CancellationToken cancellationToken);
     }
 }

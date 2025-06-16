@@ -71,5 +71,11 @@ namespace HospitalService.Infrastructure.Repositories
                                 sgs.ServiceId == serviceId &&
                                 !sgs.IsCancelled);
         }
+        public async Task<IEnumerable<ServiceGroupService>> GetByServiceIdAsync(int serviceId, CancellationToken cancellationToken = default)
+        {
+            return await _context.ServiceGroupServices
+                .Where(sgs => sgs.ServiceId == serviceId)
+                .ToListAsync(cancellationToken);
+        }
     }
 }

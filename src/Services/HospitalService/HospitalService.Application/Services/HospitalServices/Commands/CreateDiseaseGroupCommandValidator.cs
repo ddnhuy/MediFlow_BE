@@ -8,17 +8,22 @@ using System.Threading.Tasks;
 
 namespace HospitalService.Application.Services.HospitalServices.Commands
 {
-    public class CreateServiceGroupCommandValidator : AbstractValidator<CreateServiceGroupCommand>
+    public class CreateDiseaseGroupCommandValidator : AbstractValidator<CreateDiseaseGroupCommand>
     {
-        public CreateServiceGroupCommandValidator()
+        public CreateDiseaseGroupCommandValidator()
         {
             RuleFor(x => x.GroupName)
                 .NotEmpty()
-                .WithMessage(ValidationStrings.REQUIRED_GROUP_NAME)
+                .WithMessage(ValidationStrings.REQUIRED_DISEASE_GROUP_NAME)
                 .MaximumLength(200)
-                .WithMessage(ValidationStrings.GROUP_NAME_MAX_LENGTH)
+                .WithMessage(ValidationStrings.DISEASE_GROUP_NAME_MAX_LENGTH)
                 .MinimumLength(3)
-                .WithMessage(ValidationStrings.GROUP_NAME_MIN_LENGTH);
+                .WithMessage(ValidationStrings.DISEASE_GROUP_NAME_MIN_LENGTH);
+
+            RuleFor(x => x.Description)
+                .MaximumLength(500)
+                .WithMessage(ValidationStrings.DISEASE_GROUP_DESCRIPTION_MAX_LENGTH)
+                .When(x => x.Description != null);
 
             RuleForEach(x => x.ServiceIds)
                 .GreaterThan(0)
