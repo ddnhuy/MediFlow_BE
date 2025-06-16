@@ -21,7 +21,6 @@ namespace Inventory.Application.DomainEventsHandler.InventoryUpdated
                 // Create new inventory detail
                 inventoryDetail = new InventoryDetail
                 {
-                    MedicineId = notification.MedicineId,
                     MedicineBatchId = notification.MedicineBatchId,
                     WarehouseId = notification.WarehouseId,
                     Quantity = notification.Quantity,

@@ -2,7 +2,6 @@
 {
     public class InventoryDetail : Entity
     {
-        public int MedicineId { get; set; }
         public int MedicineBatchId { get; set; }
         public MedicineBatch? MedicineBatch { get; set; }
         public int WarehouseId { get; set; }
