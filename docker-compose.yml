@@ -70,6 +70,13 @@ services:
       context: .
       dockerfile: src/Workers/Workers.Email/Dockerfile
 
+  appointment.api:
+    image: ${DOCKER_REGISTRY-}appointmentapi
+    build:
+      context: .
+      dockerfile: src/Services/Appointment/Appointment.API/Dockerfile
+
 volumes:
   postgres_db:
   redis_data:
+

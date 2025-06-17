@@ -178,5 +178,18 @@
         public const string DISEASE_GROUP_NAME_MAX_LENGTH = "Tên nhóm bệnh không được vượt quá 200 ký tự";
         public const string DISEASE_GROUP_NAME_MIN_LENGTH = "Tên nhóm bệnh phải có ít nhất 3 ký tự";
         public const string DISEASE_GROUP_DESCRIPTION_MAX_LENGTH = "Mô tả không được vượt quá 500 ký tự";
+
+        // Appointment validation
+        public const string REQUIRED_APPOINTMENT_ID = "Mã cuộc hẹn là bắt buộc.";
+        public const string REQUIRED_PATIENT_ID = "Mã bệnh nhân là bắt buộc.";
+        public const string INVALID_PATIENT_ID = "Mã bệnh nhân không hợp lệ.";
+        public const string REQUIRED_APPOINTMENT_DATE = "Ngày hẹn là bắt buộc.";
+        public const string INVALID_APPOINTMENT_DATE = "Ngày hẹn phải sau ngày hiện tại.";
+        public const string REQUIRED_APPOINTMENT_TYPE = "Loại cuộc hẹn là bắt buộc.";
+        public const string INVALID_APPOINTMENT_TYPE = "Loại cuộc hẹn không hợp lệ.";
+        public const string REQUIRED_PATIENT_EMAIL = "Email bệnh nhân là bắt buộc.";
+        public const string INVALID_PATIENT_EMAIL = "Email bệnh nhân không hợp lệ.";
+        public const string INVALID_PATIENT_PHONE_NUMBER = "Số điện thoại bệnh nhân không hợp lệ.";
+        public const string REQUIRED_SUSPENDED_STATUS = "Trạng thái tạm dừng là bắt buộc.";
     }
 }
