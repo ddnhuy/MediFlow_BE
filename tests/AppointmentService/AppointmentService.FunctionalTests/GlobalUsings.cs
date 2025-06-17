@@ -1,0 +1,14 @@
+﻿global using AppointmentService.FunctionalTests.Abstractions;
+global using AppointmentService.FunctionalTests.Helpers;
+global using BuildingBlocks.Strings;
+global using FluentAssertions;
+global using Grpc.Core;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Microsoft.Extensions.DependencyInjection;
+global using NSubstitute;
+global using System.Net;
+global using System.Net.Http.Headers;
+global using System.Net.Http.Json;
+global using static CustomerInfo.Grpc.Protos.PatientProtoService;
+global using static HumanResource.Grpc.ApplicationUserProtoService;
+global using static HumanResource.Grpc.DepartmentProtoService;

@@ -1,0 +1,58 @@
+﻿namespace Appointment.API.Appointments.Commands
+{
+    public record UpdateAppointmentResult(bool IsSuccess, string Message);
+    public record UpdateAppointmentCommand(int Id, int PatientId, int DepartmentId, DateTime AppointmentDate, AppointmentType AppointmentType, string PatientEmail, string? PatientPhoneNumber, string? Note, bool IsSuspended) : ICommand<UpdateAppointmentResult>;
+
+    public class UpdateAppointmentCommandValidator : AbstractValidator<UpdateAppointmentCommand>
+    {
+        public UpdateAppointmentCommandValidator()
+        {
+            RuleFor(x => x.Id).GreaterThan(0).WithMessage(ValidationStrings.REQUIRED_APPOINTMENT_ID);
+            RuleFor(x => x.PatientId).GreaterThan(0).WithMessage(ValidationStrings.INVALID_PATIENT_ID);
+            RuleFor(x => x.DepartmentId).GreaterThan(0).WithMessage(ValidationStrings.REQUIRED_DEPARTMENT_ID);
+            RuleFor(x => x.AppointmentDate).GreaterThan(DateTime.UtcNow).WithMessage(ValidationStrings.INVALID_APPOINTMENT_DATE);
+            RuleFor(x => x.AppointmentType).IsInEnum().WithMessage(ValidationStrings.INVALID_APPOINTMENT_TYPE);
+            RuleFor(x => x.PatientEmail).NotEmpty().EmailAddress().WithMessage(ValidationStrings.INVALID_PATIENT_EMAIL);
+            RuleFor(x => x.PatientPhoneNumber).Matches(@"^\+?[1-9]\d{1,14}$").When(x => !string.IsNullOrEmpty(x.PatientPhoneNumber)).WithMessage(ValidationStrings.INVALID_PATIENT_PHONE_NUMBER);
+            RuleFor(x => x.IsSuspended).NotNull().WithMessage(ValidationStrings.REQUIRED_SUSPENDED_STATUS);
+        }
+    }
+
+    internal class UpdateAppointmentCommandHandler : ICommandHandler<UpdateAppointmentCommand, UpdateAppointmentResult>
+    {
+        private readonly ICurrentUserHelper _currentUserHelper;
+        private readonly IAppointmentRepository _appointmentRepository;
+        public UpdateAppointmentCommandHandler(ICurrentUserHelper currentUserHelper, IAppointmentRepository appointmentRepository)
+        {
+            _currentUserHelper = currentUserHelper;
+            _appointmentRepository = appointmentRepository;
+        }
+
+        public async Task<UpdateAppointmentResult> Handle(UpdateAppointmentCommand command, CancellationToken cancellationToken)
+        {
+            var appointment = await _appointmentRepository.GetByIdAsync(command.Id);
+
+            if (appointment is null)
+            {
+                throw new NotFoundException(AppointmentExceptionStrings.NOT_FOUND_APPOINTMENT_WITH_ID(command.Id));
+            }
+
+            appointment.PatientId = command.PatientId;
+            appointment.DepartmentId = command.DepartmentId;
+            appointment.AppointmentDate = command.AppointmentDate;
+            appointment.AppointmentType = command.AppointmentType;
+            appointment.PatientEmail = command.PatientEmail;
+            appointment.PatientPhoneNumber = command.PatientPhoneNumber;
+            appointment.Note = command.Note;
+            appointment.IsSuspended = command.IsSuspended;
+
+            appointment.LastUpdatedAt = DateTime.UtcNow;
+            appointment.LastUpdatedBy = _currentUserHelper.GetUserId();
+
+            await _appointmentRepository.UpdateAsync(appointment);
+            await _appointmentRepository.SaveChangesAsync();
+
+            return new UpdateAppointmentResult(true, AppointmentSuccessStrings.AppointmentUpdated);
+        }
+    }
+}

@@ -45,6 +45,7 @@ message CreatePatientRequest {
   bool isForeigner = 12;
   bool isSuspended = 13;
   bool isCancelled = 14;
+  string email = 15;
 }
 
 message UpdatePatientRequest {
@@ -63,6 +64,7 @@ message UpdatePatientRequest {
   bool isForeigner = 13;
   bool isSuspended = 14;
   bool isCancelled = 15;
+  string email = 16;
 }
 
 message DeletePatientRequest {
@@ -109,4 +111,5 @@ message PatientDetailModel {
   int32 createdBy = 17;
   google.protobuf.Timestamp lastUpdatedAt = 18;
   int32 lastUpdatedBy = 19;
+  string email = 20;
 }

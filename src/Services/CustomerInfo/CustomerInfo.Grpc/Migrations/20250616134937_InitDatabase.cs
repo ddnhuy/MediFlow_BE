@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CustomerInfo.Grpc.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -29,6 +29,7 @@ namespace CustomerInfo.Grpc.Migrations
                     Gender = table.Column<short>(type: "smallint", nullable: false, comment: "Giới tính (0: Nữ, 1: Nam)"),
                     DOB = table.Column<DateTime>(type: "date", nullable: false, comment: "Ngày sinh"),
                     PhoneNumber = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true, comment: "Số điện thoại"),
+                    Email = table.Column<string>(type: "text", nullable: true),
                     IdentityCard = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true, comment: "CMND/CCCD"),
                     AddressDetail = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true, comment: "Địa chỉ chi tiết"),
                     Province = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true, comment: "Tỉnh/Thành phố"),
@@ -52,60 +53,60 @@ namespace CustomerInfo.Grpc.Migrations
             migrationBuilder.InsertData(
                 schema: "public",
                 table: "Patients",
-                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Gender", "IdentityCard", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
-                values: new object[] { 1, "123 Đường Nguyễn Huệ", "BN001", new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9499), 0, new DateTime(1990, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quận 1", (short)1, "123456789", 0, "Nguyễn Văn An", "0987654321", "TP. Hồ Chí Minh", "Phường Bến Nghé" });
+                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Email", "Gender", "IdentityCard", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
+                values: new object[] { 1, "123 Đường Nguyễn Huệ", "BN001", new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc), 0, new DateTime(1990, 5, 14, 17, 0, 0, 0, DateTimeKind.Utc), "Quận 1", "testpatient.01@gmail.com", (short)1, "123456789", 0, "Nguyễn Văn An", "0987654321", "TP. Hồ Chí Minh", "Phường Bến Nghé" });
 
             migrationBuilder.InsertData(
                 schema: "public",
                 table: "Patients",
-                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Gender", "IdentityCard", "IsPregnant", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
-                values: new object[] { 2, "456 Đường Lê Lợi", "BN002", new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9602), 0, new DateTime(1985, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quận 1", (short)0, "234567890", true, 0, "Trần Thị Bình", "0987654322", "TP. Hồ Chí Minh", "Phường Bến Thành" });
+                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Email", "Gender", "IdentityCard", "IsPregnant", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
+                values: new object[] { 2, "456 Đường Lê Lợi", "BN002", new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc), 0, new DateTime(1985, 8, 19, 17, 0, 0, 0, DateTimeKind.Utc), "Quận 3", "testpatient.02@gmail.com", (short)0, "234567890", true, 0, "Trần Thị Bình", "0987654322", "TP. Hồ Chí Minh", "Phường 6" });
 
             migrationBuilder.InsertData(
                 schema: "public",
                 table: "Patients",
-                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Gender", "IdentityCard", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
+                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Email", "Gender", "IdentityCard", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
                 values: new object[,]
                 {
-                    { 3, "789 Đường Đồng Khởi", "BN003", new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9604), 0, new DateTime(1995, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quận 1", (short)1, "345678901", 0, "Lê Văn Cường", "0987654323", "TP. Hồ Chí Minh", "Phường Nguyễn Thái Bình" },
-                    { 4, "321 Đường Nguyễn Du", "BN004", new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9606), 0, new DateTime(1988, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quận 1", (short)0, "456789012", 0, "Phạm Thị Dung", "0987654324", "TP. Hồ Chí Minh", "Phường Bến Nghé" }
+                    { 3, "789 Đường Đồng Khởi", "BN003", new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc), 0, new DateTime(1995, 3, 9, 17, 0, 0, 0, DateTimeKind.Utc), "Phường Linh Trung", "testpatient.03@gmail.com", (short)1, "345678901", 0, "Lê Văn Cường", "0987654323", "TP. Thủ Đức", "Phường Linh Trung" },
+                    { 4, "321 Đường Nguyễn Du", "BN004", new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc), 0, new DateTime(1988, 12, 24, 17, 0, 0, 0, DateTimeKind.Utc), "Quận Hoàn Kiếm", "testpatient.04@gmail.com", (short)0, "456789012", 0, "Phạm Thị Dung", "0987654324", "TP. Hà Nội", "Phường Hàng Bạc" }
                 });
 
             migrationBuilder.InsertData(
                 schema: "public",
                 table: "Patients",
-                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Gender", "IdentityCard", "IsForeigner", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
-                values: new object[] { 5, "654 Đường Lê Duẩn", "BN005", new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9607), 0, new DateTime(1980, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quận 1", (short)1, "567890123", true, 0, "John Smith", "0987654325", "TP. Hồ Chí Minh", "Phường Bến Thành" });
+                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Email", "Gender", "IdentityCard", "IsForeigner", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
+                values: new object[] { 5, "654 Đường Lê Duẩn", "BN005", new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc), 0, new DateTime(1980, 7, 4, 17, 0, 0, 0, DateTimeKind.Utc), "Quận Hải Châu", "testpatient.05@gmail.com", (short)1, "567890123", true, 0, "John Smith", "0987654325", "TP. Đà Nẵng", "Phường Thạch Thang" });
 
             migrationBuilder.InsertData(
                 schema: "public",
                 table: "Patients",
-                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Gender", "IdentityCard", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
-                values: new object[] { 6, "987 Đường Pasteur", "BN006", new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9611), 0, new DateTime(1992, 4, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quận 3", (short)1, "678901234", 0, "Hoàng Văn Minh", "0987654326", "TP. Hồ Chí Minh", "Phường Võ Thị Sáu" });
+                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Email", "Gender", "IdentityCard", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
+                values: new object[] { 6, "987 Đường Pasteur", "BN006", new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc), 0, new DateTime(1992, 4, 17, 17, 0, 0, 0, DateTimeKind.Utc), "Quận Ninh Kiều", "testpatient.07@gmail.com", (short)1, "678901234", 0, "Hoàng Văn Minh", "0987654326", "TP. Cần Thơ", "Phường Xuân Khánh" });
 
             migrationBuilder.InsertData(
                 schema: "public",
                 table: "Patients",
-                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Gender", "IdentityCard", "IsPregnant", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
-                values: new object[] { 7, "147 Đường Võ Văn Tần", "BN007", new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9612), 0, new DateTime(1993, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quận 3", (short)0, "789012345", true, 0, "Nguyễn Thị Hương", "0987654327", "TP. Hồ Chí Minh", "Phường 6" });
+                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Email", "Gender", "IdentityCard", "IsPregnant", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
+                values: new object[] { 7, "147 Đường Võ Văn Tần", "BN007", new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc), 0, new DateTime(1993, 9, 29, 17, 0, 0, 0, DateTimeKind.Utc), "Quận Ngô Quyền", "testpatient.08@gmail.com", (short)0, "789012345", true, 0, "Nguyễn Thị Hương", "0987654327", "TP. Hải Phòng", "Phường Lạch Tray" });
 
             migrationBuilder.InsertData(
                 schema: "public",
                 table: "Patients",
-                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Gender", "IdentityCard", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
-                values: new object[] { 8, "258 Đường Nguyễn Đình Chiểu", "BN008", new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9614), 0, new DateTime(1987, 6, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quận 3", (short)1, "890123456", 0, "Trần Văn Phúc", "0987654328", "TP. Hồ Chí Minh", "Phường 5" });
+                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Email", "Gender", "IdentityCard", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
+                values: new object[] { 8, "258 Đường Nguyễn Đình Chiểu", "BN008", new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc), 0, new DateTime(1987, 6, 11, 17, 0, 0, 0, DateTimeKind.Utc), "Phường Tân Hiệp", "testpatient.09@gmail.com", (short)1, "890123456", 0, "Trần Văn Phúc", "0987654328", "TP. Biên Hòa", "Phường Tân Hiệp" });
 
             migrationBuilder.InsertData(
                 schema: "public",
                 table: "Patients",
-                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Gender", "IdentityCard", "IsForeigner", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
-                values: new object[] { 9, "369 Đường Lý Tự Trọng", "BN009", new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9615), 0, new DateTime(1991, 11, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quận 1", (short)0, "901234567", true, 0, "Sarah Johnson", "0987654329", "TP. Hồ Chí Minh", "Phường Bến Thành" });
+                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Email", "Gender", "IdentityCard", "IsForeigner", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
+                values: new object[] { 9, "369 Đường Lý Tự Trọng", "BN009", new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc), 0, new DateTime(1991, 11, 7, 17, 0, 0, 0, DateTimeKind.Utc), "TP. Huế", "testpatient.10@gmail.com", (short)0, "901234567", true, 0, "Sarah Johnson", "0987654329", "TP. Huế", "Phường Phú Hội" });
 
             migrationBuilder.InsertData(
                 schema: "public",
                 table: "Patients",
-                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Gender", "IdentityCard", "IsPregnant", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
-                values: new object[] { 10, "741 Đường Đồng Khởi", "BN010", new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9617), 0, new DateTime(1994, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Quận 1", (short)0, "012345678", true, 0, "Lê Thị Mai", "0987654330", "TP. Hồ Chí Minh", "Phường Nguyễn Thái Bình" });
+                columns: new[] { "Id", "AddressDetail", "Code", "CreatedAt", "CreatedBy", "DOB", "District", "Email", "Gender", "IdentityCard", "IsPregnant", "LastUpdatedBy", "Name", "PhoneNumber", "Province", "Ward" },
+                values: new object[] { 10, "741 Đường Đồng Khởi", "BN010", new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc), 0, new DateTime(1994, 2, 27, 17, 0, 0, 0, DateTimeKind.Utc), "TP. Nha Trang", "testpatient.11@gmail.com", (short)0, "012345678", true, 0, "Lê Thị Mai", "0987654330", "TP. Nha Trang", "Phường Vĩnh Hòa" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Patients_Code",

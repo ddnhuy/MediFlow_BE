@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CustomerInfo.Grpc.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250523143920_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250616134937_InitDatabase")]
+    partial class InitDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -63,6 +63,9 @@ namespace CustomerInfo.Grpc.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasComment("Quận/Huyện");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
 
                     b.Property<short>("Gender")
                         .HasColumnType("smallint")
@@ -155,10 +158,11 @@ namespace CustomerInfo.Grpc.Migrations
                             Id = 1,
                             AddressDetail = "123 Đường Nguyễn Huệ",
                             Code = "BN001",
-                            CreatedAt = new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9499),
+                            CreatedAt = new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 0,
-                            DOB = new DateTime(1990, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DOB = new DateTime(1990, 5, 14, 17, 0, 0, 0, DateTimeKind.Utc),
                             District = "Quận 1",
+                            Email = "testpatient.01@gmail.com",
                             Gender = (short)1,
                             IdentityCard = "123456789",
                             IsCancelled = false,
@@ -177,10 +181,11 @@ namespace CustomerInfo.Grpc.Migrations
                             Id = 2,
                             AddressDetail = "456 Đường Lê Lợi",
                             Code = "BN002",
-                            CreatedAt = new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9602),
+                            CreatedAt = new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 0,
-                            DOB = new DateTime(1985, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            District = "Quận 1",
+                            DOB = new DateTime(1985, 8, 19, 17, 0, 0, 0, DateTimeKind.Utc),
+                            District = "Quận 3",
+                            Email = "testpatient.02@gmail.com",
                             Gender = (short)0,
                             IdentityCard = "234567890",
                             IsCancelled = false,
@@ -192,17 +197,18 @@ namespace CustomerInfo.Grpc.Migrations
                             Name = "Trần Thị Bình",
                             PhoneNumber = "0987654322",
                             Province = "TP. Hồ Chí Minh",
-                            Ward = "Phường Bến Thành"
+                            Ward = "Phường 6"
                         },
                         new
                         {
                             Id = 3,
                             AddressDetail = "789 Đường Đồng Khởi",
                             Code = "BN003",
-                            CreatedAt = new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9604),
+                            CreatedAt = new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 0,
-                            DOB = new DateTime(1995, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            District = "Quận 1",
+                            DOB = new DateTime(1995, 3, 9, 17, 0, 0, 0, DateTimeKind.Utc),
+                            District = "Phường Linh Trung",
+                            Email = "testpatient.03@gmail.com",
                             Gender = (short)1,
                             IdentityCard = "345678901",
                             IsCancelled = false,
@@ -213,18 +219,19 @@ namespace CustomerInfo.Grpc.Migrations
                             LastUpdatedBy = 0,
                             Name = "Lê Văn Cường",
                             PhoneNumber = "0987654323",
-                            Province = "TP. Hồ Chí Minh",
-                            Ward = "Phường Nguyễn Thái Bình"
+                            Province = "TP. Thủ Đức",
+                            Ward = "Phường Linh Trung"
                         },
                         new
                         {
                             Id = 4,
                             AddressDetail = "321 Đường Nguyễn Du",
                             Code = "BN004",
-                            CreatedAt = new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9606),
+                            CreatedAt = new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 0,
-                            DOB = new DateTime(1988, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            District = "Quận 1",
+                            DOB = new DateTime(1988, 12, 24, 17, 0, 0, 0, DateTimeKind.Utc),
+                            District = "Quận Hoàn Kiếm",
+                            Email = "testpatient.04@gmail.com",
                             Gender = (short)0,
                             IdentityCard = "456789012",
                             IsCancelled = false,
@@ -235,18 +242,19 @@ namespace CustomerInfo.Grpc.Migrations
                             LastUpdatedBy = 0,
                             Name = "Phạm Thị Dung",
                             PhoneNumber = "0987654324",
-                            Province = "TP. Hồ Chí Minh",
-                            Ward = "Phường Bến Nghé"
+                            Province = "TP. Hà Nội",
+                            Ward = "Phường Hàng Bạc"
                         },
                         new
                         {
                             Id = 5,
                             AddressDetail = "654 Đường Lê Duẩn",
                             Code = "BN005",
-                            CreatedAt = new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9607),
+                            CreatedAt = new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 0,
-                            DOB = new DateTime(1980, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            District = "Quận 1",
+                            DOB = new DateTime(1980, 7, 4, 17, 0, 0, 0, DateTimeKind.Utc),
+                            District = "Quận Hải Châu",
+                            Email = "testpatient.05@gmail.com",
                             Gender = (short)1,
                             IdentityCard = "567890123",
                             IsCancelled = false,
@@ -257,18 +265,19 @@ namespace CustomerInfo.Grpc.Migrations
                             LastUpdatedBy = 0,
                             Name = "John Smith",
                             PhoneNumber = "0987654325",
-                            Province = "TP. Hồ Chí Minh",
-                            Ward = "Phường Bến Thành"
+                            Province = "TP. Đà Nẵng",
+                            Ward = "Phường Thạch Thang"
                         },
                         new
                         {
                             Id = 6,
                             AddressDetail = "987 Đường Pasteur",
                             Code = "BN006",
-                            CreatedAt = new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9611),
+                            CreatedAt = new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 0,
-                            DOB = new DateTime(1992, 4, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            District = "Quận 3",
+                            DOB = new DateTime(1992, 4, 17, 17, 0, 0, 0, DateTimeKind.Utc),
+                            District = "Quận Ninh Kiều",
+                            Email = "testpatient.07@gmail.com",
                             Gender = (short)1,
                             IdentityCard = "678901234",
                             IsCancelled = false,
@@ -279,18 +288,19 @@ namespace CustomerInfo.Grpc.Migrations
                             LastUpdatedBy = 0,
                             Name = "Hoàng Văn Minh",
                             PhoneNumber = "0987654326",
-                            Province = "TP. Hồ Chí Minh",
-                            Ward = "Phường Võ Thị Sáu"
+                            Province = "TP. Cần Thơ",
+                            Ward = "Phường Xuân Khánh"
                         },
                         new
                         {
                             Id = 7,
                             AddressDetail = "147 Đường Võ Văn Tần",
                             Code = "BN007",
-                            CreatedAt = new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9612),
+                            CreatedAt = new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 0,
-                            DOB = new DateTime(1993, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            District = "Quận 3",
+                            DOB = new DateTime(1993, 9, 29, 17, 0, 0, 0, DateTimeKind.Utc),
+                            District = "Quận Ngô Quyền",
+                            Email = "testpatient.08@gmail.com",
                             Gender = (short)0,
                             IdentityCard = "789012345",
                             IsCancelled = false,
@@ -301,18 +311,19 @@ namespace CustomerInfo.Grpc.Migrations
                             LastUpdatedBy = 0,
                             Name = "Nguyễn Thị Hương",
                             PhoneNumber = "0987654327",
-                            Province = "TP. Hồ Chí Minh",
-                            Ward = "Phường 6"
+                            Province = "TP. Hải Phòng",
+                            Ward = "Phường Lạch Tray"
                         },
                         new
                         {
                             Id = 8,
                             AddressDetail = "258 Đường Nguyễn Đình Chiểu",
                             Code = "BN008",
-                            CreatedAt = new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9614),
+                            CreatedAt = new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 0,
-                            DOB = new DateTime(1987, 6, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            District = "Quận 3",
+                            DOB = new DateTime(1987, 6, 11, 17, 0, 0, 0, DateTimeKind.Utc),
+                            District = "Phường Tân Hiệp",
+                            Email = "testpatient.09@gmail.com",
                             Gender = (short)1,
                             IdentityCard = "890123456",
                             IsCancelled = false,
@@ -323,18 +334,19 @@ namespace CustomerInfo.Grpc.Migrations
                             LastUpdatedBy = 0,
                             Name = "Trần Văn Phúc",
                             PhoneNumber = "0987654328",
-                            Province = "TP. Hồ Chí Minh",
-                            Ward = "Phường 5"
+                            Province = "TP. Biên Hòa",
+                            Ward = "Phường Tân Hiệp"
                         },
                         new
                         {
                             Id = 9,
                             AddressDetail = "369 Đường Lý Tự Trọng",
                             Code = "BN009",
-                            CreatedAt = new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9615),
+                            CreatedAt = new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 0,
-                            DOB = new DateTime(1991, 11, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            District = "Quận 1",
+                            DOB = new DateTime(1991, 11, 7, 17, 0, 0, 0, DateTimeKind.Utc),
+                            District = "TP. Huế",
+                            Email = "testpatient.10@gmail.com",
                             Gender = (short)0,
                             IdentityCard = "901234567",
                             IsCancelled = false,
@@ -345,18 +357,19 @@ namespace CustomerInfo.Grpc.Migrations
                             LastUpdatedBy = 0,
                             Name = "Sarah Johnson",
                             PhoneNumber = "0987654329",
-                            Province = "TP. Hồ Chí Minh",
-                            Ward = "Phường Bến Thành"
+                            Province = "TP. Huế",
+                            Ward = "Phường Phú Hội"
                         },
                         new
                         {
                             Id = 10,
                             AddressDetail = "741 Đường Đồng Khởi",
                             Code = "BN010",
-                            CreatedAt = new DateTime(2025, 5, 23, 14, 39, 20, 176, DateTimeKind.Utc).AddTicks(9617),
+                            CreatedAt = new DateTime(2023, 12, 31, 17, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 0,
-                            DOB = new DateTime(1994, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            District = "Quận 1",
+                            DOB = new DateTime(1994, 2, 27, 17, 0, 0, 0, DateTimeKind.Utc),
+                            District = "TP. Nha Trang",
+                            Email = "testpatient.11@gmail.com",
                             Gender = (short)0,
                             IdentityCard = "012345678",
                             IsCancelled = false,
@@ -367,8 +380,8 @@ namespace CustomerInfo.Grpc.Migrations
                             LastUpdatedBy = 0,
                             Name = "Lê Thị Mai",
                             PhoneNumber = "0987654330",
-                            Province = "TP. Hồ Chí Minh",
-                            Ward = "Phường Nguyễn Thái Bình"
+                            Province = "TP. Nha Trang",
+                            Ward = "Phường Vĩnh Hòa"
                         });
                 });
 #pragma warning restore 612, 618

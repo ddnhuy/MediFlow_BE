@@ -26,6 +26,7 @@ namespace CustomerInfo.Grpc.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.SeedData();
             base.OnModelCreating(modelBuilder);
         }
 

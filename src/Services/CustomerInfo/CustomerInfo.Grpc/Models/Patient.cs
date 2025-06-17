@@ -25,6 +25,9 @@ namespace CustomerInfo.Grpc.Models
         [StringLength(20, ErrorMessage = "Số điện thoại không được vượt quá {1} ký tự.")]
         public string? PhoneNumber { get; set; }
 
+        [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
+        public string? Email { get; set; }
+
         [StringLength(50, ErrorMessage = "CMND/CCCD không được vượt quá {1} ký tự.")]
         public string? IdentityCard { get; set; }
 
