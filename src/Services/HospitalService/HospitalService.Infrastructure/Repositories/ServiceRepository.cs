@@ -21,75 +21,74 @@ namespace HospitalService.Infrastructure.Repositories
             _context = context;
             _logger = logger;
         }
-
-        public async Task<Service> GetByIdAsync(int id)
+        public async Task<Service> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             return await _context.Services
                 .Include(s => s.ServiceGroupServices)
                 .Include(s => s.DiseaseGroupServices)
-                .FirstOrDefaultAsync(s => s.Id == id);
+                .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         }
 
-        public async Task<IEnumerable<Service>> GetAllAsync()
+        public async Task<IEnumerable<Service>> GetAllAsync(CancellationToken cancellationToken)
         {
             return await _context.Services
                 .Include(s => s.ServiceGroupServices)
                 .Include(s => s.DiseaseGroupServices)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<Service> AddAsync(Service service)
+        public async Task<Service> AddAsync(Service service, CancellationToken cancellationToken)
         {
-            await _context.Services.AddAsync(service);
+            await _context.Services.AddAsync(service, cancellationToken);
             return service;
         }
 
-        public async Task<Service> UpdateAsync(Service service)
+        public async Task<Service> UpdateAsync(Service service, CancellationToken cancellationToken)
         {
             _context.Services.Update(service);
             return service;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, CancellationToken cancellationToken)
         {
-            var service = await GetByIdAsync(id);
+            var service = await GetByIdAsync(id, cancellationToken);
             if (service != null)
             {
                 service.IsCancelled = true;
             }
         }
 
-        public async Task<bool> ExistsAsync(int id)
+        public async Task<bool> ExistsAsync(int id, CancellationToken cancellationToken)
         {
-            return await _context.Services.AnyAsync(s => s.Id == id);
+            return await _context.Services.AnyAsync(s => s.Id == id, cancellationToken);
         }
 
-        public async Task<IEnumerable<Service>> GetByDepartmentIdAsync(int departmentId)
+        public async Task<IEnumerable<Service>> GetByDepartmentIdAsync(int departmentId, CancellationToken cancellationToken)
         {
             return await _context.Services
                 .Where(s => s.DepartmentId == departmentId)
                 .Include(s => s.ServiceGroupServices)
                 .Include(s => s.DiseaseGroupServices)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Service>> GetBySearchTermAsync(string searchTerm)
+        public async Task<IEnumerable<Service>> GetBySearchTermAsync(string searchTerm, CancellationToken cancellationToken)
         {
             return await _context.Services
                 .Where(s => s.ServiceName.ToLower().Contains(searchTerm.ToLower()) ||
                            s.ServiceCode.ToLower().Contains(searchTerm.ToLower()))
                 .Include(s => s.ServiceGroupServices)
                 .Include(s => s.DiseaseGroupServices)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
-        public async Task<int> GetTotalCountAsync(string searchTerm)
+        public async Task<int> GetTotalCountAsync(string searchTerm, CancellationToken cancellationToken)
         {
             return await _context.Services
                 .Where(s => string.IsNullOrEmpty(searchTerm) ||
                            s.ServiceName.ToLower().Contains(searchTerm.ToLower()) ||
                            s.ServiceCode.ToLower().Contains(searchTerm.ToLower()))
-                .CountAsync();
+                .CountAsync(cancellationToken);
         }
     }
 }

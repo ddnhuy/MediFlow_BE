@@ -49,7 +49,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
                     DepartmentId = request.DepartmentId,
                 };
 
-                await _serviceRepository.AddAsync(service);
+                await _serviceRepository.AddAsync(service, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
                 _logger.LogInformation("Created new service with ID {ServiceId}", service.Id);

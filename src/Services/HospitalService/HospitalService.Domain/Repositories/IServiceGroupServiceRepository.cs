@@ -16,5 +16,6 @@ namespace HospitalService.Domain.Repositories
         Task DeleteRangeAsync(IEnumerable<ServiceGroupService> serviceGroupServices);
         Task<ServiceGroupService> GetByIdAsync(int id);
         Task<bool> ExistsAsync(int serviceGroupId, int serviceId);
+        Task<IEnumerable<ServiceGroupService>> GetByServiceIdAsync(int serviceId, CancellationToken cancellationToken = default);
     }
 }

@@ -156,5 +156,27 @@
         public const string REQUIRED_FILE_TYPE = "Loại file là bắt buộc.";
         public const string INVALID_FILE_TYPE = "Loại file không hợp lệ.";
         public const string INVALID_FILE_ID = "ID file không hợp lệ.";
+
+        // Service validation
+        public const string REQUIRED_SERVICE_CODE = "Mã dịch vụ không được để trống";
+        public const string SERVICE_CODE_MAX_LENGTH = "Mã dịch vụ không được vượt quá 50 ký tự";
+        public const string INVALID_SERVICE_CODE_FORMAT = "Mã dịch vụ chỉ được chứa chữ cái, số, dấu gạch ngang và dấu gạch dưới";
+        public const string REQUIRED_SERVICE_NAME = "Tên dịch vụ không được để trống";
+        public const string SERVICE_NAME_MAX_LENGTH = "Tên dịch vụ không được vượt quá 200 ký tự";
+        public const string SERVICE_NAME_MIN_LENGTH = "Tên dịch vụ phải có ít nhất 3 ký tự";
+        public const string INVALID_SERVICE_PRICE = "Đơn giá phải lớn hơn 0";
+        public const string SERVICE_PRICE_TOO_LARGE = "Đơn giá không được vượt quá 1 tỷ";
+
+        // ServiceGroup validation
+        public const string REQUIRED_GROUP_NAME = "Tên nhóm dịch vụ không được để trống";
+        public const string GROUP_NAME_MAX_LENGTH = "Tên nhóm dịch vụ không được vượt quá 200 ký tự";
+        public const string GROUP_NAME_MIN_LENGTH = "Tên nhóm dịch vụ phải có ít nhất 3 ký tự";
+        public const string INVALID_SERVICE_ID = "Mã dịch vụ không hợp lệ";
+
+        // DiseaseGroup validation
+        public const string REQUIRED_DISEASE_GROUP_NAME = "Tên nhóm bệnh không được để trống";
+        public const string DISEASE_GROUP_NAME_MAX_LENGTH = "Tên nhóm bệnh không được vượt quá 200 ký tự";
+        public const string DISEASE_GROUP_NAME_MIN_LENGTH = "Tên nhóm bệnh phải có ít nhất 3 ký tự";
+        public const string DISEASE_GROUP_DESCRIPTION_MAX_LENGTH = "Mô tả không được vượt quá 500 ký tự";
     }
 }
