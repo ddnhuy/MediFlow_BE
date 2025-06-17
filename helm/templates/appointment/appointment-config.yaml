@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: appointment-config
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "ConnectionStrings": {
+        "Database": "Server=postgres;Port=5432;Database=AppointmentDb;User Id=postgres;Password=postgres;Include Error Detail=true;Pooling=true;MinPoolSize=5;MaxPoolSize=100;CommandTimeout=30;"
+      },
+      "Jwt": {
+        "Secret": "super-duper-secret-value-that-should-be-in-user-secrets",
+        "Issuer": "MediFlowIssuer",
+        "Audience": "MediFlowAudience",
+        "ExpirationInMinutes": 60
+      },
+      "GrpcSettings": {
+        "HumanResourceUrl": "http://human-resource-grpc:80",
+        "CustomerInfoUrl": "http://custome-rinfo-grpc:80"
+      }
+    }
