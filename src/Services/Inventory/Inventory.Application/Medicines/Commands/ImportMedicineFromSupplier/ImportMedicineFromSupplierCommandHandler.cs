@@ -4,6 +4,20 @@
     {
         public async Task<ImportMedicineFromSupplierResult> Handle(ImportMedicineFromSupplierCommand request, CancellationToken cancellationToken)
         {
+            // Check duplicate document code and document number
+            var documentCodeExists = await dbContext.SupplierImportDocuments
+                .AnyAsync(doc => doc.DocumentCode == request.DocumentCode, cancellationToken);
+
+            var documentNumberExists = await dbContext.SupplierImportDocuments
+                .AnyAsync(doc => doc.DocumentNumber == request.DocumentNumber, cancellationToken);
+
+            if (documentCodeExists || documentNumberExists)
+            {
+                throw new DuplicateDocumentException(InventoryExceptionStrings.DUPLICATE_DOCUMENT);
+            }
+
+            await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
+
             try
             {
                 // 1. Create the SupplierImportDocument
@@ -82,14 +96,17 @@
                     await dbContext.SaveChangesAsync(cancellationToken);
                 }
 
+                await transaction.CommitAsync(cancellationToken);
+
                 return new ImportMedicineFromSupplierResult(supplierImportDocument.Id);
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error importing medicine from supplier: {e.Message}");
+                Console.WriteLine(e.Message);
+                await transaction.RollbackAsync(cancellationToken);
                 throw;
             }
-            
+
         }
     }
 }

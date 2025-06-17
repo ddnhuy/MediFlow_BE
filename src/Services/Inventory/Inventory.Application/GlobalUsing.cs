@@ -1,4 +1,5 @@
 ﻿global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Infrastructure;
 global using Inventory.Domain.Models;
 global using BuildingBlocks.Behaviors;
 global using FluentValidation;

@@ -43,5 +43,6 @@
         // General inventory exceptions
         public const string INVALID_INVENTORY_OPERATION = "Thao tác kho không hợp lệ.";
         public const string INSUFFICIENT_STOCK = "Số lượng tồn kho không đủ để thực hiện thao tác.";
+        public const string DUPLICATE_DOCUMENT = "Mã tài liệu hoặc số tài liệu đã tồn tại trong hệ thống.";
     }
 }
