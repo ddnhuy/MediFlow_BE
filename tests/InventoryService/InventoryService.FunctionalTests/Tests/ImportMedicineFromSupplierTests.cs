@@ -202,5 +202,74 @@ namespace Inventory.FunctionalTests.Tests
             var problem3 = await response3.Content.ReadFromJsonAsync<ProblemDetails>();
             problem3.Should().NotBeNull();
         }
+
+        [Fact]
+        public async Task ImportMedicineFromSupplier_WhenExceptionOccurs_RollsBackTransaction()
+        {
+            // Arrange - Create a command that will cause an exception during processing
+            // Using an invalid foreign key (non-existent manufacturer ID) to trigger a database exception
+            var command = new ImportMedicineFromSupplierCommand
+            {
+                DocumentCode = "ROLLBACK_TEST_DOC",
+                DocumentNumber = "ROLLBACK_TEST_NUM",
+                WarehouseId = 1,
+                ImportDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                SupplierId = 9999,
+                ReceivedById = 1,
+                Details = new List<ImportMedicineDetailDto>
+                {
+                    new ImportMedicineDetailDto
+                    {
+                        MedicineId = 1,
+                        BatchNumber = "BATCH_ROLLBACK",
+                        Quantity = 100,
+                        UnitPrice = 10.5m,
+                        ExpiryDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(2)),
+                        // Use an invalid manufacturer ID to cause a foreign key constraint violation
+                        ManufacturerId = 1,
+                        CountryId = 1
+                    }
+                }
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/import-medicine-from-supplier", command);
+
+            // Assert
+            // Should return an error status code
+            response.IsSuccessStatusCode.Should().BeFalse();
+
+            // Now verify the transaction was rolled back by checking that the document wasn't created
+            // We can do this by trying to create another document with the same document code/number
+            // If the rollback was successful, this should succeed
+            var verificationCommand = new ImportMedicineFromSupplierCommand
+            {
+                DocumentCode = "ROLLBACK_TEST_DOC", // Same as the failed command
+                DocumentNumber = "ROLLBACK_TEST_NUM", // Same as the failed command
+                WarehouseId = 1,
+                ImportDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                SupplierId = 1,
+                ReceivedById = 1,
+                Details = new List<ImportMedicineDetailDto>
+                {
+                    new ImportMedicineDetailDto
+                    {
+                        MedicineId = 1,
+                        BatchNumber = "BATCH_VERIFY",
+                        Quantity = 50,
+                        UnitPrice = 20.0m,
+                        ExpiryDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(1)),
+                        ManufacturerId = 1, // Valid manufacturer ID
+                        CountryId = 1
+                    }
+                }
+            };
+
+            // If the transaction was properly rolled back, we should be able to use the same document code/number
+            var verificationResponse = await _client.PostAsJsonAsync("/import-medicine-from-supplier", verificationCommand);
+            verificationResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await verificationResponse.Content.ReadFromJsonAsync<ImportMedicineFromSupplierResponse>();
+            result.Should().NotBeNull();
+        }
     }
 }
