@@ -13,7 +13,7 @@
 
             if (documentCodeExists || documentNumberExists)
             {
-                throw new DuplicateDocumentException(InventoryExceptionStrings.DUPLICATE_DOCUMENT);
+                throw new BadRequestException(InventoryExceptionStrings.DUPLICATE_DOCUMENT);
             }
 
             await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
@@ -100,9 +100,8 @@
 
                 return new ImportMedicineFromSupplierResult(supplierImportDocument.Id);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e.Message);
                 await transaction.RollbackAsync(cancellationToken);
                 throw;
             }
