@@ -23,6 +23,6 @@ data:
       },
       "GrpcSettings": {
         "HumanResourceUrl": "http://human-resource-grpc:80",
-        "CustomerInfoUrl": "http://custome-rinfo-grpc:80"
+        "CustomerInfoUrl": "http://customer-info-grpc:80"
       }
     }
