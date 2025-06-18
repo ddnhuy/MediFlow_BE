@@ -11,11 +11,11 @@ namespace Management.API.Departments.Commands
     {
         public UpdateDepartmentCommandValidator()
         {
-            RuleFor(x => x.Id).GreaterThan(0).WithMessage(ValidationStrings.REQUIRED_DEPARTMENT_ID);
-            RuleFor(x => x.Code).NotEmpty().WithMessage(ValidationStrings.REQUIRED_DEPARTMENT_CODE);
-            RuleFor(x => x.Name).NotEmpty().WithMessage(ValidationStrings.REQUIRED_DEPARTMENT_NAME);
-            RuleFor(x => x.NameInEnglish).NotEmpty().WithMessage(ValidationStrings.REQUIRED_DEPARTMENT_NAME_IN_ENGLISH);
-            RuleFor(x => x.DepartmentTypeId).GreaterThan(0).WithMessage(ValidationStrings.REQUIRED_DEPARTMENT_TYPE);
+            RuleFor(x => x.Id).GreaterThan(0).WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_ID.ToString());
+            RuleFor(x => x.Code).NotEmpty().WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_CODE.ToString());
+            RuleFor(x => x.Name).NotEmpty().WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_NAME.ToString());
+            RuleFor(x => x.NameInEnglish).NotEmpty().WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_NAME_IN_ENGLISH.ToString());
+            RuleFor(x => x.DepartmentTypeId).GreaterThan(0).WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_TYPE.ToString());
         }
     }
 

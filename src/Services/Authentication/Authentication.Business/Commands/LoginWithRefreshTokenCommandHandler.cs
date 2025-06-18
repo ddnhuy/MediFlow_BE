@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
+using FluentValidation;
 
 namespace Authentication.Business.Commands
 {
@@ -9,7 +10,7 @@ namespace Authentication.Business.Commands
     {
         public LoginWithRefreshTokenCommandValidator()
         {
-            RuleFor(x => x.RefreshToken).NotEmpty().WithMessage(ValidationStrings.REQUIRED_REFRESH_TOKEN);
+            RuleFor(x => x.RefreshToken).NotEmpty().WithMessage(ExceptionKey.REQUIRED_REFRESH_TOKEN.ToString());
         }
     }
 

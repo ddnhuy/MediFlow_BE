@@ -1,15 +1,9 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
-using BuildingBlocks.Strings.ExceptionStrings;
 using HospitalService.Domain.Abstractions;
 using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HospitalService.Application.Services.HospitalServices.Commands
 {

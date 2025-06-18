@@ -1,11 +1,13 @@
-﻿namespace Inventory.Application.Medicines.Commands.UpdateMedicine
+﻿using FluentValidation;
+
+namespace Inventory.Application.Medicines.Commands.UpdateMedicine
 {
     public class UpdateMedicineCommandValidator : AbstractValidator<UpdateMedicineCommand>
     {
         public UpdateMedicineCommandValidator()
         {
             RuleFor(x => x.Id)
-           .GreaterThan(0).WithMessage(ValidationStrings.REQUIRED_MEDICINE_ID);
+           .GreaterThan(0).WithMessage(ExceptionKey.REQUIRED_MEDICINE_ID.ToString());
 
             MedicineValidatorBase.AddMedicineRules(
                 RuleFor(x => x.MedicineCode),

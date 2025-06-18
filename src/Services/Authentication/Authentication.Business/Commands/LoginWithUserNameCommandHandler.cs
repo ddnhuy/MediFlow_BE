@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
+using FluentValidation;
 using Grpc.Core;
 
 namespace Authentication.Business.Commands
@@ -10,10 +11,10 @@ namespace Authentication.Business.Commands
     {
         public LoginWithUserNameCommandValidator()
         {
-            RuleFor(x => x.UserName).NotEmpty().WithMessage(ValidationStrings.REQUIRED_USERNAME);
+            RuleFor(x => x.UserName).NotEmpty().WithMessage(ExceptionKey.REQUIRED_USERNAME.ToString());
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_PASSWORD)
-                .MinimumLength(8).WithMessage(ValidationStrings.INVALID_PASSWORD_LENGTH);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_PASSWORD.ToString())
+                .MinimumLength(8).WithMessage(ExceptionKey.INVALID_PASSWORD_LENGTH.ToString());
         }
     }
 

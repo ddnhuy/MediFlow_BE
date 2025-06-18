@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
+using FluentValidation;
 using Grpc.Core;
 
 namespace Authentication.Business.Commands
@@ -10,15 +11,15 @@ namespace Authentication.Business.Commands
     {
         public ChangePasswordCommandValidator()
         {
-            RuleFor(x => x.UserId).NotEmpty().WithMessage(ValidationStrings.REQUIRED_USER_ID);
+            RuleFor(x => x.UserId).NotEmpty().WithMessage(ExceptionKey.REQUIRED_USER_ID.ToString());
             RuleFor(x => x.CurrentPassword)
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_CURRENT_PASSWORD)
-                .MinimumLength(8).WithMessage(ValidationStrings.INVALID_PASSWORD_LENGTH);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_CURRENT_PASSWORD.ToString())
+                .MinimumLength(8).WithMessage(ExceptionKey.INVALID_PASSWORD_LENGTH.ToString());
             RuleFor(x => x.NewPassword)
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_NEW_PASSWORD)
-                .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$").WithMessage(ValidationStrings.INVALID_PASSWORD_LENGTH)
-                .MinimumLength(8).WithMessage(ValidationStrings.INVALID_PASSWORD_LENGTH)
-                .NotEqual(x => x.CurrentPassword).WithMessage(ValidationStrings.INVALID_NEW_PASSWORD);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_NEW_PASSWORD.ToString())
+                .Matches(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$").WithMessage(ExceptionKey.INVALID_PASSWORD_LENGTH.ToString())
+                .MinimumLength(8).WithMessage(ExceptionKey.INVALID_PASSWORD_LENGTH.ToString())
+                .NotEqual(x => x.CurrentPassword).WithMessage(ExceptionKey.INVALID_NEW_PASSWORD.ToString());
         }
     }
 

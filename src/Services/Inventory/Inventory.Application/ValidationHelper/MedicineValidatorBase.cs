@@ -20,64 +20,64 @@
                                               IRuleBuilder<T, bool?> ruleForIsRequiredTestingBeforeUse)
         {
             ruleForMedicineCode
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_MEDICINE_CODE)
-                .MaximumLength(20).WithMessage(ValidationStrings.MAX_LENGTH("Mã thuốc", 20));
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_MEDICINE_CODE.ToString())
+                .MaximumLength(20).WithMessage(ExceptionKey.INVALID_MEDICINE_CODE_MAX_LENGTH.ToString());
 
             ruleForMedicineName
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_MEDICINE_NAME)
-                .MaximumLength(100).WithMessage(ValidationStrings.MAX_LENGTH("Tên thuốc", 100));
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_MEDICINE_NAME.ToString())
+                .MaximumLength(100).WithMessage(ExceptionKey.INVALID_MEDICINE_NAME_MAX_LENGTH.ToString());
 
             ruleForUnit
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_MEDICINE_UNIT)
-                .MaximumLength(50).WithMessage(ValidationStrings.MAX_LENGTH("Đơn vị tính", 50));
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_MEDICINE_UNIT.ToString())
+                .MaximumLength(50).WithMessage(ExceptionKey.INVALID_MEDICINE_UNIT_MAX_LENGTH.ToString());
 
             ruleForActiveIngredient
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_ACTIVE_INGREDIENT)
-                .MaximumLength(100).WithMessage(ValidationStrings.MAX_LENGTH("Hoạt chất", 100));
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_ACTIVE_INGREDIENT.ToString())
+                .MaximumLength(100).WithMessage(ExceptionKey.INVALID_ACTIVE_INGREDIENT_MAX_LENGTH.ToString());
 
             ruleForUsageInstructions
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_USAGE_INSTRUCTIONS)
-                .MaximumLength(200).WithMessage(ValidationStrings.MAX_LENGTH("Hướng dẫn sử dụng", 200));
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_USAGE_INSTRUCTIONS.ToString())
+                .MaximumLength(200).WithMessage(ExceptionKey.INVALID_USAGE_INSTRUCTIONS_MAX_LENGTH.ToString());
 
             ruleForConcentration
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_CONCENTRATION)
-                .MaximumLength(50).WithMessage(ValidationStrings.MAX_LENGTH("Nồng độ/Hàm lượng", 50));
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_CONCENTRATION.ToString())
+                .MaximumLength(50).WithMessage(ExceptionKey.INVALID_CONCENTRATION_MAX_LENGTH.ToString());
 
             ruleForIndications
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_INDICATIONS)
-                .MaximumLength(200).WithMessage(ValidationStrings.MAX_LENGTH("Chỉ định", 200));
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_INDICATIONS.ToString())
+                .MaximumLength(200).WithMessage(ExceptionKey.INVALID_INDICATIONS_MAX_LENGTH.ToString());
 
             ruleForMedicineClassification
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_MEDICINE_CLASSIFICATION)
-                .MaximumLength(100).WithMessage(ValidationStrings.MAX_LENGTH("Phân loại thuốc", 100));
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_MEDICINE_CLASSIFICATION.ToString())
+                .MaximumLength(100).WithMessage(ExceptionKey.INVALID_MEDICINE_CLASSIFICATION_MAX_LENGTH.ToString());
 
             ruleForRouteOfAdministration
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_ROUTE_OF_ADMINISTRATION)
-                .MaximumLength(100).WithMessage(ValidationStrings.MAX_LENGTH("Đường dùng", 100));
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_ROUTE_OF_ADMINISTRATION.ToString())
+                .MaximumLength(100).WithMessage(ExceptionKey.INVALID_ROUTE_OF_ADMINISTRATION_MAX_LENGTH.ToString());
 
             ruleForNationalMedicineCode
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_NATIONAL_MEDICINE_CODE)
-                .MaximumLength(50).WithMessage(ValidationStrings.MAX_LENGTH("Mã thuốc quốc gia", 50));
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_NATIONAL_MEDICINE_CODE.ToString())
+                .MaximumLength(50).WithMessage(ExceptionKey.INVALID_NATIONAL_MEDICINE_CODE_MAX_LENGTH.ToString());
 
             ruleForRegistrationNumber
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_REGISTRATION_NUMBER)
-                .MaximumLength(50).WithMessage(ValidationStrings.MAX_LENGTH("Số đăng ký", 50));
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_REGISTRATION_NUMBER.ToString())
+                .MaximumLength(50).WithMessage(ExceptionKey.INVALID_REGISTRATION_NUMBER_MAX_LENGTH.ToString());
 
             ruleForMedicineTypeId
-                .GreaterThan(0).WithMessage(ValidationStrings.REQUIRED_VALID_MEDICINE_TYPE);
+                .GreaterThan(0).WithMessage(ExceptionKey.REQUIRED_VALID_MEDICINE_TYPE.ToString());
 
             ruleForVaccineTypeId
-                .GreaterThan(0).WithMessage(ValidationStrings.REQUIRED_VALID_VACCINE_TYPE);
+                .GreaterThan(0).WithMessage(ExceptionKey.REQUIRED_VALID_VACCINE_TYPE.ToString());
 
             ruleForDescription
-                .MaximumLength(500).WithMessage(ValidationStrings.MAX_LENGTH("Mô tả", 500));
+                .MaximumLength(500).WithMessage(ExceptionKey.INVALID_MEDICINE_DESCRIPTION_MAX_LENGTH.ToString());
 
             ruleForNote
-                .MaximumLength(500).WithMessage(ValidationStrings.MAX_LENGTH("Ghi chú", 500));
+                .MaximumLength(500).WithMessage(ExceptionKey.INVALID_MEDICINE_NOTE_MAX_LENGTH.ToString());
 
             ruleForIsRequiredTestingBeforeUse
                 .NotNull()
-                .WithMessage(ValidationStrings.REQUIRED_IS_REQUIRED_TESTING_BEFORE_USE);              
+                .WithMessage(ExceptionKey.REQUIRED_IS_REQUIRED_TESTING_BEFORE_USE.ToString());
         }
     }
 }

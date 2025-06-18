@@ -1,6 +1,5 @@
 ﻿global using BuildingBlocks.Strings;
 global using BuildingBlocks.Strings.Enums;
-global using BuildingBlocks.Strings.Exceptions;
 global using BuildingBlocks.Strings.SuccessStrings;
 global using Grpc.Core;
 global using HumanResource.Grpc.Abstractions;

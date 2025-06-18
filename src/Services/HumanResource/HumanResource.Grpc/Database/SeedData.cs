@@ -510,9 +510,9 @@
             {
                 new Policy { ResourceType = "file-storage", Actions = ["read", "write"] }
             },
-            ["appointment"] = new()
+            ["appointments"] = new()
             {
-                new Policy { ResourceType = "appointment", Actions = ["read", "write"] }
+                new Policy { ResourceType = "appointments", Actions = ["read", "write"] }
             }
         };
 
@@ -552,7 +552,7 @@
                 (Roles.ACCOUNTANT, DepartmentTypes.FINANCE),
                 (Roles.IT_SUPPORT, DepartmentTypes.ADMIN)
             },
-            ["appointment"] = new()
+            ["appointments"] = new()
             {
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
                 (Roles.RECEPTIONIST, DepartmentTypes.VACCINE_RECEPTION),

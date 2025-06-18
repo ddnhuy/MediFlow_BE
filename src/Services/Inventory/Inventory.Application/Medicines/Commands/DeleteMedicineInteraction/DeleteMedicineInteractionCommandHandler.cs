@@ -1,6 +1,4 @@
-﻿using BuildingBlocks.Strings.ExceptionStrings;
-
-namespace Inventory.Application.Medicines.Commands.DeleteMedicineInteraction
+﻿namespace Inventory.Application.Medicines.Commands.DeleteMedicineInteraction
 {
     public class DeleteMedicineInteractionCommandHandler(IApplicationDbContext dbContext) : ICommandHandler<DeleteMedicineInteractionCommand, DeleteMedicineInteractionResult>
     {

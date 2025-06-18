@@ -23,7 +23,7 @@ namespace FileStorage.API.Helpers
 
             if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out var userId))
             {
-                throw new UnauthorizedAccessException(ValidationStrings.REQUIRED_USER_ID);
+                throw new UnauthorizedAccessException(ExceptionKey.REQUIRED_USER_ID.ToString());
             }
 
             return userId;

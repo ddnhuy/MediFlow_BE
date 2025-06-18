@@ -13,43 +13,43 @@
         {
             ruleForMedicineId
                 .GreaterThan(0)
-                .WithMessage(ValidationStrings.REQUIRED_MEDICINE_ID);
+                .WithMessage(ExceptionKey.REQUIRED_MEDICINE_ID.ToString());
 
             ruleForUnitPrice
                 .NotEmpty()
-                .WithMessage(ValidationStrings.REQUIRED_UNIT_PRICE)
+                .WithMessage(ExceptionKey.REQUIRED_UNIT_PRICE.ToString())
                 .GreaterThanOrEqualTo(0)
-                .WithMessage(ValidationStrings.INVALID_UNIT_PRICE);
+                .WithMessage(ExceptionKey.INVALID_UNIT_PRICE.ToString());
 
             ruleForCurrency
                 .NotEmpty()
-                .WithMessage(ValidationStrings.REQUIRED_CURRENCY)
+                .WithMessage(ExceptionKey.REQUIRED_CURRENCY.ToString())
                 .MaximumLength(3)
-                .WithMessage(ValidationStrings.INVALID_CURRENCY_FORMAT);
+                .WithMessage(ExceptionKey.INVALID_CURRENCY_FORMAT.ToString());
 
             ruleForVatRate
                 .NotEmpty()
-                .WithMessage(ValidationStrings.REQUIRED_VAT_RATE)
+                .WithMessage(ExceptionKey.REQUIRED_VAT_RATE.ToString())
                 .GreaterThanOrEqualTo(0)
-                .WithMessage(ValidationStrings.INVALID_VAT_RATE);
+                .WithMessage(ExceptionKey.INVALID_VAT_RATE.ToString());
 
             ruleForVatAmount
                 .NotEmpty()
-                .WithMessage(ValidationStrings.REQUIRED_VAT_AMOUNT)
+                .WithMessage(ExceptionKey.REQUIRED_VAT_AMOUNT.ToString())
                 .GreaterThanOrEqualTo(0)
-                .WithMessage(ValidationStrings.INVALID_VAT_AMOUNT);
+                .WithMessage(ExceptionKey.INVALID_VAT_AMOUNT.ToString());
 
             ruleForOriginalPriceAfterVat
                 .NotEmpty()
-                .WithMessage(ValidationStrings.REQUIRED_PRICE_AFTER_VAT)
+                .WithMessage(ExceptionKey.REQUIRED_PRICE_AFTER_VAT.ToString())
                 .GreaterThanOrEqualTo(0)
-                .WithMessage(ValidationStrings.INVALID_PRICE_AFTER_VAT);
+                .WithMessage(ExceptionKey.INVALID_PRICE_AFTER_VAT.ToString());
 
             ruleForOriginalPriceBeforeVat
                 .NotEmpty()
-                .WithMessage(ValidationStrings.REQUIRED_PRICE_BEFORE_VAT)
+                .WithMessage(ExceptionKey.REQUIRED_PRICE_BEFORE_VAT.ToString())
                 .GreaterThanOrEqualTo(0)
-                .WithMessage(ValidationStrings.INVALID_PRICE_BEFORE_VAT);
+                .WithMessage(ExceptionKey.INVALID_PRICE_BEFORE_VAT.ToString());
         }
     }
 }

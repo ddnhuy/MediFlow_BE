@@ -3,7 +3,6 @@ global using Authentication.DataAccess.Data;
 global using Authentication.DataAccess.Models;
 global using AuthenticationService.FunctionalTests.Abstractions;
 global using AuthenticationService.FunctionalTests.Helpers;
-global using BuildingBlocks.Strings.Exceptions;
 global using BuildingBlocks.Strings.SuccessStrings;
 global using FluentAssertions;
 global using HumanResource.Grpc;

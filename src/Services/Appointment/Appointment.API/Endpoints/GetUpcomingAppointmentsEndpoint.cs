@@ -9,7 +9,7 @@ namespace Appointment.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/appointments/upcoming", [Authorize] async (ISender sender) =>
+            app.MapGet("/upcoming", [Authorize] async (ISender sender) =>
             {
                 var result = await sender.Send(new GetUpcomingAppointmentsQuery(DateTime.UtcNow));
 

@@ -3,7 +3,6 @@ global using BuildingBlocks.CQRS;
 global using BuildingBlocks.Exceptions;
 global using BuildingBlocks.Pagination;
 global using BuildingBlocks.Strings;
-global using BuildingBlocks.Strings.ExceptionStrings;
 global using FluentValidation;
 global using Inventory.Application.Data;
 global using Inventory.Application.DTOs;

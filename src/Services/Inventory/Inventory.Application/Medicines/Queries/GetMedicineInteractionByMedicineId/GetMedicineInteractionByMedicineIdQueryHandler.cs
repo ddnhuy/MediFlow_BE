@@ -1,6 +1,4 @@
-﻿using BuildingBlocks.Strings.ExceptionStrings;
-
-namespace Inventory.Application.Medicines.Queries.GetMedicineInteractionByMedicineId
+﻿namespace Inventory.Application.Medicines.Queries.GetMedicineInteractionByMedicineId
 {
     public class GetMedicineInteractionsByMedicineIdQueryHandler(IApplicationDbContext dbContext)
         : IQueryHandler<GetMedicineInteractionsByMedicineIdQuery, GetMedicineInteractionsByMedicineIdResult>

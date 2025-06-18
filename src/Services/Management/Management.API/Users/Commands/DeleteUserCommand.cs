@@ -9,7 +9,7 @@ namespace Management.API.Users.Commands
     {
         public DeleteUserCommandValidator()
         {
-            RuleFor(x => x.Id).NotEmpty().WithMessage(ValidationStrings.REQUIRED_USER_ID);
+            RuleFor(x => x.Id).NotEmpty().WithMessage(ExceptionKey.REQUIRED_USER_ID.ToString());
         }
     }
 
