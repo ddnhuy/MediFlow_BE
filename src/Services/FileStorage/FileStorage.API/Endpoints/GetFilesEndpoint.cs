@@ -21,7 +21,7 @@ namespace FileStorage.API.Endpoints
 
                 if (!Enum.TryParse<FileType>(request.Type, true, out var fileType))
                 {
-                    throw new BadRequestException($"Invalid file type: {request.Type}");
+                    throw new BadRequestException(ExceptionKey.INVALID_FILE_TYPE);
                 }
 
                 var resultWithFileType = await sender.Send(new GetFilesQuery(request.Department, fileType));

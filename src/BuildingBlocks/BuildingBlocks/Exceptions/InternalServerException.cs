@@ -1,10 +1,12 @@
-﻿namespace BuildingBlocks.Exceptions
+﻿using BuildingBlocks.Strings;
+
+namespace BuildingBlocks.Exceptions
 {
     public class InternalServerException : Exception
     {
-        public InternalServerException(string message) : base(message) { }
+        public InternalServerException(ExceptionKey key) : base(key.ToString()) { }
 
-        public InternalServerException(string message, string details) : base(message)
+        public InternalServerException(ExceptionKey key, string details) : base(key.ToString())
         {
             Details = details;
         }

@@ -13,7 +13,7 @@
 
             if (documentCodeExists || documentNumberExists)
             {
-                throw new BadRequestException(InventoryExceptionStrings.DUPLICATE_DOCUMENT);
+                throw new BadRequestException(ExceptionKey.DUPLICATE_DOCUMENT);
             }
 
             await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);

@@ -37,7 +37,7 @@ namespace Management.API.Controllers
         {
             if (userId <= 0)
             {
-                throw new BadRequestException(ValidationStrings.REQUIRED_USER_ID);
+                throw new BadRequestException(ExceptionKey.REQUIRED_USER_ID);
             }
 
             var query = new GetUserByIdQuery(userId, HttpContext.User.Claims.First(x => x.Type == ClaimTypes.Role).Value);
@@ -56,7 +56,7 @@ namespace Management.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                throw new BadRequestException(ValidationStrings.INVALID_USER_DATA);
+                throw new BadRequestException(ExceptionKey.INVALID_USER_DATA);
             }
 
             var command = new CreateUserCommand(request.UserName, request.Email, request.Password, request.PhoneNumber, request.Code, request.Name, request.Address, request.ProfilePictureUrl, request.RoleNames, request.DepartmentIds, int.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value));
@@ -76,7 +76,7 @@ namespace Management.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                throw new BadRequestException(ValidationStrings.INVALID_USER_DATA);
+                throw new BadRequestException(ExceptionKey.INVALID_USER_DATA);
             }
 
             var command = new UpdateUserCommand(userId, request.UserName, request.Email, request.PhoneNumber, request.Code, request.Name, request.Address, request.ProfilePictureUrl, request.RoleNames, request.DepartmentIds, request.IsSuspended, int.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value));
@@ -105,7 +105,7 @@ namespace Management.API.Controllers
             }
             else
             {
-                throw new BadRequestException(result.Message);
+                throw new BadRequestException(ExceptionKey.FAILED_DELETE_USER);
             }
         }
     }

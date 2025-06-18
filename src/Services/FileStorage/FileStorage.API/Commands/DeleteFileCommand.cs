@@ -31,7 +31,7 @@ namespace FileStorage.API.Commands
             var fileMetadata = await _fileRepository.GetByIdAsync(command.Id);
             if (fileMetadata is null)
             {
-                throw new NotFoundException(ValidationStrings.FILE_NOT_FOUND);
+                throw new NotFoundException(ExceptionKey.FILE_NOT_FOUND);
             }
 
             await _fileHelper.DeleteFileAsync(fileMetadata.StoragePath);

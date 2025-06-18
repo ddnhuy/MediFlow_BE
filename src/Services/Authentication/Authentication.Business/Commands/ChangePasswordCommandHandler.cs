@@ -35,7 +35,7 @@ namespace Authentication.Business.Commands
 
             if (!result.IsSuccess)
             {
-                throw new BadRequestException(result.Message);
+                throw new BadRequestException(ExceptionKey.FAILED_CHANGE_PASSWORD);
             }
 
             return result.Adapt<ChangePasswordResult>();

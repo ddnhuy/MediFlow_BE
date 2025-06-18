@@ -11,7 +11,7 @@
 
             if (medicine == null)
             {
-                throw new MedicineNotFoundException(InventoryExceptionStrings.NOT_FOUND_MEDICINE_WITH_ID(request.MedicineId));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
             }
 
             // Create new medicine price

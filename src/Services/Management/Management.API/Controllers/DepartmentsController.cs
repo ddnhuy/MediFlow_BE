@@ -41,7 +41,7 @@ namespace Management.API.Controllers
         {
             if (departmentId <= 0)
             {
-                throw new BadRequestException(ValidationStrings.REQUIRED_DEPARTMENT_ID);
+                throw new BadRequestException(ExceptionKey.REQUIRED_DEPARTMENT_ID);
             }
 
             var query = new GetDepartmentByIdQuery(departmentId);
@@ -105,7 +105,7 @@ namespace Management.API.Controllers
         {
             if (departmentId <= 0)
             {
-                throw new BadRequestException(ValidationStrings.REQUIRED_DEPARTMENT_ID);
+                throw new BadRequestException(ExceptionKey.REQUIRED_DEPARTMENT_ID);
             }
 
             var command = new DeleteDepartmentCommand(departmentId, int.Parse(HttpContext.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value));
@@ -118,7 +118,7 @@ namespace Management.API.Controllers
             }
             else
             {
-                throw new BadRequestException(result.Message);
+                throw new BadRequestException(ExceptionKey.FAILED_DELETE_DEPARTMENT);
             }
         }
 

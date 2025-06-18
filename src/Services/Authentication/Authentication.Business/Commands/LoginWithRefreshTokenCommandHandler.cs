@@ -1,4 +1,6 @@
-﻿namespace Authentication.Business.Commands
+﻿using BuildingBlocks.Exceptions;
+
+namespace Authentication.Business.Commands
 {
     public record LoginWithRefreshTokenResult(string AccessToken, string RefreshToken);
     public record LoginWithRefreshTokenCommand(string RefreshToken) : ICommand<LoginWithRefreshTokenResult>;
@@ -23,7 +25,7 @@
 
             if (userId == -1)
             {
-                throw new InvalidRefreshTokenException();
+                throw new BadRequestException(ExceptionKey.INVALID_REFRESH_TOKEN);
             }
 
             var user = await applicationUserProto.GetApplicationUserAsync(new GetApplicationUserRequest { Id = userId }, cancellationToken: cancellationToken);

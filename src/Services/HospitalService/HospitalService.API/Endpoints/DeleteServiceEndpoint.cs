@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
-using BuildingBlocks.Strings.ExceptionStrings;
+using BuildingBlocks.Strings;
 using Carter;
 using HospitalService.Application.Services.HospitalServices.Commands;
 using Mapster;
@@ -16,7 +16,7 @@ namespace HospitalService.API.Endpoints
             {
                 if (id <= 0)
                 {
-                    throw new BadRequestException(HospitalServiceExceptionStrings.INVALID_SERVICE_ID);
+                    throw new BadRequestException(ExceptionKey.INVALID_SERVICE_ID);
                 }
 
                 var command = new DeleteServiceCommand(ServiceId: id);
@@ -24,7 +24,7 @@ namespace HospitalService.API.Endpoints
 
                 if (result == null)
                 {
-                    throw new InternalServerException(HospitalServiceExceptionStrings.FAILED_DELETE_SERVICE);
+                    throw new InternalServerException(ExceptionKey.FAILED_DELETE_SERVICE);
                 }
 
                 var response = result.Adapt<DeleteServiceResponse>();

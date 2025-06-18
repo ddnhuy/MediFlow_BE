@@ -15,7 +15,7 @@ namespace FileStorage.API.Endpoints
 
                 if (file is null)
                 {
-                    throw new BadRequestException("File not provided or is empty.");
+                    throw new BadRequestException(ExceptionKey.FILE_NOT_PROVIDED);
                 }
 
                 string department = form["department"].ToString();
@@ -23,7 +23,7 @@ namespace FileStorage.API.Endpoints
 
                 if (!Enum.TryParse<FileType>(typeString, true, out var fileType))
                 {
-                    throw new BadRequestException($"Invalid file type: {typeString}");
+                    throw new BadRequestException(ExceptionKey.INVALID_FILE_TYPE);
                 }
 
                 var result = await sender.Send(new UploadFileCommand(file, department, fileType));

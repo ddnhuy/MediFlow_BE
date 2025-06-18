@@ -14,10 +14,6 @@ namespace Appointment.API.Endpoints
             {
                 var result = await sender.Send(request.Adapt<UpdateAppointmentCommand>());
 
-                if (!result.IsSuccess)
-                {
-                    throw new BadRequestException(result.Message);
-                }
                 return Results.Ok(result.Adapt<UpdateAppointmentResponse>());
             })
             .WithName("UpdateAppointment")

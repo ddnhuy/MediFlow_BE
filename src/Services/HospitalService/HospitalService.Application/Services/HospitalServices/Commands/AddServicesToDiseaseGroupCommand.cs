@@ -1,15 +1,10 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
-using BuildingBlocks.Strings.ExceptionStrings;
+using BuildingBlocks.Strings;
 using HospitalService.Domain.Abstractions;
 using HospitalService.Domain.Models;
 using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HospitalService.Application.Services.HospitalServices.Commands
 {
@@ -45,7 +40,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
 
                 var diseaseGroup = await _diseaseGroupRepository.GetByIdAsync(request.DiseaseGroupId);
                 if (diseaseGroup == null)
-                    throw new NotFoundException(string.Format(HospitalServiceExceptionStrings.DISEASE_GROUP_NOT_FOUND, request.DiseaseGroupId));
+                    throw new NotFoundException(ExceptionKey.DISEASE_GROUP_NOT_FOUND);
 
                 var existingServiceIds = await _diseaseGroupServiceRepository.GetExistingServiceIdsAsync(request.DiseaseGroupId);
                 var newServiceIds = request.ServiceIds.Where(id => !existingServiceIds.Contains(id)).ToList();

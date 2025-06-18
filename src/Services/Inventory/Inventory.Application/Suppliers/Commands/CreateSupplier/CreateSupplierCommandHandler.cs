@@ -9,7 +9,7 @@
 
             if (duplicateCodeExists)
             {
-                throw new InvalidOperationException(InventoryExceptionStrings.DUPLICATE_SUPPLIER_CODE);
+                throw new InvalidOperationException(ExceptionKey.DUPLICATE_SUPPLIER_CODE.ToString());
             }
 
             var supplier = new Supplier

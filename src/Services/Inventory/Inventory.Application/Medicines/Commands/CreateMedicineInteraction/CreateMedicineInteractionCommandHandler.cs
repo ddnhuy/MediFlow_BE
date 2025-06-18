@@ -1,6 +1,4 @@
-﻿using BuildingBlocks.Strings.ExceptionStrings;
-
-namespace Inventory.Application.Medicines.Commands.CreateMedicineInteraction
+﻿namespace Inventory.Application.Medicines.Commands.CreateMedicineInteraction
 {
     public class CreateMedicineInteractionCommandHandler(IApplicationDbContext dbContext) : ICommandHandler<CreateMedicineInteractionCommand, CreateMedicineInteractionResult>
     {
@@ -11,10 +9,10 @@ namespace Inventory.Application.Medicines.Commands.CreateMedicineInteraction
             var medicine2Exists = await dbContext.Medicines.AnyAsync(m => m.Id == request.MedicineId2, cancellationToken);
 
             if (!medicine1Exists)
-                throw new MedicineNotFoundException(InventoryExceptionStrings.NOT_FOUND_MEDICINE_WITH_ID(request.MedicineId1));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
 
             if (!medicine2Exists)
-                throw new MedicineNotFoundException(InventoryExceptionStrings.NOT_FOUND_MEDICINE_WITH_ID(request.MedicineId2));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
 
             // Check if interaction already exists
             var existingInteraction = await dbContext.MedicineInteractions
@@ -24,7 +22,7 @@ namespace Inventory.Application.Medicines.Commands.CreateMedicineInteraction
                     cancellationToken);
 
             if (existingInteraction)
-                throw new MedicineInteractionExistValidation(InventoryExceptionStrings.INTERACTION_ALREADY_EXISTS);
+                throw new BadRequestException(ExceptionKey.INTERACTION_ALREADY_EXISTS);
 
             var interaction = new MedicineInteraction
             {

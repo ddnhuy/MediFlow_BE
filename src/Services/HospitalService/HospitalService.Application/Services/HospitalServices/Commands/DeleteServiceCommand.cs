@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using BuildingBlocks.Strings.ExceptionStrings;
 using HospitalService.Domain.Abstractions;
 using HospitalService.Domain.Repositories;
@@ -47,7 +48,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
                 var service = await _serviceRepository.GetByIdAsync(request.ServiceId, cancellationToken);
                 if (service == null)
                 {
-                    throw new NotFoundException(string.Format(HospitalServiceExceptionStrings.SERVICE_NOT_FOUND, request.ServiceId));
+                    throw new NotFoundException(ExceptionKey.SERVICE_NOT_FOUND);
                 }
 
                 // Delete related ServiceGroupServices
@@ -85,7 +86,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
             {
                 await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 _logger.LogError(ex, "Error occurred while deleting service with ID {ServiceId}", request.ServiceId);
-                throw new InternalServerException(HospitalServiceExceptionStrings.FAILED_DELETE_SERVICE);
+                throw new InternalServerException(ExceptionKey.FAILED_DELETE_SERVICE);
             }
         }
     }

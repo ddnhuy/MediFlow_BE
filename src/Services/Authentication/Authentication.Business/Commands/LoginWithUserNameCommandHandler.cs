@@ -1,4 +1,5 @@
-﻿using Grpc.Core;
+﻿using BuildingBlocks.Exceptions;
+using Grpc.Core;
 
 namespace Authentication.Business.Commands
 {
@@ -28,7 +29,7 @@ namespace Authentication.Business.Commands
 
             if (!loginResponse.IsSuccess)
             {
-                throw new InvalidLoginException(loginResponse.Message);
+                throw new BadRequestException(ExceptionKey.INVALID_LOGIN_CREDENTIAL);
             }
 
             var accessToken = tokenProvider.GenerateAccessToken(loginResponse.User, string.Join(",", loginResponse.User.Departments.Select(d => d.NameInEnglish)));

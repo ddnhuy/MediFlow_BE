@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BuildingBlocks.Strings;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationService.FunctionalTests.Tests
 {
@@ -83,7 +84,7 @@ namespace AuthenticationService.FunctionalTests.Tests
             var grpcResponse = new LoginResponse
             {
                 IsSuccess = false,
-                Message = HumanResourceExceptionStrings.INVALID_LOGIN_CREDENTIAL
+                Message = ExceptionKey.INVALID_LOGIN_CREDENTIAL.ToString()
             };
 
             _grpcClientMock?

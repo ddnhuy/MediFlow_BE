@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Authorization;
-using BuildingBlocks.Exceptions.Handler;
+﻿using BuildingBlocks.Exceptions.Handler;
 using Carter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -29,7 +28,7 @@ namespace HospitalService.API
                         };
                     });
 
-            services.AddAuthorization(AuthorizationPolicies.RegisterPolicies);
+            services.AddAuthorization();
 
             services.AddExceptionHandler<CustomExceptionHandler>();
 

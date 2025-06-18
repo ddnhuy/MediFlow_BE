@@ -10,7 +10,7 @@ namespace Inventory.Application.Medicines.Commands.DeleteMedicineInteraction
 
             if (interaction == null)
             {
-                throw new NotFoundException(InventoryExceptionStrings.NOT_FOUND_INTERACTION_WITH_ID(request.Id));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_INTERACTION_WITH_ID);
             }
 
             // Soft delete

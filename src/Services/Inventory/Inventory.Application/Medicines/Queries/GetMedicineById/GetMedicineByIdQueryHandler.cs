@@ -1,6 +1,4 @@
-﻿using BuildingBlocks.Strings.ExceptionStrings;
-
-namespace Inventory.Application.Medicines.Queries.GetMedicineById
+﻿namespace Inventory.Application.Medicines.Queries.GetMedicineById
 {
     public class GetMedicineByIdQueryHandler(IApplicationDbContext dbContext) : IQueryHandler<GetMedicineByIdQuery, GetMedicineByIdResult>
     {
@@ -12,7 +10,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineById
 
             if (medicine == null)
             {
-                throw new MedicineNotFoundException(InventoryExceptionStrings.NOT_FOUND_MEDICINE_WITH_ID(request.Id));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
             }
 
             var medicineDTO = medicine.Adapt<MedicineDTO>();

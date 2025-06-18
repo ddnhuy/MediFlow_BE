@@ -27,7 +27,7 @@
 
             if (appointment is null)
             {
-                throw new NotFoundException(AppointmentExceptionStrings.NOT_FOUND_APPOINTMENT_WITH_ID(command.Id));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_APPOINTMENT_WITH_ID);
             }
 
             appointment.LastUpdatedAt = DateTime.UtcNow;

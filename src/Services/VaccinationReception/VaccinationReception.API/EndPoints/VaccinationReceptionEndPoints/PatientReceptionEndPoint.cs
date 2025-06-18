@@ -1,4 +1,5 @@
-﻿using VaccinationReception.Application.VaccinationReceptions.Commands;
+﻿using BuildingBlocks.Strings;
+using VaccinationReception.Application.VaccinationReceptions.Commands;
 
 namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
 {
@@ -13,7 +14,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
 
                 if (result == null)
                 {
-                    throw new InternalServerException("Tạo bệnh nhân thất bại");
+                    throw new InternalServerException(ExceptionKey.FAILED_CREATE_PATIENT);
                 }
 
                 var response = new PatientReceptionResponse(result.patientId, result.receptionId);

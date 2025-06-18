@@ -11,7 +11,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineInteractionByMedici
                 .AnyAsync(m => m.Id == request.MedicineId, cancellationToken);
 
             if (!medicineExists)
-                throw new MedicineNotFoundException(InventoryExceptionStrings.NOT_FOUND_MEDICINE_WITH_ID(request.MedicineId));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
 
             var interactions = await dbContext.MedicineInteractions
                 .Where(mi => mi.MedicineId1 == request.MedicineId || mi.MedicineId2 == request.MedicineId)

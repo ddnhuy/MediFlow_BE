@@ -9,19 +9,19 @@ namespace BuildingBlocks.Pagination
         {
             if (pageIndex <= 0)
             {
-                throw new BadRequestException(ValidationStrings.PAGE_INDEX_TOO_SMALL);
+                throw new BadRequestException(ExceptionKey.PAGE_INDEX_TOO_SMALL);
             }
             else if (pageIndex >= 1000000)
             {
-                throw new BadRequestException(ValidationStrings.PAGE_INDEX_TOO_LARGE);
+                throw new BadRequestException(ExceptionKey.PAGE_INDEX_TOO_LARGE);
             }
             if (pageSize <= 0)
             {
-                throw new BadRequestException(ValidationStrings.PAGE_SIZE_TOO_SMALL);
+                throw new BadRequestException(ExceptionKey.PAGE_SIZE_TOO_SMALL);
             }
             else if (pageSize > 1000)
             {
-                throw new BadRequestException(ValidationStrings.PAGE_SIZE_TOO_LARGE);
+                throw new BadRequestException(ExceptionKey.PAGE_SIZE_TOO_LARGE);
             }
         }
     }

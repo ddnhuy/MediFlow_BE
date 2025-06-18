@@ -8,7 +8,7 @@
 
             if (supplier == null)
             {
-                throw new SupplierNotFoundException(InventoryExceptionStrings.NOT_FOUND_SUPPLIER_WITH_ID(request.Id));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_SUPPLIER_WITH_ID);
             }
 
             supplier.IsCancelled = true;

@@ -1,4 +1,6 @@
-﻿namespace Inventory.API.Endpoints
+﻿using BuildingBlocks.Strings;
+
+namespace Inventory.API.Endpoints
 {
     public record CreateMedicineResponse(int Id);
     public class CreateMedicineEndpoint : ICarterModule
@@ -11,7 +13,7 @@
 
                 if (result == null)
                 {
-                    throw new InternalServerException(InventoryExceptionStrings.FAILED_CREATE_MEDICINE);
+                    throw new InternalServerException(ExceptionKey.FAILED_CREATE_MEDICINE);
                 }
 
                 var response = result.Adapt<CreateMedicineResponse>();

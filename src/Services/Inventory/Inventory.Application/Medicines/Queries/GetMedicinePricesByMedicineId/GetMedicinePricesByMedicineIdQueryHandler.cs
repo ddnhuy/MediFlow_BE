@@ -11,7 +11,7 @@
 
             if (meidicine == null)
             {
-                throw new MedicineNotFoundException(InventoryExceptionStrings.NOT_FOUND_MEDICINE_WITH_ID(query.MedicineId));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
             }
 
             var medicinePrices = await dbContext.MedicinePrices
@@ -19,7 +19,7 @@
 
             if (medicinePrices == null)
             {
-                throw new NotFoundException("Không tìm thấy giá tiền của thuốc trên");
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_PRICE);
             }
 
             var medicinePriceDTOs = medicinePrices.Adapt<MedicinePriceDTO>();

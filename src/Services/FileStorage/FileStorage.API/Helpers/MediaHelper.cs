@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Strings.ExceptionStrings;
-using CloudinaryDotNet;
+﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using System.Globalization;
 
@@ -59,7 +58,7 @@ namespace FileStorage.API.Services
 
             if (deleteResult.Result != "ok")
             {
-                throw new InvalidOperationException(FileStorageExceptionStrings.UPLOAD_FAILED);
+                throw new InternalServerException(ExceptionKey.UPLOAD_FAILED);
             }
         }
 

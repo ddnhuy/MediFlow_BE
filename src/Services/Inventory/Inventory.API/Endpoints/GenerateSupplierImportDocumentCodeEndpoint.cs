@@ -1,6 +1,8 @@
-﻿namespace Inventory.API.Endpoints
+﻿using BuildingBlocks.Strings;
+
+namespace Inventory.API.Endpoints
 {
-    public record GenerateSupplierImportDocumentCodeResponse(string DocumentCode,string DocumentNumber);
+    public record GenerateSupplierImportDocumentCodeResponse(string DocumentCode, string DocumentNumber);
     public class GenerateSupplierImportDocumentCodeEndpoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
@@ -11,7 +13,7 @@
 
                 if (result == null)
                 {
-                    throw new InternalServerException("Failed to generate document code");
+                    throw new InternalServerException(ExceptionKey.FAILED_GENERATE_DOCUMENT_CODE);
                 }
 
                 var response = result.Adapt<GenerateSupplierImportDocumentCodeResponse>();

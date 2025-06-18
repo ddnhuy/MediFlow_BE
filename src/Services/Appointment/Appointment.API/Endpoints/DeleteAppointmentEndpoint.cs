@@ -13,10 +13,6 @@ namespace Appointment.API.Endpoints
             {
                 var result = await sender.Send(new DeleteAppointmentCommand(appointmentId));
 
-                if (!result.IsSuccess)
-                {
-                    throw new BadRequestException(result.Message);
-                }
                 return Results.Ok(result.Adapt<DeleteAppointmentResponse>());
             })
             .WithName("DeleteAppointment")

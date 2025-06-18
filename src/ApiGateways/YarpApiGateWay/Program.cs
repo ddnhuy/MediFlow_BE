@@ -38,17 +38,11 @@ app.Use(async (context, next) =>
 
     // Build BaseResponse
     var isSuccessStatusCode = context.Response.StatusCode is >= 200 and < 300;
-    var message = isSuccessStatusCode
-        ? context.Response.StatusCode switch
-        {
-            200 => "Success",
-            201 => "Created",
-            204 => "No Content",
-            _ => "Success"
-        }
+    var messageKey = isSuccessStatusCode
+        ? "SUCCESS"
         : (!string.IsNullOrWhiteSpace(rawBody)
-            ? JsonSerializer.Deserialize<ProblemDetails>(rawBody)?.Detail ?? "Error"
-            : "Error");
+            ? JsonSerializer.Deserialize<ProblemDetails>(rawBody)?.Detail ?? "ERROR"
+            : "ERROR");
 
     object? data = null;
     if (isSuccessStatusCode && context.Response.StatusCode != 204 && !string.IsNullOrWhiteSpace(rawBody))
@@ -70,7 +64,7 @@ app.Use(async (context, next) =>
     var baseResponse = new BaseResponse<object>
     {
         StatusCode = context.Response.StatusCode,
-        Message = message!,
+        MessageKey = messageKey!,
         Data = data
     };
 

@@ -8,7 +8,7 @@
 
             if (supplier == null)
             {
-                throw new SupplierNotFoundException(InventoryExceptionStrings.NOT_FOUND_SUPPLIER_WITH_ID(request.Id));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_SUPPLIER_WITH_ID);
             }
 
             bool duplicateCodeExists = await dbContext.Suppliers
@@ -16,7 +16,7 @@
 
             if (duplicateCodeExists)
             {
-                throw new InvalidOperationException(InventoryExceptionStrings.DUPLICATE_SUPPLIER_CODE);              
+                throw new InvalidOperationException(ExceptionKey.DUPLICATE_SUPPLIER_CODE.ToString());
             }
 
             supplier.SupplierCode = request.SupplierCode;
@@ -35,11 +35,10 @@
 
             if (result < 0)
             {
-                throw new InvalidOperationException(InventoryExceptionStrings.FAILED_UPDATE_SUPPLIER_WITH_ID(request.Id));
+                throw new InvalidOperationException(ExceptionKey.FAILED_UPDATE_SUPPLIER_WITH_ID.ToString());
             }
 
             return new UpdateSupplierResult(true);
-
         }
     }
 }
