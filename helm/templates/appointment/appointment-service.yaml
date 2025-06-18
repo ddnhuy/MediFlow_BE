@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: appointment-service
+spec:
+  selector:
+    app: appointment-service
+  ports:
+    - protocol: TCP
+      port: {{ .Values.service.port }}
+      name: http
+      targetPort: 8080
+  type: {{ .Values.service.type }}

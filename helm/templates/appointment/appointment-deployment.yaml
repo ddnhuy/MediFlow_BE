@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment-service
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: appointment-service
+  {{- with .Values.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: appointment-service
+    spec:
+      containers:
+        - name: appointment-service
+          image: "ddnhuy/appointment-service:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: SECRET_KEY
+          envFrom:
+            - configMapRef:
+                name: appointment-config
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command: ['sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done']
+        - name: wait-for-human-resource-grpc
+          image: busybox
+          command: ['sh', '-c', "until nc -z human-resource-grpc {{ .Values.service.port }}; do echo waiting for human-resource-grpc; sleep 2; done"]
+        - name: wait-for-customer-info-grpc
+          image: busybox
+          command: ['sh', '-c', "until nc -z customer-info-grpc {{ .Values.service.port }}; do echo waiting for customer-info-grpc; sleep 2; done"]
+      volumes:
+        - name: config-volume
+          configMap:
+            name: appointment-config
+            items:
+              - key: appsettings.json
+                path: appsettings.json

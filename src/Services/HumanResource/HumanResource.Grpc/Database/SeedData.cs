@@ -509,6 +509,10 @@
             ["file-storage"] = new()
             {
                 new Policy { ResourceType = "file-storage", Actions = ["read", "write"] }
+            },
+            ["appointment"] = new()
+            {
+                new Policy { ResourceType = "appointment", Actions = ["read", "write"] }
             }
         };
 
@@ -547,6 +551,18 @@
                 (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
                 (Roles.ACCOUNTANT, DepartmentTypes.FINANCE),
                 (Roles.IT_SUPPORT, DepartmentTypes.ADMIN)
+            },
+            ["appointment"] = new()
+            {
+                (Roles.ADMIN, DepartmentTypes.ADMIN),
+                (Roles.RECEPTIONIST, DepartmentTypes.VACCINE_RECEPTION),
+                (Roles.DOCTOR, DepartmentTypes.CLINIC),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE),
+                (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.NURSE, DepartmentTypes.CLINIC),
+                (Roles.NURSE, DepartmentTypes.VACCINE),
+                (Roles.NURSE, DepartmentTypes.LAB),
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
             }
         };
     }
