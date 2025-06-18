@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VaccinationReception.Application.Data;
 using VaccinationReception.Application.Patients.Commands.CreatePatient;
 using VaccinationReception.Application.Patients.Commands.UpdatePatient;
 using VaccinationReception.Application.Services.PatientServices;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
@@ -19,12 +19,12 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
     {
         private readonly IPatientGrpcClient _patientGrpcClient;
         private readonly ILogger<CreatePatientReceptionCommand> _logger;
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
 
         public CreatePatientReceptionCommandHandler(
             IPatientGrpcClient patientGrpcClient,
             ILogger<CreatePatientReceptionCommand> logger,
-            ApplicationDbContext context)
+            IApplicationDbContext context)
         {
             _patientGrpcClient = patientGrpcClient;
             _logger = logger;

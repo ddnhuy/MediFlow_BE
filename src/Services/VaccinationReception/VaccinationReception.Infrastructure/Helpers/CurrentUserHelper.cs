@@ -1,14 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using VaccinationReception.Application.Abstractions.CurrentUser;
 
 namespace VaccinationReception.Infrastructure.Helpers
 {
-    public interface ICurrentUserHelper
-    {
-        int UserId { get; }
-    }
-
     public class CurrentUserHelper : ICurrentUserHelper
     {
         private readonly ILogger<CurrentUserHelper> _logger;

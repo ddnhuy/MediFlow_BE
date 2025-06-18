@@ -1,4 +1,7 @@
-﻿namespace Inventory.Infrastructure
+﻿using BuildingBlocks.Messaging.MassTransit;
+using System.Reflection;
+
+namespace Inventory.Infrastructure
 {
     public static class DependencyInjection
     {
@@ -16,6 +19,7 @@
             });
 
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+            services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly(), useCompetingConsumers: true);
 
             return services;
         }

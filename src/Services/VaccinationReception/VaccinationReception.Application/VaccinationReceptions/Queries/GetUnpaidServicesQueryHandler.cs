@@ -6,18 +6,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VaccinationReception.Application.Data;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
-using VaccinationReception.Infrastructure.Data;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Queries
 {
     public class GetUnpaidServicesQueryHandler : IQueryHandler<GetUnpaidServicesQuery, UnpaidServicesResponseDTO>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly ILogger<GetUnpaidServicesQuery> _logger;
 
         public GetUnpaidServicesQueryHandler(
-            ApplicationDbContext context,
+            IApplicationDbContext context,
             ILogger<GetUnpaidServicesQuery> logger)
         {
             _context = context;

@@ -7,18 +7,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VaccinationReception.Application.Data;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
-using VaccinationReception.Infrastructure.Data;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Queries
 {
     public class GetReceptionVaccinationsByReceptionIdQueryHandler : IQueryHandler<GetReceptionVaccinationsByReceptionIdQuery, GetReceptionVaccinationsByReceptionIdResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly ILogger<GetReceptionVaccinationsByReceptionIdQueryHandler> _logger;
 
         public GetReceptionVaccinationsByReceptionIdQueryHandler(
-            ApplicationDbContext context,
+            IApplicationDbContext context,
             ILogger<GetReceptionVaccinationsByReceptionIdQueryHandler> logger)
         {
             _context = context;

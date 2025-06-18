@@ -77,6 +77,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
     depends_on:
       - postgres_db
+      - messagebroker
     ports:
       - "6063:8080"
 
@@ -104,6 +105,7 @@ services:
     depends_on:
       - postgres_db
       - customerinfo.grpc
+      - messagebroker
     ports:
       - "6065:8080"
       - "8081"

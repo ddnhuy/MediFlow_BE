@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using VaccinationReception.Application.Abstractions.CurrentUser;
+using VaccinationReception.Application.Data;
 using VaccinationReception.Domain.Abstractions;
 using VaccinationReception.Domain.Models;
 using VaccinationReception.Infrastructure.Data.Extensions;
@@ -13,7 +15,7 @@ using VaccinationReception.Infrastructure.Helpers;
 
 namespace VaccinationReception.Infrastructure.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         private readonly ICurrentUserHelper _userHelper;
         private readonly ILogger<ApplicationDbContext> _logger;
@@ -38,6 +40,7 @@ namespace VaccinationReception.Infrastructure.Data
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<ServiceRequestDetail> ServiceRequestDetails { get; set; }
         public virtual DbSet<RequestForm> RequestForms { get; set; }
+        public virtual DbSet<Vaccination> Vaccinations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

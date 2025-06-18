@@ -6,19 +6,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VaccinationReception.Application.Data;
 using VaccinationReception.Application.Helpers;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
     public class AddServiceToRequestFormCommandHandler : ICommandHandler<AddServiceToRequestFormCommand, AddServiceToRequestFormResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly ILogger<AddServiceToRequestFormCommand> _logger;
 
         public AddServiceToRequestFormCommandHandler(
-            ApplicationDbContext context,
+            IApplicationDbContext context,
             ILogger<AddServiceToRequestFormCommand> logger)
         {
             _context = context;
