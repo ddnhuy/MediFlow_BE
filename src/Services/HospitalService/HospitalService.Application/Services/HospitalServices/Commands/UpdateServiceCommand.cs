@@ -61,7 +61,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
             {
                 await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 _logger.LogError(ex, "Error occurred while updating service with ID {ServiceId}", request.ServiceId);
-                throw new InternalServerException(ExceptionKey.FAILED_UPDATE_SERVICE);
+                throw;
             }
         }
     }

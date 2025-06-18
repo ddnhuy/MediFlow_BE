@@ -80,7 +80,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
             {
                 await _unitOfWork.RollbackTransactionAsync(cancellationToken);
                 _logger.LogError(ex, "Error occurred while deleting service with ID {ServiceId}", request.ServiceId);
-                throw new InternalServerException(ExceptionKey.FAILED_DELETE_SERVICE);
+                throw;
             }
         }
     }

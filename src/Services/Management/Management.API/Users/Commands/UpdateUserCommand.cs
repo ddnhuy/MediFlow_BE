@@ -11,20 +11,20 @@ namespace Management.API.Users.Commands
         public UpdateUserCommandValidator()
         {
             RuleFor(x => x.Id).NotEmpty().WithMessage(ExceptionKey.REQUIRED_USER_ID.ToString());
-            RuleFor(x => x.UserName).NotEmpty().WithMessage(ExceptionKey.REQUIRED_USERNAME.ToString());
+            RuleFor(x => x.PhoneNumber).NotEmpty().WithMessage(ExceptionKey.REQUIRED_PHONE.ToString());
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage(ExceptionKey.REQUIRED_EMAIL.ToString())
                 .EmailAddress().WithMessage(ExceptionKey.INVALID_EMAIL.ToString());
-            RuleFor(x => x.PhoneNumber).NotEmpty().WithMessage(ExceptionKey.REQUIRED_PHONE.ToString());
+            RuleFor(x => x.UserName).NotEmpty().WithMessage(ExceptionKey.REQUIRED_USERNAME.ToString());
             RuleFor(x => x.Code).NotEmpty().WithMessage(ExceptionKey.REQUIRED_CODE.ToString());
-            RuleFor(x => x.Name).NotEmpty().WithMessage(ExceptionKey.REQUIRED_NAME.ToString());
             RuleFor(x => x.RoleNames)
                 .NotEmpty().WithMessage(ExceptionKey.REQUIRED_ROLE.ToString())
                 .Must(x => x.Count > 0).WithMessage(ExceptionKey.REQUIRED_ROLE.ToString());
+            RuleFor(x => x.Name).NotEmpty().WithMessage(ExceptionKey.REQUIRED_NAME.ToString());
+            RuleFor(x => x.Address).NotEmpty().WithMessage(ExceptionKey.REQUIRED_ADDRESS.ToString());
             RuleFor(x => x.DepartmentIds)
                 .NotEmpty().WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_IDS.ToString())
                 .Must(x => x.Count > 0).WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_IDS.ToString());
-            RuleFor(x => x.Address).NotEmpty().WithMessage(ExceptionKey.REQUIRED_ADDRESS.ToString());
         }
     }
 

@@ -67,5 +67,22 @@ namespace HospitalService.FunctionalTests.Tests
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
+
+        [Fact]
+        public async Task UpdateService_WithLongServiceId_Returns404()
+        {
+            var longServiceName = new string('a', 201);
+            var request = new
+            {
+                ServiceCode = "SVC001",
+                ServiceName = longServiceName,
+                UnitPrice = 100.50m,
+                DepartmentId = 1
+            };
+
+            var response = await _client.PutAsJsonAsync("/services/999", request);
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
     }
 }

@@ -42,5 +42,13 @@ namespace HospitalService.FunctionalTests.Tests
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
+
+        [Fact]
+        public async Task DeleteDiseaseGroup_NotFoundGroup_Returns404()
+        {
+            var response = await _client.DeleteAsync($"/disease-groups/9999");
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
     }
 }
