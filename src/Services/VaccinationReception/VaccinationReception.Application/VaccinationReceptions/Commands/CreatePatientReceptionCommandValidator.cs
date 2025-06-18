@@ -1,6 +1,5 @@
-﻿using FluentValidation;
-using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
-using VaccinationReception.Application.Patients.Commands.CreatePatient;
+﻿using BuildingBlocks.Strings;
+using FluentValidation;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Validators
@@ -11,79 +10,79 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
         {
             RuleFor(x => x.createPatientCommand)
                 .NotNull()
-                .WithMessage("Thông tin bệnh nhân không được để trống");
+                .WithMessage(ExceptionKey.REQUIRED_PATIENT_INFO.ToString());
 
             RuleFor(x => x.createReceptionDTO)
                 .NotNull()
-                .WithMessage("Thông tin tiếp đón không được để trống");
+                .WithMessage(ExceptionKey.REQUIRED_VACCINATION_RECEPTION_INFO.ToString());
 
             RuleFor(x => x.createPatientCommand.Code)
                 .NotEmpty()
-                .WithMessage("Mã bệnh nhân không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_PATIENT_CODE.ToString())
                 .MaximumLength(20)
-                .WithMessage("Mã bệnh nhân không được vượt quá 20 ký tự");
+                .WithMessage(ExceptionKey.INVALID_PATIENT_CODE_MAX_LENGTH.ToString());
 
             RuleFor(x => x.createPatientCommand.Name)
                 .NotEmpty()
-                .WithMessage("Tên bệnh nhân không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_PATIENT_NAME.ToString())
                 .MaximumLength(100)
-                .WithMessage("Tên bệnh nhân không được vượt quá 100 ký tự");
+                .WithMessage(ExceptionKey.INVALID_PATIENT_NAME_MAX_LENGTH.ToString());
 
             RuleFor(x => x.createPatientCommand.Gender)
                 .InclusiveBetween(0, 1)
-                .WithMessage("Giới tính không hợp lệ. Chỉ chấp nhận 0 (Nam) hoặc 1 (Nữ).");
+                .WithMessage(ExceptionKey.INVALID_PATIENT_GENDER.ToString());
 
             RuleFor(x => x.createPatientCommand.Dob)
                 .NotEmpty()
-                .WithMessage("Ngày sinh không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_PATIENT_DOB.ToString())
                 .LessThan(DateTime.Now)
-                .WithMessage("Ngày sinh không được lớn hơn ngày hiện tại");
+                .WithMessage(ExceptionKey.INVALID_PATIENT_DOB.ToString());
 
             RuleFor(x => x.createPatientCommand.PhoneNumber)
                 .NotEmpty()
-                .WithMessage("Số điện thoại không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_PATIENT_PHONE.ToString())
                 .Matches(@"^[0-9]{10,11}$")
-                .WithMessage("Số điện thoại không hợp lệ (10-11 số)");
+                .WithMessage(ExceptionKey.INVALID_PATIENT_PHONE_FORMAT.ToString());
 
             RuleFor(x => x.createPatientCommand.IdentityCard)
                 .NotEmpty()
-                .WithMessage("Số CMND/CCCD không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_PATIENT_IDENTITY_CARD.ToString())
                 .Matches(@"^[0-9]{9,12}$")
-                .WithMessage("Số CMND/CCCD không hợp lệ (9-12 số)");
+                .WithMessage(ExceptionKey.INVALID_PATIENT_IDENTITY_CARD_FORMAT.ToString());
 
             RuleFor(x => x.createPatientCommand.AddressDetail)
                 .NotEmpty()
-                .WithMessage("Địa chỉ chi tiết không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_PATIENT_ADDRESS_DETAIL.ToString())
                 .MaximumLength(200)
-                .WithMessage("Địa chỉ chi tiết không được vượt quá 200 ký tự");
+                .WithMessage(ExceptionKey.INVALID_PATIENT_ADDRESS_MAX_LENGTH.ToString());
 
             RuleFor(x => x.createPatientCommand.Province)
                 .NotEmpty()
-                .WithMessage("Tỉnh/Thành phố không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_PATIENT_PROVINCE.ToString())
                 .MaximumLength(100)
-                .WithMessage("Tỉnh/Thành phố không được vượt quá 100 ký tự");
+                .WithMessage(ExceptionKey.INVALID_PATIENT_PROVINCE_MAX_LENGTH.ToString());
 
             RuleFor(x => x.createPatientCommand.District)
                 .NotEmpty()
-                .WithMessage("Quận/Huyện không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_PATIENT_DISTRICT.ToString())
                 .MaximumLength(100)
-                .WithMessage("Quận/Huyện không được vượt quá 100 ký tự");
+                .WithMessage(ExceptionKey.INVALID_PATIENT_DISTRICT_MAX_LENGTH.ToString());
 
             RuleFor(x => x.createPatientCommand.Ward)
                 .NotEmpty()
-                .WithMessage("Phường/Xã không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_PATIENT_WARD.ToString())
                 .MaximumLength(100)
-                .WithMessage("Phường/Xã không được vượt quá 100 ký tự");
+                .WithMessage(ExceptionKey.INVALID_PATIENT_WARD_MAX_LENGTH.ToString());
 
             RuleFor(x => x.createReceptionDTO.ReceptionDate)
                 .NotEmpty()
-                .WithMessage("Ngày tiếp đón không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_VACCINATION_RECEPTION_DATE.ToString())
                 .GreaterThanOrEqualTo(DateTime.Today)
-                .WithMessage("Ngày tiếp đón không được nhỏ hơn ngày hiện tại");
+                .WithMessage(ExceptionKey.INVALID_VACCINATION_RECEPTION_DATE.ToString());
 
             RuleFor(x => x.createReceptionDTO.ServiceTypeId)
                 .GreaterThan(0)
-                .WithMessage("Loại dịch vụ không hợp lệ");
+                .WithMessage(ExceptionKey.INVALID_SERVICE_TYPE.ToString());
 
         }
     }

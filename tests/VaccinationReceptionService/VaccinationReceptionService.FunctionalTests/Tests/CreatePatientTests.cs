@@ -1,4 +1,6 @@
-﻿namespace VaccinationReception.FunctionalTests.Tests
+﻿using BuildingBlocks.Strings;
+
+namespace VaccinationReception.FunctionalTests.Tests
 {
     public class CreatePatientTests : BaseFunctionalTest
     {
@@ -92,7 +94,7 @@
             response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             var error = await response.Content.ReadFromJsonAsync<ProblemDetails>();
             error.Should().NotBeNull();
-            error?.Detail.Should().Contain("Tạo bệnh nhân thất bại");
+            error?.Detail.Should().Contain(ExceptionKey.FAILED_CREATE_PATIENT.ToString());
         }
 
         [Fact]

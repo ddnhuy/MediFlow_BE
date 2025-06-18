@@ -1,4 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using Mapster;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -32,7 +34,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 if (request.ReceptionId <= 0)
                 {
                     _logger.LogWarning("Invalid ReceptionId: {ReceptionId}", request.ReceptionId);
-                    throw new ArgumentException("ReceptionId must be a positive number.");
+                    throw new BadRequestException(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID);
                 }
 
                 var entity = request.Adapt<ScreeningEvaluationReport>();

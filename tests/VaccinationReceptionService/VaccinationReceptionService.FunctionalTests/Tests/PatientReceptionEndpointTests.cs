@@ -1,18 +1,19 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
+﻿using BuildingBlocks.Strings;
 using FluentAssertions;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NSubstitute;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
 using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
+using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
+using VaccinationReception.Application.VaccinationReceptions.Commands;
 using VaccinationReception.Domain.Models;
 using VaccinationReception.Infrastructure.Data;
 using VaccinationReceptionService.FunctionalTests.Abstractions;
-using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
-using VaccinationReception.Application.VaccinationReceptions.Commands;
-using System.Text.Json;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {
@@ -84,7 +85,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             var result = await response.Content.ReadFromJsonAsync<ProblemDetails>();
             result.Should().NotBeNull();
-            result!.Detail.Should().Contain("Tạo bệnh nhân thất bại");
+            result!.Detail.Should().Contain(ExceptionKey.FAILED_CREATE_PATIENT.ToString());
         }
 
         [Fact]

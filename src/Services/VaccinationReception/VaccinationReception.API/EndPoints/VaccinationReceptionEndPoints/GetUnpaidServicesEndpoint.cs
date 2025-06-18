@@ -1,4 +1,5 @@
-﻿using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
+﻿using BuildingBlocks.Strings;
+using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Application.VaccinationReceptions.Queries;
 
 namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
@@ -11,28 +12,21 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
                 int receptionId,
                 ISender sender) =>
             {
-                try
+                if (receptionId <= 0)
                 {
-                    if (receptionId <= 0)
-                    {
-                        return Results.BadRequest("Reception ID không hợp lệ");
-                    }
-
-                    var query = new GetUnpaidServicesQuery(receptionId);
-                    var result = await sender.Send(query);
-
-                    if (result == null ||
-                        (!result.Services.Any() && !result.Vaccinations.Any()))
-                    {
-                        return Results.NotFound("Không tìm thấy unpaid services");
-                    }
-
-                    return Results.Ok(result);
+                    throw new BadRequestException(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID);
                 }
-                catch (InvalidOperationException ex)
+
+                var query = new GetUnpaidServicesQuery(receptionId);
+                var result = await sender.Send(query);
+
+                if (result == null ||
+                    (!result.Services.Any() && !result.Vaccinations.Any()))
                 {
-                    return Results.NotFound(new { error = ex.Message });
+                    throw new NotFoundException(ExceptionKey.NOT_FOUND_UNPAID_SERVICES_WITH_RECEPTION_ID);
                 }
+
+                return Results.Ok(result);
             })
             .RequireAuthorization()
             .WithName("GetUnpaidServices")

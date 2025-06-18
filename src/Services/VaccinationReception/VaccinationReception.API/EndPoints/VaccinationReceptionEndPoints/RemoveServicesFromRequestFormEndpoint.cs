@@ -1,4 +1,5 @@
-﻿using VaccinationReception.Application.VaccinationReceptions.Commands;
+﻿using BuildingBlocks.Strings;
+using VaccinationReception.Application.VaccinationReceptions.Commands;
 
 namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
 {
@@ -13,25 +14,15 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
                 [FromBody] List<int> serviceIds,
                 ISender sender) =>
             {
-                try
+                if (receptionId <= 0 || serviceIds is not { Count: > 0 } || serviceIds.Any(id => id < 0))
                 {
-                    if (receptionId <= 0 || serviceIds is not { Count: > 0 } || serviceIds.Any(id => id < 0))
-                    {
-                        return Results.BadRequest(new
-                        {
-                            error = "Invalid input: receptionId must be > 0 and serviceIds must be a non-empty list of non-negative integers."
-                        });
-                    }
+                    throw new BadRequestException(ExceptionKey.INVALID_REQUEST);
+                }
 
-                    var command = new RemoveServicesFromRequestFormCommand(receptionId, serviceIds);
-                    var result = await sender.Send(command);
-                    var response = result.Adapt<RemoveServicesFromRequestFormResponse>();
-                    return Results.Ok(response);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return Results.NotFound(new { error = ex.Message });
-                }
+                var command = new RemoveServicesFromRequestFormCommand(receptionId, serviceIds);
+                var result = await sender.Send(command);
+                var response = result.Adapt<RemoveServicesFromRequestFormResponse>();
+                return Results.Ok(response);
             })
             .RequireAuthorization()
             .WithName("RemoveServicesFromRequestForm")

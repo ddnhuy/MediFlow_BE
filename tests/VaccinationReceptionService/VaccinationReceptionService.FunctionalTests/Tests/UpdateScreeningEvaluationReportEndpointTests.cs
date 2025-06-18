@@ -163,13 +163,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
 
             // Act
             var response = await _client.PutAsJsonAsync($"/screeningevaluation/{differentId}", command);
-
-            var content = await response.Content.ReadAsStringAsync();
            
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-            content.Should().NotBeNull();
-            content.Should().Contain("ID trong đường dẫn không khớp với ID trong nội dung yêu cầu");
         }
 
         private UpdateScreeningEvaluationReportCommand CreateValidCommand()

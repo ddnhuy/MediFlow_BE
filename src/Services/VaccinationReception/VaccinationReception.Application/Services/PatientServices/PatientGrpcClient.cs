@@ -69,7 +69,7 @@ namespace VaccinationReception.Application.Services.PatientServices
         {
             if (id <= 0)
             {
-                throw new ArgumentException("Invalid patient ID", nameof(id));
+                throw new ArgumentException(ExceptionKey.INVALID_PATIENT_ID.ToString());
             }
 
             try

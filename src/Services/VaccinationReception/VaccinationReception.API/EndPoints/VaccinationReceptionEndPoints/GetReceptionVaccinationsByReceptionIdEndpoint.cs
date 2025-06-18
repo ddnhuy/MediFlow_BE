@@ -1,4 +1,5 @@
-﻿using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
+﻿using BuildingBlocks.Strings;
+using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Application.VaccinationReceptions.Queries;
 
 namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
@@ -13,7 +14,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
             {
                 if (receptionId <= 0)
                 {
-                    return Results.BadRequest("Reception ID không hợp lệ");
+                    throw new BadRequestException(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID);
                 }
 
                 var query = new GetReceptionVaccinationsByReceptionIdQuery(receptionId);
@@ -21,7 +22,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
 
                 if (result == null || !result.ReceptionVaccinations.Any())
                 {
-                    return Results.NotFound($"Không tìm thấy lịch tiêm cho lần tiếp nhận {receptionId}");
+                    throw new NotFoundException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
                 }
 
                 var response = result.Adapt<GetReceptionVaccinationsByReceptionIdResponse>();

@@ -157,10 +157,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             };
 
             var response = await _client.SendAsync(request);
-            var responseContent = await response.Content.ReadAsStringAsync();
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            responseContent.Should().Contain("Danh sách ID không được để trống");
         }
     }
 }

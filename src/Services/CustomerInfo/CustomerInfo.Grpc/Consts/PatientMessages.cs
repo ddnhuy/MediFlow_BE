@@ -2,16 +2,6 @@
 {
     public static class PatientMessages
     {
-        public static class Messages
-        {
-            public const string PatientNotFound = "Không tìm thấy bệnh nhân với ID {0}";
-            public const string PatientCodeExists = "Mã bệnh nhân '{0}' đã tồn tại trong hệ thống. Vui lòng sử dụng mã khác.";
-            public const string CreateError = "Không thể tạo bệnh nhân. Vui lòng thử lại sau.";
-            public const string UpdateError = "Không thể cập nhật thông tin bệnh nhân. Vui lòng thử lại sau.";
-            public const string UnexpectedError = "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.";
-            public const string ValidationFailed = "Dữ liệu không hợp lệ.";
-        }
-
         public static class PatientLogMessages
         {
             public const string ListingPatients = "Listing patients: page: {PageIndex}, size: {PageSize}";

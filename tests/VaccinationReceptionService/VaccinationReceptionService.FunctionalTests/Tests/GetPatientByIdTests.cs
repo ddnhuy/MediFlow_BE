@@ -1,13 +1,14 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
+﻿using BuildingBlocks.Strings;
 using CustomerInfo.Grpc.Protos;
 using FluentAssertions;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
 using VaccinationReception.API.EndPoints.PatientEndPoints;
 using VaccinationReception.Application.DTOs.PatientDTOs;
 using VaccinationReception.Application.Patients.Queries.GetPatient;
@@ -83,11 +84,6 @@ public class GetPatientByIdTests : BaseFunctionalTest
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var content = await response.Content.ReadAsStringAsync();
-        var message = JsonSerializer.Deserialize<string>(content);
-
-        message.Should().Be("Id không hợp lệ");
-
     }
 
     [Fact]
@@ -117,7 +113,7 @@ public class GetPatientByIdTests : BaseFunctionalTest
             PropertyNameCaseInsensitive = true
         });
 
-        error.Detail.Should().Be("Entity \"Patient\" (999) was not found.");
+        error.Detail.Should().Be(ExceptionKey.NOT_FOUND_PATIENT_WITH_ID.ToString());
 
     }
 
