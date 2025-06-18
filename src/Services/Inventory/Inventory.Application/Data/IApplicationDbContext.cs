@@ -18,5 +18,6 @@
         DbSet<InventoryDetail> InventoryDetails { get; }
         DbSet<InventoryHistory> InventoryHistories { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
+        DatabaseFacade Database { get; }
     }
 }
