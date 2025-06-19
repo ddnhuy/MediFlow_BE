@@ -109,5 +109,18 @@ namespace HospitalService.FunctionalTests.Tests
             // Verify that commit was never called
             mockUnitOfWork.Verify(x => x.CommitTransactionAsync(It.IsAny<CancellationToken>()), Times.Never);
         }
+
+        [Fact]
+        public async Task AddServicesToGroup_InvalidId_Returns404()
+        {
+            // Arrange
+            var request = new { ServiceIds = new[] { 1, 2 } };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/service-groups/9999/services", request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
     }
 }

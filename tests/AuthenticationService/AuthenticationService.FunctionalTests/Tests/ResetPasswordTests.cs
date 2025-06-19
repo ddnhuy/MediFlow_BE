@@ -73,5 +73,31 @@ namespace AuthenticationService.FunctionalTests.Tests
             var result = await response.Content.ReadFromJsonAsync<ProblemDetails>();
             result.Should().NotBeNull();
         }
+
+        [Fact]
+        public async Task ResetPassword_WithValidCredentials_ReturnsBadRequestMessage()
+        {
+            // Arrange
+            var request = new Authentication.API.Endpoints.ResetPasswordRequest("admin@mediflow.health.vn");
+
+            var grpcResponse = new HumanResource.Grpc.ResetPasswordResponse
+            {
+                IsSuccess = false,
+                Message = "Email not found or invalid."
+            };
+
+            _grpcClientMock?
+                .ResetPasswordAsync(Arg.Any<HumanResource.Grpc.ResetPasswordRequest>())
+                .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
+
+            // Act
+            var response = await _client.PostAsJsonAsync(
+                "/reset-password",
+                request
+            );
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
     }
 }

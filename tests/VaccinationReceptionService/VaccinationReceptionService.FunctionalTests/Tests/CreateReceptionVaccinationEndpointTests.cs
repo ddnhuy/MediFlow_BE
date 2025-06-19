@@ -161,5 +161,31 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             result.Should().NotBeNull();
             result!.Detail.Should().NotBeNullOrEmpty();
         }
+
+        [Fact]
+        public async Task CreateReceptionVaccination_WithInvalidData_ReturnsNotFound()
+        {
+            // Arrange
+            var command = new CreateReceptionVaccinationCommand(
+                ReceptionId: 9999,
+                VaccineId: TestVaccineId,
+                Quantity: 1,
+                IsReadyToUse: true,
+                ScheduledDate: DateTime.Now.AddDays(7),
+                InvoiceDate: DateTime.Now,
+                AppointmentDate: DateTime.Now.AddDays(7),
+                IsPaid: false,
+                IsConfirmed: false,
+                Note: null,
+                TestResultEntry: null,
+                DoctorId: TestDoctorId
+            );
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/reception-vaccinations", command);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
     }
 }

@@ -362,4 +362,19 @@ public class UsersControllerTest : BaseFunctionalTest
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
     }
+
+    [Fact]
+    public async Task GetUserById_ReturnBadRequest()
+    {
+        // Arrange
+        SetAuthHeader();
+
+        var userId = 0;
+
+        // Act
+        var response = await _client.GetAsync($"/users/{userId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }

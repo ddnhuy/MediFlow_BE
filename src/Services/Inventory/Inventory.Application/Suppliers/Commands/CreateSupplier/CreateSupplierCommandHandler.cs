@@ -32,7 +32,7 @@
 
             if (result.Entity.Id < 0)
             {
-                throw new InvalidOperationException("Failed to create supplier. Please try again.");
+                throw new InvalidOperationException(ExceptionKey.FAILED_CREATE_SUPPLIER_WITH_ID.ToString());
             }
 
             return new CreateSupplierResult(result.Entity.Id);

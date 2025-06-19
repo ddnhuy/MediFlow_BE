@@ -164,5 +164,39 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             result.Should().NotBeNull();
             result!.Detail.Should().NotBeNullOrEmpty();
         }
+
+        [Fact]
+        public async Task CreateScreeningEvaluationReport_WithInvalidReceptionId_ReturnsBadRequest()
+        {
+            // Arrange
+            var command = new CreateScreeningEvaluationReportCommand(
+                ParentFullName: "Test Parent",
+                ParentPhoneNumber: "0123456789",
+                WeightKg: 70.5,
+                BodyTemperatureC: 37.0,
+                BloodPressureSystolic: 120,
+                BloodPressureDiastolic: 80,
+                HasSevereFeverAfterPreviousVaccination: false,
+                HasAcuteOrChronicDisease: false,
+                IsOnOrRecentlyEndedCorticosteroids: false,
+                HasAbnormalTemperatureOrVitals: false,
+                HasAbnormalHeartSound: false,
+                HasHeartValveDisorder: false,
+                HasNeurologicalAbnormalities: false,
+                IsUnderweightBelow2000g: false,
+                HasOtherContraindications: false,
+                IsEligibleForVaccination: true,
+                IsContraindicatedForVaccination: false,
+                IsVaccinationDeferred: false,
+                IsReferredToHospital: false,
+                ReceptionId: 0
+            );
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/screening-evaluations", command);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
     }
 }
