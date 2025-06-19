@@ -26,6 +26,18 @@ namespace Inventory.FunctionalTests.Tests
         }
 
         [Fact]
+        public async Task GetMedicineById_WhenUnauthorized_ReturnsUnauthorized()
+        {
+            // Arrange
+            _client.DefaultRequestHeaders.Authorization = null;
+            var medicineId = 1; 
+            // Act
+            var response = await _client.GetAsync($"/medicines/{medicineId}");
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
         public async Task GetMedicineById_WithInvalidId_ReturnsNotFound()
         {
             // Arrange

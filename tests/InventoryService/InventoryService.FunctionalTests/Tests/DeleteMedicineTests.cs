@@ -29,6 +29,17 @@ namespace Inventory.FunctionalTests.Tests
         }
 
         [Fact]
+        public async Task Delete_WhenUnauthorized_ReturnsUnauthorized()
+        {
+            _client.DefaultRequestHeaders.Authorization = null;
+            var medicineId = 3;
+
+            var response = await _client.DeleteAsync($"/medicines/{medicineId}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
         public async Task Delete_WithInvalidId_ReturnsNotFound()
         {
             // Arrange

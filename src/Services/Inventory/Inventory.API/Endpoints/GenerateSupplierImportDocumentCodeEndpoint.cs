@@ -11,11 +11,6 @@ namespace Inventory.API.Endpoints
             {
                 var result = await sender.Send(new GenerateSupplierImportDocumentCodeQuery());
 
-                if (result == null)
-                {
-                    throw new InternalServerException(ExceptionKey.FAILED_GENERATE_DOCUMENT_CODE);
-                }
-
                 var response = result.Adapt<GenerateSupplierImportDocumentCodeResponse>();
 
                 return Results.Ok(response);

@@ -30,7 +30,7 @@
                     cancellationToken);
 
             if (existingInteraction)
-                throw new ValidationException(ExceptionKey.INTERACTION_ALREADY_EXISTS.ToString());
+                throw new BadRequestException(ExceptionKey.INTERACTION_ALREADY_EXISTS);
 
             interaction.MedicineId1 = request.MedicineId1;
             interaction.MedicineId2 = request.MedicineId2;

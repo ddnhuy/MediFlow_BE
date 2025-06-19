@@ -39,5 +39,16 @@ namespace Inventory.FunctionalTests.Tests
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
+
+        [Fact]
+        public async Task Delete_WhenUnauthorized_ReturnsUnauthorized()
+        {
+            _client.DefaultRequestHeaders.Authorization = null;
+            var interactionId = 1;
+
+            var response = await _client.DeleteAsync($"/medicine-interactions/{interactionId}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
     }
 }

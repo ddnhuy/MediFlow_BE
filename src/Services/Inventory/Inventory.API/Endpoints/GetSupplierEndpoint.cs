@@ -7,6 +7,7 @@
         {
             app.MapGet("/suppliers", async([AsParameters] PaginationRequest request, ISender sender) =>
             {
+                PaginationHelper.VerifyPaginationRequest(request.PageIndex, request.PageSize);
                 var result = await sender.Send(new GetSupplierQuery(request));
                 var response = result.Adapt<GetSupplierResponse>();
                 return Results.Ok(response);

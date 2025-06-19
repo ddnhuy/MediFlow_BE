@@ -12,11 +12,6 @@ namespace Inventory.API.Endpoints
                 var query = new GetMedicineByIdQuery(id);
                 var result = await sender.Send(query);
 
-                if (result == null)
-                {
-                    throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
-                }
-
                 var medicineDTO = result.Medicine.Adapt<MedicineDTO>();
                 return Results.Ok(new GetMedicineByIdResponse(medicineDTO));
             })

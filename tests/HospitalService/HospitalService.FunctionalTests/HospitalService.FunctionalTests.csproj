@@ -9,6 +9,7 @@
 
 	  <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <RunSettingsFilePath>D:\FPTLearning\Semester 9\SourceCode\MediFlow_BE\tests\HospitalService\HospitalService.FunctionalTests\bin\Debug\net8.0\fine-code-coverage\coverage-tool-output\HospitalService.FunctionalTests-fcc-mscodecoverage-generated.runsettings</RunSettingsFilePath>
   </PropertyGroup>
 
   <ItemGroup>

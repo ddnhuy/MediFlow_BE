@@ -11,11 +11,6 @@ namespace Inventory.API.Endpoints
             {
                 var result = await sender.Send(command);
 
-                if (result == null)
-                {
-                    throw new InternalServerException(ExceptionKey.FAILED_CREATE_MEDICINE);
-                }
-
                 var response = result.Adapt<CreateMedicineResponse>();
 
                 return Results.Created($"/inventory/medicines/{response.Id}", response);

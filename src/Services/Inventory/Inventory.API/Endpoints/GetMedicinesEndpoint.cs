@@ -8,6 +8,7 @@
         {
             app.MapGet("/medicines", async ([AsParameters] PaginationRequest request, ISender sender) =>
             {
+                PaginationHelper.VerifyPaginationRequest(request.PageIndex, request.PageSize);
                 var result = await sender.Send(new GetMedicinesQuery(request));
                 var response = result.Adapt<GetMedicinesResponse>();
                 return Results.Ok(response);
