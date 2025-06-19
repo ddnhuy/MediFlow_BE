@@ -6,8 +6,6 @@
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
-
-    <RunSettingsFilePath>D:\FPTLearning\Semester 9\SourceCode\MediFlow_BE\tests\AuthenticationService\AuthenticationService.FunctionalTests\bin\Debug\net8.0\fine-code-coverage\coverage-tool-output\AuthenticationService.FunctionalTests-fcc-mscodecoverage-generated.runsettings</RunSettingsFilePath>
   </PropertyGroup>
 
   <ItemGroup>

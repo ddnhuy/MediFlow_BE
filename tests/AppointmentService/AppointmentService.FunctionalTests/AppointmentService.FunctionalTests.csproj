@@ -7,7 +7,6 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <RunSettingsFilePath>D:\FPTLearning\Semester 9\SourceCode\MediFlow_BE\tests\AppointmentService\AppointmentService.FunctionalTests\bin\Debug\net8.0\fine-code-coverage\coverage-tool-output\AppointmentService.FunctionalTests-fcc-mscodecoverage-generated.runsettings</RunSettingsFilePath>
   </PropertyGroup>
 
   <ItemGroup>
