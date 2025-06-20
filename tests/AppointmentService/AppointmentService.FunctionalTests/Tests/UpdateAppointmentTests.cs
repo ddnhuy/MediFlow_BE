@@ -64,5 +64,18 @@ namespace AppointmentService.FunctionalTests.Tests
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
+        [Fact]
+        public async Task UpdateAppointment_ShouldReturnNotFound_WhenAppointmentDoesNotExist()
+        {
+            // Arrange
+            SetAuthHeader();
+            var request = new UpdateAppointmentRequest(999, 1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "patient@example.com", "84123456789", null, false);
+
+            // Act
+            var response = await _client.PutAsJsonAsync("/", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
     }
 }

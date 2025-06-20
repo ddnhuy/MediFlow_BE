@@ -542,4 +542,33 @@ public class DepartmentsControllerTest : BaseFunctionalTest
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
+    [Fact]
+    public async Task DeleteDepartment_WhenDeleteFails_ReturnsBadRequest()
+    {
+        // Arrange
+        SetAuthHeader();
+
+        var departmentId = 1;
+
+        // Simulate a failed delete response
+        var grpcResponse = new HumanResource.Grpc.DeleteDepartmentResponse
+        {
+            IsSuccess = false
+        };
+
+        _grpcDepartmentClientMock?
+            .DeleteDepartmentAsync(
+                Arg.Any<HumanResource.Grpc.DeleteDepartmentRequest>(),
+                Arg.Any<Metadata>(),
+                Arg.Any<DateTime?>(),
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
+
+        // Act
+        var response = await _client.DeleteAsync($"/departments/{departmentId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }
