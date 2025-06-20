@@ -48,7 +48,6 @@ namespace InventoryService.FunctionalTests.Helpers
                 {
                     new Medicine
                     {
-                        Id = 1,
                         MedicineName = "Paracetamol",
                         MedicineTypeId = 1,
                         VaccineTypeId = 1,
@@ -57,7 +56,6 @@ namespace InventoryService.FunctionalTests.Helpers
                     },
                     new Medicine
                     {
-                        Id = 2,
                         MedicineName = "Ibuprofen",
                         MedicineTypeId = 1,
                         VaccineTypeId = 1,
@@ -66,7 +64,6 @@ namespace InventoryService.FunctionalTests.Helpers
                     },
                     new Medicine
                     {
-                        Id = 3,
                         MedicineName = "Aspirin",
                         MedicineTypeId = 1,
                         VaccineTypeId = 1,
@@ -92,6 +89,18 @@ namespace InventoryService.FunctionalTests.Helpers
                         PreventiveActions = "Test preventive actions",
                         ReferenceInfo = "Test reference",
                         Notes = "Test notes",
+                        IsSuspended = false,
+                        IsCancelled = false,
+                    },
+                    new MedicineInteraction
+                    {
+                        MedicineId1 = 2,
+                        MedicineId2 = 3,
+                        HarmfulEffects = "Test harmful effects 2",
+                        Mechanism = "Test mechanism 2",
+                        PreventiveActions = "Test preventive actions 2",
+                        ReferenceInfo = "Test reference 2",
+                        Notes = "Test notes 2",
                         IsSuspended = false,
                         IsCancelled = false,
                     }
@@ -160,7 +169,6 @@ namespace InventoryService.FunctionalTests.Helpers
                 {
                     new Supplier
                     {
-                        Id = 1,
                         SupplierCode = "SUP001",
                         SupplierName = "MedPharm Supply Co.",
                         Address = "123 Medical Plaza, Suite 100",
@@ -175,7 +183,6 @@ namespace InventoryService.FunctionalTests.Helpers
                     },
                     new Supplier
                     {
-                        Id = 2,
                         SupplierCode = "SUP002",
                         SupplierName = "Healthcare Distributors Inc.",
                         Address = "456 Hospital Drive",
@@ -190,7 +197,6 @@ namespace InventoryService.FunctionalTests.Helpers
                     },
                     new Supplier
                     {
-                        Id = 3,
                         SupplierCode = "SUP003",
                         SupplierName = "Global Meds Ltd.",
                         Address = "789 Pharmacy Road",

@@ -27,5 +27,28 @@ namespace Inventory.FunctionalTests.Tests
             var result = await response.Content.ReadFromJsonAsync<GetWarehousesResponse>();
             result.Should().NotBeNull();
         }
+
+        [Fact]
+        public async Task GetWarehouses_WhenUnauthorized_ReturnsUnauthorized()
+        {
+            // Arrange
+            _client.DefaultRequestHeaders.Authorization = null;
+            var request = new PaginationRequest { PageIndex = 1, PageSize = 10 };
+            // Act
+            var response = await _client.GetAsync($"/warehouses?pageIndex={request.PageIndex}&pageSize={request.PageSize}");
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task GetWarehouses_WithInvalidPagination_ReturnsBadRequest()
+        {
+            // Arrange
+            var request = new PaginationRequest { PageIndex = -1, PageSize = 0 }; // Invalid pagination
+            // Act
+            var response = await _client.GetAsync($"/warehouses?pageIndex={request.PageIndex}&pageSize={request.PageSize}");
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
     }
 }

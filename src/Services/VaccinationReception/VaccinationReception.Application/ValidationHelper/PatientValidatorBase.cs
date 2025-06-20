@@ -1,10 +1,5 @@
-﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VaccinationReception.Application.Const;
+﻿using BuildingBlocks.Strings;
+using FluentValidation;
 
 namespace VaccinationReception.Application.ValidationHelper
 {
@@ -23,39 +18,39 @@ namespace VaccinationReception.Application.ValidationHelper
             IRuleBuilder<T, string?> ruleForWard)
         {
             ruleForCode
-                .NotEmpty().WithMessage(ValidationMessages.Code_Required)
-                .MaximumLength(50).WithMessage(ValidationMessages.Code_MaxLength);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_PATIENT_CODE.ToString())
+                .MaximumLength(50).WithMessage(ExceptionKey.INVALID_PATIENT_CODE_MAX_LENGTH.ToString());
 
             ruleForName
-                .NotEmpty().WithMessage(ValidationMessages.Name_Required)
-                .MaximumLength(100).WithMessage(ValidationMessages.Name_MaxLength);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_PATIENT_NAME.ToString())
+                .MaximumLength(100).WithMessage(ExceptionKey.INVALID_PATIENT_NAME_MAX_LENGTH.ToString());
 
             ruleForGender
-                .InclusiveBetween(0, 1).WithMessage(ValidationMessages.InvalidGender);
+                .InclusiveBetween(0, 1).WithMessage(ExceptionKey.REQUIRED_PATIENT_GENDER.ToString());
 
             ruleForDOB
-                .NotEmpty().WithMessage(ValidationMessages.DOB_Required)
-                .LessThanOrEqualTo(DateTime.Today).WithMessage(ValidationMessages.InvalidDate);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_PATIENT_DOB.ToString())
+                .LessThanOrEqualTo(DateTime.Today).WithMessage(ExceptionKey.INVALID_PATIENT_DOB.ToString());
 
             ruleForPhoneNumber
-                .MaximumLength(20).WithMessage(ValidationMessages.Phone_MaxLength)
+                .MaximumLength(20).WithMessage(ExceptionKey.REQUIRED_PATIENT_PHONE.ToString())
                 .Matches(@"^\+?[0-9]*$").When(x => !string.IsNullOrWhiteSpace(x?.ToString()))
-                .WithMessage(ValidationMessages.Phone_Invalid);
+                .WithMessage(ExceptionKey.INVALID_PATIENT_PHONE_MAX_LENGTH.ToString());
 
             ruleForIdentityCard
-                .MaximumLength(50).WithMessage(ValidationMessages.IdentityCard_MaxLength);
+                .MaximumLength(50).WithMessage(ExceptionKey.INVALID_PATIENT_IDENTITY_CARD_MAX_LENGTH.ToString());
 
             ruleForAddressDetail
-                .MaximumLength(200).WithMessage(ValidationMessages.Address_MaxLength);
+                .MaximumLength(200).WithMessage(ExceptionKey.INVALID_PATIENT_ADDRESS_MAX_LENGTH.ToString());
 
             ruleForProvince
-                .MaximumLength(100).WithMessage(ValidationMessages.Province_MaxLength);
+                .MaximumLength(100).WithMessage(ExceptionKey.INVALID_PATIENT_PROVINCE_MAX_LENGTH.ToString());
 
             ruleForDistrict
-                .MaximumLength(100).WithMessage(ValidationMessages.District_MaxLength);
+                .MaximumLength(100).WithMessage(ExceptionKey.INVALID_PATIENT_DISTRICT_MAX_LENGTH.ToString());
 
             ruleForWard
-                .MaximumLength(100).WithMessage(ValidationMessages.Ward_MaxLength);
+                .MaximumLength(100).WithMessage(ExceptionKey.INVALID_PATIENT_WARD_MAX_LENGTH.ToString());
         }
     }
 }

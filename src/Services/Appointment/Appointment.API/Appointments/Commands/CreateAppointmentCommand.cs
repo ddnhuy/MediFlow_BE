@@ -1,4 +1,6 @@
-﻿namespace Appointment.API.Appointments.Commands
+﻿using FluentValidation;
+
+namespace Appointment.API.Appointments.Commands
 {
     public record CreateAppointmentResult(bool IsSuccess, string Message);
     public record CreateAppointmentCommand(int PatientId, int DepartmentId, DateTime AppointmentDate, AppointmentType AppointmentType, string PatientEmail, string? PatientPhoneNumber, string? Note) : ICommand<CreateAppointmentResult>;
@@ -7,12 +9,12 @@
     {
         public CreateAppointmentCommandValidator()
         {
-            RuleFor(x => x.PatientId).GreaterThan(0).WithMessage(ValidationStrings.INVALID_PATIENT_ID);
-            RuleFor(x => x.DepartmentId).GreaterThan(0).WithMessage(ValidationStrings.REQUIRED_DEPARTMENT_ID);
-            RuleFor(x => x.AppointmentDate).GreaterThan(DateTime.UtcNow).WithMessage(ValidationStrings.INVALID_APPOINTMENT_DATE);
-            RuleFor(x => x.AppointmentType).IsInEnum().WithMessage(ValidationStrings.INVALID_APPOINTMENT_TYPE);
-            RuleFor(x => x.PatientEmail).NotEmpty().EmailAddress().WithMessage(ValidationStrings.INVALID_PATIENT_EMAIL);
-            RuleFor(x => x.PatientPhoneNumber).Matches(@"^\+?[1-9]\d{1,14}$").When(x => !string.IsNullOrEmpty(x.PatientPhoneNumber)).WithMessage(ValidationStrings.INVALID_PATIENT_PHONE_NUMBER);
+            RuleFor(x => x.PatientId).GreaterThan(0).WithMessage(ExceptionKey.INVALID_PATIENT_ID.ToString());
+            RuleFor(x => x.DepartmentId).GreaterThan(0).WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_ID.ToString());
+            RuleFor(x => x.AppointmentDate).GreaterThan(DateTime.UtcNow).WithMessage(ExceptionKey.INVALID_APPOINTMENT_DATE.ToString());
+            RuleFor(x => x.AppointmentType).IsInEnum().WithMessage(ExceptionKey.INVALID_APPOINTMENT_TYPE.ToString());
+            RuleFor(x => x.PatientEmail).NotEmpty().EmailAddress().WithMessage(ExceptionKey.INVALID_PATIENT_EMAIL.ToString());
+            RuleFor(x => x.PatientPhoneNumber).Matches(@"^\+?[1-9]\d{1,14}$").When(x => !string.IsNullOrEmpty(x.PatientPhoneNumber)).WithMessage(ExceptionKey.INVALID_PATIENT_PHONE_NUMBER.ToString());
         }
     }
 

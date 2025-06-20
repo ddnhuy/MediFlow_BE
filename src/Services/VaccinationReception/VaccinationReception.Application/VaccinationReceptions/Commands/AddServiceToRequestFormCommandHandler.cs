@@ -1,4 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -33,7 +35,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     .FirstOrDefaultAsync(r => r.Id == request.ReceptionId, cancellationToken);
 
                 if (reception == null)
-                    throw new InvalidOperationException("Reception không tồn tại");
+                    throw new BadRequestException(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID);
 
                 var requestForm = await _context.RequestForms
                     .FirstOrDefaultAsync(rf => rf.ReceptionId == request.ReceptionId, cancellationToken);
@@ -107,7 +109,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     }
                     else
                     {
-                        throw new InvalidOperationException("Loại nhóm không hợp lệ");
+                        throw new BadRequestException(ExceptionKey.INVALID_GROUP_TYPE);
                     }
 
                     foreach (var serviceId in serviceIds)
@@ -149,7 +151,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 }
                 else
                 {
-                    throw new InvalidOperationException("Dữ liệu không hợp lệ");
+                    throw new BadRequestException(ExceptionKey.INVALID_DATA);
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);

@@ -26,6 +26,29 @@ namespace Inventory.FunctionalTests.Tests
             result.Should().NotBeNull();
             result!.Suppliers.Data.Should().NotBeEmpty();
         }
+
+        [Fact]
+        public async Task GetSuppliers_WhenUnauthorized_ReturnsUnauthorized()
+        {
+            // Arrange
+            _client.DefaultRequestHeaders.Authorization = null;
+            var request = new PaginationRequest { PageIndex = 1, PageSize = 10 };
+            // Act
+            var response = await _client.GetAsync($"/suppliers?pageIndex={request.PageIndex}&pageSize={request.PageSize}");
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task GetSuppliers_WithInvalidPagination_ReturnsBadRequest()
+        {
+            // Arrange
+            var request = new PaginationRequest { PageIndex = -1, PageSize = 0 }; // Invalid pagination
+            // Act
+            var response = await _client.GetAsync($"/suppliers?pageIndex={request.PageIndex}&pageSize={request.PageSize}");
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
     }
 
     public class GetSuppliersResponse

@@ -1,4 +1,6 @@
-﻿namespace VaccinationReception.API.EndPoints.PatientEndPoints
+﻿using BuildingBlocks.Strings;
+
+namespace VaccinationReception.API.EndPoints.PatientEndPoints
 {
     public record UpdatePatientResponse(bool IsSuccess);
     public class UpdatePatientEndpoint : ICarterModule
@@ -9,7 +11,7 @@
             {
                 if (id != command.Id)
                 {
-                    return Results.BadRequest("ID trong đường dẫn không khớp với ID trong nội dung yêu cầu");
+                    throw new BadRequestException(ExceptionKey.INVALID_PATIENT_ID);
                 }
 
                 var result = await sender.Send(command);

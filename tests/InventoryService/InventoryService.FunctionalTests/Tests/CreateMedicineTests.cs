@@ -45,5 +45,60 @@ namespace Inventory.FunctionalTests.Tests
             var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
             problem.Should().NotBeNull();
         }
+
+        [Fact]
+        public async Task Create_WithValidData_ReturnsCreated()
+        {
+            var command = new CreateMedicineCommand(
+                MedicineCode: "MED100",
+                MedicineName: "Valid Medicine",
+                Unit: "Tablet",
+                IsRequiredTestingBeforeUse: false,
+                ActiveIngredient: "Ingredient",
+                UsageInstructions: "Use as directed",
+                Concentration: "500mg",
+                Indications: "Pain relief",
+                MedicineClassification: "Analgesic",
+                RouteOfAdministration: "Oral",
+                NationalMedicineCode: "NMC100",
+                Description: "Description",
+                Note: "Note",
+                RegistrationNumber: "REG100",
+                MedicineTypeId: 1,
+                VaccineTypeId: 1
+            );
+
+            var response = await _client.PostAsJsonAsync("/medicines", command);
+
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+        }
+
+        [Fact]
+        public async Task Create_WhenUnauthorized_ReturnsUnauthorized()
+        {
+            _client.DefaultRequestHeaders.Authorization = null;
+            var command = new CreateMedicineCommand(
+                MedicineCode: "MED101",
+                MedicineName: "Unauthorized Medicine",
+                Unit: "Tablet",
+                IsRequiredTestingBeforeUse: false,
+                ActiveIngredient: "Ingredient",
+                UsageInstructions: "Use as directed",
+                Concentration: "500mg",
+                Indications: "Pain relief",
+                MedicineClassification: "Analgesic",
+                RouteOfAdministration: "Oral",
+                NationalMedicineCode: "NMC101",
+                Description: "Description",
+                Note: "Note",
+                RegistrationNumber: "REG101",
+                MedicineTypeId: 1,
+                VaccineTypeId: 1
+            );
+
+            var response = await _client.PostAsJsonAsync("/medicines", command);
+
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
     }
 }

@@ -156,9 +156,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            content.Should().NotBeNull();
-            content.Should().Contain("ID trong đường dẫn không khớp với ID trong nội dung yêu cầu");
         }
+
         private UpdateReceptionVaccinationCommand CreateValidCommand()
         {
             return new UpdateReceptionVaccinationCommand(

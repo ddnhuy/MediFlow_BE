@@ -51,5 +51,15 @@ namespace HospitalService.FunctionalTests.Tests
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
+
+        [Fact]
+        public async Task DeleteServiceGroup_NotFoundGroup_Returns404()
+        {
+            // Act
+            var response = await _client.DeleteAsync($"/service-groups/9999");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
     }
 }

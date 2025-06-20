@@ -8,13 +8,13 @@
         public UploadImageCommandValidator()
         {
             RuleFor(x => x.File)
-                .NotNull().WithMessage(ValidationStrings.FILE_NOT_PROVIDED)
-                .Must(file => file.Length > 0).WithMessage(ValidationStrings.FILE_NOT_PROVIDED)
-                .Must(file => file.Length <= 5 * 1024 * 1024).WithMessage(ValidationStrings.FILE_TOO_LARGE(5));
+                .NotNull().WithMessage(ExceptionKey.FILE_NOT_PROVIDED.ToString())
+                .Must(file => file.Length > 0).WithMessage(ExceptionKey.FILE_NOT_PROVIDED.ToString())
+                .Must(file => file.Length <= 5 * 1024 * 1024).WithMessage(ExceptionKey.FILE_TOO_LARGE.ToString());
             RuleFor(x => x.Folder)
-                .MaximumLength(100).WithMessage(ValidationStrings.FOLDER_NAME_TOO_LONG);
+                .MaximumLength(100).WithMessage(ExceptionKey.FOLDER_NAME_TOO_LONG.ToString());
             RuleFor(x => x.ImageUrl)
-                .Must(url => string.IsNullOrEmpty(url) || Uri.IsWellFormedUriString(url, UriKind.Absolute)).WithMessage(ValidationStrings.INVALID_IMAGE_URL);
+                .Must(url => string.IsNullOrEmpty(url) || Uri.IsWellFormedUriString(url, UriKind.Absolute)).WithMessage(ExceptionKey.INVALID_IMAGE_URL.ToString());
         }
     }
 

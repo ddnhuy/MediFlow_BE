@@ -1,4 +1,6 @@
-﻿namespace Inventory.API.Endpoints
+﻿using BuildingBlocks.Strings;
+
+namespace Inventory.API.Endpoints
 {
     public record GetMedicineByIdResponse(MedicineDTO Medicine);
     public class GetMedicineByIdEndpoint : ICarterModule
@@ -9,11 +11,6 @@
             {
                 var query = new GetMedicineByIdQuery(id);
                 var result = await sender.Send(query);
-
-                if (result == null)
-                {
-                    return Results.NotFound(InventoryExceptionStrings.NOT_FOUND_MEDICINE_WITH_ID(id));
-                }
 
                 var medicineDTO = result.Medicine.Adapt<MedicineDTO>();
                 return Results.Ok(new GetMedicineByIdResponse(medicineDTO));

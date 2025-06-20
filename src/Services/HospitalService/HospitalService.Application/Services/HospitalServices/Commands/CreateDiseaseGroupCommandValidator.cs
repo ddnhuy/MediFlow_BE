@@ -1,10 +1,5 @@
 ﻿using BuildingBlocks.Strings;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HospitalService.Application.Services.HospitalServices.Commands
 {
@@ -14,20 +9,20 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         {
             RuleFor(x => x.GroupName)
                 .NotEmpty()
-                .WithMessage(ValidationStrings.REQUIRED_DISEASE_GROUP_NAME)
+                .WithMessage(ExceptionKey.REQUIRED_DISEASE_GROUP_NAME.ToString())
                 .MaximumLength(200)
-                .WithMessage(ValidationStrings.DISEASE_GROUP_NAME_MAX_LENGTH)
+                .WithMessage(ExceptionKey.DISEASE_GROUP_NAME_MAX_LENGTH.ToString())
                 .MinimumLength(3)
-                .WithMessage(ValidationStrings.DISEASE_GROUP_NAME_MIN_LENGTH);
+                .WithMessage(ExceptionKey.DISEASE_GROUP_NAME_MIN_LENGTH.ToString());
 
             RuleFor(x => x.Description)
                 .MaximumLength(500)
-                .WithMessage(ValidationStrings.DISEASE_GROUP_DESCRIPTION_MAX_LENGTH)
+                .WithMessage(ExceptionKey.DISEASE_GROUP_DESCRIPTION_MAX_LENGTH.ToString())
                 .When(x => x.Description != null);
 
             RuleForEach(x => x.ServiceIds)
                 .GreaterThan(0)
-                .WithMessage(ValidationStrings.INVALID_SERVICE_ID)
+                .WithMessage(ExceptionKey.INVALID_SERVICE_ID.ToString())
                 .When(x => x.ServiceIds != null && x.ServiceIds.Any());
         }
     }

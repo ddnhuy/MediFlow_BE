@@ -90,7 +90,7 @@
             if (policy == null)
             {
                 logger.LogWarning("Policy not found: {Id}", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_POLICY_WITH_ID(request.Id)));
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_POLICY_WITH_ID.ToString()));
             }
 
             logger.LogInformation("Retrieved policy: {PolicyId} with ResourceType: {ResourceType}", policy.Id, policy.ResourceType);
@@ -144,7 +144,7 @@
             if (policy == null)
             {
                 logger.LogWarning("Policy not found: {Id}", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_POLICY_WITH_ID(request.Id)));
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_POLICY_WITH_ID.ToString()));
             }
 
             policy.ResourceType = request.ResourceType;
@@ -178,7 +178,7 @@
                 return new DeleteResponse
                 {
                     Success = false,
-                    Message = HumanResourceExceptionStrings.NOT_FOUND_POLICY_WITH_ID(request.Id)
+                    Message = ExceptionKey.NOT_FOUND_POLICY_WITH_ID.ToString()
                 };
             }
 
@@ -191,7 +191,7 @@
                 return new DeleteResponse
                 {
                     Success = false,
-                    Message = HumanResourceExceptionStrings.CANNOT_DELETE_POLICY_WITH_RELATIONSHIPS(request.Id)
+                    Message = ExceptionKey.CANNOT_DELETE_POLICY_WITH_RELATIONSHIPS.ToString()
                 };
             }
 
@@ -302,7 +302,7 @@
             {
                 logger.LogWarning("Policy {PolicyId} is already assigned to role {RoleId} and department {DepartmentId}",
                     request.PolicyId, request.RoleId, request.DepartmentId);
-                throw new RpcException(new Status(StatusCode.AlreadyExists, HumanResourceExceptionStrings.POLICY_ASSIGNMENT_ALREADY_EXISTS));
+                throw new RpcException(new Status(StatusCode.AlreadyExists, ExceptionKey.POLICY_ASSIGNMENT_ALREADY_EXISTS.ToString()));
             }
 
             // Verify role exists
@@ -310,7 +310,7 @@
             if (role == null)
             {
                 logger.LogWarning("Role not found: {RoleId}", request.RoleId);
-                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_ROLE_WITH_ID(request.RoleId)));
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_ROLE_WITH_ID.ToString()));
             }
 
             // Verify department exists
@@ -318,7 +318,7 @@
             if (department == null)
             {
                 logger.LogWarning("Department not found: {DepartmentId}", request.DepartmentId);
-                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_DEPARTMENT_WITH_ID(request.DepartmentId)));
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_DEPARTMENT_WITH_ID.ToString()));
             }
 
             // Verify policy exists
@@ -326,7 +326,7 @@
             if (policy == null)
             {
                 logger.LogWarning("Policy not found: {PolicyId}", request.PolicyId);
-                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_POLICY_WITH_ID(request.PolicyId)));
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_POLICY_WITH_ID.ToString()));
             }
 
             var roleDepartmentPolicy = new RoleDepartmentPolicy
@@ -388,7 +388,7 @@
                 return new DeleteResponse
                 {
                     Success = false,
-                    Message = HumanResourceExceptionStrings.NOT_FOUND_PERMISSION_WITH_ID(request.RoleDepartmentPolicyId)
+                    Message = ExceptionKey.NOT_FOUND_PERMISSION_WITH_ID.ToString()
                 };
             }
 

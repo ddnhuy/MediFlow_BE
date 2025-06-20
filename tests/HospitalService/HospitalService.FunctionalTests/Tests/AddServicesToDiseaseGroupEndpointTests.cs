@@ -47,5 +47,15 @@ namespace HospitalService.FunctionalTests.Tests
             var node = JsonNode.Parse(json);
             Assert.NotNull(node);
         }
+
+        [Fact]
+        public async Task AddServicesToDiseaseGroup_InvalidId_Return404()
+        {
+            var request = new { ServiceIds = new[] { 1, 2 } };
+
+            var response = await _client.PostAsJsonAsync("/disease-groups/9999/services", request);
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
     }
 }

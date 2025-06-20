@@ -1,10 +1,5 @@
 ﻿using BuildingBlocks.Strings;
 using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HospitalService.Application.Services.HospitalServices.Commands
 {
@@ -14,25 +9,25 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         {
             RuleFor(x => x.ServiceCode)
                 .NotEmpty()
-                .WithMessage(ValidationStrings.REQUIRED_SERVICE_CODE)
+                .WithMessage(ExceptionKey.REQUIRED_SERVICE_CODE.ToString())
                 .MaximumLength(50)
-                .WithMessage(ValidationStrings.SERVICE_CODE_MAX_LENGTH)
+                .WithMessage(ExceptionKey.SERVICE_CODE_MAX_LENGTH.ToString())
                 .Matches("^[A-Za-z0-9-_]+$")
-                .WithMessage(ValidationStrings.INVALID_SERVICE_CODE_FORMAT);
+                .WithMessage(ExceptionKey.INVALID_SERVICE_CODE_FORMAT.ToString());
 
             RuleFor(x => x.ServiceName)
                 .NotEmpty()
-                .WithMessage(ValidationStrings.REQUIRED_SERVICE_NAME)
+                .WithMessage(ExceptionKey.REQUIRED_SERVICE_NAME.ToString())
                 .MaximumLength(200)
-                .WithMessage(ValidationStrings.SERVICE_NAME_MAX_LENGTH)
+                .WithMessage(ExceptionKey.SERVICE_NAME_MAX_LENGTH.ToString())
                 .MinimumLength(3)
-                .WithMessage(ValidationStrings.SERVICE_NAME_MIN_LENGTH);
+                .WithMessage(ExceptionKey.SERVICE_NAME_MIN_LENGTH.ToString());
 
             RuleFor(x => x.UnitPrice)
                 .GreaterThan(0)
-                .WithMessage(ValidationStrings.INVALID_SERVICE_PRICE)
+                .WithMessage(ExceptionKey.INVALID_SERVICE_PRICE.ToString())
                 .LessThanOrEqualTo(1000000000)
-                .WithMessage(ValidationStrings.SERVICE_PRICE_TOO_LARGE);
+                .WithMessage(ExceptionKey.SERVICE_PRICE_TOO_LARGE.ToString());
         }
     }
 }

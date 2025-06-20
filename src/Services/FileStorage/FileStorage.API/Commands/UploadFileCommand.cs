@@ -2,6 +2,7 @@
 using FileStorage.API.Helpers;
 using FileStorage.API.Models;
 using FileStorage.API.Repositories;
+using FluentValidation;
 
 namespace FileStorage.API.Commands
 {
@@ -13,13 +14,13 @@ namespace FileStorage.API.Commands
         public UploadFileCommandValidator()
         {
             RuleFor(x => x.File)
-                .NotNull().WithMessage(ValidationStrings.FILE_NOT_PROVIDED)
-                .Must(file => file.Length > 0).WithMessage(ValidationStrings.FILE_NOT_PROVIDED)
-                .Must(file => file.Length <= 10 * 1024 * 1024).WithMessage(ValidationStrings.FILE_TOO_LARGE(10));
+                .NotNull().WithMessage(ExceptionKey.FILE_NOT_PROVIDED.ToString())
+                .Must(file => file.Length > 0).WithMessage(ExceptionKey.FILE_NOT_PROVIDED.ToString())
+                .Must(file => file.Length <= 10 * 1024 * 1024).WithMessage(ExceptionKey.FILE_TOO_LARGE.ToString());
             RuleFor(x => x.Department)
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_DEPARTMENT_NAME);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_NAME.ToString());
             RuleFor(x => x.Type)
-                .IsInEnum().WithMessage(ValidationStrings.INVALID_FILE_TYPE);
+                .IsInEnum().WithMessage(ExceptionKey.INVALID_FILE_TYPE.ToString());
         }
     }
 
@@ -45,7 +46,7 @@ namespace FileStorage.API.Commands
             {
                 FileType.Report => "reports",
                 FileType.Statistics => "statistics",
-                _ => throw new ArgumentOutOfRangeException(nameof(type), ValidationStrings.INVALID_FILE_TYPE)
+                _ => throw new ArgumentOutOfRangeException(nameof(type), ExceptionKey.INVALID_FILE_TYPE.ToString())
             };
             var fileKey = $"{folder}/{Guid.NewGuid()}_{file.FileName}";
 

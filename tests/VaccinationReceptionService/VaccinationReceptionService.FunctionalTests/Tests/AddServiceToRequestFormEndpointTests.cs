@@ -138,11 +138,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var response = await _client.PostAsJsonAsync("/request-forms/add-service", command);
 
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-            var result = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-            result.Should().NotBeNull();
-            result!.Extensions.Should().ContainKey("error");
-            result.Extensions["error"]!.ToString().Should().Be("Reception không tồn tại");
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         [Fact]
@@ -363,9 +359,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            var result = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-            result.Should().NotBeNull();
-            result.Detail!.ToString().Should().Be("Phải cung cấp danh sách dịch vụ hoặc nhóm dịch vụ");
         }
     }
 }

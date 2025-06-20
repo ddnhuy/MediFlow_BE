@@ -41,6 +41,30 @@ namespace Inventory.FunctionalTests.Tests
         }
 
         [Fact]
+        public async Task Update_WhenUnauthorized_ReturnsUnauthorized()
+        {
+            _client.DefaultRequestHeaders.Authorization = null;
+            var command = new UpdateSupplierCommand(
+                Id: 1,
+                SupplierCode: "SUP001",
+                SupplierName: "MedPharm Supply Co. Updated",
+                Phone: "0981995925",
+                Fax: "555-123-9998",
+                Email: "updated@medpharm.example",
+                TaxCode: "MP12345-U",
+                Address: "123 Medical Plaza, Suite 200",
+                ContactPerson: "Michael Lewis Jr.",
+                Director: "Sarah Johnson-Smith",
+                IsSuspended: false,
+                IsCancelled: false
+            );
+
+            var response = await _client.PutAsJsonAsync($"/suppliers/{command.Id}", command);
+
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
         public async Task Update_WithIdMismatch_ReturnsBadRequest()
         {
             // Arrange

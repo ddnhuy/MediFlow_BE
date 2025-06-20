@@ -30,7 +30,7 @@ namespace Appointment.API.Appointments.Queries
 
             if (appointment is null)
             {
-                throw new NotFoundException(AppointmentExceptionStrings.NOT_FOUND_APPOINTMENT_WITH_ID(query.Id));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_APPOINTMENT_WITH_ID);
             }
 
             var metadata = new Metadata

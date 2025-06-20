@@ -5,7 +5,6 @@ global using BuildingBlocks.CQRS;
 global using BuildingBlocks.Exceptions;
 global using BuildingBlocks.Strings;
 global using BuildingBlocks.Strings.Enums;
-global using BuildingBlocks.Strings.ExceptionStrings;
 global using BuildingBlocks.Strings.SuccessStrings;
 global using Carter;
 global using CustomerInfo.Grpc.Protos;

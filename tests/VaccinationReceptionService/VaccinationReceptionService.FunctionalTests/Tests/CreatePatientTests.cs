@@ -1,4 +1,6 @@
-﻿namespace VaccinationReception.FunctionalTests.Tests
+﻿using BuildingBlocks.Strings;
+
+namespace VaccinationReception.FunctionalTests.Tests
 {
     public class CreatePatientTests : BaseFunctionalTest
     {
@@ -92,7 +94,7 @@
             response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
             var error = await response.Content.ReadFromJsonAsync<ProblemDetails>();
             error.Should().NotBeNull();
-            error?.Detail.Should().Contain("Tạo bệnh nhân thất bại");
+            error?.Detail.Should().Contain(ExceptionKey.FAILED_CREATE_PATIENT.ToString());
         }
 
         [Fact]
@@ -128,6 +130,47 @@
             var error = await response.Content.ReadFromJsonAsync<ProblemDetails>();
             error.Should().NotBeNull();
             error?.Detail.Should().Contain("Some internal error");
+        }
+        [Fact]
+        public async Task CreatePatient_WhenHandlerReturnsNull_ThrowsInternalServerException()
+        {
+            // Arrange
+            var command = new CreatePatientCommand(
+                Code: "BN004",
+                Name: "Test Null",
+                Gender: 1,
+                Dob: new DateTime(2000, 1, 1),
+                PhoneNumber: "0000000000",
+                IdentityCard: "000000000",
+                Province: "Test",
+                District: "Test",
+                Ward: "Test",
+                AddressDetail: "Test",
+                IsPregnant: false,
+                IsForeigner: false,
+                IsSuspended: false,
+                IsCancelled: false
+            );
+
+            var asyncUnaryCall = new AsyncUnaryCall<PatientDetailModel>(
+                Task.FromResult<PatientDetailModel>(null!),
+                Task.FromResult(new Metadata()),
+                () => Status.DefaultSuccess,
+                () => new Metadata(),
+                () => { });
+
+            _grpcClientMock?
+                .CreatePatientAsync(Arg.Any<CreatePatientRequest>(), Arg.Any<Metadata>())
+                .Returns(asyncUnaryCall);
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/patients", command);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+            var error = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+            error.Should().NotBeNull();
+            error?.Detail.Should().Contain(ExceptionKey.FAILED_CREATE_PATIENT.ToString());
         }
     }
 }

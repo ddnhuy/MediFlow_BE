@@ -1,10 +1,12 @@
-﻿namespace BuildingBlocks.Exceptions
+﻿using BuildingBlocks.Strings;
+
+namespace BuildingBlocks.Exceptions
 {
     public class BadRequestException : Exception
     {
-        public BadRequestException(string message) : base(message) { }
+        public BadRequestException(ExceptionKey key) : base(key.ToString()) { }
 
-        public BadRequestException(string message, string details) : base(message)
+        public BadRequestException(ExceptionKey key, string details) : base(key.ToString())
         {
             Details = details;
         }

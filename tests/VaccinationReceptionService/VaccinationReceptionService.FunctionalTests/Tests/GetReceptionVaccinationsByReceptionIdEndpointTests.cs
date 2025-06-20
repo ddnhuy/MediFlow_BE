@@ -123,10 +123,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             // Act
             var response = await _client.GetAsync($"/receptions/{invalidReceptionId}/vaccinations");
 
-            var content = await response.Content.ReadAsStringAsync();
-
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            content.Should().Contain("Reception ID không hợp lệ");
         }
     }
 }

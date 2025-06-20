@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Pagination;
+using BuildingBlocks.Strings;
 using CustomerInfo.Grpc.Consts;
 using CustomerInfo.Grpc.Database;
 using CustomerInfo.Grpc.Helpers;
@@ -80,7 +81,7 @@ namespace CustomerInfo.Grpc.Services
                 ?? throw new RpcException(
                     new Status(
                         StatusCode.NotFound,
-                        string.Format(Messages.PatientNotFound, request.Id)
+                        ExceptionKey.NOT_FOUND_PATIENT_WITH_ID.ToString()
                     )
                 );
 
@@ -115,17 +116,17 @@ namespace CustomerInfo.Grpc.Services
                 if (DbExceptionHelper.IsDuplicateKeyException(dbEx))
                 {
                     throw new RpcException(new Status(StatusCode.AlreadyExists,
-                        string.Format(Messages.PatientCodeExists, request.Code)));
+                        ExceptionKey.PATIENT_CODE_EXISTS.ToString()));
                 }
 
-                throw new RpcException(new Status(StatusCode.Internal, Messages.CreateError));
+                throw new RpcException(new Status(StatusCode.Internal, ExceptionKey.FAILED_CREATE_PATIENT.ToString()));
 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, PatientLogMessages.UnexpectedCreateError, ex.Message);
 
-                throw new RpcException(new Status(StatusCode.Internal, Messages.UnexpectedError));
+                throw;
             }
         }
 
@@ -145,7 +146,7 @@ namespace CustomerInfo.Grpc.Services
                     _logger.LogWarning(PatientLogMessages.PatientNotFoundForUpdate, request.Id);
 
                     throw new RpcException(new Status(StatusCode.NotFound,
-                        string.Format(Messages.PatientNotFound, request.Id)));
+                        ExceptionKey.NOT_FOUND_PATIENT_WITH_ID.ToString()));
                 }
 
                 request.Adapt(patient);
@@ -165,16 +166,16 @@ namespace CustomerInfo.Grpc.Services
                 if (DbExceptionHelper.IsDuplicateKeyException(dbEx))
                 {
                     throw new RpcException(new Status(StatusCode.AlreadyExists,
-                        string.Format(Messages.PatientCodeExists, request.Code)));
+                        ExceptionKey.PATIENT_CODE_EXISTS.ToString()));
                 }
 
-                throw new RpcException(new Status(StatusCode.Internal, Messages.UpdateError));
+                throw new RpcException(new Status(StatusCode.Internal, ExceptionKey.FAILED_UPDATE_PATIENT.ToString()));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, PatientLogMessages.UnexpectedUpdateError, request.Id, ex.Message);
 
-                throw new RpcException(new Status(StatusCode.Internal, Messages.UnexpectedError));
+                throw;
             }
         }
 

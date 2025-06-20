@@ -24,10 +24,10 @@ namespace AppointmentService.FunctionalTests.Tests
             // Arrange
             SetAuthHeader();
             var create_request = new CreateAppointmentRequest(1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "patient@example.com", "84123456789", null);
-            await _client.PostAsJsonAsync("/appointments", create_request);
+            await _client.PostAsJsonAsync("/", create_request);
 
             // Act
-            var response = await _client.DeleteAsync("/appointments/1");
+            var response = await _client.DeleteAsync("/1");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -43,7 +43,7 @@ namespace AppointmentService.FunctionalTests.Tests
             SetAuthHeader();
 
             // Act
-            var response = await _client.DeleteAsync("/appointments/0");
+            var response = await _client.DeleteAsync("/0");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -53,7 +53,7 @@ namespace AppointmentService.FunctionalTests.Tests
         public async Task DeleteAppointment_ShouldReturnUnauthorized_WhenNoAuthHeader()
         {
             // Act
-            var response = await _client.DeleteAsync("/appointments/1");
+            var response = await _client.DeleteAsync("/1");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);

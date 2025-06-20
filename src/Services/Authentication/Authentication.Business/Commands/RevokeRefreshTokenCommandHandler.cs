@@ -1,4 +1,6 @@
-﻿namespace Authentication.Business.Commands
+﻿using FluentValidation;
+
+namespace Authentication.Business.Commands
 {
     public record RevokeRefreshTokenResult(bool IsSuccess, string Message);
     public record RevokeRefreshTokenCommand(int UserId, string CurrentRefreshToken) : ICommand<RevokeRefreshTokenResult>;
@@ -7,8 +9,8 @@
     {
         public RevokeRefreshTokenCommandValidator()
         {
-            RuleFor(x => x.UserId).NotEmpty().WithMessage(ValidationStrings.REQUIRED_USER_ID);
-            RuleFor(x => x.CurrentRefreshToken).NotEmpty().WithMessage(ValidationStrings.REQUIRED_REFRESH_TOKEN);
+            RuleFor(x => x.UserId).NotEmpty().WithMessage(ExceptionKey.REQUIRED_USER_ID.ToString());
+            RuleFor(x => x.CurrentRefreshToken).NotEmpty().WithMessage(ExceptionKey.REQUIRED_REFRESH_TOKEN.ToString());
         }
     }
 

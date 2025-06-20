@@ -1,4 +1,5 @@
-﻿using Management.API.Helpers;
+﻿using FluentValidation;
+using Management.API.Helpers;
 
 namespace Management.API.Departments.Commands
 {
@@ -9,7 +10,7 @@ namespace Management.API.Departments.Commands
     {
         public DeleteDepartmentCommandValidator()
         {
-            RuleFor(x => x.Id).GreaterThan(0).WithMessage(ValidationStrings.REQUIRED_DEPARTMENT_ID);
+            RuleFor(x => x.Id).GreaterThan(0).WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_ID.ToString());
         }
     }
 

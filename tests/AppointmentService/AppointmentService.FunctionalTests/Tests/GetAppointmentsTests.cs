@@ -24,7 +24,7 @@ namespace AppointmentService.FunctionalTests.Tests
             SetAuthHeader();
 
             // Act
-            var response = await _client.GetAsync("/appointments");
+            var response = await _client.GetAsync("/?pageIndex=1&pageSize=10");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -37,7 +37,7 @@ namespace AppointmentService.FunctionalTests.Tests
         public async Task GetAppointments_ShouldReturnUnauthorized_WhenUserIsNotAuthenticated()
         {
             // Act
-            var response = await _client.GetAsync("/appointments");
+            var response = await _client.GetAsync("/");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -50,7 +50,7 @@ namespace AppointmentService.FunctionalTests.Tests
             SetAuthHeader();
 
             // Act
-            var response = await _client.GetAsync("/appointments?pageIndex=0&pageSize=10");
+            var response = await _client.GetAsync("/?pageIndex=0&pageSize=10");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

@@ -15,6 +15,7 @@
 
                 return response;
             })
+            .RequireAuthorization()
             .WithName("DeSupplier")
             .Produces<DeleteSupplierRespone>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)

@@ -24,7 +24,7 @@ namespace AppointmentService.FunctionalTests.Tests
             // Arrange
             SetAuthHeader();
             var create_request = new CreateAppointmentRequest(1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "patient@example.com", "84123456789", null);
-            await _client.PostAsJsonAsync("/appointments", create_request);
+            await _client.PostAsJsonAsync("/", create_request);
 
             var appointmentId = "1";
             var userId = 1;
@@ -130,7 +130,7 @@ namespace AppointmentService.FunctionalTests.Tests
                 .Returns(asyncUnaryCall);
 
             // Act
-            var response = await _client.GetAsync($"/appointments/{appointmentId}");
+            var response = await _client.GetAsync($"/{appointmentId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -146,7 +146,7 @@ namespace AppointmentService.FunctionalTests.Tests
             var appointmentId = "1";
 
             // Act
-            var response = await _client.GetAsync($"/appointments/{appointmentId}");
+            var response = await _client.GetAsync($"/{appointmentId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -160,7 +160,7 @@ namespace AppointmentService.FunctionalTests.Tests
             var appointmentId = "9999";
 
             // Act
-            var response = await _client.GetAsync($"/appointments/{appointmentId}");
+            var response = await _client.GetAsync($"/{appointmentId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);

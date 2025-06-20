@@ -8,6 +8,7 @@
         {
             app.MapGet("/warehouses", async ([AsParameters] PaginationRequest request, ISender sender) =>
             {
+                PaginationHelper.VerifyPaginationRequest(request.PageIndex, request.PageSize);
                 var result = await sender.Send(new GetWarehouseQuery(request));
                 var response = result.Adapt<GetWarehousesResponse>();
                 return Results.Ok(response);

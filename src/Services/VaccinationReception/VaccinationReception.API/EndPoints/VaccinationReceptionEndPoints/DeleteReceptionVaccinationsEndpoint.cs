@@ -1,4 +1,5 @@
-﻿using VaccinationReception.Application.VaccinationReceptions.Commands;
+﻿using BuildingBlocks.Strings;
+using VaccinationReception.Application.VaccinationReceptions.Commands;
 
 namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
 {
@@ -12,7 +13,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
             {
                 if (receptionVaccinationIds == null || !receptionVaccinationIds.Any())
                 {
-                    return Results.BadRequest("Danh sách ID không được để trống");
+                    throw new ArgumentException(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID_LIST.ToString());
                 }
 
                 var command = new DeleteReceptionVaccinationsCommand(receptionVaccinationIds);
@@ -20,7 +21,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
 
                 if (!result.IsSuccess)
                 {
-                    return Results.NotFound($"Không tìm thấy ReceptionVaccination nào để xóa");
+                    throw new NotFoundException(ExceptionKey.FAILED_DELETE_VACCINATION_RECEPTION);
                 }
 
                 var response = result.Adapt<DeleteReceptionVaccinationsResponse>();

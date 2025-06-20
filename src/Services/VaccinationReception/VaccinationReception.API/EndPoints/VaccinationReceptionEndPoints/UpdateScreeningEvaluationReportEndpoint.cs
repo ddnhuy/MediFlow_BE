@@ -1,4 +1,5 @@
-﻿using VaccinationReception.Application.VaccinationReceptions.Commands;
+﻿using BuildingBlocks.Strings;
+using VaccinationReception.Application.VaccinationReceptions.Commands;
 
 namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
 {
@@ -11,7 +12,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
             {
                 if (id != command.Id)
                 {
-                    return Results.BadRequest("ID trong đường dẫn không khớp với ID trong nội dung yêu cầu");
+                    throw new BadRequestException(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID);
                 }
 
                 var result = await sender.Send(command);

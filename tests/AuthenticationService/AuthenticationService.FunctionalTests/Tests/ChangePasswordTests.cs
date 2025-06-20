@@ -1,4 +1,5 @@
-﻿using Grpc.Core;
+﻿using BuildingBlocks.Strings;
+using Grpc.Core;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 
@@ -66,7 +67,7 @@ namespace AuthenticationService.FunctionalTests.Tests
             var grpcResponse = new HumanResource.Grpc.ChangePasswordResponse
             {
                 IsSuccess = false,
-                Message = HumanResourceExceptionStrings.FAILED_CHANGE_PASSWORD
+                Message = ExceptionKey.FAILED_CHANGE_PASSWORD.ToString()
             };
 
             _grpcClientMock?
@@ -88,7 +89,7 @@ namespace AuthenticationService.FunctionalTests.Tests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             var result = await response.Content.ReadFromJsonAsync<ProblemDetails>();
             result.Should().NotBeNull();
-            result?.Detail.Should().Be(HumanResourceExceptionStrings.FAILED_CHANGE_PASSWORD);
+            result?.Detail.Should().Be(ExceptionKey.FAILED_CHANGE_PASSWORD.ToString());
         }
 
         [Fact]

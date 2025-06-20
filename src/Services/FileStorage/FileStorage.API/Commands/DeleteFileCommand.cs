@@ -1,5 +1,6 @@
 ﻿using FileStorage.API.Helpers;
 using FileStorage.API.Repositories;
+using FluentValidation;
 
 namespace FileStorage.API.Commands
 {
@@ -11,7 +12,7 @@ namespace FileStorage.API.Commands
         public DeleteFileCommandValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage(ValidationStrings.INVALID_FILE_ID);
+                .NotEmpty().WithMessage(ExceptionKey.INVALID_FILE_ID.ToString());
         }
     }
 
@@ -31,7 +32,7 @@ namespace FileStorage.API.Commands
             var fileMetadata = await _fileRepository.GetByIdAsync(command.Id);
             if (fileMetadata is null)
             {
-                throw new NotFoundException(ValidationStrings.FILE_NOT_FOUND);
+                throw new NotFoundException(ExceptionKey.FILE_NOT_FOUND);
             }
 
             await _fileHelper.DeleteFileAsync(fileMetadata.StoragePath);

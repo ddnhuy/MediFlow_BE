@@ -10,7 +10,7 @@ namespace Appointment.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/appointments", [Authorize] async ([AsParameters] PaginationRequest request, ISender sender) =>
+            app.MapGet("/", [Authorize] async ([AsParameters] PaginationRequest request, ISender sender) =>
             {
                 var result = await sender.Send(new GetAppointmentsQuery(request.PageIndex, request.PageSize));
 

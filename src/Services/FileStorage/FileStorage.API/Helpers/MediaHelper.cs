@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Strings.ExceptionStrings;
-using CloudinaryDotNet;
+﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using System.Globalization;
 
@@ -21,7 +20,7 @@ namespace FileStorage.API.Services
             string extension = Path.GetExtension(file.FileName).ToLower(CultureInfo.CurrentCulture);
             if (!AllowedExtensions.Contains(extension))
             {
-                throw new ArgumentException(ValidationStrings.INVALID_IMAGE_FORMAT);
+                throw new ArgumentException(ExceptionKey.INVALID_IMAGE_FORMAT.ToString());
             }
 
             var publicId = string.IsNullOrEmpty(imageUrl) ? null : ExtractPublicIdFromUrl(imageUrl);
@@ -49,7 +48,7 @@ namespace FileStorage.API.Services
         {
             if (string.IsNullOrEmpty(imageUrl))
             {
-                throw new ArgumentException(ValidationStrings.INVALID_IMAGE_URL, nameof(imageUrl));
+                throw new ArgumentException(ExceptionKey.INVALID_IMAGE_URL.ToString(), nameof(imageUrl));
             }
 
             var publicId = ExtractPublicIdFromUrl(imageUrl);
@@ -59,14 +58,14 @@ namespace FileStorage.API.Services
 
             if (deleteResult.Result != "ok")
             {
-                throw new InvalidOperationException(FileStorageExceptionStrings.UPLOAD_FAILED);
+                throw new InternalServerException(ExceptionKey.UPLOAD_FAILED);
             }
         }
 
         public static string ExtractPublicIdFromUrl(string imageUrl)
         {
             if (string.IsNullOrWhiteSpace(imageUrl))
-                throw new ArgumentException(ValidationStrings.INVALID_IMAGE_URL);
+                throw new ArgumentException(ExceptionKey.INVALID_IMAGE_URL.ToString());
 
             var uri = new Uri(imageUrl);
             var path = uri.AbsolutePath;

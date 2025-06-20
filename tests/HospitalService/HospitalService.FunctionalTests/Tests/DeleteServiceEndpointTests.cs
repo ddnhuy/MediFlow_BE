@@ -43,5 +43,13 @@ namespace HospitalService.FunctionalTests.Tests
             Assert.NotNull(node);
             Assert.Equal(1, node["serviceId"]?.GetValue<int>());
         }
+
+        [Fact]
+        public async Task DeleteService_NotFoundService_Returns404()
+        {
+            var response = await _client.DeleteAsync("/services/999");
+
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace Authentication.Business.Commands
+﻿using BuildingBlocks.Exceptions;
+using FluentValidation;
+
+namespace Authentication.Business.Commands
 {
     public record LoginWithRefreshTokenResult(string AccessToken, string RefreshToken);
     public record LoginWithRefreshTokenCommand(string RefreshToken) : ICommand<LoginWithRefreshTokenResult>;
@@ -7,7 +10,7 @@
     {
         public LoginWithRefreshTokenCommandValidator()
         {
-            RuleFor(x => x.RefreshToken).NotEmpty().WithMessage(ValidationStrings.REQUIRED_REFRESH_TOKEN);
+            RuleFor(x => x.RefreshToken).NotEmpty().WithMessage(ExceptionKey.REQUIRED_REFRESH_TOKEN.ToString());
         }
     }
 
@@ -23,7 +26,7 @@
 
             if (userId == -1)
             {
-                throw new InvalidRefreshTokenException();
+                throw new BadRequestException(ExceptionKey.INVALID_REFRESH_TOKEN);
             }
 
             var user = await applicationUserProto.GetApplicationUserAsync(new GetApplicationUserRequest { Id = userId }, cancellationToken: cancellationToken);

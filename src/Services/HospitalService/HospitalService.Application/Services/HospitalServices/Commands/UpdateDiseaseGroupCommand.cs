@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using HospitalService.Domain.Abstractions;
 using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
@@ -41,7 +42,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
 
                 var diseaseGroup = await _diseaseGroupRepository.GetByIdAsync(request.Id);
                 if (diseaseGroup == null)
-                    throw new NotFoundException($"DiseaseGroup with ID {request.Id} not found");
+                    throw new NotFoundException(ExceptionKey.DISEASE_GROUP_NOT_FOUND);
 
                 diseaseGroup.GroupName = request.GroupName;
                 diseaseGroup.Description = request.Description;

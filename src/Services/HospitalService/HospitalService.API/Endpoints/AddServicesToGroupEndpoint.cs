@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
-using BuildingBlocks.Strings.ExceptionStrings;
+using BuildingBlocks.Strings;
 using Carter;
 using HospitalService.Application.Services.HospitalServices.Commands;
 using Mapster;
@@ -17,7 +17,7 @@ namespace HospitalService.API.Endpoints
             {
                 if (command.ServiceIds == null || !command.ServiceIds.Any())
                 {
-                    throw new BadRequestException(HospitalServiceExceptionStrings.EMPTY_SERVICE_IDS);
+                    throw new BadRequestException(ExceptionKey.EMPTY_SERVICE_IDS);
                 }
 
                 command = command with { ServiceGroupId = id };
@@ -25,7 +25,7 @@ namespace HospitalService.API.Endpoints
 
                 if (result == null)
                 {
-                    throw new InternalServerException(HospitalServiceExceptionStrings.FAILED_ADD_SERVICES_TO_GROUP);
+                    throw new InternalServerException(ExceptionKey.FAILED_ADD_SERVICES_TO_GROUP);
                 }
 
                 var response = result.Adapt<AddServicesToGroupResponse>();

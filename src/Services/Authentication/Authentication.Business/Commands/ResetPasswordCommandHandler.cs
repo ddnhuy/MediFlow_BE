@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
+using FluentValidation;
 
 namespace Authentication.Business.Commands
 {
@@ -10,8 +11,8 @@ namespace Authentication.Business.Commands
         public ResetPasswordCommandValidator()
         {
             RuleFor(x => x.Email)
-                .EmailAddress().WithMessage(ValidationStrings.INVALID_EMAIL)
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_EMAIL);
+                .EmailAddress().WithMessage(ExceptionKey.INVALID_EMAIL.ToString())
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_EMAIL.ToString());
         }
     }
 
@@ -24,7 +25,7 @@ namespace Authentication.Business.Commands
 
             if (!result.IsSuccess)
             {
-                throw new BadRequestException(result.Message);
+                throw new BadRequestException(ExceptionKey.FAILED_RESET_PASSWORD);
             }
 
             return result.Adapt<ResetPasswordResult>();

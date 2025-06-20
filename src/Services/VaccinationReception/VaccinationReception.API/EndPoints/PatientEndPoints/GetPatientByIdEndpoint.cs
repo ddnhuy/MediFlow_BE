@@ -1,4 +1,6 @@
-﻿namespace VaccinationReception.API.EndPoints.PatientEndPoints
+﻿using BuildingBlocks.Strings;
+
+namespace VaccinationReception.API.EndPoints.PatientEndPoints
 {
     public record GetPatientByIdResponse(PatientDetailDTO Patient);
     public class GetPatientByIdEndpoint : ICarterModule
@@ -7,9 +9,9 @@
         {
             app.MapGet("/patients/{id}", async (int id, ISender sender) =>
             {
-                if(id <= 0)
+                if (id <= 0)
                 {
-                    return Results.BadRequest("Id không hợp lệ");
+                    throw new BadRequestException(ExceptionKey.INVALID_PATIENT_ID);
                 }
 
                 var query = new GetPatientQuery(id);
@@ -17,7 +19,7 @@
 
                 if (result == null)
                 {
-                    return Results.NotFound($"Không tìm thấy bệnh nhân với ID {id}");
+                    throw new NotFoundException(ExceptionKey.NOT_FOUND_PATIENT_WITH_ID);
                 }
 
                 return Results.Ok(new GetPatientByIdResponse(result.Patient));

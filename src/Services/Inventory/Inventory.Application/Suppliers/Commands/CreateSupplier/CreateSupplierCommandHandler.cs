@@ -9,7 +9,7 @@
 
             if (duplicateCodeExists)
             {
-                throw new InvalidOperationException(InventoryExceptionStrings.DUPLICATE_SUPPLIER_CODE);
+                throw new BadRequestException(ExceptionKey.DUPLICATE_SUPPLIER_CODE);
             }
 
             var supplier = new Supplier
@@ -32,7 +32,7 @@
 
             if (result.Entity.Id < 0)
             {
-                throw new InvalidOperationException("Failed to create supplier. Please try again.");
+                throw new BadRequestException(ExceptionKey.FAILED_CREATE_SUPPLIER_WITH_ID);
             }
 
             return new CreateSupplierResult(result.Entity.Id);

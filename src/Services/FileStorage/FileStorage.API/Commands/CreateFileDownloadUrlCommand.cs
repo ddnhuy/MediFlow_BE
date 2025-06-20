@@ -1,6 +1,6 @@
-﻿using BuildingBlocks.Strings.ExceptionStrings;
-using FileStorage.API.Helpers;
+﻿using FileStorage.API.Helpers;
 using FileStorage.API.Repositories;
+using FluentValidation;
 
 namespace FileStorage.API.Commands
 {
@@ -12,7 +12,7 @@ namespace FileStorage.API.Commands
         public CreateFileDownloadUrlCommandValidator()
         {
             RuleFor(x => x.Id)
-                .NotEmpty().WithMessage(ValidationStrings.INVALID_FILE_ID);
+                .NotEmpty().WithMessage(ExceptionKey.INVALID_FILE_ID.ToString());
         }
     }
 
@@ -33,7 +33,7 @@ namespace FileStorage.API.Commands
 
             if (fileMetadata == null)
             {
-                throw new NotFoundException(FileStorageExceptionStrings.FILE_NOT_FOUND(command.Id));
+                throw new NotFoundException(ExceptionKey.FILE_NOT_FOUND);
             }
 
             var url = await _fileHelper.GenerateDownloadUrl(fileMetadata.StoragePath);

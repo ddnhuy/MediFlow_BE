@@ -1,4 +1,6 @@
-﻿using Grpc.Core;
+﻿using BuildingBlocks.Exceptions;
+using FluentValidation;
+using Grpc.Core;
 
 namespace Authentication.Business.Commands
 {
@@ -9,10 +11,10 @@ namespace Authentication.Business.Commands
     {
         public LoginWithUserNameCommandValidator()
         {
-            RuleFor(x => x.UserName).NotEmpty().WithMessage(ValidationStrings.REQUIRED_USERNAME);
+            RuleFor(x => x.UserName).NotEmpty().WithMessage(ExceptionKey.REQUIRED_USERNAME.ToString());
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_PASSWORD)
-                .MinimumLength(8).WithMessage(ValidationStrings.INVALID_PASSWORD_LENGTH);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_PASSWORD.ToString())
+                .MinimumLength(8).WithMessage(ExceptionKey.INVALID_PASSWORD_LENGTH.ToString());
         }
     }
 
@@ -28,7 +30,7 @@ namespace Authentication.Business.Commands
 
             if (!loginResponse.IsSuccess)
             {
-                throw new InvalidLoginException(loginResponse.Message);
+                throw new BadRequestException(ExceptionKey.INVALID_LOGIN_CREDENTIAL);
             }
 
             var accessToken = tokenProvider.GenerateAccessToken(loginResponse.User, string.Join(",", loginResponse.User.Departments.Select(d => d.NameInEnglish)));

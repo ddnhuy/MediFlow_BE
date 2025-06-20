@@ -54,6 +54,30 @@ namespace Inventory.FunctionalTests.Tests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
+        // Case where no medicine id exist
+        [Fact]
+        public async Task GetMedicinePrices_WithNonExistentMedicineId_ReturnsNotFound()
+        {
+            // Arrange
+            var medicineId = 9999; // Assuming this ID does not exist
+            // Act
+            var response = await _client.GetAsync($"/medicine-prices/{medicineId}");
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        // Case where no medicine price with medicine id exist
+        [Fact]
+        public async Task GetMedicinePrices_WithNonExistentMedicinePrice_ReturnsNotFound()
+        {
+            // Arrange
+            var medicineId = 3; // Assuming this ID exists but has no prices
+            // Act
+            var response = await _client.GetAsync($"/medicine-prices/{medicineId}");
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
         #endregion
 
         #region CreateMedicinePrice
@@ -125,6 +149,25 @@ namespace Inventory.FunctionalTests.Tests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
             problem.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task CreateMedicinePrice_WithNonExistentMedicineId_ReturnsNotFound()
+        {
+            // Arrange
+            var command = new CreateMedicinePriceCommand(
+                MedicineId: 9999, // Assuming this ID does not exist
+                UnitPrice: 10.5m,
+                Currency: "USD",
+                VatRate: 10.0,
+                VatAmount: 1.05m,
+                OriginalPriceAfterVat: 11.55m,
+                OriginalPriceBeforeVat: 10.5m
+            );
+            // Act
+            var response = await _client.PostAsJsonAsync("/medicine-prices", command);
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         #endregion
@@ -219,6 +262,51 @@ namespace Inventory.FunctionalTests.Tests
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
+        // Case where medicine price does not exist
+        [Fact]
+        public async Task UpdateMedicinePrice_WithNonExistentId_ReturnsNotFound()
+        {
+            // Arrange
+            var id = 9999; // Assuming this ID does not exist
+            var command = new UpdateMedicinePriceCommand(
+                Id: id,
+                MedicineId: 1,
+                UnitPrice: 12.5m,
+                Currency: "USD",
+                VatRate: 10.0,
+                VatAmount: 1.25m,
+                OriginalPriceAfterVat: 13.75m,
+                OriginalPriceBeforeVat: 12.5m
+            );
+            // Act
+            var response = await _client.PutAsJsonAsync($"/medicine-prices/{id}", command);
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        // Case where no medicine price exist
+        [Fact]
+        public async Task UpdateMedicinePrice_WithNonExistentMedicinePriceId_ReturnsNotFound()
+        {
+            var id = 99999; // Assuming this ID does not exist
+            // Arrange
+            var command = new UpdateMedicinePriceCommand(
+                Id: id,
+                MedicineId: 1,
+                UnitPrice: 12.5m,
+                Currency: "USD",
+                VatRate: 10.0,
+                VatAmount: 1.25m,
+                OriginalPriceAfterVat: 13.75m,
+                OriginalPriceBeforeVat: 12.5m
+            );
+            // Act
+            var response = await _client.PutAsJsonAsync($"/medicine-prices/{id}", command);
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+
         #endregion
 
         #region DeleteMedicinePrice
@@ -263,6 +351,18 @@ namespace Inventory.FunctionalTests.Tests
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        // Case where the ID does not exist
+        [Fact]
+        public async Task DeleteMedicinePrice_WithNonExistentId_ReturnsNotFound()
+        {
+            // Arrange
+            var id = 9999; // Assuming this ID does not exist
+            // Act
+            var response = await _client.DeleteAsync($"/medicine-prices/{id}");
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         #endregion

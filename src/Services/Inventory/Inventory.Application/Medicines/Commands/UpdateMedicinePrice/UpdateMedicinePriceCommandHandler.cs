@@ -12,7 +12,7 @@
 
             if (medicine == null)
             {
-                throw new MedicineNotFoundException(InventoryExceptionStrings.NOT_FOUND_MEDICINE_WITH_ID(request.MedicineId));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
             }
 
             // Find existing medicine price by ID
@@ -21,7 +21,7 @@
 
             if (medicinePrice == null)
             {
-                throw new NotFoundException($"Không tìm thấy giá thuốc với ID {request.Id}");
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_PRICE);
             }
 
             // Update medicine price properties

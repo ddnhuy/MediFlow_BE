@@ -1,21 +1,11 @@
 ﻿using BuildingBlocks.Exceptions;
 using BuildingBlocks.Pagination;
+using BuildingBlocks.Strings;
 using CustomerInfo.Grpc.Protos;
 using Grpc.Core;
-using Grpc.Net.Client;
 using Mapster;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using VaccinationReception.Application.DTOs.PatientDTOs;
-using VaccinationReception.Application.Patients.Commands;
 using VaccinationReception.Application.Patients.Commands.CreatePatient;
 using VaccinationReception.Application.Patients.Commands.DeletePatient;
 using VaccinationReception.Application.Patients.Commands.UpdatePatient;
@@ -50,7 +40,7 @@ namespace VaccinationReception.Application.Services.PatientServices
             try
             {
                 _logger.LogInformation(PatientLogMessages.ListPatients_SendingRequest, request.PageIndex, request.PageSize);
-                
+
                 var grpcRequest = new ListPatientsRequest
                 {
                     PageIndex = request.PageIndex,
@@ -79,7 +69,7 @@ namespace VaccinationReception.Application.Services.PatientServices
         {
             if (id <= 0)
             {
-                throw new ArgumentException("Invalid patient ID", nameof(id));
+                throw new ArgumentException(ExceptionKey.INVALID_PATIENT_ID.ToString());
             }
 
             try
@@ -95,7 +85,7 @@ namespace VaccinationReception.Application.Services.PatientServices
             }
             catch (RpcException rpcEx) when (rpcEx.StatusCode == StatusCode.NotFound)
             {
-                throw new NotFoundException("Patient", id);
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_PATIENT_WITH_ID);
             }
             catch (Exception ex)
             {
@@ -112,10 +102,10 @@ namespace VaccinationReception.Application.Services.PatientServices
                 var request = command.Adapt<CreatePatientRequest>();
                 var response = await _client.CreatePatientAsync(request, _metadata, cancellationToken: cancellationToken);
 
-                if(response is null)
+                if (response is null)
                 {
                     _logger.LogError(PatientLogMessages.CreatePatient_Error);
-                    throw new InternalServerException("Tạo bệnh nhân thất bại");
+                    throw new InternalServerException(ExceptionKey.FAILED_CREATE_PATIENT);
                 }
                 _logger.LogInformation(PatientLogMessages.CreatePatient_Success, response.Id);
 

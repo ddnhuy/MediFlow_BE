@@ -1,11 +1,8 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VaccinationReception.Infrastructure.Data;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
@@ -31,20 +28,20 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     .FirstOrDefaultAsync(r => r.Id == request.ReceptionId, cancellationToken);
 
                 if (reception == null)
-                    throw new InvalidOperationException("Reception không tồn tại");
+                    throw new NotFoundException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
 
                 var requestForm = await _context.RequestForms
                     .FirstOrDefaultAsync(rf => rf.ReceptionId == request.ReceptionId, cancellationToken);
 
                 if (requestForm == null)
-                    throw new InvalidOperationException("Không tìm thấy phiếu yêu cầu cho lần tiếp nhận này");
+                    throw new NotFoundException(ExceptionKey.NOT_FOUND_REQUEST_FORM_WITH_RECEPTION_ID);
 
                 var serviceRequestDetails = await _context.ServiceRequestDetails
                     .Where(srd => srd.RequestFormId == requestForm.Id && request.ServiceIds.Contains(srd.ServiceId))
                     .ToListAsync(cancellationToken);
 
                 if (!serviceRequestDetails.Any())
-                    throw new InvalidOperationException("Không tìm thấy dịch vụ cần xóa");
+                    throw new NotFoundException(ExceptionKey.NOT_FOUND_SERVICE_REQUEST);
 
                 foreach (var detail in serviceRequestDetails)
                 {

@@ -10,16 +10,9 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
         {
             app.MapPost("/reception-vaccinations", async (CreateReceptionVaccinationCommand command, ISender sender) =>
             {
-                try
-                {
-                    var result = await sender.Send(command);
-                    var response = result.Adapt<CreateReceptionVaccinationResponse>();
-                    return Results.Created($"/reception-vaccinations/{response.ReceptionVaccinationId}", response);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return Results.NotFound(new { error = ex.Message });
-                }
+                var result = await sender.Send(command);
+                var response = result.Adapt<CreateReceptionVaccinationResponse>();
+                return Results.Created($"/reception-vaccinations/{response.ReceptionVaccinationId}", response);
             })
             .RequireAuthorization()
             .WithName("CreateReceptionVaccination")

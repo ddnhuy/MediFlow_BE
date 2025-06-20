@@ -9,14 +9,10 @@ namespace Appointment.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/appointments/{appointmentId}", [Authorize] async (int appointmentId, ISender sender) =>
+            app.MapDelete("/{appointmentId}", [Authorize] async (int appointmentId, ISender sender) =>
             {
                 var result = await sender.Send(new DeleteAppointmentCommand(appointmentId));
 
-                if (!result.IsSuccess)
-                {
-                    throw new BadRequestException(result.Message);
-                }
                 return Results.Ok(result.Adapt<DeleteAppointmentResponse>());
             })
             .WithName("DeleteAppointment")

@@ -10,14 +10,10 @@ namespace Appointment.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/appointments", [Authorize] async (CreateAppointmentRequest request, ISender sender) =>
+            app.MapPost("/", [Authorize] async (CreateAppointmentRequest request, ISender sender) =>
             {
                 var result = await sender.Send(request.Adapt<CreateAppointmentCommand>());
 
-                if (!result.IsSuccess)
-                {
-                    throw new BadRequestException(result.Message);
-                }
                 return Results.Created();
             })
             .WithName("CreateAppointment")

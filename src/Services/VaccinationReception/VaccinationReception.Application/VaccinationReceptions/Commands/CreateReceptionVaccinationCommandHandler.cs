@@ -1,4 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -35,7 +37,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 if (reception == null)
                 {
                     _logger.LogWarning("Không tìm thấy Reception với Id: {ReceptionId}", request.ReceptionId);
-                    throw new InvalidOperationException($"Không tìm thấy lần tiếp nhận với Id: {request.ReceptionId}");
+                    throw new NotFoundException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
                 }
 
                 var receptionVaccination = request.Adapt<ReceptionVaccination>();

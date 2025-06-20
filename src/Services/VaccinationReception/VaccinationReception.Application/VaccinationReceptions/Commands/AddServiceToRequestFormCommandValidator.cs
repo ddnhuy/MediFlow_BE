@@ -1,9 +1,5 @@
-﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BuildingBlocks.Strings;
+using FluentValidation;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
@@ -13,7 +9,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
         {
             RuleFor(x => x.ReceptionId)
                 .GreaterThan(0)
-                .WithMessage("Mã tiếp đón không hợp lệ");
+                .WithMessage(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID.ToString());
 
             RuleFor(x => x.Services)
                 .Must((command, services) =>
@@ -24,7 +20,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     }
                     return true;
                 })
-                .WithMessage("Phải cung cấp danh sách dịch vụ hoặc nhóm dịch vụ");
+                .WithMessage(ExceptionKey.INVALID_SERVICE_LIST.ToString());
 
             RuleFor(x => x.GroupType)
                 .Must((command, groupType) =>
@@ -35,7 +31,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     }
                     return true;
                 })
-                .WithMessage("Phải cung cấp mã nhóm khi chọn loại nhóm");
+                .WithMessage(ExceptionKey.INVALID_GROUP_TYPE.ToString());
 
             RuleFor(x => x.GroupId)
                 .Must((command, groupId) =>
@@ -46,7 +42,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     }
                     return true;
                 })
-                .WithMessage("Phải cung cấp loại nhóm khi chọn mã nhóm");
+                .WithMessage(ExceptionKey.INVALID_GROUP_ID.ToString());
 
             RuleFor(x => x.Services)
                 .Must((command, services) =>
@@ -58,23 +54,23 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 
                     return services.All(s => s.ServiceId > 0 && s.Quantity > 0);
                 })
-                .WithMessage("Danh sách dịch vụ không hợp lệ");
+                .WithMessage(ExceptionKey.INVALID_SERVICE_LIST.ToString());
 
             RuleForEach(x => x.Services)
                 .ChildRules(service =>
                 {
                     service.RuleFor(x => x.ServiceId)
                         .GreaterThan(0)
-                        .WithMessage("Mã dịch vụ không hợp lệ");
+                        .WithMessage(ExceptionKey.INVALID_SERVICE_ID.ToString());
 
                     service.RuleFor(x => x.Quantity)
                         .GreaterThan(0)
-                        .WithMessage("Số lượng phải lớn hơn 0");
+                        .WithMessage(ExceptionKey.INVALID_QUANTITY.ToString());
                 });
 
             RuleFor(x => x.DefaultQuantity)
                 .GreaterThan(0)
-                .WithMessage("Số lượng mặc định phải lớn hơn 0");
+                .WithMessage(ExceptionKey.INVALID_DEFAULT_QUANTITY.ToString());
         }
     }
 }

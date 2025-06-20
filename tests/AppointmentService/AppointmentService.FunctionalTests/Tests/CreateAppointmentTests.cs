@@ -26,7 +26,7 @@ namespace AppointmentService.FunctionalTests.Tests
             var request = new CreateAppointmentRequest(1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "patient@example.com", "84123456789", null);
 
             // Act
-            var response = await _client.PostAsJsonAsync("/appointments", request);
+            var response = await _client.PostAsJsonAsync("/", request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -40,7 +40,7 @@ namespace AppointmentService.FunctionalTests.Tests
             var request = new CreateAppointmentRequest(0, 0, DateTime.UtcNow.AddDays(-1), AppointmentType.Vaccination, "invalid-email", "84123456789", null);
 
             // Act
-            var response = await _client.PostAsJsonAsync("/appointments", request);
+            var response = await _client.PostAsJsonAsync("/", request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -53,7 +53,7 @@ namespace AppointmentService.FunctionalTests.Tests
             var request = new CreateAppointmentRequest(1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "patient@example.com", "84123456789", null);
 
             // Act
-            var response = await _client.PostAsJsonAsync("/appointments", request);
+            var response = await _client.PostAsJsonAsync("/", request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);

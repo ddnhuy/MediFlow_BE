@@ -178,5 +178,45 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var result = await response.Content.ReadFromJsonAsync<ProblemDetails>();
             result.Should().NotBeNull();
         }
+
+        [Fact]
+        public async Task RemoveServicesFromRequestForm_WithInvalidReceptionId_ReturnsNotFound()
+        {
+            // Arrange
+            var serviceIds = new List<int> { TestServiceId };
+
+            // Act
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"/request-forms/9999/services")
+            {
+                Content = JsonContent.Create(serviceIds)
+            };
+            var response = await _client.SendAsync(request);
+
+            // Debug log
+            var content = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task RemoveServicesFromRequestForm_WithInvalidServiceId_ReturnsNotFound()
+        {
+            // Arrange
+            var serviceIds = new List<int> { 99999 };
+
+            // Act
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"/request-forms/{TestReceptionId}/services")
+            {
+                Content = JsonContent.Create(serviceIds)
+            };
+            var response = await _client.SendAsync(request);
+
+            // Debug log
+            var content = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
     }
 }

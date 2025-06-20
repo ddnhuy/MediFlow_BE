@@ -1,4 +1,6 @@
-﻿namespace VaccinationReception.API.EndPoints.PatientEndPoints
+﻿using BuildingBlocks.Strings;
+
+namespace VaccinationReception.API.EndPoints.PatientEndPoints
 {
     public record CreatePatientResponse(int Id);
     public class CreatePatientEndpoint : ICarterModule
@@ -11,7 +13,7 @@
 
                 if (result == null)
                 {
-                    throw new InternalServerException("Tạo bệnh nhân thất bại");
+                    throw new InternalServerException(ExceptionKey.FAILED_CREATE_PATIENT);
                 }
 
                 var response = result.Adapt<CreatePatientResponse>();

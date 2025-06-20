@@ -107,7 +107,7 @@ namespace HumanResource.Grpc.Services
             if (user == null || (string.Join(",", (await userManager.GetRolesAsync(user))).Contains(Roles.ADMIN) && currentUserRoles != Roles.ADMIN))
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.Id)));
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_USER_WITH_ID.ToString()));
             }
 
             var userModel = user.Adapt<ApplicationUserDetailModel>();
@@ -151,7 +151,7 @@ namespace HumanResource.Grpc.Services
                 if (!roleResult.Succeeded)
                 {
                     logger.LogWarning("Failed to assign roles to user {UserName}: {Errors}", request.UserName, string.Join("; ", roleResult.Errors.Select(e => e.Description)));
-                    throw new RpcException(new Status(StatusCode.Internal, HumanResourceExceptionStrings.FAILED_ASSIGN_ROLE_TO_USER));
+                    throw new RpcException(new Status(StatusCode.Internal, ExceptionKey.FAILED_ASSIGN_ROLE_TO_USER.ToString()));
                 }
             }
 
@@ -185,7 +185,7 @@ namespace HumanResource.Grpc.Services
             if (user is null)
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.Id)));
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_USER_WITH_ID.ToString()));
             }
 
             user.UserName = request.UserName;
@@ -217,7 +217,7 @@ namespace HumanResource.Grpc.Services
                 if (!removeResult.Succeeded)
                 {
                     logger.LogWarning("Failed to remove roles from user {Id}: {Errors}", user.Id, string.Join("; ", removeResult.Errors.Select(e => e.Description)));
-                    throw new RpcException(new Status(StatusCode.Internal, HumanResourceExceptionStrings.FAILED_ASSIGN_ROLE_TO_USER));
+                    throw new RpcException(new Status(StatusCode.Internal, ExceptionKey.FAILED_ASSIGN_ROLE_TO_USER.ToString()));
                 }
             }
 
@@ -227,7 +227,7 @@ namespace HumanResource.Grpc.Services
                 if (!addResult.Succeeded)
                 {
                     logger.LogWarning("Failed to assign roles to user {Id}: {Errors}", user.Id, string.Join("; ", addResult.Errors.Select(e => e.Description)));
-                    throw new RpcException(new Status(StatusCode.Internal, HumanResourceExceptionStrings.FAILED_ASSIGN_ROLE_TO_USER));
+                    throw new RpcException(new Status(StatusCode.Internal, ExceptionKey.FAILED_ASSIGN_ROLE_TO_USER.ToString()));
                 }
             }
 
@@ -257,7 +257,7 @@ namespace HumanResource.Grpc.Services
             if (user is null)
             {
                 logger.LogWarning("User not found: {Id}", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.Id)));
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_USER_WITH_ID.ToString()));
             }
 
             user.IsSuspended = true;
@@ -283,7 +283,7 @@ namespace HumanResource.Grpc.Services
             if (user == null)
             {
                 logger.LogWarning("User not found for password change: {Id}", request.UserId);
-                return new ChangePasswordResponse { IsSuccess = false, Message = HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_ID(request.UserId) };
+                return new ChangePasswordResponse { IsSuccess = false, Message = ExceptionKey.NOT_FOUND_USER_WITH_ID.ToString() };
             }
 
             var result = await userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
@@ -295,7 +295,7 @@ namespace HumanResource.Grpc.Services
             return new ChangePasswordResponse
             {
                 IsSuccess = result.Succeeded,
-                Message = result.Succeeded ? HumanResourceSuccessStrings.SUCCESS_CHANGE_PASSWORD : HumanResourceExceptionStrings.FAILED_CHANGE_PASSWORD
+                Message = result.Succeeded ? HumanResourceSuccessStrings.SUCCESS_CHANGE_PASSWORD : ExceptionKey.FAILED_CHANGE_PASSWORD.ToString()
             };
         }
 
@@ -310,7 +310,7 @@ namespace HumanResource.Grpc.Services
                 return new ResetPasswordResponse
                 {
                     IsSuccess = false,
-                    Message = HumanResourceExceptionStrings.NOT_FOUND_USER_WITH_EMAIL(request.Email)
+                    Message = ExceptionKey.NOT_FOUND_USER_WITH_EMAIL.ToString()
                 };
             }
 
@@ -328,7 +328,7 @@ namespace HumanResource.Grpc.Services
                 return new ResetPasswordResponse
                 {
                     IsSuccess = false,
-                    Message = HumanResourceExceptionStrings.FAILED_RESET_PASSWORD
+                    Message = ExceptionKey.FAILED_RESET_PASSWORD.ToString()
                 };
             }
 
@@ -368,7 +368,7 @@ namespace HumanResource.Grpc.Services
                 return new LoginResponse
                 {
                     IsSuccess = false,
-                    Message = HumanResourceExceptionStrings.INVALID_LOGIN_CREDENTIAL
+                    Message = ExceptionKey.INVALID_LOGIN_CREDENTIAL.ToString()
                 };
             }
 
@@ -379,7 +379,7 @@ namespace HumanResource.Grpc.Services
                 return new LoginResponse
                 {
                     IsSuccess = false,
-                    Message = HumanResourceExceptionStrings.INVALID_LOGIN_CREDENTIAL
+                    Message = ExceptionKey.INVALID_LOGIN_CREDENTIAL.ToString()
                 };
             }
 

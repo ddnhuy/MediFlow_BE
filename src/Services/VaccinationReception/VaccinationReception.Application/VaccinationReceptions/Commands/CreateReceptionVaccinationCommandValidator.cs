@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using BuildingBlocks.Strings;
+using FluentValidation;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Validators
@@ -9,46 +10,46 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
         {
             RuleFor(x => x.ReceptionId)
                 .GreaterThan(0)
-                .WithMessage("Mã tiếp đón không hợp lệ");
+                .WithMessage(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID.ToString());
 
             RuleFor(x => x.VaccineId)
                 .GreaterThan(0)
-                .WithMessage("Mã vaccine không hợp lệ");
+                .WithMessage(ExceptionKey.INVALID_VACCINE_ID.ToString());
 
             RuleFor(x => x.Quantity)
                 .GreaterThan(0)
-                .WithMessage("Số lượng phải lớn hơn 0");
+                .WithMessage(ExceptionKey.INVALID_QUANTITY.ToString());
 
             RuleFor(x => x.ScheduledDate)
                 .NotEmpty()
-                .WithMessage("Ngày lên lịch không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_SCHEDULED_DATE.ToString())
                 .Must(date => date > DateTime.Now)
-                .WithMessage("Ngày lên lịch phải lớn hơn thời gian hiện tại");
+                .WithMessage(ExceptionKey.INVALID_SCHEDULED_DATE.ToString());
 
 
             RuleFor(x => x.AppointmentDate)
                 .NotEmpty()
-                .WithMessage("Ngày hẹn không được để trống")
+                .WithMessage(ExceptionKey.REQUIRED_APPOINTMENT_DATE.ToString())
                 .Must(date => date > DateTime.Now)
-                .WithMessage("Ngày hẹn phải lớn hơn thời gian hiện tại");
+                .WithMessage(ExceptionKey.INVALID_APPOINTMENT_DATE.ToString());
 
             RuleFor(x => x.DoctorId)
                 .GreaterThan(0)
-                .WithMessage("Mã bác sĩ không hợp lệ");
+                .WithMessage(ExceptionKey.INVALID_DOCTOR_ID.ToString());
 
             // Validate Note if provided
             When(x => !string.IsNullOrEmpty(x.Note), () =>
             {
                 RuleFor(x => x.Note)
                     .MaximumLength(500)
-                    .WithMessage("Ghi chú không được vượt quá 500 ký tự");
+                    .WithMessage(ExceptionKey.INVALID_NOTE_MAX_LENGTH.ToString());
             });
 
             When(x => !string.IsNullOrEmpty(x.TestResultEntry), () =>
             {
                 RuleFor(x => x.TestResultEntry)
                     .MaximumLength(1000)
-                    .WithMessage("Kết quả xét nghiệm không được vượt quá 1000 ký tự");
+                    .WithMessage(ExceptionKey.INVALID_TEST_RESULT_ENTRY_MAX_LENGTH.ToString());
             });
 
             RuleFor(x => x)
@@ -71,7 +72,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
 
                     return true;
                 })
-                .WithMessage("Dữ liệu không hợp lệ theo quy tắc nghiệp vụ");
+                .WithMessage(ExceptionKey.INVALID_DATA_FOLLOWING_BUSINESS_RULES.ToString());
         }
     }
 }

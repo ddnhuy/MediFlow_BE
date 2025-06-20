@@ -8,7 +8,7 @@
         public DeleteImageCommandValidator()
         {
             RuleFor(x => x.ImageUrl)
-                .NotEmpty().WithMessage(ValidationStrings.INVALID_IMAGE_URL);
+                .NotEmpty().WithMessage(ExceptionKey.INVALID_IMAGE_URL.ToString());
         }
     }
 
@@ -25,7 +25,7 @@
         {
             if (string.IsNullOrEmpty(command.ImageUrl))
             {
-                throw new ArgumentException(ValidationStrings.INVALID_IMAGE_URL, nameof(command.ImageUrl));
+                throw new ArgumentException(ExceptionKey.INVALID_IMAGE_URL.ToString(), nameof(command.ImageUrl));
             }
 
             await _mediaHelper.DeleteMediaAsync(command.ImageUrl);

@@ -10,7 +10,7 @@ namespace Appointment.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/appointments/{appointmentId}", [Authorize] async (int appointmentId, ISender sender, HttpContext httpContext) =>
+            app.MapGet("/{appointmentId}", [Authorize] async (int appointmentId, ISender sender, HttpContext httpContext) =>
             {
                 var result = await sender.Send(new GetAppointmentByIdQuery(appointmentId, httpContext.User.Claims.First(x => x.Type == ClaimTypes.Role).Value));
 

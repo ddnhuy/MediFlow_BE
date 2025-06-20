@@ -10,21 +10,21 @@ namespace Management.API.Users.Commands
     {
         public UpdateUserCommandValidator()
         {
-            RuleFor(x => x.Id).NotEmpty().WithMessage(ValidationStrings.REQUIRED_USER_ID);
-            RuleFor(x => x.UserName).NotEmpty().WithMessage(ValidationStrings.REQUIRED_USERNAME);
+            RuleFor(x => x.Id).NotEmpty().WithMessage(ExceptionKey.REQUIRED_USER_ID.ToString());
+            RuleFor(x => x.PhoneNumber).NotEmpty().WithMessage(ExceptionKey.REQUIRED_PHONE.ToString());
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_EMAIL)
-                .EmailAddress().WithMessage(ValidationStrings.INVALID_EMAIL);
-            RuleFor(x => x.PhoneNumber).NotEmpty().WithMessage(ValidationStrings.REQUIRED_PHONE);
-            RuleFor(x => x.Code).NotEmpty().WithMessage(ValidationStrings.REQUIRED_CODE);
-            RuleFor(x => x.Name).NotEmpty().WithMessage(ValidationStrings.REQUIRED_NAME);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_EMAIL.ToString())
+                .EmailAddress().WithMessage(ExceptionKey.INVALID_EMAIL.ToString());
+            RuleFor(x => x.UserName).NotEmpty().WithMessage(ExceptionKey.REQUIRED_USERNAME.ToString());
+            RuleFor(x => x.Code).NotEmpty().WithMessage(ExceptionKey.REQUIRED_CODE.ToString());
             RuleFor(x => x.RoleNames)
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_ROLE)
-                .Must(x => x.Count > 0).WithMessage(ValidationStrings.REQUIRED_ROLE);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_ROLE.ToString())
+                .Must(x => x.Count > 0).WithMessage(ExceptionKey.REQUIRED_ROLE.ToString());
+            RuleFor(x => x.Name).NotEmpty().WithMessage(ExceptionKey.REQUIRED_NAME.ToString());
+            RuleFor(x => x.Address).NotEmpty().WithMessage(ExceptionKey.REQUIRED_ADDRESS.ToString());
             RuleFor(x => x.DepartmentIds)
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_DEPARTMENT_IDS)
-                .Must(x => x.Count > 0).WithMessage(ValidationStrings.REQUIRED_DEPARTMENT_IDS);
-            RuleFor(x => x.Address).NotEmpty().WithMessage(ValidationStrings.REQUIRED_ADDRESS);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_IDS.ToString())
+                .Must(x => x.Count > 0).WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_IDS.ToString());
         }
     }
 

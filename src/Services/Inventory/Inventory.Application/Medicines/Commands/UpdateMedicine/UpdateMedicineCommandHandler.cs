@@ -1,6 +1,4 @@
-﻿using BuildingBlocks.Strings.ExceptionStrings;
-
-namespace Inventory.Application.Medicines.Commands.UpdateMedicine
+﻿namespace Inventory.Application.Medicines.Commands.UpdateMedicine
 {
     public class UpdateMedicineCommandHandler : ICommandHandler<UpdateMedicineCommand, UpdateMedicineResult>
     {
@@ -17,7 +15,7 @@ namespace Inventory.Application.Medicines.Commands.UpdateMedicine
 
             if (medicine == null)
             {
-                throw new MedicineNotFoundException(InventoryExceptionStrings.NOT_FOUND_MEDICINE_WITH_ID(request.Id));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
             }
 
             medicine.MedicineCode = request.MedicineCode;

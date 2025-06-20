@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
-using BuildingBlocks.Strings.ExceptionStrings;
+using BuildingBlocks.Strings;
 using Carter;
 using HospitalService.Application.Services.HospitalServices.Commands;
 using Mapster;
@@ -15,15 +15,15 @@ namespace HospitalService.API.Endpoints
         {
             app.MapPut("/disease-groups/{id}", async (int id, [FromBody] UpdateDiseaseGroupCommand command, ISender sender) =>
             {
-                if (id <= 0) throw new BadRequestException(HospitalServiceExceptionStrings.INVALID_DISEASE_GROUP_ID);
-                if (string.IsNullOrWhiteSpace(command.GroupName)) throw new BadRequestException(HospitalServiceExceptionStrings.EMPTY_DISEASE_GROUP_NAME);
+                if (id <= 0) throw new BadRequestException(ExceptionKey.INVALID_DISEASE_GROUP_ID);
+                if (string.IsNullOrWhiteSpace(command.GroupName)) throw new BadRequestException(ExceptionKey.EMPTY_DISEASE_GROUP_NAME);
 
                 command = command with { Id = id };
                 var result = await sender.Send(command);
 
                 if (result == null)
                 {
-                    throw new InternalServerException(HospitalServiceExceptionStrings.FAILED_UPDATE_DISEASE_GROUP);
+                    throw new InternalServerException(ExceptionKey.FAILED_UPDATE_DISEASE_GROUP);
                 }
 
                 var response = result.Adapt<UpdateDiseaseGroupResponse>();

@@ -10,16 +10,9 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
         {
             app.MapPost("/request-forms/add-service", async (AddServiceToRequestFormCommand command, ISender sender) =>
             {
-                try
-                {
-                    var result = await sender.Send(command);
-                    var response = result.Adapt<AddServiceToRequestFormResponse>();
-                    return Results.Created($"/request-forms/{response.RequestFormId}", response);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return Results.NotFound(new { error = ex.Message });
-                }
+                var result = await sender.Send(command);
+                var response = result.Adapt<AddServiceToRequestFormResponse>();
+                return Results.Created($"/request-forms/{response.RequestFormId}", response);
             })
             .RequireAuthorization()
             .WithName("AddServiceToRequestForm")

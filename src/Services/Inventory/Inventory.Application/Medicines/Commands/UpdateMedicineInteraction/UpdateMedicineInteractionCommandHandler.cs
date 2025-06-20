@@ -1,6 +1,4 @@
-﻿using BuildingBlocks.Strings.ExceptionStrings;
-
-namespace Inventory.Application.Medicines.Commands.UpdateMedicineInteraction
+﻿namespace Inventory.Application.Medicines.Commands.UpdateMedicineInteraction
 {
     public class UpdateMedicineInteractionCommandHandler(IApplicationDbContext dbContext) : ICommandHandler<UpdateMedicineInteractionCommand, UpdateMedicineInteractionResult>
     {
@@ -10,7 +8,7 @@ namespace Inventory.Application.Medicines.Commands.UpdateMedicineInteraction
 
             if (interaction == null)
             {
-                throw new NotFoundException(InventoryExceptionStrings.NOT_FOUND_INTERACTION_WITH_ID(request.Id));
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_INTERACTION_WITH_ID);
             }
 
             // Verify both medicines exist
@@ -18,10 +16,10 @@ namespace Inventory.Application.Medicines.Commands.UpdateMedicineInteraction
             var medicine2Exists = await dbContext.Medicines.AnyAsync(m => m.Id == request.MedicineId2 && !m.IsSuspended, cancellationToken);
 
             if (!medicine1Exists)
-                throw new NotFoundException("Medicine", request.MedicineId1);
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
 
             if (!medicine2Exists)
-                throw new NotFoundException("Medicine", request.MedicineId2);
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
 
             // Check if a different interaction with the same medicines exists
             var existingInteraction = await dbContext.MedicineInteractions
@@ -32,7 +30,7 @@ namespace Inventory.Application.Medicines.Commands.UpdateMedicineInteraction
                     cancellationToken);
 
             if (existingInteraction)
-                throw new ValidationException(InventoryExceptionStrings.INTERACTION_ALREADY_EXISTS);
+                throw new BadRequestException(ExceptionKey.INTERACTION_ALREADY_EXISTS);
 
             interaction.MedicineId1 = request.MedicineId1;
             interaction.MedicineId2 = request.MedicineId2;

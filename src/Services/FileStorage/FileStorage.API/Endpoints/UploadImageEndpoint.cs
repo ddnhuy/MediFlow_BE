@@ -15,7 +15,7 @@ namespace FileStorage.API.Endpoints
 
                 if (file is null)
                 {
-                    throw new BadRequestException("File not provided or is empty.");
+                    throw new BadRequestException(ExceptionKey.FILE_NOT_PROVIDED);
                 }
 
                 string? folder = form["folder"].ToString();

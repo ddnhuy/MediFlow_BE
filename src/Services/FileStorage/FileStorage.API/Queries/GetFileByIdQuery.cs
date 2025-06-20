@@ -1,5 +1,4 @@
-﻿using BuildingBlocks.Strings.ExceptionStrings;
-using FileStorage.API.Repositories;
+﻿using FileStorage.API.Repositories;
 
 namespace FileStorage.API.Queries
 {
@@ -18,7 +17,7 @@ namespace FileStorage.API.Queries
             var fileMetadata = await _fileRepository.GetByIdAsync(query.Id);
             if (fileMetadata is null)
             {
-                throw new NotFoundException(FileStorageExceptionStrings.FILE_NOT_FOUND(query.Id));
+                throw new NotFoundException(ExceptionKey.FILE_NOT_FOUND);
             }
 
             return new GetFileByIdResult(fileMetadata.Adapt<FileMetaDataDto>());

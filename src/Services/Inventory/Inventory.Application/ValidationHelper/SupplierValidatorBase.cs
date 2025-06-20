@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application.ValidationHelper
+﻿using FluentValidation;
+
+namespace Inventory.Application.ValidationHelper
 {
     public static class SupplierValidatorBase
     {
@@ -13,36 +15,36 @@
                                               IRuleBuilder<T, string> ruleForDirector)
         {
             ruleForSupplierCode
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_SUPPLIER_CODE);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_SUPPLIER_CODE.ToString());
 
             ruleForSupplierName
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_SUPPLIER_NAME);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_SUPPLIER_NAME.ToString());
 
             ruleForPhone
                 .NotEmpty()
                 .Length(10, 15)
                 .Matches(@"^\d+$")
-                .WithMessage(ValidationStrings.INVALID_SUPPLIER_PHONE);
+                .WithMessage(ExceptionKey.INVALID_SUPPLIER_PHONE.ToString());
 
             ruleForFax
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_SUPPLIER_FAX);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_SUPPLIER_FAX.ToString());
 
             ruleForEmail
                 .NotEmpty()
                 .EmailAddress()
-                .WithMessage(ValidationStrings.INVALID_EMAIL);
+                .WithMessage(ExceptionKey.INVALID_EMAIL.ToString());
 
             ruleForTaxCode
-                .NotEmpty().WithMessage(ValidationStrings.INVALID_SUPPLIER_TAX_CODE);
+                .NotEmpty().WithMessage(ExceptionKey.INVALID_SUPPLIER_TAX_CODE.ToString());
 
             ruleForAddress
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_SUPPLIER_ADDRESS);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_SUPPLIER_ADDRESS.ToString());
 
             ruleForContactPerson
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_SUPPLIER_CONTACT_PERSON);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_SUPPLIER_CONTACT_PERSON.ToString());
 
             ruleForDirector
-                .NotEmpty().WithMessage(ValidationStrings.REQUIRED_SUPPLIER_DIRECTOR);
+                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_SUPPLIER_DIRECTOR.ToString());
 
         }
     }

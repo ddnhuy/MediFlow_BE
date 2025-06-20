@@ -50,6 +50,18 @@ namespace BuildingBlocks.Exceptions.Handler
                         ? StatusCodes.Status404NotFound
                         : StatusCodes.Status400BadRequest
                 ),
+                UnauthorizedAccessException =>
+                (
+                    exception.Message,
+                    exception.GetType().Name,
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized
+                ),
+                ArgumentException =>
+                (
+                    exception.Message,
+                    exception.GetType().Name,
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest
+                ),
                 _ =>
                 (
                     exception.Message,

@@ -56,5 +56,18 @@ namespace HospitalService.FunctionalTests.Tests
             var node = JsonNode.Parse(json);
             Assert.NotNull(node);
         }
+
+        [Fact]
+        public async Task UpdateServiceGroup_NotFoundServiceGroup_Returns404()
+        {
+            // Arrange
+            var request = new { GroupName = "Updated Group" };
+
+            // Act
+            var response = await _client.PutAsJsonAsync("/service-groups/999", request);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
     }
 }

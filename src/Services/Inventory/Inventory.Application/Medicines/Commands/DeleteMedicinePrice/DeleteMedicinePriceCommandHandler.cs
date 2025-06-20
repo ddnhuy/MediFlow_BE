@@ -11,7 +11,7 @@
 
             if (medicinePrice == null)
             {
-                throw new NotFoundException($"Không tìm thấy giá thuốc với ID {request.Id}");
+                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_PRICE);
             }
 
             // Soft delete by marking as cancelled
