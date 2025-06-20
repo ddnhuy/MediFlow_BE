@@ -377,4 +377,83 @@ public class UsersControllerTest : BaseFunctionalTest
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
+    [Fact]
+    public async Task CreateUserAsync_InvalidModelState_ReturnsBadRequest()
+    {
+        SetAuthHeader();
+
+        var invalidRequest = new
+        {
+            // UserName = "testuser",
+            Email = "testemail@gmail.com",
+            Password = "TestPassword123!",
+            PhoneNumber = "1234567890",
+            Code = "TD001",
+            Name = "Test User",
+            Address = "123 Test St, Test City",
+            ProfilePictureUrl = "https://example.com/profile.jpg",
+            RoleNames = new List<string> { "ADMIN" },
+            DepartmentIds = new List<int> { 1 }
+        };
+
+        var response = await _client.PostAsJsonAsync("/users", invalidRequest);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task UpdateUserAsync_InvalidModelState_ReturnsBadRequest()
+    {
+        SetAuthHeader();
+
+        var userId = 1;
+
+        var invalidRequest = new
+        {
+            // UserName = "testuser",
+            Email = "testemail@gmail.com",
+            PhoneNumber = "1234567890",
+            Code = "TD001",
+            Name = "Test User",
+            Address = "123 Test St, Test City",
+            ProfilePictureUrl = "https://example.com/profile.jpg",
+            RoleNames = new List<string> { "ADMIN" },
+            DepartmentIds = new List<int> { 1 },
+            IsSuspended = false
+        };
+
+        // Act
+        var response = await _client.PutAsJsonAsync($"/users/{userId}", invalidRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+    [Fact]
+    public async Task DeleteUserAsync_WhenDeleteFails_ReturnsBadRequest()
+    {
+        // Arrange
+        SetAuthHeader();
+
+        var userId = 1;
+
+        var grpcResponse = new HumanResource.Grpc.DeleteApplicationUserResponse
+        {
+            IsSuccess = false
+        };
+
+        _grpcUserClientMock?
+            .DeleteApplicationUserAsync(
+                Arg.Any<HumanResource.Grpc.DeleteApplicationUserRequest>(),
+                Arg.Any<Metadata>(),
+                Arg.Any<DateTime?>(),
+                Arg.Any<CancellationToken>()
+            )
+            .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
+
+        // Act
+        var response = await _client.DeleteAsync($"/users/{userId}");
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }
