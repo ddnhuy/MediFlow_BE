@@ -59,7 +59,21 @@ data:
               "Path": "/vaccination-reception/{**catch-all}"
             },
             "Transforms": [ { "PathPattern": "{**catch-all}" } ]
-          }
+          },
+          "appointment-route": {
+            "ClusterId": "appointment-cluster",
+            "Match": {
+              "Path": "/appointments/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          },
+          "hospital-service-route": {
+            "ClusterId": "hospital-service-cluster",
+            "Match": {
+              "Path": "/hospital-service/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          },
         },
         "Clusters": {
           "authentication-cluster": {
@@ -87,6 +101,20 @@ data:
             "Destinations": {
               "default": {
                 "Address": "http://vaccination-reception-service:80"
+              }
+            }
+          },
+          "appointment-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://appointment-service:80"
+              }
+            }
+          },
+          "hospital-service-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://hospital-service-service:80"
               }
             }
           }

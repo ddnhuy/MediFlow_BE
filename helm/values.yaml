@@ -163,6 +163,7 @@ deployments:
   worker-email-service: {}
   file-storage-service: {}
   appointment-service: {}
+  hospital-service-service: {}
   gateway: {}
 
 strategy:
