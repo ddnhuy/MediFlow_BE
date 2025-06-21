@@ -185,6 +185,7 @@
         FAILED_DELETE_SERVICE,
         FAILED_UPDATE_SERVICE,
         INVALID_SERVICE_ID,
+        INVALID_SERVICE_IDS,
 
         // Service Group
         SERVICE_GROUP_NOT_FOUND,
@@ -393,5 +394,12 @@
         INVALID_PATIENT_PHONE_NUMBER,
         REQUIRED_SUSPENDED_STATUS,
         #endregion
+
+        #region HospitalFee Exceptions
+        ONE_OR_MORE_ITEMS_ALREADY_PAID_OR_INVALID,
+        CANCEL_ITEMS_NOT_PAID_OR_INVALID,
+        ORIGINAL_PAYMENT_NOT_FOUND_FOR_RECEPTION
+        #endregion
+
     }
 }

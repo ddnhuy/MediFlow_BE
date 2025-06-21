@@ -26,4 +26,7 @@
 			<Link>Protos\patient.proto</Link>
 		</Protobuf>
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="HospitalFees\Queries\" />
+	</ItemGroup>
 </Project>

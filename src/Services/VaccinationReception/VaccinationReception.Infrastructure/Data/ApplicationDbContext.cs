@@ -31,13 +31,10 @@ namespace VaccinationReception.Infrastructure.Data
         public virtual DbSet<ScreeningEvaluationReport> ScreeningEvaluationReports { get; set; }
         public virtual DbSet<ServiceType> ServiceTypes { get; set; }
         public virtual DbSet<ReceptionVaccination> ReceptionVaccinations { get; set; }
-        public virtual DbSet<DiseaseGroup> DiseaseGroups { get; set; }
-        public virtual DbSet<DiseaseGroupService> DiseaseGroupServices { get; set; }
-        public virtual DbSet<ServiceGroup> ServiceGroups { get; set; }
-        public virtual DbSet<ServiceGroupService> ServiceGroupServices { get; set; }
-        public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<ServiceRequestDetail> ServiceRequestDetails { get; set; }
         public virtual DbSet<RequestForm> RequestForms { get; set; }
+        public virtual DbSet<Payment> Payments { get; set; }
+        public virtual DbSet<PaymentDetail> PaymentDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

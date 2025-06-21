@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using VaccinationReception.Application.Patients.Commands.CreatePatient;
 using VaccinationReception.Application.Patients.Commands.UpdatePatient;
 using VaccinationReception.Application.Services.PatientServices;
+using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 using VaccinationReception.Infrastructure.Data;
 
@@ -82,7 +83,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 {
                     var unpaidVaccinations = await _context.ReceptionVaccinations
                         .Where(rv => rv.ReceptionId == previousReception.Id
-                            && !rv.IsPaid
+                            && rv.PaymentStatus == PaymentStatusForItem.NotPaid
                             && rv.AppointmentDate >= reception.ReceptionDate)
                         .ToListAsync(cancellationToken);
 

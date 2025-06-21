@@ -21,5 +21,7 @@ namespace VaccinationReception.Application.DTOs.VaccinationReceptionDTOs
         public DateTime ScheduledDate { get; set; }
         public bool IsReadyToUse { get; set; }
         public int DoctorId { get; set; }
+        public string RequestNumber { get; set; } = string.Empty;
+        public decimal UnitPrice { get; set; }
     }
 }

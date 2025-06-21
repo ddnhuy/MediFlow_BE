@@ -22,7 +22,7 @@ namespace VaccinationReception.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("VaccinationReception.Domain.Models.DiseaseGroup", b =>
+            modelBuilder.Entity("VaccinationReception.Domain.Models.Payment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,174 +33,152 @@ namespace VaccinationReception.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ATMTransactionCode")
+                        .HasColumnType("text")
+                        .HasComment("Mã giao dịch ATM");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                        .HasComment("Ngày tạo bản ghi");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("integer")
-                        .HasComment("Người tạo bản ghi");
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasComment("Mô tả nhóm bệnh");
-
-                    b.Property<string>("GroupName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasComment("Tên nhóm bệnh");
+                    b.Property<string>("InvoiceNumber")
+                        .HasColumnType("text")
+                        .HasComment("Số hóa đơn tạm");
 
                     b.Property<bool>("IsCancelled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái hủy");
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsSuspended")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái tạm ngưng");
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime>("LastUpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                        .HasComment("Ngày cập nhật bản ghi cuối cùng");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasComment("Phương thức thanh toán");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text")
+                        .HasComment("Ghi chú");
+
+                    b.Property<string>("OfficialInvoiceNumber")
+                        .HasColumnType("text")
+                        .HasComment("Số hóa đơn chính thức");
+
+                    b.Property<int?>("OriginalPaymentId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PaymentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasComment("Loại thanh toán");
+
+                    b.Property<int>("ReceptionId")
                         .HasColumnType("integer")
-                        .HasComment("Người cập nhật bản ghi cuối cùng");
+                        .HasComment("Mã tiếp nhận");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasComment("Trạng thái thanh toán");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("numeric(18,2)")
+                        .HasComment("Tổng số tiền");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GroupName")
-                        .HasDatabaseName("IX_DiseaseGroups_GroupName");
+                    b.HasIndex("OriginalPaymentId");
 
-                    b.ToTable("DiseaseGroups", "public", t =>
-                        {
-                            t.HasComment("Bảng nhóm bệnh");
-                        });
+                    b.HasIndex("ReceptionId")
+                        .HasDatabaseName("IX_Payments_ReceptionId");
 
-                    b.HasData(
-                        new
+                    b.ToTable("Payments", "public", t =>
                         {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            Description = "Các bệnh có khả năng lây truyền từ người sang người",
-                            GroupName = "Nhóm bệnh truyền nhiễm",
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            Description = "Các bệnh không có khả năng lây truyền",
-                            GroupName = "Nhóm bệnh không truyền nhiễm",
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1
+                            t.HasComment("Bảng thanh toán");
                         });
                 });
 
-            modelBuilder.Entity("VaccinationReception.Domain.Models.DiseaseGroupService", b =>
+            modelBuilder.Entity("VaccinationReception.Domain.Models.PaymentDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
-                        .HasComment("Primary key")
                         .HasAnnotation("Npgsql:IdentityIncrement", 1)
                         .HasAnnotation("Npgsql:IdentityStartValue", 1);
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric(18,2)")
+                        .HasComment("Số tiền");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                        .HasComment("Ngày tạo bản ghi");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("CreatedBy")
-                        .HasColumnType("integer")
-                        .HasComment("Người tạo bản ghi");
-
-                    b.Property<int>("DiseaseGroupId")
-                        .HasColumnType("integer")
-                        .HasComment("Mã nhóm bệnh");
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsCancelled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái hủy");
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsSuspended")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái tạm ngưng");
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime>("LastUpdatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                        .HasComment("Ngày cập nhật bản ghi cuối cùng");
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("LastUpdatedBy")
-                        .HasColumnType("integer")
-                        .HasComment("Người cập nhật bản ghi cuối cùng");
+                        .HasColumnType("integer");
 
-                    b.Property<int>("ServiceId")
+                    b.Property<int>("PaymentId")
                         .HasColumnType("integer")
-                        .HasComment("Mã dịch vụ");
+                        .HasComment("Mã thanh toán");
+
+                    b.Property<int?>("ReceptionVaccinationId")
+                        .HasColumnType("integer")
+                        .HasComment("Mã tiêm chủng");
+
+                    b.Property<int?>("ServiceRequestDetailId")
+                        .HasColumnType("integer")
+                        .HasComment("Mã chi tiết yêu cầu dịch vụ");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DiseaseGroupId")
-                        .HasDatabaseName("IX_DiseaseGroupServices_DiseaseGroupId");
+                    b.HasIndex("PaymentId")
+                        .HasDatabaseName("IX_PaymentDetails_PaymentId");
 
-                    b.HasIndex("ServiceId")
-                        .HasDatabaseName("IX_DiseaseGroupServices_ServiceId");
+                    b.HasIndex("ReceptionVaccinationId");
 
-                    b.ToTable("DiseaseGroupServices", "public", t =>
-                        {
-                            t.HasComment("Bảng liên kết nhóm bệnh và dịch vụ");
-                        });
+                    b.HasIndex("ServiceRequestDetailId");
 
-                    b.HasData(
-                        new
+                    b.ToTable("PaymentDetails", "public", t =>
                         {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            DiseaseGroupId = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
-                            ServiceId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            DiseaseGroupId = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
-                            ServiceId = 2
+                            t.HasComment("Chi tiết thanh toán");
                         });
                 });
 
@@ -318,10 +296,6 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasComment("Đã xác nhận");
 
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("boolean")
-                        .HasComment("Đã thanh toán");
-
                     b.Property<bool>("IsReadyToUse")
                         .HasColumnType("boolean")
                         .HasComment("Sẵn sàng sử dụng");
@@ -347,6 +321,11 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasComment("Ghi chú");
 
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)")
+                        .HasComment("Trạng thái thanh toán");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
                         .HasComment("Số lượng");
@@ -354,6 +333,12 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.Property<int>("ReceptionId")
                         .HasColumnType("integer")
                         .HasComment("Mã tiếp nhận");
+
+                    b.Property<string>("RequestNumber")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("varchar(15)")
+                        .HasComment("Số phiếu yêu cầu");
 
                     b.Property<DateTime>("ScheduledDate")
                         .HasColumnType("timestamp without time zone")
@@ -363,6 +348,11 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasComment("Kết quả thử");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasComment("Đơn giá");
 
                     b.Property<int>("VaccineId")
                         .HasColumnType("integer")
@@ -589,293 +579,6 @@ namespace VaccinationReception.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("VaccinationReception.Domain.Models.Service", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasComment("Primary key")
-                        .HasAnnotation("Npgsql:IdentityIncrement", 1)
-                        .HasAnnotation("Npgsql:IdentityStartValue", 1);
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                        .HasComment("Ngày tạo bản ghi");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("integer")
-                        .HasComment("Người tạo bản ghi");
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("integer")
-                        .HasComment("Mã phòng ban");
-
-                    b.Property<bool>("IsCancelled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái hủy");
-
-                    b.Property<bool>("IsSuspended")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái tạm ngưng");
-
-                    b.Property<DateTime>("LastUpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                        .HasComment("Ngày cập nhật bản ghi cuối cùng");
-
-                    b.Property<int>("LastUpdatedBy")
-                        .HasColumnType("integer")
-                        .HasComment("Người cập nhật bản ghi cuối cùng");
-
-                    b.Property<string>("ServiceCode")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasComment("Mã dịch vụ");
-
-                    b.Property<string>("ServiceName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasComment("Tên dịch vụ");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasComment("Đơn giá");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId")
-                        .HasDatabaseName("IX_Services_DepartmentId");
-
-                    b.HasIndex("ServiceCode")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Services_ServiceCode");
-
-                    b.HasIndex("ServiceName")
-                        .HasDatabaseName("IX_Services_ServiceName");
-
-                    b.ToTable("Services", "public", t =>
-                        {
-                            t.HasComment("Bảng dịch vụ");
-                        });
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            DepartmentId = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
-                            ServiceCode = "VAC001",
-                            ServiceName = "Tiêm vắc xin 5 trong 1",
-                            UnitPrice = 500000m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            DepartmentId = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
-                            ServiceCode = "VAC002",
-                            ServiceName = "Tiêm vắc xin 6 trong 1",
-                            UnitPrice = 600000m
-                        });
-                });
-
-            modelBuilder.Entity("VaccinationReception.Domain.Models.ServiceGroup", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasComment("Primary key")
-                        .HasAnnotation("Npgsql:IdentityIncrement", 1)
-                        .HasAnnotation("Npgsql:IdentityStartValue", 1);
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                        .HasComment("Ngày tạo bản ghi");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("integer")
-                        .HasComment("Người tạo bản ghi");
-
-                    b.Property<string>("GroupName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasComment("Tên nhóm dịch vụ");
-
-                    b.Property<bool>("IsCancelled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái hủy");
-
-                    b.Property<bool>("IsSuspended")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái tạm ngưng");
-
-                    b.Property<DateTime>("LastUpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                        .HasComment("Ngày cập nhật bản ghi cuối cùng");
-
-                    b.Property<int>("LastUpdatedBy")
-                        .HasColumnType("integer")
-                        .HasComment("Người cập nhật bản ghi cuối cùng");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GroupName")
-                        .HasDatabaseName("IX_ServiceGroups_GroupName");
-
-                    b.ToTable("ServiceGroups", "public", t =>
-                        {
-                            t.HasComment("Bảng nhóm dịch vụ");
-                        });
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            GroupName = "Nhóm dịch vụ tiêm chủng cơ bản",
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            GroupName = "Nhóm dịch vụ tiêm chủng đặc biệt",
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1
-                        });
-                });
-
-            modelBuilder.Entity("VaccinationReception.Domain.Models.ServiceGroupService", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasComment("Primary key")
-                        .HasAnnotation("Npgsql:IdentityIncrement", 1)
-                        .HasAnnotation("Npgsql:IdentityStartValue", 1);
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                        .HasComment("Ngày tạo bản ghi");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("integer")
-                        .HasComment("Người tạo bản ghi");
-
-                    b.Property<bool>("IsCancelled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái hủy");
-
-                    b.Property<bool>("IsSuspended")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái tạm ngưng");
-
-                    b.Property<DateTime>("LastUpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                        .HasComment("Ngày cập nhật bản ghi cuối cùng");
-
-                    b.Property<int>("LastUpdatedBy")
-                        .HasColumnType("integer")
-                        .HasComment("Người cập nhật bản ghi cuối cùng");
-
-                    b.Property<int>("ServiceGroupId")
-                        .HasColumnType("integer")
-                        .HasComment("Mã nhóm dịch vụ");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("integer")
-                        .HasComment("Mã dịch vụ");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceGroupId")
-                        .HasDatabaseName("IX_ServiceGroupServices_ServiceGroupId");
-
-                    b.HasIndex("ServiceId")
-                        .HasDatabaseName("IX_ServiceGroupServices_ServiceId");
-
-                    b.ToTable("ServiceGroupServices", "public", t =>
-                        {
-                            t.HasComment("Bảng liên kết nhóm dịch vụ và dịch vụ");
-                        });
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
-                            ServiceGroupId = 1,
-                            ServiceId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
-                            ServiceGroupId = 2,
-                            ServiceId = 2
-                        });
-                });
-
             modelBuilder.Entity("VaccinationReception.Domain.Models.ServiceRequestDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -907,10 +610,6 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasDefaultValue(false)
                         .HasComment("Trạng thái hủy");
 
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("boolean")
-                        .HasComment("Đã thanh toán");
-
                     b.Property<bool>("IsSuspended")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -926,6 +625,11 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.Property<int>("LastUpdatedBy")
                         .HasColumnType("integer")
                         .HasComment("Người cập nhật bản ghi cuối cùng");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("varchar(20)")
+                        .HasComment("Trạng thái thanh toán");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer")
@@ -1051,23 +755,47 @@ namespace VaccinationReception.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("VaccinationReception.Domain.Models.DiseaseGroupService", b =>
+            modelBuilder.Entity("VaccinationReception.Domain.Models.Payment", b =>
                 {
-                    b.HasOne("VaccinationReception.Domain.Models.DiseaseGroup", "DiseaseGroup")
-                        .WithMany("DiseaseGroupServices")
-                        .HasForeignKey("DiseaseGroupId")
+                    b.HasOne("VaccinationReception.Domain.Models.Payment", "OriginalPayment")
+                        .WithMany()
+                        .HasForeignKey("OriginalPaymentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("VaccinationReception.Domain.Models.Reception", "Reception")
+                        .WithMany("Payments")
+                        .HasForeignKey("ReceptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VaccinationReception.Domain.Models.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.Navigation("OriginalPayment");
+
+                    b.Navigation("Reception");
+                });
+
+            modelBuilder.Entity("VaccinationReception.Domain.Models.PaymentDetail", b =>
+                {
+                    b.HasOne("VaccinationReception.Domain.Models.Payment", "Payment")
+                        .WithMany("PaymentDetails")
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("DiseaseGroup");
+                    b.HasOne("VaccinationReception.Domain.Models.ReceptionVaccination", "ReceptionVaccination")
+                        .WithMany()
+                        .HasForeignKey("ReceptionVaccinationId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Service");
+                    b.HasOne("VaccinationReception.Domain.Models.ServiceRequestDetail", "ServiceRequestDetail")
+                        .WithMany()
+                        .HasForeignKey("ServiceRequestDetailId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Payment");
+
+                    b.Navigation("ReceptionVaccination");
+
+                    b.Navigation("ServiceRequestDetail");
                 });
 
             modelBuilder.Entity("VaccinationReception.Domain.Models.Reception", b =>
@@ -1114,25 +842,6 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.Navigation("Reception");
                 });
 
-            modelBuilder.Entity("VaccinationReception.Domain.Models.ServiceGroupService", b =>
-                {
-                    b.HasOne("VaccinationReception.Domain.Models.ServiceGroup", "ServiceGroup")
-                        .WithMany("ServiceGroupServices")
-                        .HasForeignKey("ServiceGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VaccinationReception.Domain.Models.Service", "Service")
-                        .WithMany("ServiceGroupServices")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Service");
-
-                    b.Navigation("ServiceGroup");
-                });
-
             modelBuilder.Entity("VaccinationReception.Domain.Models.ServiceRequestDetail", b =>
                 {
                     b.HasOne("VaccinationReception.Domain.Models.RequestForm", "RequestForm")
@@ -1141,24 +850,18 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VaccinationReception.Domain.Models.Service", "Service")
-                        .WithMany("ServiceRequestDetails")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("RequestForm");
-
-                    b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("VaccinationReception.Domain.Models.DiseaseGroup", b =>
+            modelBuilder.Entity("VaccinationReception.Domain.Models.Payment", b =>
                 {
-                    b.Navigation("DiseaseGroupServices");
+                    b.Navigation("PaymentDetails");
                 });
 
             modelBuilder.Entity("VaccinationReception.Domain.Models.Reception", b =>
                 {
+                    b.Navigation("Payments");
+
                     b.Navigation("ReceptionVaccinations");
 
                     b.Navigation("RequestForms");
@@ -1169,18 +872,6 @@ namespace VaccinationReception.Infrastructure.Migrations
             modelBuilder.Entity("VaccinationReception.Domain.Models.RequestForm", b =>
                 {
                     b.Navigation("ServiceRequestDetails");
-                });
-
-            modelBuilder.Entity("VaccinationReception.Domain.Models.Service", b =>
-                {
-                    b.Navigation("ServiceGroupServices");
-
-                    b.Navigation("ServiceRequestDetails");
-                });
-
-            modelBuilder.Entity("VaccinationReception.Domain.Models.ServiceGroup", b =>
-                {
-                    b.Navigation("ServiceGroupServices");
                 });
 
             modelBuilder.Entity("VaccinationReception.Domain.Models.ServiceType", b =>

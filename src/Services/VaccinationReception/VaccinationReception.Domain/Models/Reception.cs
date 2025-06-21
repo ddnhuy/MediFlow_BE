@@ -18,5 +18,6 @@ namespace VaccinationReception.Domain.Models
         public ICollection<ReceptionVaccination> ReceptionVaccinations { get; set; } = new List<ReceptionVaccination>();
 
         public ICollection<RequestForm> RequestForms { get; set; } = new List<RequestForm>();
+        public ICollection<Payment> Payments { get; set; } = new List<Payment>();
     }
 }

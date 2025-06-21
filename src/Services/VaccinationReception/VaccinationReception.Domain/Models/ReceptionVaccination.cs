@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Domain.Abstractions;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Domain.Models
 {
@@ -16,11 +17,13 @@ namespace VaccinationReception.Domain.Models
         public DateTime ScheduledDate { get; set; }
         public DateTime InvoiceDate { get; set; }
         public DateTime AppointmentDate { get; set; }
-        public bool IsPaid { get; set; }
+        public PaymentStatusForItem PaymentStatus { get; set; }
         public bool IsConfirmed { get; set; }
         public string? Note { get; set; }
         public string? TestResultEntry { get; set; }
         public int DoctorId { get; set; }
+        public string RequestNumber { get; set; } = null!;
+        public decimal UnitPrice { get; set; }
 
         // Navigation
         public Reception Reception { get; set; } = null!;

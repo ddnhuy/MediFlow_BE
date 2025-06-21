@@ -23,8 +23,10 @@ namespace VaccinationReception.Application.DTOs.VaccinationReceptionDTOs
 
     public record UnpaidVaccinationDTO(
         int Id,
+        string RequestNumber,
         int VaccineId,
         int Quantity,
+        decimal UnitPrice,
         DateTime CreatedAt
     );
 }

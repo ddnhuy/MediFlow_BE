@@ -88,6 +88,11 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                .HasForeignKey(x => x.ReceptionId)
                .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(x => x.Payments)
+                .WithOne(x => x.Reception)
+                .HasForeignKey(x => x.ReceptionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // Indexes
             builder.HasIndex(x => x.PatientId)
                 .HasDatabaseName("IX_Receptions_PatientId");

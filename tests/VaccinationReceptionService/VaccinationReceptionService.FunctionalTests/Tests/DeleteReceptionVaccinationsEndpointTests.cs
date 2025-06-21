@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
+using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 using VaccinationReception.Infrastructure.Data;
 using VaccinationReceptionService.FunctionalTests.Abstractions;
@@ -66,7 +67,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     ScheduledDate = DateTime.Now,
                     InvoiceDate = DateTime.Now,
                     AppointmentDate = DateTime.Now,
-                    IsPaid = false,
+                    PaymentStatus = PaymentStatusForItem.NotPaid,
                     IsConfirmed = false,
                     CreatedAt = DateTime.Now,
                     CreatedBy = 1,

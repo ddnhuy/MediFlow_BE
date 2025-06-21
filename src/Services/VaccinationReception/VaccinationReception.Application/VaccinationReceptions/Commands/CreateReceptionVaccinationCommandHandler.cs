@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VaccinationReception.Application.Helpers;
+using VaccinationReception.Domain.IServiceClients;
 using VaccinationReception.Domain.Models;
 using VaccinationReception.Infrastructure.Data;
 
@@ -18,13 +20,16 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<CreateReceptionVaccinationCommandHandler> _logger;
+        private readonly IInventoryServiceClient _inventoryServiceClient;
 
         public CreateReceptionVaccinationCommandHandler(
             ApplicationDbContext context,
-            ILogger<CreateReceptionVaccinationCommandHandler> logger)
+            ILogger<CreateReceptionVaccinationCommandHandler> logger,
+            IInventoryServiceClient inventoryServiceClient)
         {
             _context = context;
             _logger = logger;
+            _inventoryServiceClient = inventoryServiceClient;
         }
 
         public async Task<CreateReceptionVaccinationResult> Handle(CreateReceptionVaccinationCommand request, CancellationToken cancellationToken)
@@ -39,10 +44,14 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     _logger.LogWarning("Không tìm thấy Reception với Id: {ReceptionId}", request.ReceptionId);
                     throw new NotFoundException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
                 }
+                var medicine = await _inventoryServiceClient.GetMedicineByIdAsync(request.VaccineId, cancellationToken);
 
                 var receptionVaccination = request.Adapt<ReceptionVaccination>();
 
-                _context.ReceptionVaccinations.Add(receptionVaccination);
+                receptionVaccination.RequestNumber = UniqueStringGenerator.GenerateUniqueString();
+                receptionVaccination.UnitPrice = medicine?.UnitPrice ?? 0;
+                await _context.ReceptionVaccinations.AddAsync(receptionVaccination);
+
                 await _context.SaveChangesAsync(cancellationToken);
 
                 _logger.LogInformation("Đã tạo mới ReceptionVaccination với Id: {Id} cho ReceptionId: {ReceptionId}",

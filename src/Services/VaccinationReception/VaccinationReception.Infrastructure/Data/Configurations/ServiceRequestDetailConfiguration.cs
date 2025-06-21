@@ -56,10 +56,11 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasComment("Ngày xuất hóa đơn")
                 .HasColumnType("timestamp without time zone");
 
-            builder.Property(x => x.IsPaid)
+            builder.Property(x => x.PaymentStatus)
                 .IsRequired()
-                .HasComment("Đã thanh toán")
-                .HasColumnType("boolean");
+                .HasConversion<string>()
+                .HasColumnType("varchar(20)")
+                .HasComment("Trạng thái thanh toán");
 
             builder.Property(x => x.IsSuspended)
                 .IsRequired()
@@ -87,11 +88,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .WithMany(x => x.ServiceRequestDetails)
                 .HasForeignKey(x => x.RequestFormId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(x => x.Service)
-                .WithMany(x => x.ServiceRequestDetails)
-                .HasForeignKey(x => x.ServiceId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             // Indexes
             builder.HasIndex(x => x.RequestFormId)

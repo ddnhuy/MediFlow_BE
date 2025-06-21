@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
+using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 using VaccinationReception.Infrastructure.Data;
 using VaccinationReceptionService.FunctionalTests.Abstractions;
@@ -52,22 +53,22 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             }
 
             // Create Service if not exists
-            var service = await dbContext.Services.FirstOrDefaultAsync(s => s.Id == TestServiceId);
-            if (service == null)
-            {
-                service = new Service
-                {
-                    Id = TestServiceId,
-                    ServiceCode = "SVC001",
-                    ServiceName = "Test Service",
-                    UnitPrice = 100,
-                    CreatedAt = DateTime.Now,
-                    CreatedBy = 1,
-                    LastUpdatedAt = DateTime.Now,
-                    LastUpdatedBy = 1
-                };
-                await dbContext.Services.AddAsync(service);
-            }
+            //var service = await dbContext.Services.FirstOrDefaultAsync(s => s.Id == TestServiceId);
+            //if (service == null)
+            //{
+            //    service = new Service
+            //    {
+            //        Id = TestServiceId,
+            //        ServiceCode = "SVC001",
+            //        ServiceName = "Test Service",
+            //        UnitPrice = 100,
+            //        CreatedAt = DateTime.Now,
+            //        CreatedBy = 1,
+            //        LastUpdatedAt = DateTime.Now,
+            //        LastUpdatedBy = 1
+            //    };
+            //    await dbContext.Services.AddAsync(service);
+            //}
 
             // Create RequestForm with unpaid service if not exists
             var requestForm = await dbContext.RequestForms
@@ -92,7 +93,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     ServiceId = TestServiceId,
                     Quantity = 1,
                     UnitPrice = 100,
-                    IsPaid = false,
+                    PaymentStatus = PaymentStatusForItem.NotPaid,
                     CreatedAt = DateTime.Now,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.Now,
@@ -111,7 +112,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     ReceptionId = TestReceptionId,
                     VaccineId = TestVaccineId,
                     Quantity = 1,
-                    IsPaid = false,
+                    PaymentStatus = PaymentStatusForItem.NotPaid,
                     CreatedAt = DateTime.Now,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.Now,

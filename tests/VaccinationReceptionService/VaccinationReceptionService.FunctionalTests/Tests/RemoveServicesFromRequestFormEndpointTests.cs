@@ -50,22 +50,22 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             }
 
             // Create Service if not exists
-            var service = await dbContext.Services.FirstOrDefaultAsync(s => s.Id == TestServiceId);
-            if (service == null)
-            {
-                service = new Service
-                {
-                    Id = TestServiceId,
-                    ServiceCode = "SVC001",
-                    ServiceName = "Test Service",
-                    UnitPrice = 100,
-                    CreatedAt = DateTime.Now,
-                    CreatedBy = 1,
-                    LastUpdatedAt = DateTime.Now,
-                    LastUpdatedBy = 1
-                };
-                await dbContext.Services.AddAsync(service);
-            }
+            //var service = await dbContext.Services.FirstOrDefaultAsync(s => s.Id == TestServiceId);
+            //if (service == null)
+            //{
+            //    service = new Service
+            //    {
+            //        Id = TestServiceId,
+            //        ServiceCode = "SVC001",
+            //        ServiceName = "Test Service",
+            //        UnitPrice = 100,
+            //        CreatedAt = DateTime.Now,
+            //        CreatedBy = 1,
+            //        LastUpdatedAt = DateTime.Now,
+            //        LastUpdatedBy = 1
+            //    };
+            //    await dbContext.Services.AddAsync(service);
+            //}
 
             // Create RequestForm if not exists
             var requestForm = await dbContext.RequestForms

@@ -3,6 +3,8 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using VaccinationReception.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using VaccinationReception.Domain.IServiceClients;
+using VaccinationReception.Infrastructure.ServiceClients;
 
 namespace VaccinationReception.API
 {
@@ -18,6 +20,30 @@ namespace VaccinationReception.API
             .AddApiServices(builder.Configuration);
 
             builder.Services.AddFluentValidationAutoValidation();
+
+            var httpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+
+            void ConfigureHttpClient<TInterface, TImplementation>(string baseUrlKey)
+                where TInterface : class
+                where TImplementation : class, TInterface
+            {
+                builder.Services.AddHttpClient<TInterface, TImplementation>(client =>
+                {
+                    var baseUrl = builder.Configuration[baseUrlKey];
+                    if (string.IsNullOrWhiteSpace(baseUrl))
+                        throw new InvalidOperationException($"Missing base URL for {baseUrlKey}");
+
+                    client.BaseAddress = new Uri(baseUrl);
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
+                })
+                .ConfigurePrimaryHttpMessageHandler(() => httpHandler);
+            }
+
+            ConfigureHttpClient<IHospitalServiceClient, HospitalServiceClient>("HospitalService:BaseUrl");
+            ConfigureHttpClient<IInventoryServiceClient, InventoryServiceClient>("InventoryService:BaseUrl");
 
             builder.Services
                 .AddHealthChecks()

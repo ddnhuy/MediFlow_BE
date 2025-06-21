@@ -14,11 +14,6 @@ namespace VaccinationReception.Infrastructure.Data.Extensions
         public static void SeedData(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ServiceType>().HasData(ServiceTypeSeedData.GetSeedData());
-            modelBuilder.Entity<DiseaseGroup>().HasData(DiseaseGroupSeedData.GetSeedData());
-            modelBuilder.Entity<ServiceGroup>().HasData(ServiceGroupSeedData.GetSeedData());
-            modelBuilder.Entity<Service>().HasData(ServiceSeedData.GetSeedData());
-            modelBuilder.Entity<DiseaseGroupService>().HasData(DiseaseGroupServiceSeedData.GetSeedData());
-            modelBuilder.Entity<ServiceGroupService>().HasData(ServiceGroupServiceSeedData.GetSeedData());
         }
     } 
 }
