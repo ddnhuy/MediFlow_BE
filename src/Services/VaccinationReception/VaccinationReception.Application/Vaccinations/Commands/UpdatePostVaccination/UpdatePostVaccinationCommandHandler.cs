@@ -14,7 +14,7 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdatePostVacci
 
             if (vaccination == null)
             {
-                throw new BadRequestException($"Không tìm thấy mũi tiêm với ID {request.Id}");
+                throw new BadRequestException(BuildingBlocks.Strings.ExceptionKey.NOT_FOUND_VACCINATION_WITH_ID);
             }
 
             // Update post-vaccination properties

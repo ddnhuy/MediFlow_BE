@@ -17,6 +17,7 @@ namespace VaccinationReception.Domain.Models
         public DateTime ScheduledDate { get; set; }
         public DateTime InvoiceDate { get; set; }
         public DateTime AppointmentDate { get; set; }
+        public DateTime? VaccinationTestDate { get; set; }
         public PaymentStatusForItem PaymentStatus { get; set; }
         public bool IsConfirmed { get; set; }
         public string? Note { get; set; }

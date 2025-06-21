@@ -16,18 +16,14 @@ namespace VaccinationReception.Domain.Models
         public string? MedicineName { get; set; }
 
         public string? VaccinationConfirmation { get; set; }
+        public DateTime VaccinationDate { get; set; }
         public DateTime? ScheduleVaccinationDate { get; set; }
         public string? Note { get; set; }
 
         public int DoctorId { get; set; }
         public string? DoctorName { get; set; }
 
-        // Examination properties
-        public DateTime? ExaminationDate { get; set; }
-        public string? ExaminationResult { get; set; }
-
         // PostVaccination properties
-        public DateTime VaccinationDate { get; set; }
         public bool ObservationConfirmed { get; set; }
         public bool HasReaction { get; set; }
         public DateTime? ReactionDate { get; set; }

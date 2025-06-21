@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Messaging.Contracts.Inventory;
+using BuildingBlocks.Messaging.Contracts.Inventory.MedicineBatchInformation.NearestExpiryMedicineBatch;
 using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -8,15 +9,18 @@ namespace VaccinationReception.Infrastructure.Services.InventoryMessaging
 {
     public class InventoryService : IInventoryService
     {
-        private readonly IRequestClient<GetMedicineInformationRequest> _requestClient;
+        private readonly IRequestClient<GetMedicineInformationRequest> _medicineInformationRequestClient;
+        private readonly IRequestClient<GetNearestExpiryMedicineBatchRequest> _nearestExpiryMedicineBatchRequestClient;
         private readonly ILogger<InventoryService> _logger;
 
         public InventoryService(
-            IRequestClient<GetMedicineInformationRequest> requestClient,
-            ILogger<InventoryService> logger)
+            IRequestClient<GetMedicineInformationRequest> medicineInformationRequestClient,
+            ILogger<InventoryService> logger,
+            IRequestClient<GetNearestExpiryMedicineBatchRequest> nearestExpiryMedicineBatchRequestClient)
         {
-            _requestClient = requestClient;
+            _medicineInformationRequestClient = medicineInformationRequestClient;
             _logger = logger;
+            _nearestExpiryMedicineBatchRequestClient = nearestExpiryMedicineBatchRequestClient;
         }
 
         public async Task<List<GetMedicineInformationResponse>> GetMedicineInformationAsync(IEnumerable<int> medicineIdList, CancellationToken cancellationToken = default)
@@ -35,7 +39,7 @@ namespace VaccinationReception.Infrastructure.Services.InventoryMessaging
                     _logger.LogInformation("Requesting medicine information for MedicineId: {MedicineId}, RequestId: {RequestId}",
                         medicineId, request.RequestId);
 
-                    var response = await _requestClient.GetResponse<GetMedicineInformationResponse>(request, cancellationToken);
+                    var response = await _medicineInformationRequestClient.GetResponse<GetMedicineInformationResponse>(request, cancellationToken);
 
                     if (response.Message.IsSuccess)
                     {
@@ -56,6 +60,40 @@ namespace VaccinationReception.Infrastructure.Services.InventoryMessaging
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error requesting medicine information for multiple medicines");
+                throw;
+            }
+        }
+
+        public async Task<GetNearestExpiryMedicineBatchResponse> GetNearestExpiryMedicineBatchAsync(int medicineId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var request = new GetNearestExpiryMedicineBatchRequest
+                {
+                    MedicineId = medicineId
+                };
+
+                _logger.LogInformation("Requesting nearest expiry medicine batch for MedicineId: {MedicineId}, RequestId: {RequestId}",
+                    medicineId, request.RequestId);
+
+                var response = await _nearestExpiryMedicineBatchRequestClient.GetResponse<GetNearestExpiryMedicineBatchResponse>(request, cancellationToken);
+
+                if (response.Message.IsSuccess)
+                {
+                    _logger.LogInformation("Successfully received nearest expiry medicine batch for MedicineId: {MedicineId}, RequestId: {RequestId}",
+                        medicineId, request.RequestId);
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to get nearest expiry medicine batch for MedicineId: {MedicineId}, Error: {Error}, RequestId: {RequestId}",
+                        medicineId, response.Message.ErrorMessage, request.RequestId);
+                }
+
+                return response.Message;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error requesting nearest expiry medicine batch for MedicineId: {MedicineId}", medicineId);
                 throw;
             }
         }
