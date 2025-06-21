@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [Authentication, Inventory, Management, VaccinationReception, FileStorage, Appointment]
+        service: [Authentication, Inventory, Management, VaccinationReception, FileStorage, Appointment, HospitalService]
     steps:
       - uses: actions/checkout@v4
 

@@ -513,6 +513,10 @@
             ["appointments"] = new()
             {
                 new Policy { ResourceType = "appointments", Actions = ["read", "write"] }
+            },
+            ["hospital-service"] = new()
+            {
+                new Policy { ResourceType = "hospital-service", Actions = ["read", "write"] }
             }
         };
 
@@ -553,6 +557,18 @@
                 (Roles.IT_SUPPORT, DepartmentTypes.ADMIN)
             },
             ["appointments"] = new()
+            {
+                (Roles.ADMIN, DepartmentTypes.ADMIN),
+                (Roles.RECEPTIONIST, DepartmentTypes.VACCINE_RECEPTION),
+                (Roles.DOCTOR, DepartmentTypes.CLINIC),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE),
+                (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.NURSE, DepartmentTypes.CLINIC),
+                (Roles.NURSE, DepartmentTypes.VACCINE),
+                (Roles.NURSE, DepartmentTypes.LAB),
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
+            },
+            ["hospital-service"] = new()
             {
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
                 (Roles.RECEPTIONIST, DepartmentTypes.VACCINE_RECEPTION),
