@@ -3,14 +3,9 @@ using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using VaccinationReception.Application.Data;
 using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
 
 namespace VaccinationReception.Application.HospitalFees.Commands
 {
@@ -27,10 +22,10 @@ namespace VaccinationReception.Application.HospitalFees.Commands
     public record AdjustPaymentResult(int AdjustmentPaymentId);
     public class AdjustPaymentCommandHandler : ICommandHandler<AdjustPaymentCommand, AdjustPaymentResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly ILogger<AdjustPaymentCommandHandler> _logger;
 
-        public AdjustPaymentCommandHandler(ApplicationDbContext context, ILogger<AdjustPaymentCommandHandler> logger)
+        public AdjustPaymentCommandHandler(IApplicationDbContext context, ILogger<AdjustPaymentCommandHandler> logger)
         {
             _context = context;
             _logger = logger;

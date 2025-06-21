@@ -1,0 +1,30 @@
+﻿using BuildingBlocks.CQRS;
+
+namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHistoryByPatientId
+{
+    public record GetVaccinationHistoryByPatientIdQuery(int PatientId) : IQuery<GetVaccinationHistoryByPatientIdResult>;
+
+    public record VaccinationHistoryItem(
+        int Id,
+        string MedicineTypeName,
+        string MedicineName,
+        string Concentration,
+        DateTime? VaccinationTestDate,
+        DateTime VaccinationDate,
+        string VaccinationStatus,
+        string DoctorName
+    );
+
+    public record GetVaccinationHistoryByPatientIdResult(
+        string PatientCode,
+        string PatientVaccinationCode,
+        string PatientName,
+        string Gender,
+        string PhoneNumber,
+        string AddressDetail,
+        string Ward,
+        string District,
+        string Province,
+        List<VaccinationHistoryItem> VaccinationHistoryItems
+    );
+}

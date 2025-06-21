@@ -9,19 +9,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VaccinationReception.Application.Data;
 using VaccinationReception.Application.Patients.Commands.UpdatePatient;
 using VaccinationReception.Application.Services.PatientServices;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
     public class CreateScreeningEvaluationReportHandler : IRequestHandler<CreateScreeningEvaluationReportCommand, CreateScreeningEvaluationReportResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly ILogger<CreateScreeningEvaluationReportHandler> _logger;
 
-        public CreateScreeningEvaluationReportHandler(ApplicationDbContext context, ILogger<CreateScreeningEvaluationReportHandler> logger)
+        public CreateScreeningEvaluationReportHandler(IApplicationDbContext context, ILogger<CreateScreeningEvaluationReportHandler> logger)
         {
             _context = context;
             _logger = logger;

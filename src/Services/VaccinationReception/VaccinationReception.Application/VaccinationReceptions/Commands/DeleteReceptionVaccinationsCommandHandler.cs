@@ -6,17 +6,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VaccinationReception.Infrastructure.Data;
+using VaccinationReception.Application.Data;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
     public class DeleteReceptionVaccinationsCommandHandler : ICommandHandler<DeleteReceptionVaccinationsCommand, DeleteReceptionVaccinationsResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly ILogger<DeleteReceptionVaccinationsCommandHandler> _logger;
 
         public DeleteReceptionVaccinationsCommandHandler(
-            ApplicationDbContext context,
+            IApplicationDbContext context,
             ILogger<DeleteReceptionVaccinationsCommandHandler> logger)
         {
             _context = context;

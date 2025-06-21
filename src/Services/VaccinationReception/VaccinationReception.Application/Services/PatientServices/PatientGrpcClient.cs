@@ -5,11 +5,18 @@ using CustomerInfo.Grpc.Protos;
 using Grpc.Core;
 using Mapster;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using VaccinationReception.Application.Abstractions.CurrentUser;
 using VaccinationReception.Application.DTOs.PatientDTOs;
 using VaccinationReception.Application.Patients.Commands.CreatePatient;
 using VaccinationReception.Application.Patients.Commands.DeletePatient;
 using VaccinationReception.Application.Patients.Commands.UpdatePatient;
-using VaccinationReception.Infrastructure.Helpers;
 using static VaccinationReception.Application.Const.LogMessages;
 
 namespace VaccinationReception.Application.Services.PatientServices

@@ -11,21 +11,21 @@ using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.Helpers;
 using VaccinationReception.Domain.IServiceClients;
+using VaccinationReception.Application.Data;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
     public class CreateReceptionVaccinationCommandHandler : ICommandHandler<CreateReceptionVaccinationCommand, CreateReceptionVaccinationResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly ILogger<CreateReceptionVaccinationCommandHandler> _logger;
         private readonly IInventoryServiceClient _inventoryServiceClient;
 
         public CreateReceptionVaccinationCommandHandler(
-            ApplicationDbContext context,
             ILogger<CreateReceptionVaccinationCommandHandler> logger,
-            IInventoryServiceClient inventoryServiceClient)
+            IInventoryServiceClient inventoryServiceClient,
+            IApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
