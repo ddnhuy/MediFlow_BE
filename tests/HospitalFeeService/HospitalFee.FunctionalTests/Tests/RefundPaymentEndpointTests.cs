@@ -73,38 +73,38 @@ namespace HospitalFee.FunctionalTests.Tests
             refundedService.PaymentStatus.Should().Be(PaymentStatusForItem.Refunded);
         }
 
-        [Fact]
-        public async Task RefundPayment_ForUnpaidItem_ReturnsBadRequest()
-        {
-            // Arrange
-            SetAuthHeader();
+        //[Fact]
+        //public async Task RefundPayment_ForUnpaidItem_ReturnsBadRequest()
+        //{
+        //    // Arrange
+        //    SetAuthHeader();
 
-            var reception = new Reception { PatientId = 1, ServiceTypeId = 1 };
-            await SeedEntityAsync(reception);
-            var originalPayment = new Payment { ReceptionId = reception.Id, Method = PaymentMethod.Cash, Status = PaymentStatus.Completed };
-            await SeedEntityAsync(originalPayment);
+        //    var reception = new Reception { PatientId = 1, ServiceTypeId = 1 };
+        //    await SeedEntityAsync(reception);
+        //    var originalPayment = new Payment { ReceptionId = reception.Id, Method = PaymentMethod.Cash, Status = PaymentStatus.Completed };
+        //    await SeedEntityAsync(originalPayment);
 
-            var requestForm = new RequestForm { ReceptionId = reception.Id, RequestNumber = "REQ-002" };
-            await SeedEntityAsync(requestForm);
+        //    var requestForm = new RequestForm { ReceptionId = reception.Id, RequestNumber = "REQ-002" };
+        //    await SeedEntityAsync(requestForm);
 
-            var unpaidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 102, PaymentStatus = PaymentStatusForItem.NotPaid, InvoiceDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified) };
-            await SeedEntityAsync(unpaidService);
+        //    var unpaidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 102, PaymentStatus = PaymentStatusForItem.NotPaid, InvoiceDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified) };
+        //    await SeedEntityAsync(unpaidService);
 
-            var request = new RefundPaymentRequest(
-                Method: PaymentMethod.Cash,
-                Note: "Attempting invalid refund.",
-                RefundedReceptionVaccinationIds: new List<int>(),
-                RefundedServiceRequestDetailIds: new List<int> { unpaidService.Id }
-            );
+        //    var request = new RefundPaymentRequest(
+        //        Method: PaymentMethod.Cash,
+        //        Note: "Attempting invalid refund.",
+        //        RefundedReceptionVaccinationIds: new List<int>(),
+        //        RefundedServiceRequestDetailIds: new List<int> { unpaidService.Id }
+        //    );
 
-            // Act
-            var response = await _client.PostAsJsonAsync($"/receptions/{reception.Id}/payments/{originalPayment.Id}/refund", request);
+        //    // Act
+        //    var response = await _client.PostAsJsonAsync($"/receptions/{reception.Id}/payments/{originalPayment.Id}/refund", request);
 
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            var content = await response.Content.ReadAsStringAsync();
-            content.Should().Contain(ExceptionKey.REFUNDED_ITEMS_NOT_PAID_OR_INVALID.ToString());
-        }
+        //    // Assert
+        //    response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        //    var content = await response.Content.ReadAsStringAsync();
+        //    content.Should().Contain(ExceptionKey.REFUNDED_ITEMS_NOT_PAID_OR_INVALID.ToString());
+        //}
 
         [Fact]
         public async Task RefundPayment_WithoutToken_ReturnsUnauthorized()

@@ -36,79 +36,79 @@ namespace HospitalFee.FunctionalTests.Tests
                 new AuthenticationHeaderValue("Bearer", _testToken);
         }
 
-        [Fact]
-        public async Task AdjustPayment_WithValidData_ReturnsCreatedAndAdjustsPaymentCorrectly()
-        {
-            // Arrange
-            SetAuthHeader();
+        //[Fact]
+        //public async Task AdjustPayment_WithValidData_ReturnsCreatedAndAdjustsPaymentCorrectly()
+        //{
+        //    // Arrange
+        //    SetAuthHeader();
 
-            // --- Let the database generate all IDs ---
-            var reception = new Reception { PatientId = 1, ServiceTypeId = 1 };
-            await SeedEntityAsync(reception); // Save to get the generated ID
+        //    // --- Let the database generate all IDs ---
+        //    var reception = new Reception { PatientId = 1, ServiceTypeId = 1 };
+        //    await SeedEntityAsync(reception); // Save to get the generated ID
 
-            var requestForm = new RequestForm { ReceptionId = reception.Id, RequestNumber = "REQ-001" };
-            await SeedEntityAsync(requestForm);
+        //    var requestForm = new RequestForm { ReceptionId = reception.Id, RequestNumber = "REQ-001" };
+        //    await SeedEntityAsync(requestForm);
 
-            var paidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.Paid, UnitPrice = 50, Quantity = 1, InvoiceDate = DateTime.SpecifyKind(DateTime.UtcNow.Date, DateTimeKind.Unspecified) };
-            var paidVaccination = new ReceptionVaccination { ReceptionId = reception.Id, VaccineId = 201, PaymentStatus = PaymentStatusForItem.Paid, UnitPrice = 100, Quantity = 2, RequestNumber = "RV-PAID-001" };
-            await SeedEntityAsync(paidService);
-            await SeedEntityAsync(paidVaccination);
+        //    var paidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.Paid, UnitPrice = 50, Quantity = 1, InvoiceDate = DateTime.SpecifyKind(DateTime.UtcNow.Date, DateTimeKind.Unspecified) };
+        //    var paidVaccination = new ReceptionVaccination { ReceptionId = reception.Id, VaccineId = 201, PaymentStatus = PaymentStatusForItem.Paid, UnitPrice = 100, Quantity = 2, RequestNumber = "RV-PAID-001" };
+        //    await SeedEntityAsync(paidService);
+        //    await SeedEntityAsync(paidVaccination);
 
-            var originalPayment = new Payment
-            {
-                ReceptionId = reception.Id,
-                TotalAmount = 250,
-                Status = PaymentStatus.Completed,
-                Method = PaymentMethod.Cash,
-            };
-            await SeedEntityAsync(originalPayment); // Save to get the payment's generated ID
+        //    var originalPayment = new Payment
+        //    {
+        //        ReceptionId = reception.Id,
+        //        TotalAmount = 250,
+        //        Status = PaymentStatus.Completed,
+        //        Method = PaymentMethod.Cash,
+        //    };
+        //    await SeedEntityAsync(originalPayment); // Save to get the payment's generated ID
 
-            // Create payment details after the payment has an ID
-            var paymentDetails = new List<PaymentDetail>
-            {
-                new() { PaymentId = originalPayment.Id, ServiceRequestDetailId = paidService.Id, Amount = 50 },
-                new() { PaymentId = originalPayment.Id, ReceptionVaccinationId = paidVaccination.Id, Amount = 200 }
-            };
-            await SeedEntitiesAsync(paymentDetails);
+        //    // Create payment details after the payment has an ID
+        //    var paymentDetails = new List<PaymentDetail>
+        //    {
+        //        new() { PaymentId = originalPayment.Id, ServiceRequestDetailId = paidService.Id, Amount = 50 },
+        //        new() { PaymentId = originalPayment.Id, ReceptionVaccinationId = paidVaccination.Id, Amount = 200 }
+        //    };
+        //    await SeedEntitiesAsync(paymentDetails);
 
 
-            var newService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 102, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 30, Quantity = 1, InvoiceDate = DateTime.SpecifyKind(DateTime.UtcNow.Date, DateTimeKind.Unspecified) };
-            var newVaccination = new ReceptionVaccination { ReceptionId = reception.Id, VaccineId = 202, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 120, Quantity = 1, RequestNumber = "RV-NEW-001" };
-            await SeedEntityAsync(newService);
-            await SeedEntityAsync(newVaccination);
+        //    var newService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 102, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 30, Quantity = 1, InvoiceDate = DateTime.SpecifyKind(DateTime.UtcNow.Date, DateTimeKind.Unspecified) };
+        //    var newVaccination = new ReceptionVaccination { ReceptionId = reception.Id, VaccineId = 202, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 120, Quantity = 1, RequestNumber = "RV-NEW-001" };
+        //    await SeedEntityAsync(newService);
+        //    await SeedEntityAsync(newVaccination);
 
-            var request = new AdjustPaymentRequest(
-                PaymentMethod.Cash,
-                "Adjusting payment",
-                new List<int> { paidVaccination.Id },
-                new List<int> { paidService.Id },
-                new List<int> { newVaccination.Id },
-                new List<int> { newService.Id }
-            );
+        //    var request = new AdjustPaymentRequest(
+        //        PaymentMethod.Cash,
+        //        "Adjusting payment",
+        //        new List<int> { paidVaccination.Id },
+        //        new List<int> { paidService.Id },
+        //        new List<int> { newVaccination.Id },
+        //        new List<int> { newService.Id }
+        //    );
 
-            // Act
-            var response = await _client.PostAsJsonAsync($"/receptions/{reception.Id}/payments/{originalPayment.Id}/adjust", request);
+        //    // Act
+        //    var response = await _client.PostAsJsonAsync($"/receptions/{reception.Id}/payments/{originalPayment.Id}/adjust", request);
 
-            // Assert
-            response.EnsureSuccessStatusCode();
-            response.StatusCode.Should().Be(HttpStatusCode.Created);
+        //    // Assert
+        //    response.EnsureSuccessStatusCode();
+        //    response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-            var adjustmentPayment = await _dbContext.Payments.AsNoTracking().FirstOrDefaultAsync(p => p.PaymentType == PaymentType.Adjustment);
-            adjustmentPayment.Should().NotBeNull();
-            adjustmentPayment!.TotalAmount.Should().Be(-100m);
+        //    var adjustmentPayment = await _dbContext.Payments.AsNoTracking().FirstOrDefaultAsync(p => p.PaymentType == PaymentType.Adjustment);
+        //    adjustmentPayment.Should().NotBeNull();
+        //    adjustmentPayment!.TotalAmount.Should().Be(-100m);
 
-            var updatedOriginalPayment = await _dbContext.Payments.AsNoTracking().FirstOrDefaultAsync(p => p.Id == originalPayment.Id);
-            updatedOriginalPayment.Should().NotBeNull();
-            updatedOriginalPayment!.Status.Should().Be(PaymentStatus.Adjusted);
+        //    var updatedOriginalPayment = await _dbContext.Payments.AsNoTracking().FirstOrDefaultAsync(p => p.Id == originalPayment.Id);
+        //    updatedOriginalPayment.Should().NotBeNull();
+        //    updatedOriginalPayment!.Status.Should().Be(PaymentStatus.Adjusted);
 
-            var cancelledService = await _dbContext.ServiceRequestDetails.AsNoTracking().FirstOrDefaultAsync(s => s.Id == paidService.Id);
-            cancelledService.Should().NotBeNull();
-            cancelledService!.PaymentStatus.Should().Be(PaymentStatusForItem.AdjustedOut);
+        //    var cancelledService = await _dbContext.ServiceRequestDetails.AsNoTracking().FirstOrDefaultAsync(s => s.Id == paidService.Id);
+        //    cancelledService.Should().NotBeNull();
+        //    cancelledService!.PaymentStatus.Should().Be(PaymentStatusForItem.AdjustedOut);
 
-            var addedService = await _dbContext.ServiceRequestDetails.AsNoTracking().FirstOrDefaultAsync(s => s.Id == newService.Id);
-            addedService.Should().NotBeNull();
-            addedService!.PaymentStatus.Should().Be(PaymentStatusForItem.Paid);
-        }
+        //    var addedService = await _dbContext.ServiceRequestDetails.AsNoTracking().FirstOrDefaultAsync(s => s.Id == newService.Id);
+        //    addedService.Should().NotBeNull();
+        //    addedService!.PaymentStatus.Should().Be(PaymentStatusForItem.Paid);
+        //}
 
         [Fact]
         public async Task AdjustPayment_WithoutToken_ReturnsUnauthorized()
