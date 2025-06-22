@@ -44,6 +44,12 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
                 .Matches(@"^[0-9]{10,11}$")
                 .WithMessage(ExceptionKey.INVALID_PATIENT_PHONE_FORMAT.ToString());
 
+            RuleFor(x => x.createPatientCommand.Email)
+                .NotEmpty()
+                .WithMessage(ExceptionKey.REQUIRED_PATIENT_EMAIL.ToString())
+                .EmailAddress()
+                .WithMessage(ExceptionKey.INVALID_PATIENT_EMAIL.ToString());
+
             RuleFor(x => x.createPatientCommand.IdentityCard)
                 .NotEmpty()
                 .WithMessage(ExceptionKey.REQUIRED_PATIENT_IDENTITY_CARD.ToString())

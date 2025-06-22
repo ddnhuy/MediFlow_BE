@@ -1,15 +1,6 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Reflection.PortableExecutable;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
+﻿using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
-using VaccinationReceptionService.FunctionalTests.Abstractions;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {

@@ -2,11 +2,6 @@
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VaccinationReception.Application.Patients.Commands.CreatePatient;
 using VaccinationReception.Application.Patients.Commands.UpdatePatient;
 using VaccinationReception.Application.Services.PatientServices;

@@ -1,30 +1,28 @@
-﻿using FluentValidation;
-
-namespace Appointment.API.Appointments.Commands
+﻿namespace Appointment.API.Appointments.Commands
 {
     public record CreateAppointmentResult(bool IsSuccess, string Message);
-    public record CreateAppointmentCommand(int PatientId, int DepartmentId, DateTime AppointmentDate, AppointmentType AppointmentType, string PatientEmail, string? PatientPhoneNumber, string? Note) : ICommand<CreateAppointmentResult>;
+    public record CreateAppointmentCommand(int UserId, int PatientId, DateTime AppointmentDate, AppointmentType AppointmentType, string PatientCode, string PatientFullName, DateTime PatientDOB, string PatientEmail, string? PatientPhoneNumber, string? VaccineName, string? Note) : ICommand<CreateAppointmentResult>;
 
     public class CreateAppointmentCommandValidator : AbstractValidator<CreateAppointmentCommand>
     {
         public CreateAppointmentCommandValidator()
         {
             RuleFor(x => x.PatientId).GreaterThan(0).WithMessage(ExceptionKey.INVALID_PATIENT_ID.ToString());
-            RuleFor(x => x.DepartmentId).GreaterThan(0).WithMessage(ExceptionKey.REQUIRED_DEPARTMENT_ID.ToString());
             RuleFor(x => x.AppointmentDate).GreaterThan(DateTime.UtcNow).WithMessage(ExceptionKey.INVALID_APPOINTMENT_DATE.ToString());
             RuleFor(x => x.AppointmentType).IsInEnum().WithMessage(ExceptionKey.INVALID_APPOINTMENT_TYPE.ToString());
+            RuleFor(x => x.PatientCode).NotEmpty().WithMessage(ExceptionKey.REQUIRED_PATIENT_CODE.ToString());
+            RuleFor(x => x.PatientFullName).NotEmpty().WithMessage(ExceptionKey.REQUIRED_PATIENT_NAME.ToString());
+            RuleFor(x => x.PatientDOB).LessThan(DateTime.UtcNow).WithMessage(ExceptionKey.INVALID_PATIENT_DOB.ToString());
             RuleFor(x => x.PatientEmail).NotEmpty().EmailAddress().WithMessage(ExceptionKey.INVALID_PATIENT_EMAIL.ToString());
-            RuleFor(x => x.PatientPhoneNumber).Matches(@"^\+?[1-9]\d{1,14}$").When(x => !string.IsNullOrEmpty(x.PatientPhoneNumber)).WithMessage(ExceptionKey.INVALID_PATIENT_PHONE_NUMBER.ToString());
+            RuleFor(x => x.PatientPhoneNumber).Matches(@"^\+?[0-9]*$").When(x => !string.IsNullOrEmpty(x.PatientPhoneNumber)).WithMessage(ExceptionKey.INVALID_PATIENT_PHONE_NUMBER.ToString());
         }
     }
 
     internal class CreateAppointmentCommandHandler : ICommandHandler<CreateAppointmentCommand, CreateAppointmentResult>
     {
-        private readonly ICurrentUserHelper _currentUserHelper;
         private readonly IAppointmentRepository _appointmentRepository;
-        public CreateAppointmentCommandHandler(ICurrentUserHelper currentUserHelper, IAppointmentRepository appointmentRepository)
+        public CreateAppointmentCommandHandler(IAppointmentRepository appointmentRepository)
         {
-            _currentUserHelper = currentUserHelper;
             _appointmentRepository = appointmentRepository;
         }
 
@@ -33,16 +31,19 @@ namespace Appointment.API.Appointments.Commands
             var appointment = new Models.Appointment
             {
                 PatientId = command.PatientId,
-                DepartmentId = command.DepartmentId,
                 AppointmentDate = command.AppointmentDate,
                 AppointmentType = command.AppointmentType,
+                PatientCode = command.PatientCode,
+                PatientFullName = command.PatientFullName,
+                PatientDOB = command.PatientDOB,
                 PatientEmail = command.PatientEmail,
                 PatientPhoneNumber = command.PatientPhoneNumber,
+                VaccineName = command.VaccineName,
                 Note = command.Note,
                 CreatedAt = DateTime.UtcNow,
-                CreatedBy = _currentUserHelper.GetUserId(),
+                CreatedBy = command.UserId,
                 LastUpdatedAt = DateTime.UtcNow,
-                LastUpdatedBy = _currentUserHelper.GetUserId()
+                LastUpdatedBy = command.UserId
             };
 
             await _appointmentRepository.AddAsync(appointment);

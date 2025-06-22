@@ -50,15 +50,10 @@ namespace Appointment.API.Appointments.Queries
             {
                 Id = appointment.PatientId
             });
-            var getDepartment = _departmentServiceClient.GetDepartmentAsync(new GetDepartmentRequest
-            {
-                Id = appointment.DepartmentId
-            });
 
             var createdBy = await getCreatedBy;
             var lastUpdatedBy = await getLastUpdatedBy;
             var patient = await getPatient;
-            var department = await getDepartment;
 
             return new GetAppointmentByIdResult(new AppointmentDetailDto
             {
@@ -90,12 +85,6 @@ namespace Appointment.API.Appointments.Queries
                     DOB = patient.Dob.ToDateTime(),
                     Email = patient.Email,
                     PhoneNumber = patient.PhoneNumber
-                },
-                Department = new DepartmentDto
-                {
-                    Id = department.Id,
-                    Name = department.Name,
-                    NameInEnglish = department.NameInEnglish
                 }
             });
         }

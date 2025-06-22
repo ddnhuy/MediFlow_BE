@@ -23,10 +23,6 @@ namespace VaccinationReception.API
                 .AddHealthChecks()
                 .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
 
-            builder.Services.AddMediatR(cfg => {
-                cfg.RegisterServicesFromAssembly(typeof(CreatePatientCommand).Assembly);
-            });
-
             TypeAdapterConfig.GlobalSettings.Scan(AppDomain.CurrentDomain.GetAssemblies());
             TypeAdapterConfig.GlobalSettings.Default
                 .UseDestinationValue(member => member.SetterModifier == AccessModifier.None &&

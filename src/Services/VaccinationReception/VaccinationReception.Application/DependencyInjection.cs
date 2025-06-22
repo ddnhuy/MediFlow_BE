@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Behaviors;
+using BuildingBlocks.Messaging.MassTransit;
 using CustomerInfo.Grpc.Protos;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -42,6 +43,9 @@ namespace VaccinationReception.Application
             services.TryAddScoped<IPatientGrpcClient, PatientGrpcClient>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            // Message Broker
+            services.AddMessageBroker(configuration);
 
             return services;
         }

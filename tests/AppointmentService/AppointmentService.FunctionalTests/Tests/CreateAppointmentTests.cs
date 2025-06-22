@@ -23,7 +23,7 @@ namespace AppointmentService.FunctionalTests.Tests
         {
             // Arrange
             SetAuthHeader();
-            var request = new CreateAppointmentRequest(1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "patient@example.com", "84123456789", null);
+            var request = new CreateAppointmentRequest(1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "PATIENT1", "Patient 1", DateTime.UtcNow.AddDays(-1), "patient@example.com", "84123456789", null, null);
 
             // Act
             var response = await _client.PostAsJsonAsync("/", request);
@@ -37,7 +37,7 @@ namespace AppointmentService.FunctionalTests.Tests
         {
             // Arrange
             SetAuthHeader();
-            var request = new CreateAppointmentRequest(0, 0, DateTime.UtcNow.AddDays(-1), AppointmentType.Vaccination, "invalid-email", "84123456789", null);
+            var request = new CreateAppointmentRequest(0, DateTime.UtcNow.AddDays(-1), AppointmentType.Vaccination, "PATIENT1", "Patient 1", DateTime.UtcNow.AddDays(-1), "invalid-email", "84123456789", null, null);
 
             // Act
             var response = await _client.PostAsJsonAsync("/", request);
@@ -50,7 +50,7 @@ namespace AppointmentService.FunctionalTests.Tests
         public async Task CreateAppointment_ShouldReturnUnauthorized_WhenNoAuthHeader()
         {
             // Arrange
-            var request = new CreateAppointmentRequest(1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "patient@example.com", "84123456789", null);
+            var request = new CreateAppointmentRequest(1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "PATIENT1", "Patient 1", DateTime.UtcNow.AddDays(-1), "patient@example.com", "84123456789", null, null);
 
             // Act
             var response = await _client.PostAsJsonAsync("/", request);
