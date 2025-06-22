@@ -59,6 +59,8 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.Method)
                 .IsRequired()
+                .HasConversion<string>()
+                .HasColumnType("varchar(20)")
                 .HasComment("Phương thức thanh toán");
 
             builder.Property(x => x.Note)
@@ -102,6 +104,8 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.HasIndex(x => x.ReceptionId)
                 .HasDatabaseName("IX_Payments_ReceptionId");
+
+            builder.HasQueryFilter(x => !x.IsCancelled);
 
             builder.ToTable(t => t.HasComment("Bảng thanh toán"));
         }

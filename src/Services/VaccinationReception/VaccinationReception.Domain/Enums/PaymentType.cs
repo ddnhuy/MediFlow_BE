@@ -8,9 +8,9 @@ namespace VaccinationReception.Domain.Enums
 {
     public enum PaymentType
     {
-        Receipt = 0,     // Phiếu thu
-        Refund = 1,      // Hoàn tiền
-        Adjustment = 2   // Điều chỉnh
+        Receipt = 0,
+        Refund = 1,
+        Adjustment = 2
     }
 
 }

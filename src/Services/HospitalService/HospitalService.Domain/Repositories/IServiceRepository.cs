@@ -20,5 +20,6 @@ namespace HospitalService.Domain.Repositories
         Task<int> GetTotalCountAsync(string searchTerm, CancellationToken cancellationToken);
         Task<IEnumerable<Service>> GetServicesByGroupIdAsync(int groupId, string groupType, CancellationToken cancellationToken);
         Task<IEnumerable<Service>> GetByIdsAsync(List<int> serviceIds, CancellationToken cancellationToken);
+        Task<List<Service>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default);
     }
 }

@@ -81,6 +81,9 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
             builder.HasIndex(x => x.PaymentId)
                 .HasDatabaseName("IX_PaymentDetails_PaymentId");
 
+            // Global Query Filter
+            builder.HasQueryFilter(x => !x.IsCancelled);
+
             builder.ToTable(t => t.HasComment("Chi tiết thanh toán"));
         }
     }

@@ -134,5 +134,15 @@ namespace HospitalService.Infrastructure.Repositories
                 .Include(s => s.DiseaseGroupServices)
                 .ToListAsync(cancellationToken);
         }
+        public async Task<List<Service>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Services
+                .Where(s => !s.IsCancelled)
+                .Include(s => s.ServiceGroupServices)
+                    .ThenInclude(sgs => sgs.ServiceGroup)
+                .Include(s => s.DiseaseGroupServices)
+                    .ThenInclude(dgs => dgs.DiseaseGroup)
+                .ToListAsync(cancellationToken);
+        }
     }
 }

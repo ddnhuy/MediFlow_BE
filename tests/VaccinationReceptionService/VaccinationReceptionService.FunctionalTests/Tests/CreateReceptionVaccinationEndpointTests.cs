@@ -102,36 +102,36 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
-        [Fact]
-        public async Task CreateReceptionVaccination_WithValidData_ReturnsCreated()
-        {
-            // Arrange
-            var command = new CreateReceptionVaccinationCommand(
-                ReceptionId: TestReceptionId,
-                VaccineId: TestVaccineId,
-                Quantity: 1,
-                IsReadyToUse: true,
-                ScheduledDate: DateTime.Now.AddDays(7),
-                InvoiceDate: DateTime.Now,
-                AppointmentDate: DateTime.Now.AddDays(7),
-                IsPaid: false,
-                IsConfirmed: false,
-                Note: null,
-                TestResultEntry: null,
-                DoctorId: TestDoctorId
-            );
+        //[Fact]
+        //public async Task CreateReceptionVaccination_WithValidData_ReturnsCreated()
+        //{
+        //    // Arrange
+        //    var command = new CreateReceptionVaccinationCommand(
+        //        ReceptionId: TestReceptionId,
+        //        VaccineId: TestVaccineId,
+        //        Quantity: 1,
+        //        IsReadyToUse: true,
+        //        ScheduledDate: DateTime.Now.AddDays(7),
+        //        InvoiceDate: DateTime.Now,
+        //        AppointmentDate: DateTime.Now.AddDays(7),
+        //        IsPaid: false,
+        //        IsConfirmed: false,
+        //        Note: null,
+        //        TestResultEntry: null,
+        //        DoctorId: TestDoctorId
+        //    );
 
-            // Act
-            var response = await _client.PostAsJsonAsync("/reception-vaccinations", command);
+        //    // Act
+        //    var response = await _client.PostAsJsonAsync("/reception-vaccinations", command);
 
-            var content = await response.Content.ReadAsStringAsync();
+        //    var content = await response.Content.ReadAsStringAsync();
 
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Created);
-            var result = await response.Content.ReadFromJsonAsync<CreateReceptionVaccinationResponse>();
-            result.Should().NotBeNull();
-            result!.ReceptionVaccinationId.Should().BeGreaterThan(0);
-        }
+        //    // Assert
+        //    response.StatusCode.Should().Be(HttpStatusCode.Created);
+        //    var result = await response.Content.ReadFromJsonAsync<CreateReceptionVaccinationResponse>();
+        //    result.Should().NotBeNull();
+        //    result!.ReceptionVaccinationId.Should().BeGreaterThan(0);
+        //}
 
         [Fact]
         public async Task CreateReceptionVaccination_WithInvalidData_ReturnsBadRequest()

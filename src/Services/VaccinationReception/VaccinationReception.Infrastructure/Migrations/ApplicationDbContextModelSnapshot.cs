@@ -69,7 +69,7 @@ namespace VaccinationReception.Infrastructure.Migrations
 
                     b.Property<string>("Method")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("varchar(20)")
                         .HasComment("Phương thức thanh toán");
 
                     b.Property<string>("Note")

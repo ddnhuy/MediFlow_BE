@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using Carter;
 using HospitalService.Application.DTOs;
 using HospitalService.Application.Services.HospitalServices.Queries;
@@ -20,12 +21,12 @@ namespace HospitalService.API.Endpoints
             {
                 if (serviceIds == null || !serviceIds.Any())
                 {
-                    //throw new BadRequestException(HospitalServiceExceptionStrings.INVALID_SERVICE_IDS);
+                    throw new BadRequestException(ExceptionKey.INVALID_SERVICE_IDS);
                 }
 
                 if (serviceIds.Any(id => id <= 0))
                 {
-                   // throw new BadRequestException(HospitalServiceExceptionStrings.INVALID_SERVICE_ID);
+                     throw new BadRequestException(ExceptionKey.INVALID_SERVICE_ID);
                 }
 
                 var query = new GetServicesByIdsQuery(serviceIds);

@@ -8,8 +8,8 @@ namespace VaccinationReception.Domain.Enums
 {
     public enum PaymentStatus
     {
-        Completed = 0,   // Đã hoàn tất
-        Cancelled = 1,   // Đã hủy
-        Adjusted = 2     // Đã được điều chỉnh
+        Completed = 0,
+        Cancelled = 1,
+        Adjusted = 2
     }
 }

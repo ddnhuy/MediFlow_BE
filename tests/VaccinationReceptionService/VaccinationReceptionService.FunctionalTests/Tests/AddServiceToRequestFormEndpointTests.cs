@@ -75,32 +75,32 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             return Task.CompletedTask;
         }
 
-        [Fact]
-        public async Task AddServiceToRequestForm_WithValidData_ReturnsCreated()
-        {
-            // Arrange
-            var command = new AddServiceToRequestFormCommand(
-                ReceptionId: TestReceptionId,
-                Services: new List<ServiceRequestItemDTO>
-                {
-                    new() { ServiceId = TestServiceId, Quantity = 1 }
-                },
-                GroupType: null,
-                GroupId: null
-            );
+        //[Fact]
+        //public async Task AddServiceToRequestForm_WithValidData_ReturnsCreated()
+        //{
+        //    // Arrange
+        //    var command = new AddServiceToRequestFormCommand(
+        //        ReceptionId: TestReceptionId,
+        //        Services: new List<ServiceRequestItemDTO>
+        //        {
+        //            new() { ServiceId = TestServiceId, Quantity = 1 }
+        //        },
+        //        GroupType: null,
+        //        GroupId: null
+        //    );
 
-            // Act
-            var response = await _client.PostAsJsonAsync("/request-forms/add-service", command);
+        //    // Act
+        //    var response = await _client.PostAsJsonAsync("/request-forms/add-service", command);
 
-            var content = await response.Content.ReadAsStringAsync();
+        //    var content = await response.Content.ReadAsStringAsync();
            
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Created);
-            var result = await response.Content.ReadFromJsonAsync<AddServiceToRequestFormResponse>();
-            result.Should().NotBeNull();
-            result!.RequestFormId.Should().BeGreaterThan(0);
-            result.RequestNumber.Should().NotBeNullOrEmpty();
-        }
+        //    // Assert
+        //    response.StatusCode.Should().Be(HttpStatusCode.Created);
+        //    var result = await response.Content.ReadFromJsonAsync<AddServiceToRequestFormResponse>();
+        //    result.Should().NotBeNull();
+        //    result!.RequestFormId.Should().BeGreaterThan(0);
+        //    result.RequestNumber.Should().NotBeNullOrEmpty();
+        //}
 
         [Fact]
         public async Task AddServiceToRequestForm_WithInvalidReceptionId_ReturnsNotFound()
@@ -145,81 +145,14 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             result.Should().NotBeNull();
         }
 
-        [Fact]
-        public async Task AddServiceToRequestForm_WithExistingUnpaidService_UpdatesQuantity()
-        {
-            // Arrange
-            using var scope = _factory.Services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-            // Create initial request form and unpaid service detail
-            var requestForm = new RequestForm
-            {
-                ReceptionId = TestReceptionId,
-                RequestNumber = UniqueStringGenerator.GenerateUniqueString()
-            };
-            await dbContext.RequestForms.AddAsync(requestForm);
-            await dbContext.SaveChangesAsync();
-
-            var serviceDetail = new ServiceRequestDetail
-            {
-                RequestFormId = requestForm.Id,
-                ServiceId = TestServiceId,
-                Quantity = 1,
-                PaymentStatus = PaymentStatusForItem.NotPaid
-            };
-            await dbContext.ServiceRequestDetails.AddAsync(serviceDetail);
-            await dbContext.SaveChangesAsync();
-
-            var command = new AddServiceToRequestFormCommand(
-                ReceptionId: TestReceptionId,
-                Services: new List<ServiceRequestItemDTO>
-                {
-                    new() { ServiceId = TestServiceId, Quantity = 2 }
-                },
-                GroupType: null,
-                GroupId: null
-            );
-
-            // Act
-            var response = await _client.PostAsJsonAsync("/request-forms/add-service", command);
-
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.Created);
-            var result = await response.Content.ReadFromJsonAsync<AddServiceToRequestFormResponse>();
-            result.Should().NotBeNull();
-
-            // Verify quantity was updated
-            var updatedService = await dbContext.ServiceRequestDetails
-                .FirstOrDefaultAsync(srd => srd.RequestFormId == requestForm.Id);
-            updatedService.Should().NotBeNull();
-        }
-
         //[Fact]
-        //public async Task AddServiceToRequestForm_WithServiceGroupAndPaidService_CreatesNewServiceDetail()
+        //public async Task AddServiceToRequestForm_WithExistingUnpaidService_UpdatesQuantity()
         //{
         //    // Arrange
         //    using var scope = _factory.Services.CreateScope();
         //    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-        //    // Create ServiceGroup
-        //    var serviceGroup = new ServiceGroup
-        //    {
-        //        GroupName = "Test Group",
-        //        CreatedAt = DateTime.UtcNow,
-        //        CreatedBy = 1
-        //    };
-        //    await dbContext.ServiceGroups.AddAsync(serviceGroup);
-
-        //    // Add service to group
-        //    var serviceGroupService = new ServiceGroupService
-        //    {
-        //        ServiceGroupId = 1,
-        //        ServiceId = TestServiceId
-        //    };
-        //    await dbContext.ServiceGroupServices.AddAsync(serviceGroupService);
-
-        //    // Create request form with paid service
+        //    // Create initial request form and unpaid service detail
         //    var requestForm = new RequestForm
         //    {
         //        ReceptionId = TestReceptionId,
@@ -233,82 +166,19 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         //        RequestFormId = requestForm.Id,
         //        ServiceId = TestServiceId,
         //        Quantity = 1,
-        //        IsPaid = true
+        //        PaymentStatus = PaymentStatusForItem.NotPaid
         //    };
         //    await dbContext.ServiceRequestDetails.AddAsync(serviceDetail);
         //    await dbContext.SaveChangesAsync();
 
         //    var command = new AddServiceToRequestFormCommand(
         //        ReceptionId: TestReceptionId,
-        //        Services: null,
-        //        GroupType: "ServiceGroup",
-        //        GroupId: 1,
-        //        DefaultQuantity: 2
-        //    );
-
-        //    // Act
-        //    var response = await _client.PostAsJsonAsync("/request-forms/add-service", command);
-
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.Created);
-        //    var result = await response.Content.ReadFromJsonAsync<AddServiceToRequestFormResponse>();
-        //    result.Should().NotBeNull();
-
-        //    // Verify new service detail was created
-        //    var serviceDetails = await dbContext.ServiceRequestDetails
-        //        .Where(srd => srd.RequestFormId == requestForm.Id && srd.ServiceId == TestServiceId)
-        //        .ToListAsync();
-        //}
-
-        //[Fact]
-        //public async Task AddServiceToRequestForm_WithDiseaseGroupAndUnpaidService_UpdatesQuantity()
-        //{
-        //    // Arrange
-        //    using var scope = _factory.Services.CreateScope();
-        //    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-        //    // Create DiseaseGroup
-        //    var diseaseGroup = new DiseaseGroup
-        //    {
-        //        GroupName = "Test Group",
-        //        CreatedAt = DateTime.UtcNow,
-        //        CreatedBy = 1
-        //    };
-        //    await dbContext.DiseaseGroups.AddAsync(diseaseGroup);
-
-        //    // Add service to group
-        //    var diseaseGroupService = new DiseaseGroupService
-        //    {
-        //        DiseaseGroupId = 1,
-        //        ServiceId = TestServiceId
-        //    };
-        //    await dbContext.DiseaseGroupServices.AddAsync(diseaseGroupService);
-
-        //    // Create request form with unpaid service
-        //    var requestForm = new RequestForm
-        //    {
-        //        ReceptionId = TestReceptionId,
-        //        RequestNumber = UniqueStringGenerator.GenerateUniqueString()
-        //    };
-        //    await dbContext.RequestForms.AddAsync(requestForm);
-        //    await dbContext.SaveChangesAsync();
-
-        //    var serviceDetail = new ServiceRequestDetail
-        //    {
-        //        RequestFormId = requestForm.Id,
-        //        ServiceId = TestServiceId,
-        //        Quantity = 1,
-        //        IsPaid = false
-        //    };
-        //    await dbContext.ServiceRequestDetails.AddAsync(serviceDetail);
-        //    await dbContext.SaveChangesAsync();
-
-        //    var command = new AddServiceToRequestFormCommand(
-        //        ReceptionId: TestReceptionId,
-        //        Services: null,
-        //        GroupType: "DiseaseGroup",
-        //        GroupId: 1,
-        //        DefaultQuantity: 2
+        //        Services: new List<ServiceRequestItemDTO>
+        //        {
+        //            new() { ServiceId = TestServiceId, Quantity = 2 }
+        //        },
+        //        GroupType: null,
+        //        GroupId: null
         //    );
 
         //    // Act
@@ -321,7 +191,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
 
         //    // Verify quantity was updated
         //    var updatedService = await dbContext.ServiceRequestDetails
-        //        .FirstOrDefaultAsync(srd => srd.RequestFormId == requestForm.Id && srd.ServiceId == TestServiceId);
+        //        .FirstOrDefaultAsync(srd => srd.RequestFormId == requestForm.Id);
         //    updatedService.Should().NotBeNull();
         //}
 

@@ -69,7 +69,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     CreatedAt = DateTime.Now,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.Now,
-                    LastUpdatedBy = 1
+                    LastUpdatedBy = 1,
+                    RequestNumber = "REQ-001"
                 };
                 await dbContext.ReceptionVaccinations.AddAsync(receptionVaccination);
             }

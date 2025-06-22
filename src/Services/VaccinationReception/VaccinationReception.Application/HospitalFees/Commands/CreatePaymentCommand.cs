@@ -11,7 +11,7 @@ namespace VaccinationReception.Application.HospitalFees.Commands
 {
     public record CreatePaymentCommand(
         int ReceptionId,
-        string Method,
+        PaymentMethod Method,
         string? Note,
         string? InvoiceNumber,
         string? OfficialInvoiceNumber,
@@ -50,8 +50,8 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                              && x.PaymentStatus == PaymentStatusForItem.NotPaid)
                     .ToListAsync(cancellationToken);
 
-                if (unpaidVaccinations.Count != request.ReceptionVaccinationIds.Count ||
-                    unpaidServices.Count != request.ServiceRequestDetailIds.Count)
+                if (unpaidVaccinations.Count != (request.ReceptionVaccinationIds?.Count ?? 0) ||
+                    unpaidServices.Count != (request.ServiceRequestDetailIds?.Count ?? 0))
                 {
                     _logger.LogWarning("Some items are already paid or do not exist.");
                     throw new BadRequestException(ExceptionKey.ONE_OR_MORE_ITEMS_ALREADY_PAID_OR_INVALID);

@@ -20,13 +20,13 @@ namespace HospitalService.API.Endpoints
             {
                 if (groupId <= 0)
                 {
-                  //  throw new BadRequestException(HospitalServiceExceptionStrings.INVALID_GROUP_ID);
+                    throw new BadRequestException(ExceptionKey.INVALID_GROUP_ID);
                 }
 
                 if (!string.Equals(groupType?.Trim(), GroupServiceType.SERVICE_GROUP, StringComparison.OrdinalIgnoreCase) &&
                     !string.Equals(groupType?.Trim(), GroupServiceType.DISEASE_GROUP, StringComparison.OrdinalIgnoreCase))
                 {
-                   // throw new BadRequestException(HospitalServiceExceptionStrings.INVALID_GROUP_TYPE);
+                     throw new BadRequestException(ExceptionKey.INVALID_GROUP_TYPE);
                 }
 
                 var query = new GetServicesByGroupQuery(groupId, groupType);

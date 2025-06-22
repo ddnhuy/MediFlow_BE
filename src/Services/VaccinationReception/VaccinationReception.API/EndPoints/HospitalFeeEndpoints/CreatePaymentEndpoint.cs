@@ -1,9 +1,10 @@
 ﻿using VaccinationReception.Application.HospitalFees.Commands;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
 {
     public record CreatePaymentRequest(
-            string Method,
+            PaymentMethod Method,
             string? Note,
             string? InvoiceNumber,
             string? OfficialInvoiceNumber,
@@ -34,6 +35,7 @@ namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
 
                 return Results.Created($"/payments/{response.PaymentId}", response);
             })
+            .RequireAuthorization()
             .WithName("CreatePayment")
             .Produces<CreatePaymentResponse>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)

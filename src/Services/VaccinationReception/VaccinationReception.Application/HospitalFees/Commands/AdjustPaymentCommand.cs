@@ -12,7 +12,7 @@ namespace VaccinationReception.Application.HospitalFees.Commands
     public record AdjustPaymentCommand(
         int ReceptionId,
         int OriginalPaymentId,
-        string Method,
+        PaymentMethod Method,
         string? Note,
         List<int> CancelledReceptionVaccinationIds,
         List<int> CancelledServiceRequestDetailIds,
@@ -73,14 +73,14 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                              && x.PaymentStatus == PaymentStatusForItem.NotPaid)
                     .ToListAsync(cancellationToken);
 
-                if (itemsToCancelVaccination.Count != request.CancelledReceptionVaccinationIds.Count ||
-                    itemsToCancelService.Count != request.CancelledServiceRequestDetailIds.Count)
+                if (itemsToCancelVaccination.Count != (request.CancelledReceptionVaccinationIds?.Count ?? 0) ||
+                    itemsToCancelService.Count != (request.CancelledServiceRequestDetailIds?.Count ?? 0))
                 {
                     throw new BadRequestException(ExceptionKey.CANCEL_ITEMS_NOT_PAID_OR_INVALID);
                 }
 
-                if (itemsToAddVaccination.Count != request.NewReceptionVaccinationIds.Count ||
-                    itemsToAddService.Count != request.NewServiceRequestDetailIds.Count)
+                if (itemsToAddVaccination.Count != (request.NewReceptionVaccinationIds?.Count ?? 0) ||
+                    itemsToAddService.Count != (request.NewServiceRequestDetailIds?.Count ?? 0))
                 {
                     throw new BadRequestException(ExceptionKey.ONE_OR_MORE_ITEMS_ALREADY_PAID_OR_INVALID);
                 }

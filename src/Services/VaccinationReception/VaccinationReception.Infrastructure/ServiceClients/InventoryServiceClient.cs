@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -59,9 +60,8 @@ namespace VaccinationReception.Infrastructure.ServiceClients
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error while calling InventoryService API to get medicine by ID {MedicineId}", medicineId);
-                // throw new InternalServerException("An unexpected error occurred while calling InventoryService", ex.Message);
-                return null;
+                _logger.LogError(ex.Message, "Error while calling InventoryService API to get medicine by ID {MedicineId}", medicineId);
+                throw new InternalServerException(ExceptionKey.UNEXPECTED_ERROR_WHILE_CALLING_INVENTORY_SERVICE);
             }
         }
     }

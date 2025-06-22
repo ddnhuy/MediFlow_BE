@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
@@ -52,20 +53,18 @@ namespace VaccinationReception.Infrastructure.ServiceClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, "Error calling HospitalService API");
-                // throw new InternalServerException("HospitalService is currently unavailable", ex.Message);
-                return null;
+                _logger.LogError(ex.Message, "Error calling HospitalService API");
+                 throw new InternalServerException(ExceptionKey.HOSPITAL_SERVICE_UNAVAILABLE);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error while calling HospitalService API");
-                // throw new InternalServerException("An unexpected error occurred while calling HospitalService", ex.Message);
-                return null;
+                _logger.LogError(ex.Message, "Unexpected error while calling HospitalService API");
+                throw new InternalServerException(ExceptionKey.UNEXPECTED_ERROR_WHILE_CALLING_HOSPITAL_SERVICE);
             }
         }
         public async Task<List<ServiceResponse>> GetServicesByIdsAsync(
-        List<int> serviceIds,
-        CancellationToken cancellationToken)
+            List<int> serviceIds,
+            CancellationToken cancellationToken)
         {
             try
             {
@@ -88,15 +87,13 @@ namespace VaccinationReception.Infrastructure.ServiceClients
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(ex, "Error calling HospitalService API to get services by IDs");
-                //  throw new InternalServerException("HospitalService is currently unavailable", ex.Message);
-                return null;
+                _logger.LogError(ex.Message, "Error calling HospitalService API to get services by IDs");
+                throw new InternalServerException(ExceptionKey.HOSPITAL_SERVICE_UNAVAILABLE);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error while calling HospitalService API to get services by IDs");
-                //  throw new InternalServerException("An unexpected error occurred while calling HospitalService", ex.Message);
-                return null;
+                _logger.LogError(ex.Message, "Unexpected error while calling HospitalService API to get services by IDs");
+                throw new InternalServerException(ExceptionKey.UNEXPECTED_ERROR_WHILE_CALLING_HOSPITAL_SERVICE);
             }
         }
     }

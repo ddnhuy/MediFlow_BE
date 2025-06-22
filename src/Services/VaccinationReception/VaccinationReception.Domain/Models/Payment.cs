@@ -12,7 +12,7 @@ namespace VaccinationReception.Domain.Models
     {
         public int ReceptionId { get; set; }
         public decimal TotalAmount { get; set; }
-        public string Method { get; set; } = null!;
+        public PaymentMethod Method { get; set; }
         public string? Note { get; set; }
 
 
