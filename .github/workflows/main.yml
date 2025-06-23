@@ -50,7 +50,7 @@ jobs:
         run: docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml up -d
 
       - name: Run tests
-        run: dotnet test MediFlow.sln --settings .\test.runsettings --configuration Release
+        run: dotnet test MediFlow.sln --settings ./test.runsettings --configuration Release
 
       - name: Clean up Docker containers
         run: docker compose -f ./docker-compose.yml -f ./docker-compose.override.yml down
