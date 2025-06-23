@@ -89,21 +89,25 @@ builder.Services.AddGrpcClient<PatientProtoService.PatientProtoServiceClient>(op
 builder.Services.AddMessageBroker(builder.Configuration, Assembly.GetExecutingAssembly(), useCompetingConsumers: true);
 
 // Add Quartz
-builder.Services.AddQuartzHostedService(options =>
+if (!builder.Environment.IsEnvironment("Test"))
 {
-    options.WaitForJobsToComplete = true;
-});
-builder.Services.AddQuartz(q =>
-{
-    var jobKey = new JobKey("DailyAppointmentNotificationJob");
+    builder.Services.AddQuartz(q =>
+    {
+        var jobKey = new JobKey("DailyAppointmentNotificationJob");
 
-    q.AddJob<DailyAppointmentNotificationJob>(opts => opts.WithIdentity(jobKey));
+        q.AddJob<DailyAppointmentNotificationJob>(opts => opts.WithIdentity(jobKey));
 
-    q.AddTrigger(opts => opts
-        .ForJob(jobKey)
-        .WithIdentity("DailyAppointmentNotificationJob-trigger")
-        .WithCronSchedule("0 30 19 * * ?")); // 19h30
-});
+        q.AddTrigger(opts => opts
+            .ForJob(jobKey)
+            .WithIdentity("DailyAppointmentNotificationJob-trigger")
+            .WithCronSchedule("0 30 19 * * ?")); // 19h30
+    });
+
+    builder.Services.AddQuartzHostedService(options =>
+    {
+        options.WaitForJobsToComplete = true;
+    });
+}
 
 // Cross-Cutting Services
 builder.Services.AddMediatR(config =>

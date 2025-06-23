@@ -10,6 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="appsettings.Test.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.Test.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
 	  <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
 	  <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
 	  <PackageReference Include="Carter" Version="8.2.0" />

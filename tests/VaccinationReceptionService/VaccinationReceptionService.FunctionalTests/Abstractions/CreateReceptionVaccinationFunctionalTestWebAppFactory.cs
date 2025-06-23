@@ -32,7 +32,7 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
 
             builder.ConfigureAppConfiguration((context, configBuilder) =>
             {
-                // Add appsettings.Test.json để override MessageBroker
+                // Add appsettings.Test.json to override MessageBroker
                 configBuilder.AddJsonFile("appsettings.Test.json", optional: false, reloadOnChange: true);
             });
 

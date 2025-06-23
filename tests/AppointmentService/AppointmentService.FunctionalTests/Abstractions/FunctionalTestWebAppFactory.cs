@@ -22,6 +22,8 @@ namespace AppointmentService.FunctionalTests.Abstractions
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseEnvironment("Test");
+
             builder.ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
@@ -49,14 +51,14 @@ namespace AppointmentService.FunctionalTests.Abstractions
             });
         }
 
-        public Task InitializeAsync()
+        public async Task InitializeAsync()
         {
-            return _dbContainer.StartAsync();
+            await _dbContainer.StartAsync();
         }
 
-        public new Task DisposeAsync()
+        public new async Task DisposeAsync()
         {
-            return _dbContainer.StopAsync();
+            await _dbContainer.StopAsync();
         }
     }
 }
