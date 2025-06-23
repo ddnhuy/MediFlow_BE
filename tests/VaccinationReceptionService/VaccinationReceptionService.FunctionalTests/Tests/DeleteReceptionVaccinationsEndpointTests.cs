@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Text.Json;
 using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Domain.Enums;
@@ -12,6 +13,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         private readonly FunctionalTestWebAppFactory _factory;
         private const int TestReceptionId = 1;
         private const int TestVaccineId = 1;
+
+        // Use UTC DateTime for PostgreSQL compatibility
+        private static readonly DateTime TestDateTime = DateTime.UtcNow;
 
         public DeleteReceptionVaccinationsEndpointTests(FunctionalTestWebAppFactory factory) : base(factory)
         {
@@ -37,10 +41,10 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Id = TestReceptionId,
                     ServiceTypeId = 1,
                     PatientId = 1,
-                    ReceptionDate = DateTime.Now,
-                    CreatedAt = DateTime.UtcNow,
+                    ReceptionDate = TestDateTime,
+                    CreatedAt = TestDateTime,
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedAt = TestDateTime,
                     LastUpdatedBy = 1
                 };
                 dbContext.Receptions.Add(reception);
@@ -57,15 +61,15 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     VaccineId = TestVaccineId,
                     Quantity = 1,
                     IsReadyToUse = true,
-                    ScheduledDate = DateTime.Now,
-                    InvoiceDate = DateTime.Now,
-                    AppointmentDate = DateTime.Now,
+                    ScheduledDate = TestDateTime,
+                    InvoiceDate = TestDateTime,
+                    AppointmentDate = TestDateTime,
                     PaymentStatus = PaymentStatusForItem.NotPaid,
                     RequestNumber = "REQ-001",
                     IsConfirmed = false,
-                    CreatedAt = DateTime.UtcNow,
+                    CreatedAt = TestDateTime,
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedAt = TestDateTime,
                     LastUpdatedBy = 1
                 };
                 dbContext.ReceptionVaccinations.Add(receptionVaccination);
@@ -130,7 +134,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 .FirstOrDefaultAsync(rv => rv.ReceptionId == TestReceptionId && rv.VaccineId == TestVaccineId);
             deletedVaccination.Should().BeNull();
         }
-
 
         [Fact]
         public async Task DeleteReceptionVaccinations_WithInvalidData_ReturnsBadRequest()

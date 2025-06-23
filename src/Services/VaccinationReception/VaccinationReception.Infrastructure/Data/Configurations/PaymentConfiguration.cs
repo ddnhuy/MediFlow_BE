@@ -34,15 +34,13 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasDefaultValue(false);
 
             builder.Property(x => x.CreatedAt)
-                .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                .IsRequired();
 
             builder.Property(x => x.CreatedBy)
                 .IsRequired();
 
             builder.Property(x => x.LastUpdatedAt)
-                .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                .IsRequired();
 
             builder.Property(x => x.LastUpdatedBy)
                 .IsRequired();

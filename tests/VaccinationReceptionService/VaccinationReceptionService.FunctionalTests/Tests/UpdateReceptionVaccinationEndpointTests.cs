@@ -19,7 +19,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _testToken);
-
             SeedData();
         }
 
@@ -38,7 +37,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Id = TestReceptionId,
                     ServiceTypeId = 1,
                     PatientId = 1,
-                    ReceptionDate = DateTime.Now,
+                    ReceptionDate = DateTime.UtcNow,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.UtcNow,
@@ -59,9 +58,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     VaccineId = TestVaccineId,
                     Quantity = 1,
                     IsReadyToUse = false,
-                    ScheduledDate = DateTime.Now,
-                    InvoiceDate = DateTime.Now,
-                    AppointmentDate = DateTime.Now,
+                    ScheduledDate = DateTime.UtcNow,
+                    InvoiceDate = DateTime.UtcNow,
+                    AppointmentDate = DateTime.UtcNow,
                     PaymentStatus = PaymentStatusForItem.NotPaid,
                     IsConfirmed = false,
                     CreatedAt = DateTime.UtcNow,
@@ -154,9 +153,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 Id: TestReceptionVaccinationId,
                 Quantity: 2,
                 IsReadyToUse: true,
-                ScheduledDate: DateTime.Now.AddDays(1),
-                InvoiceDate: DateTime.Now,
-                AppointmentDate: DateTime.Now.AddDays(2),
+                ScheduledDate: DateTime.UtcNow.AddDays(1),
+                InvoiceDate: DateTime.UtcNow,
+                AppointmentDate: DateTime.UtcNow.AddDays(2),
                 PaymentStatus: PaymentStatusForItem.Paid,
                 IsConfirmed: true,
                 Note: "Test note",

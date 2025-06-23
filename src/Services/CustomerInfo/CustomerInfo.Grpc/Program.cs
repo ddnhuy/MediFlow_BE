@@ -45,6 +45,7 @@ public class Program
             try
             {
                 var context = services.GetRequiredService<ApplicationDbContext>();
+                
                 context.Database.Migrate();
             }
             catch (Exception ex)

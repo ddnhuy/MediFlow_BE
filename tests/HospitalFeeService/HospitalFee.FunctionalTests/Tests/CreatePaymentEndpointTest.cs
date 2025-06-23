@@ -45,7 +45,7 @@ namespace HospitalFee.FunctionalTests.Tests
             var requestForm = new RequestForm { ReceptionId = reception.Id, RequestNumber = "REQ-001" };
             await SeedEntityAsync(requestForm);
 
-            var unpaidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 50, Quantity = 2, InvoiceDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified) }; // Total 100
+            var unpaidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 50, Quantity = 2, InvoiceDate = DateTime.UtcNow }; // Total 100
             var unpaidVaccination = new ReceptionVaccination { ReceptionId = reception.Id, VaccineId = 201, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 150, Quantity = 1, RequestNumber = "RV-001" }; // Total 150
             await SeedEntityAsync(unpaidService);
             await SeedEntityAsync(unpaidVaccination);
@@ -81,7 +81,7 @@ namespace HospitalFee.FunctionalTests.Tests
             var requestForm = new RequestForm { ReceptionId = reception.Id, RequestNumber = "REQ-PAID-002" };
             await SeedEntityAsync(requestForm);
 
-            var paidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.Paid, UnitPrice = 50, Quantity = 1, InvoiceDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified) };
+            var paidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.Paid, UnitPrice = 50, Quantity = 1, InvoiceDate = DateTime.UtcNow };
             await SeedEntityAsync(paidService);
 
             var request = new CreatePaymentRequest(

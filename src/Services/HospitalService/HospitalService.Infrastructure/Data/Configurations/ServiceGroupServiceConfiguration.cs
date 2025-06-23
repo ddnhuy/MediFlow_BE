@@ -27,7 +27,6 @@ namespace HospitalService.Infrastructure.Data.Configurations
             // BaseEntity Properties
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày tạo bản ghi");
 
             builder.Property(x => x.IsSuspended)
@@ -52,7 +51,6 @@ namespace HospitalService.Infrastructure.Data.Configurations
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
             // Properties

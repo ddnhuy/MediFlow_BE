@@ -30,7 +30,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
             // Properties
@@ -53,8 +52,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.InvoiceDate)
                 .IsRequired()
-                .HasComment("Ngày xuất hóa đơn")
-                .HasColumnType("timestamp without time zone");
+                .HasComment("Ngày xuất hóa đơn");
 
             builder.Property(x => x.PaymentStatus)
                 .IsRequired()
@@ -80,7 +78,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày tạo bản ghi");
 
             // Relationships

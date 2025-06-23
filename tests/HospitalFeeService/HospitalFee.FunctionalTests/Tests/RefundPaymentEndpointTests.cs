@@ -48,7 +48,7 @@ namespace HospitalFee.FunctionalTests.Tests
             var requestForm = new RequestForm { ReceptionId = reception.Id, RequestNumber = "REQ-001" };
             await SeedEntityAsync(requestForm);
 
-            var paidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.Paid, UnitPrice = 100, Quantity = 1, InvoiceDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified) };
+            var paidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.Paid, UnitPrice = 100, Quantity = 1, InvoiceDate = DateTime.UtcNow };
             await SeedEntityAsync(paidService);
 
             var originalPayment = new Payment { ReceptionId = reception.Id, Method = PaymentMethod.Cash, TotalAmount = 100, Status = PaymentStatus.Completed, PaymentDetails = new List<PaymentDetail> { new() { ServiceRequestDetailId = paidService.Id, Amount = 100 } } };

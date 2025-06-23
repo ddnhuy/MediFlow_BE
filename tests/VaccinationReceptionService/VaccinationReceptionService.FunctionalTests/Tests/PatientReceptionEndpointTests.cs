@@ -34,9 +34,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 serviceType = new ServiceType
                 {
                     Id = TestServiceTypeId,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.Now,
+                    LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
                 dbContext.ServiceTypes.Add(serviceType);
@@ -202,7 +202,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var previousReception = new Reception
             {
                 PatientId = 1,
-                ReceptionDate = DateTime.Now.AddDays(-1),
+                ReceptionDate = DateTime.UtcNow.AddDays(-1),
                 ServiceTypeId = TestServiceTypeId
             };
             await dbContext.Receptions.AddAsync(previousReception);
@@ -248,7 +248,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Code: "PAT001",
                     Name: "Test Patient",
                     Gender: 1,
-                    Dob: new DateTime(1990, 1, 1),
+                    Dob:  new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                     PhoneNumber: "0123456789",
                     Email: "abcde@example.com",
                     IdentityCard: "123456789",
@@ -264,7 +264,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 new CreateReceptionDTO
                 {
                     PatientId = 0,
-                    ReceptionDate = DateTime.Now,
+                    ReceptionDate = DateTime.UtcNow.AddDays(2),
                     ServiceTypeId = TestServiceTypeId
                 },
                 patientId: 0
@@ -278,7 +278,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Code: "",
                     Name: "",
                     Gender: 1,
-                    Dob: DateTime.Now.AddDays(1),
+                    Dob: DateTime.UtcNow.AddDays(1),
                     PhoneNumber: "invalid",
                     Email: "abcde@example.com",
                     IdentityCard: "",
@@ -294,7 +294,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 new CreateReceptionDTO
                 {
                     PatientId = 0,
-                    ReceptionDate = DateTime.Now,
+                    ReceptionDate = DateTime.UtcNow,
                     ServiceTypeId = 0
                 },
                 patientId: 0

@@ -38,7 +38,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
             builder.Property(x => x.LastUpdatedBy)
@@ -57,7 +56,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.CreatedAt)
                .IsRequired()
-               .HasDefaultValueSql("CURRENT_TIMESTAMP")
                .HasComment("Ngày tạo phiếu");
 
             builder.Property(x => x.CreatedBy)

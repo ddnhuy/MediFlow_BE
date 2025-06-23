@@ -23,6 +23,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
 
         private void SeedData()
         {
+            var now = DateTime.UtcNow;
             // Seed test data before running tests
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -36,10 +37,10 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Id = TestReceptionId,
                     ServiceTypeId = 1,
                     PatientId = 1,
-                    ReceptionDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
-                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
+                    ReceptionDate = now,
+                    CreatedAt = now,
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
+                    LastUpdatedAt = now,
                     LastUpdatedBy = 1
                 };
                 dbContext.Receptions.Add(reception);
@@ -54,9 +55,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 {
                     ReceptionId = TestReceptionId,
                     RequestNumber = "REQ001",
-                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
+                    CreatedAt = now,
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
+                    LastUpdatedAt = now,
                     LastUpdatedBy = 1
                 };
                 dbContext.RequestForms.Add(requestForm);
@@ -69,10 +70,11 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Quantity = 1,
                     UnitPrice = 100,
                     PaymentStatus = PaymentStatusForItem.NotPaid,
-                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
+                    CreatedAt = now,
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
-                    LastUpdatedBy = 1
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1,
+                    InvoiceDate = now
                 };
                 dbContext.ServiceRequestDetails.Add(requestFormService);
             }
@@ -88,12 +90,18 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     VaccineId = TestVaccineId,
                     Quantity = 1,
                     PaymentStatus = PaymentStatusForItem.NotPaid,
-                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
+                    CreatedAt = now,
                     CreatedBy = 1,
                     RequestNumber = "REQ-001",
-                    LastUpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
-                    LastUpdatedBy = 1
+                    LastUpdatedAt = now,
+                    LastUpdatedBy = 1,
+                    InvoiceDate = now,
+                    ScheduledDate = now.AddDays(2),
+                    AppointmentDate = now.AddDays(3),
+                    IsReadyToUse = false,
+                    IsConfirmed = false
                 };
+
                 dbContext.ReceptionVaccinations.Add(receptionVaccination);
             }
 

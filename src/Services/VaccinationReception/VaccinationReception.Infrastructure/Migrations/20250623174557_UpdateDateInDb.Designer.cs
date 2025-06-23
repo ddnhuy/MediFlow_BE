@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VaccinationReception.Infrastructure.Data;
@@ -11,9 +12,11 @@ using VaccinationReception.Infrastructure.Data;
 namespace VaccinationReception.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250623174557_UpdateDateInDb")]
+    partial class UpdateDateInDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -218,7 +221,7 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasComment("Mã bệnh nhân");
 
                     b.Property<DateTime>("ReceptionDate")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp without time zone")
                         .HasComment("Ngày tiếp nhận");
 
                     b.Property<int>("ServiceTypeId")

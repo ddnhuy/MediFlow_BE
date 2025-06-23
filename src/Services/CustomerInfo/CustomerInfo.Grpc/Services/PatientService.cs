@@ -72,23 +72,36 @@ namespace CustomerInfo.Grpc.Services
 
         public override async Task<PatientDetailModel> GetPatient(GetPatientRequest request, ServerCallContext context)
         {
-            _logger.LogInformation(PatientLogMessages.GettingPatient, request.Id);
+            try
+            {
+                _logger.LogInformation(PatientLogMessages.GettingPatient, request.Id);
 
-            ExtractUserIdFromMetadata(context);
+                ExtractUserIdFromMetadata(context);
 
-            var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled, context.CancellationToken)
-                ?? throw new RpcException(
-                    new Status(
-                        StatusCode.NotFound,
-                        ExceptionKey.NOT_FOUND_PATIENT_WITH_ID.ToString()
-                    )
-                );
+                var patient = await _context.Patients
+                    .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled, context.CancellationToken)
+                    ?? throw new RpcException(
+                        new Status(
+                            StatusCode.NotFound,
+                            ExceptionKey.NOT_FOUND_PATIENT_WITH_ID.ToString()
+                        )
+                    );
 
-            _logger.LogInformation(PatientLogMessages.FoundPatient, patient.Name, patient.Id);
+                _logger.LogInformation(PatientLogMessages.FoundPatient, patient.Name, patient.Id);
 
-            return patient.Adapt<PatientDetailModel>();
+                return patient.Adapt<PatientDetailModel>();
+            }
+            catch (RpcException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error in GetPatient with ID {Id}", request.Id);
+                throw new RpcException(new Status(StatusCode.Internal, "Internal server error"));
+            }
         }
+
 
         public override async Task<PatientDetailModel> CreatePatient(CreatePatientRequest request, ServerCallContext context)
         {

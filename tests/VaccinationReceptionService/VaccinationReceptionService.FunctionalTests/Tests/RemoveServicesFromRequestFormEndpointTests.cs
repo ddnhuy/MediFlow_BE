@@ -34,7 +34,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Id = TestReceptionId,
                     ServiceTypeId = 1,
                     PatientId = 1,
-                    ReceptionDate = DateTime.Now,
+                    ReceptionDate = DateTime.UtcNow,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.UtcNow,
