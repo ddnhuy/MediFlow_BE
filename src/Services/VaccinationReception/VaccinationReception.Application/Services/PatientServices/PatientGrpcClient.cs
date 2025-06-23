@@ -164,5 +164,29 @@ namespace VaccinationReception.Application.Services.PatientServices
                 throw;
             }
         }
+
+        public async Task<List<PatientSummaryDTO>> ListPatientsByIdsAndSearchAsync(List<int> ids, string? searchTerm, CancellationToken cancellationToken)
+        {
+            if (ids == null || ids.Count == 0)
+                return new List<PatientSummaryDTO>();
+
+            try
+            {
+                var request = new FilteredPatientsRequest
+                {
+                    PatientIds = { ids },
+                    SearchTerm = searchTerm ?? string.Empty
+                };
+
+                var response = await _client.ListPatientsWithIdsAndSearchAsync(request, _metadata, cancellationToken: cancellationToken);
+
+                return response.Data.Adapt<List<PatientSummaryDTO>>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching patients by IDs and search term.");
+                throw;
+            }
+        }
     }
 }

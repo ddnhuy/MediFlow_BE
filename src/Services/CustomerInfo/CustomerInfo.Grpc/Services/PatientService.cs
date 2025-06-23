@@ -203,6 +203,36 @@ namespace CustomerInfo.Grpc.Services
             return new DeletePatientResponse { IsSuccess = true };
         }
 
+        public override async Task<FilteredPatientsResponse> ListPatientsWithIdsAndSearch(
+            FilteredPatientsRequest request,
+            ServerCallContext context)
+        {
+            _logger.LogInformation("Fetching patients by IDs with optional search. IDs: {Count}, Search: {SearchTerm}",
+                request.PatientIds.Count, request.SearchTerm);
+
+            ExtractUserIdFromMetadata(context);
+
+            var query = _context.Patients
+                .Where(p => request.PatientIds.Contains(p.Id) && !p.IsCancelled);
+
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var normalizedSearch = request.SearchTerm.Trim().ToLower();
+                query = query.Where(p => p.Code.ToLower().Contains(normalizedSearch));
+            }
+
+            var patients = await query.ToListAsync(context.CancellationToken);
+
+            var mapped = patients.Adapt<List<PatientSummaryModel>>();
+
+            _logger.LogInformation("Returning {Count} filtered patients.", mapped.Count);
+
+            return new FilteredPatientsResponse
+            {
+                Data = { mapped }
+            };
+        }
+
         private void ValidatePatientModel(Patient patient)
         {
             var validationContext = new ValidationContext(patient);
