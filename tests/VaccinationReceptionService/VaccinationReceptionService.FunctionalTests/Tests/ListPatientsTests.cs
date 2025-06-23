@@ -1,18 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using BuildingBlocks.Pagination;
-using CustomerInfo.Grpc.Protos;
-using FluentAssertions;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
-using Microsoft.AspNetCore.Mvc;
-using NSubstitute;
-using VaccinationReception.API.EndPoints.PatientEndPoints;
-using VaccinationReception.Application.DTOs.PatientDTOs;
-using ListPatientsResponse = CustomerInfo.Grpc.Protos.ListPatientsResponse;
-
-namespace VaccinationReception.FunctionalTests.Tests;
+﻿namespace VaccinationReception.FunctionalTests.Tests;
 
 public class ListPatientsTests : BaseFunctionalTest
 {

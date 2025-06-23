@@ -1,20 +1,12 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
+﻿using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Application.Helpers;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
-using VaccinationReceptionService.FunctionalTests.Abstractions;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {
-    public class AddServiceToRequestFormEndpointTests : BaseFunctionalTest, IAsyncLifetime
+    public class AddServiceToRequestFormEndpointTests : BaseFunctionalTest
     {
         private readonly string _testToken;
         private readonly FunctionalTestWebAppFactory _factory;
@@ -26,16 +18,18 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _testToken);
+
+            SeedData();
         }
 
-        public async Task InitializeAsync()
+        private void SeedData()
         {
             // Seed test data before running tests
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             // Create ServiceType if not exists
-            var serviceType = await dbContext.ServiceTypes.FirstOrDefaultAsync(st => st.Id == 1);
+            var serviceType = dbContext.ServiceTypes.FirstOrDefault(st => st.Id == 1);
             if (serviceType == null)
             {
                 serviceType = new ServiceType
@@ -47,11 +41,11 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
-                await dbContext.ServiceTypes.AddAsync(serviceType);
+                dbContext.ServiceTypes.Add(serviceType);
             }
 
             // Create Reception if not exists
-            var reception = await dbContext.Receptions.FirstOrDefaultAsync(r => r.Id == TestReceptionId);
+            var reception = dbContext.Receptions.FirstOrDefault(r => r.Id == TestReceptionId);
             if (reception == null)
             {
                 reception = new Reception
@@ -63,11 +57,11 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
-                await dbContext.Receptions.AddAsync(reception);
+                dbContext.Receptions.Add(reception);
             }
 
             // Create Service if not exists
-            var service = await dbContext.Services.FirstOrDefaultAsync(s => s.Id == TestServiceId);
+            var service = dbContext.Services.FirstOrDefault(s => s.Id == TestServiceId);
             if (service == null)
             {
                 service = new Service
@@ -82,15 +76,10 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
-                await dbContext.Services.AddAsync(service);
+                dbContext.Services.Add(service);
             }
 
-            await dbContext.SaveChangesAsync();
-        }
-
-        public Task DisposeAsync()
-        {
-            return Task.CompletedTask;
+            dbContext.SaveChanges();
         }
 
         [Fact]

@@ -1,11 +1,14 @@
-using Appointment.API.Database;
+﻿using Appointment.API.Database;
+using Appointment.API.Jobs;
 using BuildingBlocks.Behaviors;
 using BuildingBlocks.Exceptions.Handler;
+using BuildingBlocks.Messaging.MassTransit;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Quartz;
 using System.Reflection;
 using System.Text;
 
@@ -81,6 +84,30 @@ builder.Services.AddGrpcClient<PatientProtoService.PatientProtoServiceClient>(op
 
     return handler;
 });
+
+// Message Broker
+builder.Services.AddMessageBroker(builder.Configuration, Assembly.GetExecutingAssembly(), useCompetingConsumers: true);
+
+// Add Quartz
+if (!builder.Environment.IsEnvironment("Test"))
+{
+    builder.Services.AddQuartz(q =>
+    {
+        var jobKey = new JobKey("DailyAppointmentNotificationJob");
+
+        q.AddJob<DailyAppointmentNotificationJob>(opts => opts.WithIdentity(jobKey));
+
+        q.AddTrigger(opts => opts
+            .ForJob(jobKey)
+            .WithIdentity("DailyAppointmentNotificationJob-trigger")
+            .WithCronSchedule("0 30 19 * * ?")); // 19h30
+    });
+
+    builder.Services.AddQuartzHostedService(options =>
+    {
+        options.WaitForJobsToComplete = true;
+    });
+}
 
 // Cross-Cutting Services
 builder.Services.AddMediatR(config =>

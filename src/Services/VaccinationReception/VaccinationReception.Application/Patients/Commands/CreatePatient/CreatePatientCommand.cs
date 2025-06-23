@@ -13,6 +13,7 @@ namespace VaccinationReception.Application.Patients.Commands.CreatePatient
         int Gender,
         DateTime Dob,
         string PhoneNumber,
+        string Email,
         string IdentityCard,
         string AddressDetail,
         string Province,

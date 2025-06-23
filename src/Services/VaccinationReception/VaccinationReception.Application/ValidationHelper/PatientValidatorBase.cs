@@ -11,6 +11,7 @@ namespace VaccinationReception.Application.ValidationHelper
             IRuleBuilder<T, int> ruleForGender,
             IRuleBuilder<T, DateTime> ruleForDOB,
             IRuleBuilder<T, string?> ruleForPhoneNumber,
+            IRuleBuilder<T, string?> ruleForEmail,
             IRuleBuilder<T, string?> ruleForIdentityCard,
             IRuleBuilder<T, string?> ruleForAddressDetail,
             IRuleBuilder<T, string?> ruleForProvince,
@@ -36,6 +37,11 @@ namespace VaccinationReception.Application.ValidationHelper
                 .MaximumLength(20).WithMessage(ExceptionKey.REQUIRED_PATIENT_PHONE.ToString())
                 .Matches(@"^\+?[0-9]*$").When(x => !string.IsNullOrWhiteSpace(x?.ToString()))
                 .WithMessage(ExceptionKey.INVALID_PATIENT_PHONE_MAX_LENGTH.ToString());
+
+            ruleForEmail
+                .MaximumLength(100).WithMessage(ExceptionKey.INVALID_PATIENT_EMAIL.ToString())
+                .EmailAddress().When(x => !string.IsNullOrWhiteSpace(x?.ToString()))
+                .WithMessage(ExceptionKey.INVALID_PATIENT_EMAIL.ToString());
 
             ruleForIdentityCard
                 .MaximumLength(50).WithMessage(ExceptionKey.INVALID_PATIENT_IDENTITY_CARD_MAX_LENGTH.ToString());

@@ -1,40 +1,36 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Reflection.PortableExecutable;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Testcontainers.RabbitMq;
 using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
 using VaccinationReception.Domain.Models;
-using VaccinationReceptionService.FunctionalTests.Abstractions;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {
-    public class CreateReceptionVaccinationEndpointTests : BaseFunctionalTest, IAsyncLifetime
+    public class CreateReceptionVaccinationEndpointTests : CreateReceptionVaccinationBaseTest
     {
         private readonly string _testToken;
-        private readonly FunctionalTestWebAppFactory _factory;
+        private readonly CreateReceptionVaccinationFunctionalTestWebAppFactory _factory;
         private const int TestReceptionId = 1;
         private const int TestVaccineId = 1;
         private const int TestDoctorId = 1;
         private const int TestServiceTypeId = 1;
 
-        public CreateReceptionVaccinationEndpointTests(FunctionalTestWebAppFactory factory) : base(factory)
+        public CreateReceptionVaccinationEndpointTests(CreateReceptionVaccinationFunctionalTestWebAppFactory factory) : base(factory)
         {
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _testToken);
+
+            SeedData();
         }
 
-        public async Task InitializeAsync()
+        private void SeedData()
         {
             // Seed test data before running tests
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             // Create ServiceType if not exists
-            var serviceType = await dbContext.ServiceTypes.FirstOrDefaultAsync(st => st.Id == TestServiceTypeId);
+            var serviceType = dbContext.ServiceTypes.FirstOrDefault(st => st.Id == TestServiceTypeId);
             if (serviceType == null)
             {
                 serviceType = new ServiceType
@@ -46,11 +42,11 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
-                await dbContext.ServiceTypes.AddAsync(serviceType);
+                dbContext.ServiceTypes.Add(serviceType);
             }
 
             // Create Reception if not exists
-            var reception = await dbContext.Receptions.FirstOrDefaultAsync(r => r.Id == TestReceptionId);
+            var reception = dbContext.Receptions.FirstOrDefault(r => r.Id == TestReceptionId);
             if (reception == null)
             {
                 reception = new Reception
@@ -59,20 +55,15 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     ServiceTypeId = TestServiceTypeId,
                     PatientId = 1, // Thêm PatientId
                     ReceptionDate = DateTime.Now,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.Now,
+                    LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
-                await dbContext.Receptions.AddAsync(reception);
+                dbContext.Receptions.Add(reception);
             }
 
-            await dbContext.SaveChangesAsync();
-        }
-
-        public Task DisposeAsync()
-        {
-            return Task.CompletedTask;
+            dbContext.SaveChanges();
         }
 
         [Fact]
@@ -106,6 +97,38 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         public async Task CreateReceptionVaccination_WithValidData_ReturnsCreated()
         {
             // Arrange
+            var patientId = 1;
+            var grpcResponse = new PatientDetailModel
+            {
+                Id = patientId,
+                Code = "BN001",
+                Name = "Nguyen Van A",
+                Gender = 1,
+                Dob = Timestamp.FromDateTime(new DateTime(1990, 1, 1).ToUniversalTime()),
+                PhoneNumber = "0123456789",
+                Email = "abcd@example.com",
+                IdentityCard = "123456789",
+                AddressDetail = "123 Street",
+                Province = "Hanoi",
+                District = "Cau Giay",
+                Ward = "Dich Vong",
+                IsPregnant = false,
+                IsForeigner = false,
+                IsSuspended = false,
+                IsCancelled = false
+            };
+
+            var asyncUnaryCall = new AsyncUnaryCall<PatientDetailModel>(
+                Task.FromResult(grpcResponse),
+                Task.FromResult(new Metadata()),
+                () => Status.DefaultSuccess,
+                () => new Metadata(),
+                () => { });
+
+            _grpcClientMock?
+                .GetPatientAsync(Arg.Any<GetPatientRequest>(), Arg.Any<Metadata>())
+                .Returns(asyncUnaryCall);
+
             var command = new CreateReceptionVaccinationCommand(
                 ReceptionId: TestReceptionId,
                 VaccineId: TestVaccineId,
