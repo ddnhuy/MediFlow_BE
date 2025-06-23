@@ -23,10 +23,10 @@ namespace AppointmentService.FunctionalTests.Tests
         {
             // Arrange
             SetAuthHeader();
-            var create_request = new CreateAppointmentRequest(1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "patient@example.com", "84123456789", null);
+            var create_request = new CreateAppointmentRequest(1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "PATIENT1", "Patient 1", DateTime.UtcNow.AddDays(-1), "patient@example.com", "84123456789", null, null);
             await _client.PostAsJsonAsync("/", create_request);
 
-            var request = new UpdateAppointmentRequest(1, 1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "patient@example.com", "84123456789", null, false);
+            var request = new UpdateAppointmentRequest(1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "PATIENT1", "Patient 1", DateTime.UtcNow.AddDays(-1), "patient@example.com", "84123456789", null, null, false);
 
             // Act
             var response = await _client.PutAsJsonAsync("/", request);
@@ -43,7 +43,7 @@ namespace AppointmentService.FunctionalTests.Tests
         {
             // Arrange
             SetAuthHeader();
-            var request = new UpdateAppointmentRequest(1, 1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "invalid-email", "84123456789", null, false);
+            var request = new UpdateAppointmentRequest(1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "PATIENT1", "Patient 1", DateTime.UtcNow.AddDays(-1), "invalid-email", "84123456789", null, null, false);
 
             // Act
             var response = await _client.PutAsJsonAsync("/", request);
@@ -56,7 +56,7 @@ namespace AppointmentService.FunctionalTests.Tests
         public async Task UpdateAppointment_ShouldReturnUnauthorized_WhenNoAuthHeader()
         {
             // Arrange
-            var request = new UpdateAppointmentRequest(1, 1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "patient@example.com", "84123456789", null, false);
+            var request = new UpdateAppointmentRequest(1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "PATIENT1", "Patient 1", DateTime.UtcNow.AddDays(-1), "patient@example.com", "84123456789", null, null, false);
 
             // Act
             var response = await _client.PutAsJsonAsync("/", request);
@@ -64,12 +64,13 @@ namespace AppointmentService.FunctionalTests.Tests
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
+
         [Fact]
         public async Task UpdateAppointment_ShouldReturnNotFound_WhenAppointmentDoesNotExist()
         {
             // Arrange
             SetAuthHeader();
-            var request = new UpdateAppointmentRequest(999, 1, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "patient@example.com", "84123456789", null, false);
+            var request = new UpdateAppointmentRequest(999, 1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "PATIENT1", "Patient 1", DateTime.UtcNow.AddDays(-1), "patient@example.com", "84123456789", null, null, false);
 
             // Act
             var response = await _client.PutAsJsonAsync("/", request);

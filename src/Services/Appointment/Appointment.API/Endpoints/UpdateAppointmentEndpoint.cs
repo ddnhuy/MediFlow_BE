@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace Appointment.API.Endpoints
 {
     public record UpdateAppointmentResponse(bool IsSuccess, string Message);
-    public record UpdateAppointmentRequest(int Id, int PatientId, int DepartmentId, DateTime AppointmentDate, AppointmentType AppointmentType, string PatientEmail, string? PatientPhoneNumber, string? Note, bool IsSuspended);
+    public record UpdateAppointmentRequest(int Id, int PatientId, DateTime AppointmentDate, AppointmentType AppointmentType, string PatientCode, string PatientFullName, DateTime PatientDOB, string PatientEmail, string? PatientPhoneNumber, string? VaccineName, string? Note, bool IsSuspended);
 
     public class UpdateAppointmentEndpoint : ICarterModule
     {

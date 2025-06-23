@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VaccinationReception.Application.DTOs.PatientDTOs
+﻿namespace VaccinationReception.Application.DTOs.PatientDTOs
 {
     public class CreatePatientDTO
     {
@@ -14,6 +8,7 @@ namespace VaccinationReception.Application.DTOs.PatientDTOs
         public int Gender { get; set; }
         public DateTime Dob { get; set; }
         public string PhoneNumber { get; set; }
+        public string Email { get; set; }
         public string IdentityCard { get; set; }
         public string AddressDetail { get; set; }
         public string Province { get; set; }

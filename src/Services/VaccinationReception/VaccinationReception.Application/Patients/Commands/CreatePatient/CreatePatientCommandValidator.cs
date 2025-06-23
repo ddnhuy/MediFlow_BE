@@ -1,9 +1,4 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using VaccinationReception.Application.ValidationHelper;
 
 namespace VaccinationReception.Application.Patients.Commands.CreatePatient
@@ -18,6 +13,7 @@ namespace VaccinationReception.Application.Patients.Commands.CreatePatient
                 RuleFor(x => x.Gender),
                 RuleFor(x => x.Dob),
                 RuleFor(x => x.PhoneNumber),
+                RuleFor(x => x.Email),
                 RuleFor(x => x.IdentityCard),
                 RuleFor(x => x.AddressDetail),
                 RuleFor(x => x.Province),

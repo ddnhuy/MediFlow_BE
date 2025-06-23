@@ -1,17 +1,5 @@
 ﻿using BuildingBlocks.Strings;
-using CustomerInfo.Grpc.Protos;
-using FluentAssertions;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
-using Microsoft.AspNetCore.Mvc;
-using NSubstitute;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text.Json;
-using VaccinationReception.API.EndPoints.PatientEndPoints;
-using VaccinationReception.Application.DTOs.PatientDTOs;
-using VaccinationReception.Application.Patients.Queries.GetPatient;
 
 namespace VaccinationReception.FunctionalTests.Tests;
 

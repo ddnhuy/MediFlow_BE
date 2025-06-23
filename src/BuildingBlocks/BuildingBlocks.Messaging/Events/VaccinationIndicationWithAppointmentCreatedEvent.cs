@@ -1,7 +1,10 @@
-﻿namespace Appointment.API.Models
+﻿using BuildingBlocks.Strings.Enums;
+
+namespace BuildingBlocks.Messaging.Events
 {
-    public class Appointment : BaseEntity
+    public record VaccinationIndicationWithAppointmentCreatedEvent : IntegrationEvent
     {
+        public int UserId { get; set; }
         public int PatientId { get; set; }
         public DateTime AppointmentDate { get; set; }
         public AppointmentType AppointmentType { get; set; }

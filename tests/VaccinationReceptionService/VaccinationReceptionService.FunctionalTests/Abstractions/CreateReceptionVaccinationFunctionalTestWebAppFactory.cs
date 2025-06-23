@@ -1,13 +1,10 @@
-﻿using Appointment.API.Database;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Testcontainers.PostgreSql;
+using Testcontainers.RabbitMq;
 
-namespace AppointmentService.FunctionalTests.Abstractions
+namespace VaccinationReceptionService.FunctionalTests.Abstractions
 {
-    public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
+    public class CreateReceptionVaccinationFunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
         private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder()
             .WithImage("postgres:14")
@@ -16,18 +13,26 @@ namespace AppointmentService.FunctionalTests.Abstractions
             .WithPassword("postgres")
             .Build();
 
-        public ApplicationUserProtoServiceClient? _grpcUserClientMock { get; internal set; }
-        public DepartmentProtoServiceClient? _grpcDepartmentClientMock { get; internal set; }
-        public PatientProtoServiceClient? _grpcPatientClientMock { get; internal set; }
+        private readonly RabbitMqContainer _rabbitMqContainer = new RabbitMqBuilder()
+            .WithImage("rabbitmq:4-management-alpine")
+            .WithUsername("mediflow")
+            .WithPassword("Mediflow@123")
+            .WithPortBinding(5673, 5672) // RabbitMQ port
+            .Build();
+
+        public PatientProtoServiceClient? _grpcClientMock { get; internal set; }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.UseEnvironment("Test");
-
             builder.ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
-                logging.AddConsole();
+            });
+
+            builder.ConfigureAppConfiguration((context, configBuilder) =>
+            {
+                // Add appsettings.Test.json to override MessageBroker
+                configBuilder.AddJsonFile("appsettings.Test.json", optional: false, reloadOnChange: true);
             });
 
             builder.ConfigureServices(services =>
@@ -41,24 +46,21 @@ namespace AppointmentService.FunctionalTests.Abstractions
                 });
 
                 // Mock gRPC client
-                _grpcUserClientMock = Substitute.For<ApplicationUserProtoServiceClient>();
-                _grpcDepartmentClientMock = Substitute.For<DepartmentProtoServiceClient>();
-                _grpcPatientClientMock = Substitute.For<PatientProtoServiceClient>();
-
-                services.AddSingleton(_grpcUserClientMock);
-                services.AddSingleton(_grpcDepartmentClientMock);
-                services.AddSingleton(_grpcPatientClientMock);
+                _grpcClientMock = Substitute.For<PatientProtoServiceClient>();
+                services.AddSingleton(_grpcClientMock);
             });
         }
 
         public async Task InitializeAsync()
         {
             await _dbContainer.StartAsync();
+            await _rabbitMqContainer.StartAsync();
         }
 
         public new async Task DisposeAsync()
         {
             await _dbContainer.StopAsync();
+            await _rabbitMqContainer.StopAsync();
         }
     }
 }

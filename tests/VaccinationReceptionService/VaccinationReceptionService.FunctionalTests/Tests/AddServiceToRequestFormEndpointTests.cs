@@ -1,21 +1,12 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
+﻿using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Application.Helpers;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
-using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
-using VaccinationReceptionService.FunctionalTests.Abstractions;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {
-    public class AddServiceToRequestFormEndpointTests : BaseFunctionalTest, IAsyncLifetime
+    public class AddServiceToRequestFormEndpointTests : BaseFunctionalTest
     {
         private readonly string _testToken;
         private readonly FunctionalTestWebAppFactory _factory;
@@ -27,16 +18,18 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _testToken);
+
+            SeedData();
         }
 
-        public async Task InitializeAsync()
+        private void SeedData()
         {
             // Seed test data before running tests
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             // Create ServiceType if not exists
-            var serviceType = await dbContext.ServiceTypes.FirstOrDefaultAsync(st => st.Id == 1);
+            var serviceType = dbContext.ServiceTypes.FirstOrDefault(st => st.Id == 1);
             if (serviceType == null)
             {
                 serviceType = new ServiceType
@@ -48,11 +41,11 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
-                await dbContext.ServiceTypes.AddAsync(serviceType);
+                dbContext.ServiceTypes.Add(serviceType);
             }
 
             // Create Reception if not exists
-            var reception = await dbContext.Receptions.FirstOrDefaultAsync(r => r.Id == TestReceptionId);
+            var reception = dbContext.Receptions.FirstOrDefault(r => r.Id == TestReceptionId);
             if (reception == null)
             {
                 reception = new Reception
@@ -64,15 +57,10 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
-                await dbContext.Receptions.AddAsync(reception);
+                dbContext.Receptions.Add(reception);
             }
-         
-            await dbContext.SaveChangesAsync();
-        }
 
-        public Task DisposeAsync()
-        {
-            return Task.CompletedTask;
+            dbContext.SaveChanges();
         }
 
         //[Fact]
@@ -166,7 +154,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         //        RequestFormId = requestForm.Id,
         //        ServiceId = TestServiceId,
         //        Quantity = 1,
-        //        PaymentStatus = PaymentStatusForItem.NotPaid
+        //        PaymentStatus = VaccinationReception.Domain.Enums.PaymentStatusForItem.Paid
         //    };
         //    await dbContext.ServiceRequestDetails.AddAsync(serviceDetail);
         //    await dbContext.SaveChangesAsync();
@@ -192,6 +180,103 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         //    // Verify quantity was updated
         //    var updatedService = await dbContext.ServiceRequestDetails
         //        .FirstOrDefaultAsync(srd => srd.RequestFormId == requestForm.Id);
+        //    updatedService.Should().NotBeNull();
+        //}
+
+        //[Fact]
+        //public async Task AddServiceToRequestForm_WithServiceGroupAndPaidService_CreatesNewServiceDetail()
+        //{
+        //    // Arrange
+        //    using var scope = _factory.Services.CreateScope();
+        //    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();         
+
+        //    // Create request form with paid service
+        //    var requestForm = new RequestForm
+        //    {
+        //        ReceptionId = TestReceptionId,
+        //        RequestNumber = UniqueStringGenerator.GenerateUniqueString()
+        //    };
+        //    await dbContext.RequestForms.AddAsync(requestForm);
+        //    await dbContext.SaveChangesAsync();
+
+        //    var serviceDetail = new ServiceRequestDetail
+        //    {
+        //        RequestFormId = requestForm.Id,
+        //        ServiceId = TestServiceId,
+        //        Quantity = 1,
+        //        PaymentStatus = VaccinationReception.Domain.Enums.PaymentStatusForItem.Paid
+        //    };
+        //    await dbContext.ServiceRequestDetails.AddAsync(serviceDetail);
+        //    await dbContext.SaveChangesAsync();
+
+        //    var command = new AddServiceToRequestFormCommand(
+        //        ReceptionId: TestReceptionId,
+        //        Services: null,
+        //        GroupType: "ServiceGroup",
+        //        GroupId: 1,
+        //        DefaultQuantity: 2
+        //    );
+
+        //    // Act
+        //    var response = await _client.PostAsJsonAsync("/request-forms/add-service", command);
+
+        //    // Assert
+        //    response.StatusCode.Should().Be(HttpStatusCode.Created);
+        //    var result = await response.Content.ReadFromJsonAsync<AddServiceToRequestFormResponse>();
+        //    result.Should().NotBeNull();
+
+        //    // Verify new service detail was created
+        //    var serviceDetails = await dbContext.ServiceRequestDetails
+        //        .Where(srd => srd.RequestFormId == requestForm.Id && srd.ServiceId == TestServiceId)
+        //        .ToListAsync();
+        //}
+
+        //[Fact]
+        //public async Task AddServiceToRequestForm_WithDiseaseGroupAndUnpaidService_UpdatesQuantity()
+        //{
+        //    // Arrange
+        //    using var scope = _factory.Services.CreateScope();
+        //    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+
+        //    // Create request form with unpaid service
+        //    var requestForm = new RequestForm
+        //    {
+        //        ReceptionId = TestReceptionId,
+        //        RequestNumber = UniqueStringGenerator.GenerateUniqueString()
+        //    };
+        //    await dbContext.RequestForms.AddAsync(requestForm);
+        //    await dbContext.SaveChangesAsync();
+
+        //    var serviceDetail = new ServiceRequestDetail
+        //    {
+        //        RequestFormId = requestForm.Id,
+        //        ServiceId = TestServiceId,
+        //        Quantity = 1,
+        //        PaymentStatus = VaccinationReception.Domain.Enums.PaymentStatusForItem.NotPaid
+        //    };
+        //    await dbContext.ServiceRequestDetails.AddAsync(serviceDetail);
+        //    await dbContext.SaveChangesAsync();
+
+        //    var command = new AddServiceToRequestFormCommand(
+        //        ReceptionId: TestReceptionId,
+        //        Services: null,
+        //        GroupType: "DiseaseGroup",
+        //        GroupId: 1,
+        //        DefaultQuantity: 2
+        //    );
+
+        //    // Act
+        //    var response = await _client.PostAsJsonAsync("/request-forms/add-service", command);
+
+        //    // Assert
+        //    response.StatusCode.Should().Be(HttpStatusCode.Created);
+        //    var result = await response.Content.ReadFromJsonAsync<AddServiceToRequestFormResponse>();
+        //    result.Should().NotBeNull();
+
+        //    // Verify quantity was updated
+        //    var updatedService = await dbContext.ServiceRequestDetails
+        //        .FirstOrDefaultAsync(srd => srd.RequestFormId == requestForm.Id && srd.ServiceId == TestServiceId);
         //    updatedService.Should().NotBeNull();
         //}
 

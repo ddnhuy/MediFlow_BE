@@ -1,19 +1,10 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Reflection.PortableExecutable;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
-using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
+﻿using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
-using VaccinationReceptionService.FunctionalTests.Abstractions;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {
-    public class GetUnpaidServicesEndpointTests : BaseFunctionalTest, IAsyncLifetime
+    public class GetUnpaidServicesEndpointTests : BaseFunctionalTest
     {
         private readonly string _testToken;
         private readonly FunctionalTestWebAppFactory _factory;
@@ -26,16 +17,18 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _testToken);
+
+            SeedData();
         }
 
-        public async Task InitializeAsync()
+        private void SeedData()
         {
             // Seed test data before running tests
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             // Create Reception if not exists
-            var reception = await dbContext.Receptions.FirstOrDefaultAsync(r => r.Id == TestReceptionId);
+            var reception = dbContext.Receptions.FirstOrDefault(r => r.Id == TestReceptionId);
             if (reception == null)
             {
                 reception = new Reception
@@ -43,49 +36,31 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Id = TestReceptionId,
                     ServiceTypeId = 1,
                     PatientId = 1,
-                    ReceptionDate = DateTime.Now,
-                    CreatedAt = DateTime.Now,
+                    ReceptionDate = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
+                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.Now,
+                    LastUpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
                     LastUpdatedBy = 1
                 };
-                await dbContext.Receptions.AddAsync(reception);
+                dbContext.Receptions.Add(reception);
             }
 
-            // Create Service if not exists
-            //var service = await dbContext.Services.FirstOrDefaultAsync(s => s.Id == TestServiceId);
-            //if (service == null)
-            //{
-            //    service = new Service
-            //    {
-            //        Id = TestServiceId,
-            //        ServiceCode = "SVC001",
-            //        ServiceName = "Test Service",
-            //        UnitPrice = 100,
-            //        CreatedAt = DateTime.Now,
-            //        CreatedBy = 1,
-            //        LastUpdatedAt = DateTime.Now,
-            //        LastUpdatedBy = 1
-            //    };
-            //    await dbContext.Services.AddAsync(service);
-            //}
-
             // Create RequestForm with unpaid service if not exists
-            var requestForm = await dbContext.RequestForms
-                .FirstOrDefaultAsync(rf => rf.ReceptionId == TestReceptionId);
+            var requestForm = dbContext.RequestForms
+                .FirstOrDefault(rf => rf.ReceptionId == TestReceptionId);
             if (requestForm == null)
             {
                 requestForm = new RequestForm
                 {
                     ReceptionId = TestReceptionId,
                     RequestNumber = "REQ001",
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.Now,
+                    LastUpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
                     LastUpdatedBy = 1
                 };
-                await dbContext.RequestForms.AddAsync(requestForm);
-                await dbContext.SaveChangesAsync();
+                dbContext.RequestForms.Add(requestForm);
+                dbContext.SaveChanges();
 
                 var requestFormService = new ServiceRequestDetail
                 {
@@ -94,17 +69,17 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Quantity = 1,
                     UnitPrice = 100,
                     PaymentStatus = PaymentStatusForItem.NotPaid,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.Now,
+                    LastUpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
                     LastUpdatedBy = 1
                 };
-                await dbContext.ServiceRequestDetails.AddAsync(requestFormService);
+                dbContext.ServiceRequestDetails.Add(requestFormService);
             }
 
             // Create ReceptionVaccination with unpaid status if not exists
-            var receptionVaccination = await dbContext.ReceptionVaccinations
-                .FirstOrDefaultAsync(rv => rv.ReceptionId == TestReceptionId && rv.VaccineId == TestVaccineId);
+            var receptionVaccination = dbContext.ReceptionVaccinations
+                .FirstOrDefault(rv => rv.ReceptionId == TestReceptionId && rv.VaccineId == TestVaccineId);
             if (receptionVaccination == null)
             {
                 receptionVaccination = new ReceptionVaccination
@@ -113,21 +88,16 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     VaccineId = TestVaccineId,
                     Quantity = 1,
                     PaymentStatus = PaymentStatusForItem.NotPaid,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
                     CreatedBy = 1,
                     RequestNumber = "REQ-001",
-                    LastUpdatedAt = DateTime.Now,
+                    LastUpdatedAt = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified),
                     LastUpdatedBy = 1
                 };
-                await dbContext.ReceptionVaccinations.AddAsync(receptionVaccination);
+                dbContext.ReceptionVaccinations.Add(receptionVaccination);
             }
 
-            await dbContext.SaveChangesAsync();
-        }
-
-        public Task DisposeAsync()
-        {
-            return Task.CompletedTask;
+            dbContext.SaveChanges();
         }
 
         [Fact]

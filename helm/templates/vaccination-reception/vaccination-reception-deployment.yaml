@@ -47,6 +47,9 @@ spec:
         - name: wait-for-customer-info-grpc
           image: busybox
           command: ['sh', '-c', "until nc -z customer-info-grpc {{ .Values.service.port }}; do echo waiting for customer-info-grpc; sleep 2; done"]
+        - name: wait-for-rabbitmq
+          image: busybox
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done']
       volumes:
         - name: config-volume
           configMap:

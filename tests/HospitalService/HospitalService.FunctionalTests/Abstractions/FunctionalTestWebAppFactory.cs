@@ -2,11 +2,6 @@
 using HospitalService.FunctionalTests.Helpers;
 using HospitalService.Infrastructure.Data;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HospitalService.FunctionalTests.Abstractions
 {
@@ -28,6 +23,7 @@ namespace HospitalService.FunctionalTests.Abstractions
             builder.ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
+                logging.AddConsole();
             });
 
             builder.ConfigureServices(services =>

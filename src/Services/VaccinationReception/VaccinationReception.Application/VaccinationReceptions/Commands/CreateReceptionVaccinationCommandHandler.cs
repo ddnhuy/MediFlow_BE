@@ -2,6 +2,7 @@
 using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
 using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,6 +14,7 @@ using VaccinationReception.Application.Helpers;
 using VaccinationReception.Domain.IServiceClients;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Domain.Models;
+using VaccinationReception.Application.VaccinationReceptions.EventHandlers;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
@@ -20,16 +22,19 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
     {
         private readonly IApplicationDbContext _context;
         private readonly ILogger<CreateReceptionVaccinationCommandHandler> _logger;
+        private readonly IPublisher _publisher;
         private readonly IInventoryServiceClient _inventoryServiceClient;
 
         public CreateReceptionVaccinationCommandHandler(
             ILogger<CreateReceptionVaccinationCommandHandler> logger,
             IInventoryServiceClient inventoryServiceClient,
-            IApplicationDbContext context)
+            IApplicationDbContext context,
+            IPublisher publisher)
         {
             _context = context;
             _logger = logger;
             _inventoryServiceClient = inventoryServiceClient;
+            _publisher = publisher;
         }
 
         public async Task<CreateReceptionVaccinationResult> Handle(CreateReceptionVaccinationCommand request, CancellationToken cancellationToken)
@@ -56,6 +61,16 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 
                 _logger.LogInformation("Đã tạo mới ReceptionVaccination với Id: {Id} cho ReceptionId: {ReceptionId}",
                     receptionVaccination.Id, request.ReceptionId);
+
+                // Publish ReceptionVaccinationCreatedEvent
+                var createdEvent = new ReceptionVaccinationCreatedEvent
+                {
+                    PatientId = reception.PatientId,
+                    VaccineId = receptionVaccination.VaccineId,
+                    AppointmentDate = receptionVaccination.AppointmentDate,
+                    Note = receptionVaccination.Note
+                };
+                await _publisher.Publish(createdEvent, cancellationToken);
 
                 return new CreateReceptionVaccinationResult(receptionVaccination.Id);
             }
