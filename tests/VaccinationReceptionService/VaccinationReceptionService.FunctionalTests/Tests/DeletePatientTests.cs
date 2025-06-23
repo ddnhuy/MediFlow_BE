@@ -1,15 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using CustomerInfo.Grpc.Protos;
-using FluentAssertions;
-using Grpc.Core;
-using Microsoft.AspNetCore.Mvc;
-using NSubstitute;
-using VaccinationReception.API.EndPoints.PatientEndPoints;
-using VaccinationReception.Application.Patients.Commands.DeletePatient;
-
-namespace VaccinationReception.FunctionalTests.Tests;
+﻿namespace VaccinationReception.FunctionalTests.Tests;
 
 public class DeletePatientTests : BaseFunctionalTest
 {

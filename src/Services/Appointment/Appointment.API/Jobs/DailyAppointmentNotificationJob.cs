@@ -40,7 +40,7 @@ namespace Appointment.API.Jobs
                         SubjectCode = EmailSubjectCode.AppointmentReminder,
                         TemplateData = new Dictionary<string, string>
                         {
-                            ["AppointmentDate"] = appointment.AppointmentDate.ToString("HH:mm dd/MM/yyyy"),
+                            ["AppointmentDate"] = appointment.AppointmentDate.AddHours(7).ToString("HH:mm dd/MM/yyyy"),
                             ["AppointmentType"] = appointment.AppointmentType.ToString(),
                             ["PatientCode"] = appointment.PatientCode,
                             ["PatientFullName"] = appointment.PatientFullName,

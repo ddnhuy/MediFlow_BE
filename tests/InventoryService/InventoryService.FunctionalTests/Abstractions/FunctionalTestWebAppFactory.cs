@@ -29,6 +29,12 @@ namespace InventoryService.FunctionalTests.Abstractions
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.AddConsole();
+            });
+
             builder.ConfigureServices(services =>
             {
                 // Configure test database

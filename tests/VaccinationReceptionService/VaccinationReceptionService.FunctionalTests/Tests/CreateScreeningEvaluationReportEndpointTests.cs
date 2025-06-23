@@ -1,18 +1,10 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using FluentAssertions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
+﻿using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
-using VaccinationReceptionService.FunctionalTests.Abstractions;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {
-    public class CreateScreeningEvaluationReportEndpointTests : BaseFunctionalTest, IAsyncLifetime
+    public class CreateScreeningEvaluationReportEndpointTests : BaseFunctionalTest
     {
         private readonly string _testToken;
         private readonly FunctionalTestWebAppFactory _factory;
@@ -23,14 +15,16 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _testToken);
+
+            SeedData();
         }
 
-        public async Task InitializeAsync()
+        private void SeedData()
         {
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            var reception = await dbContext.Receptions.FirstOrDefaultAsync(r => r.Id == TestReceptionId);
+            var reception = dbContext.Receptions.FirstOrDefault(r => r.Id == TestReceptionId);
             if (reception == null)
             {
                 reception = new Reception
@@ -39,19 +33,14 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     ServiceTypeId = 1,
                     PatientId = 1,
                     ReceptionDate = DateTime.Now,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.Now,
+                    LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
-                await dbContext.Receptions.AddAsync(reception);
-                await dbContext.SaveChangesAsync();
+                dbContext.Receptions.Add(reception);
+                dbContext.SaveChanges();
             }
-        }
-
-        public Task DisposeAsync()
-        {
-            return Task.CompletedTask;
         }
 
         [Fact]

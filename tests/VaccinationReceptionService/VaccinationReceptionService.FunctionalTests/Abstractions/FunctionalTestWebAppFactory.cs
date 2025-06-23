@@ -1,4 +1,6 @@
-﻿namespace VaccinationReceptionService.FunctionalTests.Abstractions
+﻿using Microsoft.Extensions.Logging;
+
+namespace VaccinationReceptionService.FunctionalTests.Abstractions
 {
     public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
@@ -13,9 +15,15 @@
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.AddConsole();
+            });
+
             builder.ConfigureServices(services =>
             {
-                // Configure test database
+                // Configure test database  
                 services.RemoveAll(typeof(DbContextOptions<ApplicationDbContext>));
 
                 services.AddDbContext<ApplicationDbContext>(options =>
@@ -23,20 +31,20 @@
                     options.UseNpgsql(_dbContainer.GetConnectionString());
                 });
 
-                // Mock gRPC client
+                // Mock gRPC client  
                 _grpcClientMock = Substitute.For<PatientProtoServiceClient>();
                 services.AddSingleton(_grpcClientMock);
             });
         }
 
-        public Task InitializeAsync()
+        public async Task InitializeAsync()
         {
-            return _dbContainer.StartAsync();
+            await _dbContainer.StartAsync();
         }
 
-        public new Task DisposeAsync()
+        public new async Task DisposeAsync()
         {
-            return _dbContainer.StopAsync();
+            await _dbContainer.StopAsync();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Testcontainers.RabbitMq;
 
 namespace VaccinationReceptionService.FunctionalTests.Abstractions
@@ -23,6 +24,12 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.AddConsole();
+            });
+
             builder.ConfigureAppConfiguration((context, configBuilder) =>
             {
                 // Add appsettings.Test.json để override MessageBroker

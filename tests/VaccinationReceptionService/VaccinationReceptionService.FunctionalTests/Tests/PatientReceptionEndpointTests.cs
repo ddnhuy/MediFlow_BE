@@ -1,23 +1,12 @@
 ﻿using BuildingBlocks.Strings;
-using FluentAssertions;
-using Grpc.Core;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NSubstitute;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
 using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
-using VaccinationReceptionService.FunctionalTests.Abstractions;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {
-    public class PatientReceptionEndpointTests : BaseFunctionalTest, IAsyncLifetime
+    public class PatientReceptionEndpointTests : BaseFunctionalTest
     {
         private readonly string _testToken;
         private readonly FunctionalTestWebAppFactory _factory;
@@ -28,16 +17,18 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _testToken);
+
+            SeedData();
         }
 
-        public async Task InitializeAsync()
+        private void SeedData()
         {
             // Seed test data before running tests
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             // Create ServiceType if not exists
-            var serviceType = await dbContext.ServiceTypes.FirstOrDefaultAsync(st => st.Id == TestServiceTypeId);
+            var serviceType = dbContext.ServiceTypes.FirstOrDefault(st => st.Id == TestServiceTypeId);
             if (serviceType == null)
             {
                 serviceType = new ServiceType
@@ -48,14 +39,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     LastUpdatedAt = DateTime.Now,
                     LastUpdatedBy = 1
                 };
-                await dbContext.ServiceTypes.AddAsync(serviceType);
-                await dbContext.SaveChangesAsync();
+                dbContext.ServiceTypes.Add(serviceType);
+                dbContext.SaveChanges();
             }
-        }
-
-        public Task DisposeAsync()
-        {
-            return Task.CompletedTask;
         }
 
         [Fact]

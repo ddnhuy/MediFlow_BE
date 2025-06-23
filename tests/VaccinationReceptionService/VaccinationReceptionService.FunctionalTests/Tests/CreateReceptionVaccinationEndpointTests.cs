@@ -5,7 +5,7 @@ using VaccinationReception.Domain.Models;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {
-    public class CreateReceptionVaccinationEndpointTests : CreateReceptionVaccinationBaseTest, IAsyncLifetime
+    public class CreateReceptionVaccinationEndpointTests : CreateReceptionVaccinationBaseTest
     {
         private readonly string _testToken;
         private readonly CreateReceptionVaccinationFunctionalTestWebAppFactory _factory;
@@ -19,16 +19,18 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _testToken);
+
+            SeedData();
         }
 
-        public async Task InitializeAsync()
+        private void SeedData()
         {
             // Seed test data before running tests
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
             // Create ServiceType if not exists
-            var serviceType = await dbContext.ServiceTypes.FirstOrDefaultAsync(st => st.Id == TestServiceTypeId);
+            var serviceType = dbContext.ServiceTypes.FirstOrDefault(st => st.Id == TestServiceTypeId);
             if (serviceType == null)
             {
                 serviceType = new ServiceType
@@ -40,11 +42,11 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
-                await dbContext.ServiceTypes.AddAsync(serviceType);
+                dbContext.ServiceTypes.Add(serviceType);
             }
 
             // Create Reception if not exists
-            var reception = await dbContext.Receptions.FirstOrDefaultAsync(r => r.Id == TestReceptionId);
+            var reception = dbContext.Receptions.FirstOrDefault(r => r.Id == TestReceptionId);
             if (reception == null)
             {
                 reception = new Reception
@@ -53,20 +55,15 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     ServiceTypeId = TestServiceTypeId,
                     PatientId = 1, // Thêm PatientId
                     ReceptionDate = DateTime.Now,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
-                    LastUpdatedAt = DateTime.Now,
+                    LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
-                await dbContext.Receptions.AddAsync(reception);
+                dbContext.Receptions.Add(reception);
             }
 
-            await dbContext.SaveChangesAsync();
-        }
-
-        public Task DisposeAsync()
-        {
-            return Task.CompletedTask;
+            dbContext.SaveChanges();
         }
 
         [Fact]

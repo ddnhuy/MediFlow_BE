@@ -68,11 +68,6 @@ jobs:
             /d:sonar.coverage.exclusions="**/*.Grpc*/**/*.cs" \
             /d:sonar.secret.exclusions="**/appsettings*.json, **/SeedData.cs, **/helm/**, **/Migrations/**"
 
-      - name: Build the project
-        shell: bash
-        run: |
-          dotnet build MediFlow.sln --no-incremental --no-restore --configuration Release || echo "Build failed, continuing with SonarQube analysis."
-
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
 
@@ -90,7 +85,7 @@ jobs:
 
       - name: Run tests and generate coverage report
         shell: bash
-        run: dotnet-coverage collect "dotnet test MediFlow.sln" -f xml -o "TestResults/Coverages/test-coverage.xml"
+        run: dotnet-coverage collect "dotnet test MediFlow.sln --settings .\test.runsettings" -f xml -o "TestResults/Coverages/test-coverage.xml"
 
       - name: End SonarQube analysis
         env:
