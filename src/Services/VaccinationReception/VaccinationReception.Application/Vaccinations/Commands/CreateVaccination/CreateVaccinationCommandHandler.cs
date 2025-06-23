@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Data;
@@ -28,13 +29,17 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
                 BatchNumber = request.BatchNumber,
                 MedicineId = request.MedicineId,
                 MedicineName = request.MedicineName,
-                VaccinationConfirmation = request.VaccinationConfirmation,
-                ScheduleVaccinationDate = request.ScheduleVaccinationDate,
                 Note = request.Note,
                 DoctorId = request.DoctorId,
-                DoctorName = request.DoctorName,
-                VaccinationDate = request.VaccinationDate
+                VaccinationDate = DateTime.UtcNow
             };
+
+            // Update the status of reception vaccination
+            var receptionVaccination = await _dbContext.ReceptionVaccinations
+                .FirstOrDefaultAsync(rv => rv.Id == request.ReceptionVaccinationId, cancellationToken);
+
+            receptionVaccination!.IsConfirmed = true;
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             _dbContext.Vaccinations.Add(vaccination);
             await _dbContext.SaveChangesAsync(cancellationToken);

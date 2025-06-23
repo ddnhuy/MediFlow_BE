@@ -15,6 +15,7 @@ using VaccinationReception.Domain.IServiceClients;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Domain.Models;
 using VaccinationReception.Application.VaccinationReceptions.EventHandlers;
+using VaccinationReception.Application.Abstraction.InventoryMessaging;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
@@ -22,19 +23,19 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
     {
         private readonly IApplicationDbContext _context;
         private readonly ILogger<CreateReceptionVaccinationCommandHandler> _logger;
+        private readonly IInventoryService _inventoryService;
         private readonly IPublisher _publisher;
-        private readonly IInventoryServiceClient _inventoryServiceClient;
 
         public CreateReceptionVaccinationCommandHandler(
             ILogger<CreateReceptionVaccinationCommandHandler> logger,
-            IInventoryServiceClient inventoryServiceClient,
-            IApplicationDbContext context,
-            IPublisher publisher)
+            IInventoryService inventoryService,
+            IPublisher publisher,
+            IApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
-            _inventoryServiceClient = inventoryServiceClient;
             _publisher = publisher;
+            _inventoryService = inventoryService;
         }
 
         public async Task<CreateReceptionVaccinationResult> Handle(CreateReceptionVaccinationCommand request, CancellationToken cancellationToken)
@@ -49,10 +50,12 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     _logger.LogWarning("Không tìm thấy Reception với Id: {ReceptionId}", request.ReceptionId);
                     throw new NotFoundException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
                 }
-                var medicine = await _inventoryServiceClient.GetMedicineByIdAsync(request.VaccineId, cancellationToken);
+                var medicineList = await _inventoryService.GetMedicineInformationAsync([request.VaccineId], cancellationToken);
+                var medicine = medicineList.FirstOrDefault(m => m.MedicineId == request.VaccineId);
 
                 var receptionVaccination = request.Adapt<ReceptionVaccination>();
 
+                receptionVaccination.PaymentStatus = Domain.Enums.PaymentStatusForItem.NotPaid;
                 receptionVaccination.RequestNumber = UniqueStringGenerator.GenerateUniqueString();
                 receptionVaccination.UnitPrice = medicine?.UnitPrice ?? 0;
                 await _context.ReceptionVaccinations.AddAsync(receptionVaccination);

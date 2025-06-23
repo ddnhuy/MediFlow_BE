@@ -15,13 +15,10 @@ namespace VaccinationReception.Domain.Models
         public int MedicineId { get; set; }
         public string? MedicineName { get; set; }
 
-        public string? VaccinationConfirmation { get; set; }
-        public DateTime VaccinationDate { get; set; }
-        public DateTime? ScheduleVaccinationDate { get; set; }
+        public DateTime? VaccinationDate { get; set; }
         public string? Note { get; set; }
 
         public int DoctorId { get; set; }
-        public string? DoctorName { get; set; }
 
         // PostVaccination properties
         public bool ObservationConfirmed { get; set; }

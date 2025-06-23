@@ -11,7 +11,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHi
         string Concentration,
         DateTime? VaccinationTestDate,
         DateTime VaccinationDate,
-        string VaccinationStatus,
+        bool VaccinationConfirmation,
         string DoctorName
     );
 

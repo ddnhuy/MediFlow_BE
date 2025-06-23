@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
@@ -32,7 +33,7 @@ namespace VaccinationReception.Infrastructure
                 options.UseNpgsql(connectionString);
                 options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
             });
-            services.AddMessageBroker(configuration, typeof(DependencyInjection).Assembly, useCompetingConsumers: true);
+            services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly(), useCompetingConsumers: true);
             services.AddScoped<IInventoryService, InventoryService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
             return services;

@@ -25,6 +25,8 @@ namespace VaccinationReception.Application.DTOs.VaccinationReceptionDTOs
         int Id,
         string RequestNumber,
         int VaccineId,
+        string VaccineTypeName,
+        string VaccineName,
         int Quantity,
         decimal UnitPrice,
         DateTime CreatedAt

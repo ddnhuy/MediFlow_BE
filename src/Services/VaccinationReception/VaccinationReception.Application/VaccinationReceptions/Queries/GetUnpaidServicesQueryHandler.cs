@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Domain.Enums;
@@ -13,15 +14,18 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
         private readonly IApplicationDbContext _context;
         private readonly ILogger<GetUnpaidServicesQuery> _logger;
         private readonly IHospitalServiceClient _hospitalServiceClient;
+        private readonly IInventoryService _inventoryService;
 
         public GetUnpaidServicesQueryHandler(
             IApplicationDbContext context,
             IHospitalServiceClient hospitalServiceClient,
-            ILogger<GetUnpaidServicesQuery> logger)
+            ILogger<GetUnpaidServicesQuery> logger,
+            IInventoryService inventoryService)
         {
             _context = context;
             _logger = logger;
             _hospitalServiceClient = hospitalServiceClient;
+            _inventoryService = inventoryService;
         }
 
         public async Task<UnpaidServicesResponseDTO> Handle(GetUnpaidServicesQuery request, CancellationToken cancellationToken)
@@ -65,11 +69,59 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                         rv.Id,
                         rv.RequestNumber,
                         rv.VaccineId,
+                        string.Empty, // Will be populated with VaccineTypeName
+                        string.Empty, // Will be populated with MedicineName
                         rv.Quantity,
                         rv.UnitPrice,
                         rv.CreatedAt
                     ))
                     .ToListAsync(cancellationToken);
+
+                // Get unique vaccine IDs to fetch medicine information
+                var vaccineIds = unpaidVaccinations.Select(uv => uv.VaccineId).Distinct().ToList();
+
+                if (vaccineIds.Any())
+                {
+                    var medicineInformationList = await _inventoryService.GetMedicineInformationAsync(vaccineIds, cancellationToken);
+
+                    // Create lookup dictionary for medicine information
+                    var medicineLookup = medicineInformationList
+                        .Where(m => m.IsSuccess)
+                        .ToDictionary(m => m.MedicineId, m => m);
+
+                    // Update unpaid vaccinations with medicine information
+                    var updatedUnpaidVaccinations = unpaidVaccinations.Select(uv =>
+                    {
+                        if (medicineLookup.TryGetValue(uv.VaccineId, out var medicineInfo))
+                        {
+                            return new UnpaidVaccinationDTO(
+                                uv.Id,
+                                uv.RequestNumber,
+                                uv.VaccineId,
+                                medicineInfo.VaccineTypeName ?? string.Empty,
+                                medicineInfo.MedicineName ?? string.Empty,
+                                uv.Quantity,
+                                uv.UnitPrice,
+                                uv.CreatedAt
+                            );
+                        }
+                        else
+                        {
+                            return new UnpaidVaccinationDTO(
+                                uv.Id,
+                                uv.RequestNumber,
+                                uv.VaccineId,
+                                string.Empty,
+                                string.Empty,
+                                uv.Quantity,
+                                uv.UnitPrice,
+                                uv.CreatedAt
+                            );
+                        }
+                    }).ToList();
+
+                    return new UnpaidServicesResponseDTO(unpaidServicesDTO, updatedUnpaidVaccinations);
+                }
 
                 return new UnpaidServicesResponseDTO(unpaidServicesDTO, unpaidVaccinations);
             }

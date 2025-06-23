@@ -9,12 +9,8 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
         string? BatchNumber,
         int MedicineId,
         string? MedicineName,
-        string? VaccinationConfirmation,
-        DateTime? ScheduleVaccinationDate,
-        DateTime VaccinationDate,
         string? Note,
-        int DoctorId,
-        string? DoctorName
+        int DoctorId
     ) : ICommand<CreateVaccinationResponse>;
     public record CreateVaccinationResponse(int VaccinationId);
 }

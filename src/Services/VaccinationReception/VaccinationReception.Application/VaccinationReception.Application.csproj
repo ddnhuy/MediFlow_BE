@@ -27,5 +27,17 @@
 		<Protobuf Include="..\..\CustomerInfo\CustomerInfo.Grpc\Protos\patient.proto" AdditionalImportDirs="..\..\CustomerInfo\CustomerInfo.Grpc" GrpcServices="Client">
 			<Link>Protos\patient.proto</Link>
 		</Protobuf>
+		<Protobuf Include="..\..\HumanResource\HumanResource.Grpc\Protos\application_user.proto" AdditionalImportDirs="..\..\HumanResource\HumanResource.Grpc" GrpcServices="Client">
+		  <Link>Protos\application_user.proto</Link>
+		</Protobuf>
+		<Protobuf Include="..\..\HumanResource\HumanResource.Grpc\Protos\department.proto" AdditionalImportDirs="..\..\HumanResource\HumanResource.Grpc" GrpcServices="Client">
+		  <Link>Protos\department.proto</Link>
+		</Protobuf>
+		<Protobuf Include="..\..\HumanResource\HumanResource.Grpc\Protos\department_type.proto" GrpcServices="Client">
+		  <Link>Protos\department_type.proto</Link>
+		</Protobuf>
+		<Protobuf Include="..\..\HumanResource\HumanResource.Grpc\Protos\role.proto" GrpcServices="Client">
+		  <Link>Protos\role.proto</Link>
+		</Protobuf>
 	</ItemGroup>
 </Project>
