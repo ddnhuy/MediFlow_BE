@@ -9,6 +9,7 @@ using VaccinationReception.Application.Data;
 using VaccinationReception.Infrastructure.Data;
 using VaccinationReception.Domain.IServiceClients;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace HospitalFee.FunctionalTests.Abstractions
 {
@@ -35,6 +36,11 @@ namespace HospitalFee.FunctionalTests.Abstractions
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+            });
+
             builder.ConfigureServices(services =>
             {
                 // Configure test database
@@ -52,10 +58,11 @@ namespace HospitalFee.FunctionalTests.Abstractions
                 // Mock Hospital Service client
                 HospitalServiceClientMock = Substitute.For<IHospitalServiceClient>();
                 services.AddSingleton(HospitalServiceClientMock);
-
+    
                 // Get DbContext instance
                 var serviceProvider = services.BuildServiceProvider();
                 DbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
+
             });
         }
 

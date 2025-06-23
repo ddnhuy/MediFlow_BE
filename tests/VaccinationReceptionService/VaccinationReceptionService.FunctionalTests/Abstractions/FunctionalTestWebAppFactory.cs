@@ -1,4 +1,6 @@
-﻿namespace VaccinationReceptionService.FunctionalTests.Abstractions
+﻿using Microsoft.Extensions.Logging;
+
+namespace VaccinationReceptionService.FunctionalTests.Abstractions
 {
     public class FunctionalTestWebAppFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
@@ -13,6 +15,12 @@
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+
+            });
+
             builder.ConfigureServices(services =>
             {
                 // Configure test database
