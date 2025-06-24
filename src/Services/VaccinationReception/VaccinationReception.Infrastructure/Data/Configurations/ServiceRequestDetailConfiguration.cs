@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Domain.Models;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Infrastructure.Data.Configurations
 {
@@ -58,6 +59,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasConversion<string>()
                 .HasColumnType("varchar(20)")
+                .HasDefaultValue(PaymentStatusForItem.NotPaid)
                 .HasComment("Trạng thái thanh toán");
 
             builder.Property(x => x.IsSuspended)

@@ -7,9 +7,12 @@ using Testcontainers.PostgreSql;
 using VaccinationReception.API;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Infrastructure.Data;
-using VaccinationReception.Domain.IServiceClients;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using VaccinationReception.Application.Abstraction.InventoryMessaging;
+using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace HospitalFee.FunctionalTests.Abstractions
 {
@@ -22,8 +25,10 @@ namespace HospitalFee.FunctionalTests.Abstractions
             .WithPassword("postgres")
             .Build();
 
-      //  public PatientProtoServiceClient? GrpcClientMock { get; private set; }
-        public IHospitalServiceClient? HospitalServiceClientMock { get; private set; }
+        //  public PatientProtoServiceClient? GrpcClientMock { get; private set; }
+        public IInventoryService InventoryServiceMock { get; private set; } = Substitute.For<IInventoryService>();
+
+        public IHospitalService HospitalServiceMock { get; private set; } = Substitute.For<IHospitalService>();
         public ApplicationDbContext? DbContext { get; private set; }
 
         public async Task ResetDatabaseAsync()
@@ -51,14 +56,30 @@ namespace HospitalFee.FunctionalTests.Abstractions
                     options.UseNpgsql(_dbContainer.GetConnectionString());
                 });
 
-                // Mock gRPC client
-                //GrpcClientMock = Substitute.For<PatientProtoServiceClient>();
-                //services.AddSingleton(GrpcClientMock);
 
-                // Mock Hospital Service client
-                HospitalServiceClientMock = Substitute.For<IHospitalServiceClient>();
-                services.AddSingleton(HospitalServiceClientMock);
-    
+                services.AddSingleton(_ => {
+                    var mockHttpContext = Substitute.For<IHttpContextAccessor>();
+                    var context = new DefaultHttpContext();
+
+                    // Add test claims
+                    var identity = new ClaimsIdentity(new[] {
+                        new Claim(ClaimTypes.NameIdentifier, "1"),
+                        new Claim(ClaimTypes.Role, "Doctor")
+                    });
+                    context.User = new ClaimsPrincipal(identity);
+
+                    mockHttpContext.HttpContext.Returns(context);
+                    return mockHttpContext;
+                });
+
+                // Replace real inventory service with mock
+                services.RemoveAll<IInventoryService>();
+                services.AddSingleton(InventoryServiceMock);
+
+                services.RemoveAll<IHospitalService>();
+                services.AddSingleton(HospitalServiceMock);
+
+
                 // Get DbContext instance
                 var serviceProvider = services.BuildServiceProvider();
                 DbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();

@@ -6,7 +6,6 @@ using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Domain.Enums;
-using VaccinationReception.Domain.IServiceClients;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Queries
 {

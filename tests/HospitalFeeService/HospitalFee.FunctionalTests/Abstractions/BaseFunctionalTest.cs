@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Domain.DTOs;
-using VaccinationReception.Domain.IServiceClients;
 using VaccinationReception.Infrastructure.Data;
 
 namespace HospitalFee.FunctionalTests.Abstractions
@@ -15,24 +14,13 @@ namespace HospitalFee.FunctionalTests.Abstractions
     {
         protected readonly HttpClient _client;
         protected readonly ApplicationDbContext _dbContext;
-        protected readonly IHospitalServiceClient _hospitalServiceClientMock;
 
         protected BaseFunctionalTest(FunctionalTestWebAppFactory factory)
         {
             _client = factory.CreateClient();
             _dbContext = factory.DbContext!;
-            _hospitalServiceClientMock = factory.HospitalServiceClientMock!;
         }
 
-        protected void MockGetServicesByIds(List<int> serviceIds, List<ServiceResponse> serviceResponses)
-        {
-            _hospitalServiceClientMock
-                .GetServicesByIdsAsync(
-                    Arg.Is<List<int>>(ids => ids.SequenceEqual(serviceIds)),
-                    Arg.Any<CancellationToken>()
-                )
-                .Returns(Task.FromResult(serviceResponses));
-        }
 
         protected async Task SeedEntityAsync<TEntity>(TEntity entity) where TEntity : class
         {

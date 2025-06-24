@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 
 namespace VaccinationReception.Infrastructure.Data.Configurations
@@ -90,6 +91,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasConversion<string>()
                 .HasColumnType("varchar(20)")
+                .HasDefaultValue(PaymentStatusForItem.NotPaid)
                 .HasComment("Trạng thái thanh toán");
 
             builder.Property(x => x.IsConfirmed)

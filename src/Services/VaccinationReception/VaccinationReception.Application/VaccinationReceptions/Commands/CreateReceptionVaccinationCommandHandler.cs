@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.Helpers;
-using VaccinationReception.Domain.IServiceClients;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Domain.Models;
 using VaccinationReception.Application.VaccinationReceptions.EventHandlers;

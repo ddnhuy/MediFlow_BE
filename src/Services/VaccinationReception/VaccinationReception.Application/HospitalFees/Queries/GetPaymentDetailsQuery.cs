@@ -17,7 +17,7 @@ namespace VaccinationReception.Application.HospitalFees.Queries
         private readonly IApplicationDbContext _context;
         private readonly ILogger<GetPaymentDetailsQueryHandler> _logger;
         private readonly IHospitalService _hospitalService;
-        private readonly IInventoryService  _inventoryService;
+        private readonly IInventoryService _inventoryService;
 
         public GetPaymentDetailsQueryHandler(
             IApplicationDbContext context,

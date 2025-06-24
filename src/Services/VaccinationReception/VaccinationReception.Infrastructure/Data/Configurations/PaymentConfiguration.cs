@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Domain.Models;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Infrastructure.Data.Configurations
 {
@@ -59,6 +60,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasConversion<string>()
                 .HasColumnType("varchar(20)")
+                .HasDefaultValue(PaymentMethod.Cash)
                 .HasComment("Phương thức thanh toán");
 
             builder.Property(x => x.Note)
@@ -71,6 +73,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasConversion<string>()
                 .HasMaxLength(50)
                 .IsRequired()
+                .HasDefaultValue(PaymentType.Receipt)
                 .HasComment("Loại thanh toán");
 
             builder.Property(x => x.InvoiceNumber)
@@ -82,6 +85,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
             builder.Property(x => x.Status)
                 .HasConversion<string>()
                 .HasMaxLength(50)
+                .HasDefaultValue(PaymentStatus.Pending)
                 .HasComment("Trạng thái thanh toán");
 
             // Relationships

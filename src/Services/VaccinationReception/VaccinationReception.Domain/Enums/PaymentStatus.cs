@@ -10,6 +10,7 @@ namespace VaccinationReception.Domain.Enums
     {
         Completed = 0,
         Cancelled = 1,
-        Adjusted = 2
+        Adjusted = 2,
+        Pending = 3
     }
 }

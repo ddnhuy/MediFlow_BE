@@ -114,7 +114,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             createdVaccination.MedicineId.Should().Be(TestMedicineId);
             createdVaccination.MedicineName.Should().Be("Test Vaccine");
             createdVaccination.DoctorId.Should().Be(TestDoctorId);
-            createdVaccination.VaccinationDate.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+            var expectedTimestamp = DateTime.UtcNow;
+            createdVaccination.VaccinationDate.Should().BeCloseTo(expectedTimestamp, TimeSpan.FromMinutes(1));
 
             // Verify that the reception vaccination was marked as confirmed
             var updatedReceptionVaccination = await dbContext.ReceptionVaccinations

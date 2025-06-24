@@ -34,6 +34,7 @@ namespace VaccinationReception.Infrastructure
             services.AddScoped<IInventoryService, InventoryService>();
             services.AddScoped<IHospitalService, HospitalService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+            services.AddScoped<ICurrentUserHelper, CurrentUserHelper>();
             return services;
         }
     }
