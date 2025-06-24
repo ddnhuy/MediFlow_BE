@@ -38,9 +38,15 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
             var receptionVaccination = await _dbContext.ReceptionVaccinations
                 .FirstOrDefaultAsync(rv => rv.Id == request.ReceptionVaccinationId, cancellationToken);
 
-            receptionVaccination!.IsConfirmed = true;
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
+            if (receptionVaccination == null)
+            {
+                throw new BadRequestException(BuildingBlocks.Strings.ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
+            } else
+            {
+                receptionVaccination.IsConfirmed = true;
+                await _dbContext.SaveChangesAsync(cancellationToken);
+            }
+                         
             _dbContext.Vaccinations.Add(vaccination);
             await _dbContext.SaveChangesAsync(cancellationToken);
 

@@ -35,20 +35,26 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
                 _logger.LogInformation("Retrieving all reception vaccinations with paid payment status");
 
                 // Get all reception vaccinations with paid payment status
-                var paidReceptionVaccinations = (await _context.ReceptionVaccinations
+                var paidReceptionVaccinations = await _context.ReceptionVaccinations
                     .Include(rv => rv.Reception)
                     .ThenInclude(rv => rv.ScreeningEvaluationReport)
-                    .Where(rv => rv.PaymentStatus == PaymentStatusForItem.Paid && !rv.IsCancelled && !rv.IsConfirmed)
-                    .ToListAsync(cancellationToken))
-                    .DistinctBy(x => x.Reception.Id)
+                    .Where(rv => rv.PaymentStatus == PaymentStatusForItem.Paid && !rv.IsCancelled)
+                    .ToListAsync(cancellationToken);
+
+                // Group by reception and include those with at least one unconfirmed vaccination
+                var receptionsWithUnconfirmedVaccinations = paidReceptionVaccinations
+                    .GroupBy(rv => rv.Reception.Id)
+                    .Where(group => group.Any(rv => !rv.IsConfirmed))
+                    .Select(group => group.First())
                     .OrderBy(rv => rv.Reception.ReceptionDate)
                     .ToList();
 
-                _logger.LogInformation("Found {Count} paid reception vaccinations", paidReceptionVaccinations.Count);
+                _logger.LogInformation("Found {Count} receptions with unconfirmed vaccinations", receptionsWithUnconfirmedVaccinations.Count);
+
 
                 var patientVaccinationItems = new List<PatientVaccinationItem>();
 
-                foreach (var receptionVaccination in paidReceptionVaccinations)
+                foreach (var receptionVaccination in receptionsWithUnconfirmedVaccinations)
                 {
                     try
                     {

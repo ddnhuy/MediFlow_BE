@@ -35,7 +35,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.EventHandlers
             {
                 UserId = currentUserHelper.UserId,
                 PatientId = notification.PatientId,
-                AppointmentDate = notification.AppointmentDate.AddHours(-7).ToUniversalTime(),
+                AppointmentDate = notification.AppointmentDate.ToUniversalTime(),
                 AppointmentType = AppointmentType.Vaccination,
                 PatientCode = patient.Code,
                 PatientFullName = patient.Name,
