@@ -12,5 +12,4 @@ namespace VaccinationReception.Domain.IServiceClients
         Task<List<ServiceResponse>> GetServicesByGroupAsync(int groupId, string groupType, CancellationToken cancellationToken);
         Task<List<ServiceResponse>> GetServicesByIdsAsync(List<int> serviceIds, CancellationToken cancellationToken);
     }
-
 }

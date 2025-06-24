@@ -1,20 +1,22 @@
-﻿using Testcontainers.RabbitMq;
+﻿using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
+using HumanResource.Grpc;
+using Testcontainers.RabbitMq;
 using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
 using VaccinationReception.Domain.Models;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {
-    public class CreateReceptionVaccinationEndpointTests : CreateReceptionVaccinationBaseTest
+    public class CreateReceptionVaccinationEndpointTests : BaseFunctionalTest
     {
         private readonly string _testToken;
-        private readonly CreateReceptionVaccinationFunctionalTestWebAppFactory _factory;
+        private readonly FunctionalTestWebAppFactory _factory;
         private const int TestReceptionId = 1;
         private const int TestVaccineId = 1;
         private const int TestDoctorId = 1;
         private const int TestServiceTypeId = 1;
 
-        public CreateReceptionVaccinationEndpointTests(CreateReceptionVaccinationFunctionalTestWebAppFactory factory) : base(factory)
+        public CreateReceptionVaccinationEndpointTests(FunctionalTestWebAppFactory factory) : base(factory)
         {
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
@@ -93,68 +95,95 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
-        //[Fact]
-        //public async Task CreateReceptionVaccination_WithValidData_ReturnsCreated()
-        //{
-        //    // Arrange
-        //    var patientId = 1;
-        //    var grpcResponse = new PatientDetailModel
-        //    {
-        //        Id = patientId,
-        //        Code = "BN001",
-        //        Name = "Nguyen Van A",
-        //        Gender = 1,
-        //        Dob = Timestamp.FromDateTime(DateTime.UtcNow),
-        //        PhoneNumber = "0123456789",
-        //        Email = "abcd@example.com",
-        //        IdentityCard = "123456789",
-        //        AddressDetail = "123 Street",
-        //        Province = "Hanoi",
-        //        District = "Cau Giay",
-        //        Ward = "Dich Vong",
-        //        IsPregnant = false,
-        //        IsForeigner = false,
-        //        IsSuspended = false,
-        //        IsCancelled = false
-        //    };
+        [Fact]
+        public async Task CreateReceptionVaccination_WithValidData_ReturnsCreated()
+        {
+            // Arrange
+            var patientId = 1;
+            var grpcResponse = new PatientDetailModel
+            {
+                Id = patientId,
+                Code = "BN001",
+                Name = "Nguyen Van A",
+                Gender = 1,
+                Dob = Timestamp.FromDateTime(DateTime.UtcNow),
+                PhoneNumber = "0123456789",
+                Email = "abcd@example.com",
+                IdentityCard = "123456789",
+                AddressDetail = "123 Street",
+                Province = "Hanoi",
+                District = "Cau Giay",
+                Ward = "Dich Vong",
+                IsPregnant = false,
+                IsForeigner = false,
+                IsSuspended = false,
+                IsCancelled = false
+            };
 
-        //    var asyncUnaryCall = new AsyncUnaryCall<PatientDetailModel>(
-        //        Task.FromResult(grpcResponse),
-        //        Task.FromResult(new Metadata()),
-        //        () => Status.DefaultSuccess,
-        //        () => new Metadata(),
-        //        () => { });
+            var asyncUnaryCall = new AsyncUnaryCall<PatientDetailModel>(
+                Task.FromResult(grpcResponse),
+                Task.FromResult(new Metadata()),
+                () => Status.DefaultSuccess,
+                () => new Metadata(),
+                () => { });
 
-        //    _grpcClientMock?
-        //        .GetPatientAsync(Arg.Any<GetPatientRequest>(), Arg.Any<Metadata>())
-        //        .Returns(asyncUnaryCall);
+            _grpcClientMock?
+                .GetPatientAsync(Arg.Any<GetPatientRequest>(), Arg.Any<Metadata>())
+                .Returns(asyncUnaryCall);
 
-        //    var command = new CreateReceptionVaccinationCommand(
-        //        ReceptionId: TestReceptionId,
-        //        VaccineId: TestVaccineId,
-        //        Quantity: 1,
-        //        IsReadyToUse: true,
-        //        ScheduledDate: DateTime.UtcNow.AddDays(7),
-        //        InvoiceDate: DateTime.UtcNow,
-        //        AppointmentDate: DateTime.UtcNow.AddDays(7),
-        //        PaymentStatusForItem: VaccinationReception.Domain.Enums.PaymentStatusForItem.NotPaid,
-        //        IsConfirmed: false,
-        //        Note: null,
-        //        TestResultEntry: null,
-        //        DoctorId: TestDoctorId
-        //    );
+            // Configure the mock from factory
 
-        //    // Act
-        //    var response = await _client.PostAsJsonAsync("/reception-vaccinations", command);
+            // Arrange
+            var medicineInfo1 = new GetMedicineInformationResponse
+            {
+                MedicineId = 1,
+                MedicineName = "COVID-19 Vaccine",
+                VaccineTypeName = "COVID-19",
+                MedicineTypeName = "Vaccine",
+                IsSuccess = true
+            };
 
-        //    var content = await response.Content.ReadAsStringAsync();
+            var medicineInfo2 = new GetMedicineInformationResponse
+            {
+                MedicineId = 2,
+                MedicineName = "Flu Vaccine",
+                VaccineTypeName = "Influenza",
+                MedicineTypeName = "Vaccine",
+                IsSuccess = true
+            };
 
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.Created);
-        //    var result = await response.Content.ReadFromJsonAsync<CreateReceptionVaccinationResponse>();
-        //    result.Should().NotBeNull();
-        //    result!.ReceptionVaccinationId.Should().BeGreaterThan(0);
-        //}
+            var medicineInfoList = new List<GetMedicineInformationResponse> { medicineInfo1, medicineInfo2 };
+
+            _factory.InventoryServiceMock!
+                .GetMedicineInformationAsync(Arg.Any<IEnumerable<int>>(), Arg.Any<CancellationToken>())
+                .Returns(medicineInfoList);
+
+            var command = new CreateReceptionVaccinationCommand(
+                ReceptionId: TestReceptionId,
+                VaccineId: TestVaccineId,
+                Quantity: 1,
+                IsReadyToUse: true,
+                ScheduledDate: DateTime.UtcNow.AddDays(7),
+                InvoiceDate: DateTime.UtcNow,
+                AppointmentDate: DateTime.UtcNow.AddDays(7),
+                PaymentStatusForItem: VaccinationReception.Domain.Enums.PaymentStatusForItem.NotPaid,
+                IsConfirmed: false,
+                Note: null,
+                TestResultEntry: null,
+                DoctorId: TestDoctorId
+            );
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/reception-vaccinations", command);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+            var result = await response.Content.ReadFromJsonAsync<CreateReceptionVaccinationResponse>();
+            result.Should().NotBeNull();
+            result!.ReceptionVaccinationId.Should().BeGreaterThan(0);
+        }
 
         [Fact]
         public async Task CreateReceptionVaccination_WithInvalidData_ReturnsBadRequest()

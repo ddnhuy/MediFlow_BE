@@ -1,4 +1,6 @@
-﻿using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
+﻿using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
+using NSubstitute;
+using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 
@@ -86,24 +88,49 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         }
 
 
-        //[Fact]
-        //public async Task GetReceptionVaccinationsByReceptionId_WithValidData_ReturnsOk()
-        //{
-        //    // Act
-        //    var response = await _client.GetAsync($"/receptions/{TestReceptionId}/vaccinations");
+        [Fact]
+        public async Task GetReceptionVaccinationsByReceptionId_WithValidData_ReturnsOk()
+        {
+            // Arrange
+            var medicineInfo1 = new GetMedicineInformationResponse
+            {
+                MedicineId = 1,
+                MedicineName = "COVID-19 Vaccine",
+                VaccineTypeName = "COVID-19",
+                MedicineTypeName = "Vaccine",
+                IsSuccess = true
+            };
 
-        //    // Debug log
-        //    var content = await response.Content.ReadAsStringAsync();
-        //    Console.WriteLine($"Response Status: {response.StatusCode}");
-        //    Console.WriteLine($"Response Content: {content}");
+            var medicineInfo2 = new GetMedicineInformationResponse
+            {
+                MedicineId = 2,
+                MedicineName = "Flu Vaccine",
+                VaccineTypeName = "Influenza",
+                MedicineTypeName = "Vaccine",
+                IsSuccess = true
+            };
 
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var medicineInfoList = new List<GetMedicineInformationResponse> { medicineInfo1, medicineInfo2 };
 
-        //    var result = await response.Content.ReadFromJsonAsync<GetReceptionVaccinationsByReceptionIdResponse>();
-        //    result.Should().NotBeNull();
-        //    result.ReceptionVaccinations.Should().NotBeEmpty();
-        //}
+            _factory.InventoryServiceMock!
+                .GetMedicineInformationAsync(Arg.Any<IEnumerable<int>>(), Arg.Any<CancellationToken>())
+                .Returns(medicineInfoList);
+
+            // Act
+            var response = await _client.GetAsync($"/receptions/{TestReceptionId}/vaccinations");
+
+            // Debug log
+            var content = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response Status: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {content}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            var result = await response.Content.ReadFromJsonAsync<GetReceptionVaccinationsByReceptionIdResponse>();
+            result.Should().NotBeNull();
+            result.ReceptionVaccinations.Should().NotBeEmpty();
+        }
 
         [Fact]
         public async Task GetReceptionVaccinationsByReceptionId_WithInvalidReceptionId_ReturnsBadRequest()

@@ -3,14 +3,10 @@ using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using VaccinationReception.Application.Abstraction.InventoryMessaging;
+using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Application.DTOs.HospitalFeeDTOs;
-using VaccinationReception.Domain.IServiceClients;
 
 namespace VaccinationReception.Application.HospitalFees.Queries
 {
@@ -20,16 +16,19 @@ namespace VaccinationReception.Application.HospitalFees.Queries
     {
         private readonly IApplicationDbContext _context;
         private readonly ILogger<GetPaymentDetailsQueryHandler> _logger;
-        private readonly IHospitalServiceClient _hospitalServiceClient;
+        private readonly IHospitalService _hospitalService;
+        private readonly IInventoryService  _inventoryService;
 
         public GetPaymentDetailsQueryHandler(
             IApplicationDbContext context,
             ILogger<GetPaymentDetailsQueryHandler> logger,
-            IHospitalServiceClient hospitalServiceClient)
+            IHospitalService hospitalService,
+            IInventoryService inventoryService)
         {
             _context = context;
             _logger = logger;
-            _hospitalServiceClient = hospitalServiceClient;
+            _hospitalService = hospitalService;
+            _inventoryService = inventoryService;
         }
 
 
@@ -39,6 +38,9 @@ namespace VaccinationReception.Application.HospitalFees.Queries
 
             var payment = await _context.Payments
                 .Include(p => p.PaymentDetails)
+                    .ThenInclude(pd => pd.ServiceRequestDetail)
+                .Include(p => p.PaymentDetails)
+                    .ThenInclude(pd => pd.ReceptionVaccination)
                 .FirstOrDefaultAsync(p => p.Id == request.PaymentId && !p.IsCancelled, cancellationToken);
 
             if (payment == null)
@@ -47,13 +49,24 @@ namespace VaccinationReception.Application.HospitalFees.Queries
                 throw new NotFoundException(ExceptionKey.PAYMENT_NOT_FOUND);
             }
             var serviceIds = payment.PaymentDetails
-              .Where(pd => pd.ServiceRequestDetailId.HasValue && pd.ServiceRequestDetail != null)
-              .Select(pd => pd.ServiceRequestDetail!.ServiceId)
-              .Distinct()
-              .ToList();
+                  .Where(pd => pd.ServiceRequestDetailId.HasValue && pd.ServiceRequestDetail != null)
+                  .Select(pd => pd.ServiceRequestDetail!.ServiceId)
+                  .Distinct()
+                  .ToList();
 
-            var services = await _hospitalServiceClient.GetServicesByIdsAsync(serviceIds, cancellationToken);
+            var vaccinationIds = payment.PaymentDetails
+                   .Where(pd => pd.ReceptionVaccinationId.HasValue && pd.ReceptionVaccination != null)
+                   .Select(pd => pd.ReceptionVaccination!.VaccineId)
+                   .Distinct()
+                   .ToList();
+
+            var services = await _hospitalService.GetServicesByIdsAsync(serviceIds, cancellationToken);
+
+            var vaccines = await _inventoryService.GetMedicineInformationAsync(vaccinationIds, cancellationToken);
+
             var serviceDict = services.ToDictionary(s => s.Id);
+
+            var vaccineDict = vaccines.ToDictionary(s => s.MedicineId);
 
             var paymentDTO = new PaymentDTO(
                 payment.Id,
@@ -84,6 +97,16 @@ namespace VaccinationReception.Application.HospitalFees.Queries
                                 {
                                     serviceCode = service.ServiceCode;
                                     serviceName = service.ServiceName;
+                                }
+                            }
+
+                            else if (pd.ReceptionVaccinationId.HasValue && pd.ReceptionVaccination != null)
+                            {
+                                var vaccineId = pd.ReceptionVaccination.VaccineId;
+                                if (vaccineDict.TryGetValue(vaccineId, out var vaccine))
+                                {
+                                    serviceCode = vaccine.VaccineTypeName;
+                                    serviceName = vaccine.MedicineName;
                                 }
                             }
                             return new PaymentDetailDTO(

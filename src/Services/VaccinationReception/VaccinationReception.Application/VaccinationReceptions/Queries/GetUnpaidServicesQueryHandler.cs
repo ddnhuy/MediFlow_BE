@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
+using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Domain.Enums;
@@ -13,18 +14,18 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
     {
         private readonly IApplicationDbContext _context;
         private readonly ILogger<GetUnpaidServicesQuery> _logger;
-        private readonly IHospitalServiceClient _hospitalServiceClient;
+        private readonly IHospitalService _hospitalService;
         private readonly IInventoryService _inventoryService;
 
         public GetUnpaidServicesQueryHandler(
             IApplicationDbContext context,
-            IHospitalServiceClient hospitalServiceClient,
+            IHospitalService hospitalService,
             ILogger<GetUnpaidServicesQuery> logger,
             IInventoryService inventoryService)
         {
             _context = context;
             _logger = logger;
-            _hospitalServiceClient = hospitalServiceClient;
+            _hospitalService = hospitalService;
             _inventoryService = inventoryService;
         }
 
@@ -43,7 +44,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                 var serviceIds = unpaidServices.Select(srd => srd.ServiceId).Distinct().ToList();
 
                 // Change mess brok
-                var services = await _hospitalServiceClient.GetServicesByIdsAsync(serviceIds, cancellationToken);
+                var services = await _hospitalService.GetServicesByIdsAsync(serviceIds, cancellationToken);
 
                 var serviceDictionary = services.ToDictionary(s => s.Id, s => s);
 

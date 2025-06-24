@@ -3,6 +3,7 @@ using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
+using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 
 namespace VaccinationReceptionService.FunctionalTests.Abstractions
 {
@@ -16,6 +17,8 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
             .Build();
 
         public IInventoryService InventoryServiceMock { get; private set; } = Substitute.For<IInventoryService>();
+
+        public IHospitalService HospitalServiceMock { get; private set; } = Substitute.For<IHospitalService>();
 
         public PatientProtoServiceClient? _grpcClientMock { get; internal set; }
 
@@ -66,6 +69,9 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
                 // Replace real inventory service with mock
                 services.RemoveAll<IInventoryService>();
                 services.AddSingleton(InventoryServiceMock);
+
+                services.RemoveAll<IHospitalService>();
+                services.AddSingleton(HospitalServiceMock);
 
                 // Disable actual MassTransit RabbitMQ connection
                 services.AddMassTransitTestHarness(cfg =>

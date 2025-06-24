@@ -3,17 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Abstractions.CurrentUser;
+using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Infrastructure.Data;
 using VaccinationReception.Infrastructure.Helpers;
+using VaccinationReception.Infrastructure.Services.HospitalServiceMessaging;
 using VaccinationReception.Infrastructure.Services.InventoryMessaging;
 
 namespace VaccinationReception.Infrastructure
@@ -35,6 +32,7 @@ namespace VaccinationReception.Infrastructure
             });
             services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly(), useCompetingConsumers: true);
             services.AddScoped<IInventoryService, InventoryService>();
+            services.AddScoped<IHospitalService, HospitalService>();
             services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
             return services;
         }

@@ -1,12 +1,16 @@
-﻿using HospitalService.Infrastructure.Helpers;
+﻿using BuildingBlocks.Messaging.MassTransit;
+using HospitalService.Domain.Abstractions;
+using HospitalService.Domain.Repositories;
+using HospitalService.Infrastructure.Comsumers;
+using HospitalService.Infrastructure.Data;
+using HospitalService.Infrastructure.Helpers;
+using HospitalService.Infrastructure.Repositories;
+using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using HospitalService.Infrastructure.Data;
-using HospitalService.Domain.Abstractions;
-using HospitalService.Domain.Repositories;
-using HospitalService.Infrastructure.Repositories;
+using System.Reflection;
 
 namespace HospitalService.Infrastructure
 {
@@ -34,6 +38,9 @@ namespace HospitalService.Infrastructure
 
             // Add Unit of Work
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly(), useCompetingConsumers: true);
+
             return services;
         }
     }

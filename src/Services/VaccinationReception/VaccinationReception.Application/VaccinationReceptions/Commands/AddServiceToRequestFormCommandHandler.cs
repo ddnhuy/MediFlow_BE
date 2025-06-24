@@ -3,15 +3,10 @@ using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Application.Helpers;
 using VaccinationReception.Domain.Enums;
-using VaccinationReception.Domain.IServiceClients;
 using VaccinationReception.Domain.Models;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
@@ -20,15 +15,15 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
     {
         private readonly IApplicationDbContext _context;
         private readonly ILogger<AddServiceToRequestFormCommand> _logger;
-        private readonly IHospitalServiceClient _hospitalServiceClient;
+        private readonly IHospitalService _hospitalService;
 
         public AddServiceToRequestFormCommandHandler(
             IApplicationDbContext context,
-            IHospitalServiceClient hospitalServiceClient,
+            IHospitalService hospitalService,
             ILogger<AddServiceToRequestFormCommand> logger)
         {
             _context = context;
-            _hospitalServiceClient = hospitalServiceClient;
+            _hospitalService = hospitalService;
             _logger = logger;
         }
 
@@ -62,7 +57,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                         .Select(s => s.ServiceId)
                         .ToList();
                     // Change mess broke
-                    var services = await _hospitalServiceClient.GetServicesByIdsAsync(serviceIds, cancellationToken);
+                    var services = await _hospitalService.GetServicesByIdsAsync(serviceIds, cancellationToken);
 
                     var serviceDict = services.ToDictionary(s => s.Id);
 
@@ -112,8 +107,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 }
                 else if (!string.IsNullOrEmpty(request.GroupType) && request.GroupId.HasValue)
                 {
-                    // Change mess bro
-                    var services = await _hospitalServiceClient.GetServicesByGroupAsync(
+                    var services = await _hospitalService.GetServicesByGroupAsync(
                         request.GroupId.Value,
                         request.GroupType,
                         cancellationToken);

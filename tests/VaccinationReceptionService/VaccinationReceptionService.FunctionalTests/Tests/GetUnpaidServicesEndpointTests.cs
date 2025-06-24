@@ -1,4 +1,7 @@
-﻿using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
+﻿using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
+using NSubstitute;
+using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
+using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 
@@ -121,30 +124,66 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
 
-        //[Fact]
-        //public async Task GetUnpaidServices_WithValidData_ReturnsOk()
-        //{
-        //    // Act
-        //    var response = await _client.GetAsync($"/receptions/{TestReceptionId}/unpaid-services");
+        [Fact]
+        public async Task GetUnpaidServices_WithValidData_ReturnsOk()
+        {
+            // Arrange
+            var medicineInfo1 = new GetMedicineInformationResponse
+            {
+                MedicineId = 1,
+                MedicineName = "COVID-19 Vaccine",
+                VaccineTypeName = "COVID-19",
+                MedicineTypeName = "Vaccine",
+                IsSuccess = true
+            };
 
-        //    // Debug log
-        //    var content = await response.Content.ReadAsStringAsync();
+            var medicineInfo2 = new GetMedicineInformationResponse
+            {
+                MedicineId = 2,
+                MedicineName = "Flu Vaccine",
+                VaccineTypeName = "Influenza",
+                MedicineTypeName = "Vaccine",
+                IsSuccess = true
+            };
 
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //    var result = await response.Content.ReadFromJsonAsync<UnpaidServicesResponseDTO>();
-        //    result.Should().NotBeNull();
+            var medicineInfoList = new List<GetMedicineInformationResponse> { medicineInfo1, medicineInfo2 };
 
-        //    // Verify services
-        //    result!.Services.Should().NotBeNull();
-        //    result.Services.Should().NotBeEmpty();
-        //    result.Services.First().ServiceId.Should().Be(TestServiceId);
+            // Mock HospitalService
+            var hospitalServiceMock = _factory.Services.GetRequiredService<IHospitalService>();
+            hospitalServiceMock
+                .GetServicesByIdsAsync(Arg.Any<List<int>>(), Arg.Any<CancellationToken>())
+                .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>
+                {
+            new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+            {
+                Id = TestServiceId,
+                ServiceName = "Test Service", // Make sure this matches what your handler expects
+                UnitPrice = 100000
+            }
+                });
 
-        //    // Verify vaccinations
-        //    result.Vaccinations.Should().NotBeNull();
-        //    result.Vaccinations.Should().NotBeEmpty();
-        //    result.Vaccinations.First().VaccineId.Should().Be(TestVaccineId);
-        //}
+            _factory.InventoryServiceMock!
+                .GetMedicineInformationAsync(Arg.Any<IEnumerable<int>>(), Arg.Any<CancellationToken>())
+                .Returns(medicineInfoList);
+
+            // Act
+            var response = await _client.GetAsync($"/receptions/{TestReceptionId}/unpaid-services");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<UnpaidServicesResponseDTO>();
+            result.Should().NotBeNull();
+
+            // Verify services
+            result!.Services.Should().NotBeNull();
+            result.Services.Should().NotBeEmpty();
+            result.Services.First().ServiceId.Should().Be(TestServiceId);
+
+            // Verify vaccinations
+            result.Vaccinations.Should().NotBeNull();
+            result.Vaccinations.Should().NotBeEmpty();
+            result.Vaccinations.First().VaccineId.Should().Be(TestVaccineId);
+        }
 
         [Fact]
         public async Task GetUnpaidServices_WithInvalidReceptionId_ReturnsNotFound()

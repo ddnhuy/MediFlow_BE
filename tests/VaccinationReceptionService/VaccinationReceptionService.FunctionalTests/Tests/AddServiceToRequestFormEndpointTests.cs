@@ -1,4 +1,7 @@
-﻿using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
+﻿using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
+using NSubstitute;
+using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
+using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Application.Helpers;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
@@ -63,32 +66,48 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             dbContext.SaveChanges();
         }
 
-        //[Fact]
-        //public async Task AddServiceToRequestForm_WithValidData_ReturnsCreated()
-        //{
-        //    // Arrange
-        //    var command = new AddServiceToRequestFormCommand(
-        //        ReceptionId: TestReceptionId,
-        //        Services: new List<ServiceRequestItemDTO>
-        //        {
-        //            new() { ServiceId = TestServiceId, Quantity = 1 }
-        //        },
-        //        GroupType: null,
-        //        GroupId: null
-        //    );
+        [Fact]
+        public async Task AddServiceToRequestForm_WithValidData_ReturnsCreated()
+        {
+            // Arrange
+            var command = new AddServiceToRequestFormCommand(
+                ReceptionId: TestReceptionId,
+                Services: new List<ServiceRequestItemDTO>
+                {
+                    new ServiceRequestItemDTO
+                    {
+                        ServiceId = TestServiceId,
+                        Quantity = 1
+                    }
+                },
+                GroupType: null,
+                GroupId: null
+            );
 
-        //    // Act
-        //    var response = await _client.PostAsJsonAsync("/request-forms/add-service", command);
+            // Mock HospitalService
+            var hospitalServiceMock = _factory.Services.GetRequiredService<IHospitalService>();
+            hospitalServiceMock
+                .GetServicesByIdsAsync(Arg.Any<List<int>>(), Arg.Any<CancellationToken>())
+                .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>
+                {
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = TestServiceId,
+                        UnitPrice = 100000
+                    }
+                });
 
-        //    var content = await response.Content.ReadAsStringAsync();
-           
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.Created);
-        //    var result = await response.Content.ReadFromJsonAsync<AddServiceToRequestFormResponse>();
-        //    result.Should().NotBeNull();
-        //    result!.RequestFormId.Should().BeGreaterThan(0);
-        //    result.RequestNumber.Should().NotBeNullOrEmpty();
-        //}
+            // Act
+            var response = await _client.PostAsJsonAsync("/request-forms/add-service", command);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            var result = await response.Content.ReadFromJsonAsync<AddServiceToRequestFormResponse>();
+            result.Should().NotBeNull();
+            result!.RequestFormId.Should().BeGreaterThan(0);
+            result.RequestNumber.Should().NotBeNullOrEmpty();
+        }
 
         [Fact]
         public async Task AddServiceToRequestForm_WithInvalidReceptionId_ReturnsNotFound()
