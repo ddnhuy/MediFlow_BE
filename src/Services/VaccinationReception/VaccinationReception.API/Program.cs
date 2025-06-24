@@ -38,8 +38,7 @@ namespace VaccinationReception.API
 
                     client.BaseAddress = new Uri(baseUrl);
                     client.DefaultRequestHeaders.Add("Accept", "application/json");
-                })
-                .ConfigurePrimaryHttpMessageHandler(() => httpHandler);
+                });
             }
 
             ConfigureHttpClient<IHospitalServiceClient, HospitalServiceClient>("HospitalService:BaseUrl");

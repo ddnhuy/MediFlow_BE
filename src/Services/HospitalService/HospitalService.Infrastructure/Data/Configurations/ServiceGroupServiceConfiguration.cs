@@ -82,7 +82,8 @@ namespace HospitalService.Infrastructure.Data.Configurations
 
             builder.HasIndex(x => new { x.ServiceGroupId, x.ServiceId })
                 .IsUnique()
-                .HasDatabaseName("IX_ServiceGroupServices_ServiceGroupId_ServiceId");
+                .HasDatabaseName("IX_ServiceGroupServices_ServiceGroupId_ServiceId")
+                .HasFilter("\"IsCancelled\" = false");
 
             // Global Query Filter
             builder.HasQueryFilter(x => !x.IsCancelled);
