@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 
@@ -16,13 +17,15 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
     {
         private readonly IApplicationDbContext _context;
         private readonly ILogger<GetReceptionVaccinationsByReceptionIdQueryHandler> _logger;
+        private readonly IInventoryService _inventoryService;
 
         public GetReceptionVaccinationsByReceptionIdQueryHandler(
             IApplicationDbContext context,
-            ILogger<GetReceptionVaccinationsByReceptionIdQueryHandler> logger)
+            ILogger<GetReceptionVaccinationsByReceptionIdQueryHandler> logger, IInventoryService inventoryService)
         {
             _context = context;
             _logger = logger;
+            _inventoryService = inventoryService;
         }
 
         public async Task<GetReceptionVaccinationsByReceptionIdResult> Handle(GetReceptionVaccinationsByReceptionIdQuery request, CancellationToken cancellationToken)
@@ -34,7 +37,21 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                     .OrderBy(rv => rv.AppointmentDate)
                     .ToListAsync(cancellationToken);
 
-                var receptionVaccinationDTOs = receptionVaccinations.Adapt<IEnumerable<ReceptionVaccinationDTO>>();
+                var vaccineIds = receptionVaccinations.Select(rv => rv.VaccineId).Distinct().ToList();
+
+                var medicineInfos = await _inventoryService.GetMedicineInformationAsync(vaccineIds, cancellationToken);
+
+                var receptionVaccinationDTOs = receptionVaccinations.Select(rv =>
+                {
+                    var dto = rv.Adapt<ReceptionVaccinationDTO>();
+                    var medicine = medicineInfos.FirstOrDefault(m => m.MedicineId == rv.VaccineId);
+                    if (medicine != null)
+                    {
+                        dto.VaccineName = medicine.MedicineName;
+                        dto.VaccineTypeName = medicine.VaccineTypeName;
+                    }
+                    return dto;
+                }).ToList();
 
                 _logger.LogInformation("Retrieved {Count} reception vaccinations for ReceptionId {ReceptionId}",
                     receptionVaccinations.Count, request.ReceptionId);

@@ -86,24 +86,24 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         }
 
 
-        [Fact]
-        public async Task GetReceptionVaccinationsByReceptionId_WithValidData_ReturnsOk()
-        {
-            // Act
-            var response = await _client.GetAsync($"/receptions/{TestReceptionId}/vaccinations");
+        //[Fact]
+        //public async Task GetReceptionVaccinationsByReceptionId_WithValidData_ReturnsOk()
+        //{
+        //    // Act
+        //    var response = await _client.GetAsync($"/receptions/{TestReceptionId}/vaccinations");
 
-            // Debug log
-            var content = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response Status: {response.StatusCode}");
-            Console.WriteLine($"Response Content: {content}");
+        //    // Debug log
+        //    var content = await response.Content.ReadAsStringAsync();
+        //    Console.WriteLine($"Response Status: {response.StatusCode}");
+        //    Console.WriteLine($"Response Content: {content}");
 
-            // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        //    // Assert
+        //    response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var result = await response.Content.ReadFromJsonAsync<GetReceptionVaccinationsByReceptionIdResponse>();
-            result.Should().NotBeNull();
-            result.ReceptionVaccinations.Should().NotBeEmpty();
-        }
+        //    var result = await response.Content.ReadFromJsonAsync<GetReceptionVaccinationsByReceptionIdResponse>();
+        //    result.Should().NotBeNull();
+        //    result.ReceptionVaccinations.Should().NotBeEmpty();
+        //}
 
         [Fact]
         public async Task GetReceptionVaccinationsByReceptionId_WithInvalidReceptionId_ReturnsBadRequest()

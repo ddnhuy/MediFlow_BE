@@ -61,7 +61,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     var serviceIds = request.Services
                         .Select(s => s.ServiceId)
                         .ToList();
-
+                    // Change mess broke
                     var services = await _hospitalServiceClient.GetServicesByIdsAsync(serviceIds, cancellationToken);
 
                     var serviceDict = services.ToDictionary(s => s.Id);
@@ -112,6 +112,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 }
                 else if (!string.IsNullOrEmpty(request.GroupType) && request.GroupId.HasValue)
                 {
+                    // Change mess bro
                     var services = await _hospitalServiceClient.GetServicesByGroupAsync(
                         request.GroupId.Value,
                         request.GroupType,

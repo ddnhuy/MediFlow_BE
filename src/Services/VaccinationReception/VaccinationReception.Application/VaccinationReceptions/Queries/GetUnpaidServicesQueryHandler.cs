@@ -42,6 +42,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
 
                 var serviceIds = unpaidServices.Select(srd => srd.ServiceId).Distinct().ToList();
 
+                // Change mess brok
                 var services = await _hospitalServiceClient.GetServicesByIdsAsync(serviceIds, cancellationToken);
 
                 var serviceDictionary = services.ToDictionary(s => s.Id, s => s);
@@ -84,7 +85,6 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                 {
                     var medicineInformationList = await _inventoryService.GetMedicineInformationAsync(vaccineIds, cancellationToken);
 
-                    // Create lookup dictionary for medicine information
                     var medicineLookup = medicineInformationList
                         .Where(m => m.IsSuccess)
                         .ToDictionary(m => m.MedicineId, m => m);
