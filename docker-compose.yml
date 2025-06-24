@@ -10,6 +10,9 @@ services:
   messagebroker:
     image: rabbitmq:4-management-alpine
 
+  seq:
+    image: datalust/seq:latest
+
   yarpapigateway:
     image: ${DOCKER_REGISTRY-}yarpapigateway
     build:

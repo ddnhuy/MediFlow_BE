@@ -1,8 +1,10 @@
 ﻿using BuildingBlocks.Messaging.MassTransit;
+using BuildingBlocks.Strings.Extensions;
 using Google.Protobuf.Collections;
 using HumanResource.Grpc.ErrorDescribers;
 using HumanResource.Grpc.Mapping;
 using HumanResource.Grpc.Services;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,8 @@ builder.Services.AddScoped<ICurrentUserHelper, CurrentUserHelper>();
 builder.Services.AddGrpc();
 
 builder.Services.AddMessageBroker(builder.Configuration);
+
+builder.Services.AddSeqLogging(serviceName: Assembly.GetExecutingAssembly().GetName().Name!);
 
 var app = builder.Build();
 

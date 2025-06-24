@@ -3,6 +3,7 @@ using Appointment.API.Jobs;
 using BuildingBlocks.Behaviors;
 using BuildingBlocks.Exceptions.Handler;
 using BuildingBlocks.Messaging.MassTransit;
+using BuildingBlocks.Strings.Extensions;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -110,6 +111,8 @@ if (!builder.Environment.IsEnvironment("Test"))
 }
 
 // Cross-Cutting Services
+builder.Services.AddSeqLogging(serviceName: Assembly.GetExecutingAssembly().GetName().Name!);
+
 builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
