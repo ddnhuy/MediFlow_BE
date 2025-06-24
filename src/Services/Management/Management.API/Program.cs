@@ -1,5 +1,6 @@
 using BuildingBlocks.Behaviors;
 using BuildingBlocks.Exceptions.Handler;
+using BuildingBlocks.Strings.Extensions;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -64,6 +65,8 @@ builder.Services.AddGrpcClient<DepartmentTypeProtoService.DepartmentTypeProtoSer
 });
 
 // Cross-Cutting Services
+builder.Services.AddSeqLogging(serviceName: Assembly.GetExecutingAssembly().GetName().Name!);
+
 builder.Services.AddMediatR(config =>
  {
      config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());

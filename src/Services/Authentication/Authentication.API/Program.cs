@@ -1,9 +1,11 @@
 ﻿using Authentication.Business;
 using BuildingBlocks.Exceptions.Handler;
+using BuildingBlocks.Strings.Extensions;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,6 +48,8 @@ builder.Services.AddGrpcClient<ApplicationUserProtoService.ApplicationUserProtoS
 });
 
 // Cross-Cutting Services
+builder.Services.AddSeqLogging(serviceName: Assembly.GetExecutingAssembly().GetName().Name!);
+
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 builder.Services

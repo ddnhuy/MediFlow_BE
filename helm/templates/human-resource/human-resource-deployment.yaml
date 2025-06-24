@@ -24,9 +24,13 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080
-          {{- with .Values.resources }}
           resources:
-            {{- toYaml . | nindent 12 }}
+            requests:
+              cpu: "100m"
+              memory: "250Mi"
+            limits:
+              cpu: "150m"
+              memory: "260Mi"
           {{- end }}
           envFrom:
             - configMapRef:
