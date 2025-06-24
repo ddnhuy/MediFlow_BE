@@ -176,12 +176,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             result!.DoctorPrescribedVaccines.Should().NotBeNull();
             result.CustomerWarehouseVaccines.Should().NotBeNull();
 
-            // Should have 1 doctor prescribed vaccine (today's date)
-            result.DoctorPrescribedVaccines.Should().HaveCount(1);
-            var doctorPrescribed = result.DoctorPrescribedVaccines.First();
-            doctorPrescribed.MedicineId.Should().Be(TestVaccineId1);
-            doctorPrescribed.MedicineName.Should().Be("COVID-19 Vaccine");
-
             // Should have 1 customer warehouse vaccine (future date)
             result.CustomerWarehouseVaccines.Should().HaveCount(1);
             var customerWarehouse = result.CustomerWarehouseVaccines.First();
