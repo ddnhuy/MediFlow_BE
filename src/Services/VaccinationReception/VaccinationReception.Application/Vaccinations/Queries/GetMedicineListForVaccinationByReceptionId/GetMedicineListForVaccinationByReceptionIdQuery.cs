@@ -10,6 +10,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
     );
 
     public record MedicineInfo(
+        int ReceptionVaccinationId,
         int MedicineId,
         string MedicineName,
         bool IsConfirmed,
