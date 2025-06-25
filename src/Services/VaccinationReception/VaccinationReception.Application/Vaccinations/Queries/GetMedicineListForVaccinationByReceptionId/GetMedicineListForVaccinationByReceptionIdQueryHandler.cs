@@ -60,6 +60,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
             var doctorPrescribedTasks = doctorPrescribedVaccines
                 .Where(rv => medicineLookup.ContainsKey(rv.VaccineId))
                 .Select(async rv => new MedicineInfo(
+                    rv.Id,
                     medicineLookup[rv.VaccineId].MedicineId,
                     medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
                     rv.IsConfirmed,
@@ -74,6 +75,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
             var customerWarehouseTasks = customerWarehouseVaccines
                 .Where(rv => medicineLookup.ContainsKey(rv.VaccineId))
                 .Select(async rv => new MedicineInfo(
+                    rv.Id,
                     medicineLookup[rv.VaccineId].MedicineId,
                     medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
                     rv.IsConfirmed,

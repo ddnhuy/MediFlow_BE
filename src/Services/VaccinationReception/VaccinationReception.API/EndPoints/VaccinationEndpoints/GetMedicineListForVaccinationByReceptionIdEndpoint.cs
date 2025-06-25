@@ -8,6 +8,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
     );
 
     public record MedicineInfoResponse(
+        int ReceptionVaccinationId,
         int MedicineId,
         string MedicineName,
         bool IsConfirmed,
@@ -27,6 +28,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
                 // Map the result to the response structure
                 var response = new GetMedicineListForVaccinationByReceptionIdResponse(
                     result.DoctorPrescribedVaccines.Select(m => new MedicineInfoResponse(
+                        m.ReceptionVaccinationId,
                         m.MedicineId,
                         m.MedicineName,
                         m.IsConfirmed,
@@ -34,6 +36,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
                         m.doctorName
                     )).ToList(),
                     result.CustomerWarehouseVaccines.Select(m => new MedicineInfoResponse(
+                        m.ReceptionVaccinationId,
                         m.MedicineId,
                         m.MedicineName,
                         m.IsConfirmed,
