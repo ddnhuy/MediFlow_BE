@@ -3,17 +3,17 @@ using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using VaccinationReception.Infrastructure.Data;
+using VaccinationReception.Application.Data;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
     public class RemoveServicesFromRequestFormCommandHandler : ICommandHandler<RemoveServicesFromRequestFormCommand, RemoveServicesFromRequestFormResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly ILogger<RemoveServicesFromRequestFormCommand> _logger;
 
         public RemoveServicesFromRequestFormCommandHandler(
-            ApplicationDbContext context,
+            IApplicationDbContext context,
             ILogger<RemoveServicesFromRequestFormCommand> logger)
         {
             _context = context;

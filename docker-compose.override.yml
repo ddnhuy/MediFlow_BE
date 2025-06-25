@@ -32,6 +32,16 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+  seq:
+    container_name: seq
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=Mediflow@123
+    ports:
+      - "5342:80"     # Web UI
+      - "5341:5341"   # Ingestion port
+
   yarpapigateway:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -77,6 +87,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
     depends_on:
       - postgres_db
+      - messagebroker
     ports:
       - "6063:8080"
 
@@ -104,6 +115,7 @@ services:
     depends_on:
       - postgres_db
       - customerinfo.grpc
+      - messagebroker
     ports:
       - "6065:8080"
       - "8081"

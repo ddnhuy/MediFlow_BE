@@ -30,6 +30,7 @@ namespace CustomerInfo.Grpc.Mapping
                 .Map(dest => dest.Id, src => src.Id)
                 .Map(dest => dest.Code, src => src.Code)
                 .Map(dest => dest.Name, src => src.Name)
+                .Map(dest => dest.Email, src => src.Email ?? "")
                 .Map(dest => dest.Gender, src => src.Gender)
                 .Map(dest => dest.Dob, src => Timestamp.FromDateTime(DateTime.SpecifyKind(src.DOB, DateTimeKind.Local).ToUniversalTime()))
                 .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)

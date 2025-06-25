@@ -8,7 +8,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPut("/screeningevaluation/{id}", async (int id, [FromBody] UpdateScreeningEvaluationReportCommand command, ISender sender) =>
+            app.MapPut("/screening-evaluation/{id}", async (int id, [FromBody] UpdateScreeningEvaluationReportCommand command, ISender sender) =>
             {
                 if (id != command.Id)
                 {

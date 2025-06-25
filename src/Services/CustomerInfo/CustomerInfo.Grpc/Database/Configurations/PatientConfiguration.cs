@@ -21,7 +21,6 @@ namespace CustomerInfo.Grpc.Database.Configurations
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày tạo bản ghi");
 
             builder.Property(x => x.LastUpdatedBy)
@@ -46,7 +45,6 @@ namespace CustomerInfo.Grpc.Database.Configurations
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
             // Code
@@ -72,7 +70,6 @@ namespace CustomerInfo.Grpc.Database.Configurations
             // DOB
             builder.Property(x => x.DOB)
                 .IsRequired()
-                .HasColumnType("date")
                 .HasComment("Ngày sinh");
 
             // PhoneNumber

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
@@ -15,7 +16,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             DateTime ScheduledDate,
             DateTime InvoiceDate,
             DateTime AppointmentDate,
-            bool IsPaid,
+            PaymentStatusForItem PaymentStatusForItem,
             bool IsConfirmed,
             string? Note,
             string? TestResultEntry,

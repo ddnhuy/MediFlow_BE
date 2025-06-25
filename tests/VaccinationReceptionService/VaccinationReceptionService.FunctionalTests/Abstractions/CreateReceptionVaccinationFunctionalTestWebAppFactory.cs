@@ -27,7 +27,6 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
             builder.ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
-                logging.AddConsole();
             });
 
             builder.ConfigureAppConfiguration((context, configBuilder) =>

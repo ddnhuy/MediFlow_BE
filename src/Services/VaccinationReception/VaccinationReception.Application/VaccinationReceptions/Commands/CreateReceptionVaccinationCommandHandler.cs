@@ -5,26 +5,36 @@ using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using VaccinationReception.Application.VaccinationReceptions.EventHandlers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using VaccinationReception.Application.Helpers;
+using VaccinationReception.Application.Data;
 using VaccinationReception.Domain.Models;
-using VaccinationReception.Infrastructure.Data;
+using VaccinationReception.Application.VaccinationReceptions.EventHandlers;
+using VaccinationReception.Application.Abstraction.InventoryMessaging;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
     public class CreateReceptionVaccinationCommandHandler : ICommandHandler<CreateReceptionVaccinationCommand, CreateReceptionVaccinationResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly ILogger<CreateReceptionVaccinationCommandHandler> _logger;
+        private readonly IInventoryService _inventoryService;
         private readonly IPublisher _publisher;
 
         public CreateReceptionVaccinationCommandHandler(
-            ApplicationDbContext context,
             ILogger<CreateReceptionVaccinationCommandHandler> logger,
-            IPublisher publisher)
+            IInventoryService inventoryService,
+            IPublisher publisher,
+            IApplicationDbContext context)
         {
             _context = context;
             _logger = logger;
             _publisher = publisher;
+            _inventoryService = inventoryService;
         }
 
         public async Task<CreateReceptionVaccinationResult> Handle(CreateReceptionVaccinationCommand request, CancellationToken cancellationToken)
@@ -39,10 +49,16 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     _logger.LogWarning("Không tìm thấy Reception với Id: {ReceptionId}", request.ReceptionId);
                     throw new NotFoundException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
                 }
+                var medicineList = await _inventoryService.GetMedicineInformationAsync([request.VaccineId], cancellationToken);
+                var medicine = medicineList.FirstOrDefault(m => m.MedicineId == request.VaccineId);
 
                 var receptionVaccination = request.Adapt<ReceptionVaccination>();
 
-                _context.ReceptionVaccinations.Add(receptionVaccination);
+                receptionVaccination.PaymentStatus = Domain.Enums.PaymentStatusForItem.NotPaid;
+                receptionVaccination.RequestNumber = UniqueStringGenerator.GenerateUniqueString();
+                receptionVaccination.UnitPrice = medicine?.UnitPrice ?? 0;
+                await _context.ReceptionVaccinations.AddAsync(receptionVaccination);
+
                 await _context.SaveChangesAsync(cancellationToken);
 
                 _logger.LogInformation("Đã tạo mới ReceptionVaccination với Id: {Id} cho ReceptionId: {ReceptionId}",

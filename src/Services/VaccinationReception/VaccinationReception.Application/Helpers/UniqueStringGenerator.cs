@@ -59,5 +59,37 @@ namespace VaccinationReception.Application.Helpers
                 return result;
             }
         }
+
+        public static string GeneratePatientIdentifier()
+        {
+            lock (_lock)
+            {
+                string result;
+                do
+                {
+                    var now = DateTime.Now;
+
+                    // Format: CDCDN + YY + MM + DD + HH + MM + SS + mmm
+                    var year = now.ToString("yy");
+                    var month = now.ToString("MM");
+                    var day = now.ToString("dd");
+                    var hour = now.ToString("HH");
+                    var minute = now.ToString("mm");
+                    var second = now.ToString("ss");
+                    var millisecond = now.ToString("fff");
+
+                    result = $"CDCDN{year}{month}{day}{hour}{minute}{second}{millisecond}";
+
+                } while (_usedStrings.Contains(result));
+
+                _usedStrings.Add(result);
+                return result;
+            }
+        }
+
+        public static async Task<string> GeneratePatientIdentifierAsync()
+        {
+            return await Task.Run(() => GeneratePatientIdentifier());
+        }
     }
 }

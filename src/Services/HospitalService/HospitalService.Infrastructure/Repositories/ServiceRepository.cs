@@ -1,4 +1,5 @@
-﻿using HospitalService.Domain.Models;
+﻿using BuildingBlocks.Strings;
+using HospitalService.Domain.Models;
 using HospitalService.Domain.Repositories;
 using HospitalService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -89,6 +90,59 @@ namespace HospitalService.Infrastructure.Repositories
                            s.ServiceName.ToLower().Contains(searchTerm.ToLower()) ||
                            s.ServiceCode.ToLower().Contains(searchTerm.ToLower()))
                 .CountAsync(cancellationToken);
+        }
+        public async Task<IEnumerable<Service>> GetServicesByGroupIdAsync(int groupId, string groupType, CancellationToken cancellationToken)
+        {
+            IQueryable<Service> query = _context.Services;
+
+            var normalizedGroupType = groupType?.Trim();
+
+            if (string.Equals(normalizedGroupType, GroupServiceType.SERVICE_GROUP, StringComparison.OrdinalIgnoreCase))
+            {
+                var serviceIds = await _context.ServiceGroupServices
+                    .Where(sgs => sgs.ServiceGroupId == groupId)
+                    .Select(sgs => sgs.ServiceId)
+                    .ToListAsync(cancellationToken);
+
+                query = query.Where(s => serviceIds.Contains(s.Id));
+            }
+            else if (string.Equals(normalizedGroupType, GroupServiceType.DISEASE_GROUP, StringComparison.OrdinalIgnoreCase))
+            {
+                var serviceIds = await _context.DiseaseGroupServices
+                    .Where(dgs => dgs.DiseaseGroupId == groupId)
+                    .Select(dgs => dgs.ServiceId)
+                    .ToListAsync(cancellationToken);
+
+                query = query.Where(s => serviceIds.Contains(s.Id));
+            }
+
+            return await query
+                .Include(s => s.ServiceGroupServices)
+                .Include(s => s.DiseaseGroupServices)
+                .ToListAsync(cancellationToken);
+        }
+        public async Task<IEnumerable<Service>> GetByIdsAsync(List<int> serviceIds, CancellationToken cancellationToken)
+        {
+            if (serviceIds == null || !serviceIds.Any())
+            {
+                return new List<Service>();
+            }
+
+            return await _context.Services
+                .Where(s => serviceIds.Contains(s.Id) && !s.IsCancelled)
+                .Include(s => s.ServiceGroupServices)
+                .Include(s => s.DiseaseGroupServices)
+                .ToListAsync(cancellationToken);
+        }
+        public async Task<List<Service>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Services
+                .Where(s => !s.IsCancelled)
+                .Include(s => s.ServiceGroupServices)
+                    .ThenInclude(sgs => sgs.ServiceGroup)
+                .Include(s => s.DiseaseGroupServices)
+                    .ThenInclude(dgs => dgs.DiseaseGroup)
+                .ToListAsync(cancellationToken);
         }
     }
 }

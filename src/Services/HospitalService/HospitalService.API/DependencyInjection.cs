@@ -1,7 +1,9 @@
 ﻿using BuildingBlocks.Exceptions.Handler;
+using BuildingBlocks.Strings.Extensions;
 using Carter;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Reflection;
 using System.Text;
 
 namespace HospitalService.API
@@ -31,6 +33,8 @@ namespace HospitalService.API
             services.AddAuthorization();
 
             services.AddExceptionHandler<CustomExceptionHandler>();
+
+            services.AddSeqLogging(serviceName: Assembly.GetExecutingAssembly().GetName().Name!);
 
             return services;
         }

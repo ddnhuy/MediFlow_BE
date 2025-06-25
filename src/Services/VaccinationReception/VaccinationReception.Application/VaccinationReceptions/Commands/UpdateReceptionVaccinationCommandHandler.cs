@@ -6,17 +6,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VaccinationReception.Infrastructure.Data;
+using VaccinationReception.Application.Data;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
     public class UpdateReceptionVaccinationCommandHandler : ICommandHandler<UpdateReceptionVaccinationCommand, UpdateReceptionVaccinationResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly ILogger<UpdateReceptionVaccinationCommandHandler> _logger;
 
         public UpdateReceptionVaccinationCommandHandler(
-            ApplicationDbContext context,
+            IApplicationDbContext context,
             ILogger<UpdateReceptionVaccinationCommandHandler> logger)
         {
             _context = context;
@@ -41,7 +41,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 receptionVaccination.ScheduledDate = request.ScheduledDate;
                 receptionVaccination.InvoiceDate = request.InvoiceDate;
                 receptionVaccination.AppointmentDate = request.AppointmentDate;
-                receptionVaccination.IsPaid = request.IsPaid;
+                receptionVaccination.PaymentStatus = request.PaymentStatus;
                 receptionVaccination.IsConfirmed = request.IsConfirmed;
                 receptionVaccination.Note = request.Note;
                 receptionVaccination.TestResultEntry = request.TestResultEntry;

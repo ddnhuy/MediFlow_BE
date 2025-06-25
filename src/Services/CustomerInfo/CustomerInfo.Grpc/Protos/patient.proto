@@ -12,6 +12,7 @@ service PatientProtoService {
   rpc CreatePatient (CreatePatientRequest) returns (PatientDetailModel);
   rpc UpdatePatient (UpdatePatientRequest) returns (PatientDetailModel);
   rpc DeletePatient (DeletePatientRequest) returns (DeletePatientResponse);
+  rpc ListPatientsWithIdsAndSearch (FilteredPatientsRequest) returns (FilteredPatientsResponse);
 }
 
 message ListPatientsRequest {
@@ -73,6 +74,15 @@ message DeletePatientRequest {
 
 message DeletePatientResponse {
   bool isSuccess = 1;
+}
+
+message FilteredPatientsRequest {
+  repeated int32 patient_ids = 1;
+  string searchTerm = 2;
+}
+
+message FilteredPatientsResponse {
+  repeated PatientSummaryModel data = 1;
 }
 
 message PatientSummaryModel {

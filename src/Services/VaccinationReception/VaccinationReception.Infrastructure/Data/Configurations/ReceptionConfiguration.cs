@@ -34,7 +34,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày tạo bản ghi");
 
             builder.Property(x => x.CreatedBy)
@@ -43,7 +42,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
             builder.Property(x => x.LastUpdatedBy)
@@ -59,8 +57,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
             // ReceptionDate
             builder.Property(x => x.ReceptionDate)
                 .IsRequired()
-                .HasComment("Ngày tiếp nhận")
-                .HasColumnType("timestamp without time zone");
+                .HasComment("Ngày tiếp nhận");
 
             // ServiceTypeId
             builder.Property(x => x.ServiceTypeId)
@@ -87,6 +84,11 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                .WithOne(x => x.Reception)
                .HasForeignKey(x => x.ReceptionId)
                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.Payments)
+                .WithOne(x => x.Reception)
+                .HasForeignKey(x => x.ReceptionId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Indexes
             builder.HasIndex(x => x.PatientId)

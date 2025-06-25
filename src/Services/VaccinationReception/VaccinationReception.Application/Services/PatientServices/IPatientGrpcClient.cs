@@ -19,5 +19,6 @@ namespace VaccinationReception.Application.Services.PatientServices
         Task<CreatePatientResult> CreatePatientAsync(CreatePatientCommand command, CancellationToken cancellationToken);
         Task<UpdatePatientResult> UpdatePatientAsync(UpdatePatientCommand command, CancellationToken cancellationToken);
         Task<DeletePatientResult> DeletePatientAsync(int id, CancellationToken cancellationToken);
+        Task<List<PatientSummaryDTO>> ListPatientsByIdsAndSearchAsync(List<int> ids, string? searchTerm, CancellationToken cancellationToken);
     }
 }

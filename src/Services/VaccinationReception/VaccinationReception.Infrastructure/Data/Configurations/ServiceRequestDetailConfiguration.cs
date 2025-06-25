@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Domain.Models;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Infrastructure.Data.Configurations
 {
@@ -30,7 +31,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
             // Properties
@@ -53,13 +53,14 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.InvoiceDate)
                 .IsRequired()
-                .HasComment("Ngày xuất hóa đơn")
-                .HasColumnType("timestamp without time zone");
+                .HasComment("Ngày xuất hóa đơn");
 
-            builder.Property(x => x.IsPaid)
+            builder.Property(x => x.PaymentStatus)
                 .IsRequired()
-                .HasComment("Đã thanh toán")
-                .HasColumnType("boolean");
+                .HasConversion<string>()
+                .HasColumnType("varchar(20)")
+                .HasDefaultValue(PaymentStatusForItem.NotPaid)
+                .HasComment("Trạng thái thanh toán");
 
             builder.Property(x => x.IsSuspended)
                 .IsRequired()
@@ -79,7 +80,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày tạo bản ghi");
 
             // Relationships
@@ -87,11 +87,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .WithMany(x => x.ServiceRequestDetails)
                 .HasForeignKey(x => x.RequestFormId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasOne(x => x.Service)
-                .WithMany(x => x.ServiceRequestDetails)
-                .HasForeignKey(x => x.ServiceId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             // Indexes
             builder.HasIndex(x => x.RequestFormId)

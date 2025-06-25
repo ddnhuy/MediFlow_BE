@@ -27,7 +27,6 @@ namespace HospitalService.Infrastructure.Data.Configurations
             // BaseEntity Properties
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày tạo bản ghi");
 
             builder.Property(x => x.CreatedBy)
@@ -42,7 +41,6 @@ namespace HospitalService.Infrastructure.Data.Configurations
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
             builder.Property(x => x.LastUpdatedBy)
@@ -84,7 +82,8 @@ namespace HospitalService.Infrastructure.Data.Configurations
 
             builder.HasIndex(x => new { x.DiseaseGroupId, x.ServiceId })
                 .IsUnique()
-                .HasDatabaseName("IX_DiseaseGroupServices_DiseaseGroupId_ServiceId");
+                .HasDatabaseName("IX_DiseaseGroupServices_DiseaseGroupId_ServiceId")
+                .HasFilter("\"IsCancelled\" = false");
 
             // Global Query Filter
             builder.HasQueryFilter(x => !x.IsCancelled);

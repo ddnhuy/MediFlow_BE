@@ -4,8 +4,9 @@ using BuildingBlocks.Strings.Enums;
 using MassTransit;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using VaccinationReception.Application.Abstractions.CurrentUser;
 using VaccinationReception.Application.Services.PatientServices;
-using VaccinationReception.Infrastructure.Helpers;
+
 
 namespace VaccinationReception.Application.VaccinationReceptions.EventHandlers
 {
@@ -34,7 +35,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.EventHandlers
             {
                 UserId = currentUserHelper.UserId,
                 PatientId = notification.PatientId,
-                AppointmentDate = notification.AppointmentDate.AddHours(-7).ToUniversalTime(),
+                AppointmentDate = notification.AppointmentDate.ToUniversalTime(),
                 AppointmentType = AppointmentType.Vaccination,
                 PatientCode = patient.Code,
                 PatientFullName = patient.Name,

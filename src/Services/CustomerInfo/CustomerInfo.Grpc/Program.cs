@@ -1,3 +1,4 @@
+using BuildingBlocks.Strings.Extensions;
 using CustomerInfo.Grpc.Database;
 using CustomerInfo.Grpc.Helpers;
 using CustomerInfo.Grpc.Interceptors;
@@ -6,6 +7,7 @@ using CustomerInfo.Grpc.Services;
 using Google.Protobuf.Collections;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace CustomerInfo.Grpc;
 
@@ -37,6 +39,8 @@ public class Program
             options.Interceptors.Add<GrpcUserInterceptor>();
         });
 
+        builder.Services.AddSeqLogging(serviceName: Assembly.GetExecutingAssembly().GetName().Name!);
+
         var app = builder.Build();
 
         using (var scope = app.Services.CreateScope())
@@ -45,6 +49,7 @@ public class Program
             try
             {
                 var context = services.GetRequiredService<ApplicationDbContext>();
+                
                 context.Database.Migrate();
             }
             catch (Exception ex)

@@ -55,7 +55,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
             RuleFor(x => x)
                 .Must(command =>
                 {
-                    if (command.IsPaid && command.InvoiceDate == default)
+                    if (command.PaymentStatusForItem == Domain.Enums.PaymentStatusForItem.Paid && command.InvoiceDate == default)
                     {
                         return false;
                     }

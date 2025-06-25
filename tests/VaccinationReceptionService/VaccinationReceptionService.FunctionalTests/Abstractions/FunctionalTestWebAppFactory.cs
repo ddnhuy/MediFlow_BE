@@ -1,4 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using HumanResource.Grpc;
+using MassTransit;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using VaccinationReception.Application.Abstraction.InventoryMessaging;
+using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 
 namespace VaccinationReceptionService.FunctionalTests.Abstractions
 {
@@ -11,14 +16,20 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
             .WithPassword("postgres")
             .Build();
 
+        public IInventoryService InventoryServiceMock { get; private set; } = Substitute.For<IInventoryService>();
+
+        public IHospitalService HospitalServiceMock { get; private set; } = Substitute.For<IHospitalService>();
+
         public PatientProtoServiceClient? _grpcClientMock { get; internal set; }
+
+        public ApplicationUserProtoService.ApplicationUserProtoServiceClient ApplicationUserProtoMock { get; private set; } =
+    Substitute.For<ApplicationUserProtoService.ApplicationUserProtoServiceClient>();
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
-                logging.AddConsole();
             });
 
             builder.ConfigureServices(services =>
@@ -34,6 +45,41 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
                 // Mock gRPC client  
                 _grpcClientMock = Substitute.For<PatientProtoServiceClient>();
                 services.AddSingleton(_grpcClientMock);
+
+                // Remove and replace ApplicationUserProtoService client
+                services.RemoveAll<ApplicationUserProtoService.ApplicationUserProtoServiceClient>();
+                services.AddSingleton(ApplicationUserProtoMock);
+
+                // Mock HttpContextAccessor if needed
+                services.AddSingleton(_ => {
+                    var mockHttpContext = Substitute.For<IHttpContextAccessor>();
+                    var context = new DefaultHttpContext();
+
+                    // Add test claims
+                    var identity = new ClaimsIdentity(new[] {
+                        new Claim(ClaimTypes.NameIdentifier, "1"),
+                        new Claim(ClaimTypes.Role, "Doctor")
+                    });
+                    context.User = new ClaimsPrincipal(identity);
+
+                    mockHttpContext.HttpContext.Returns(context);
+                    return mockHttpContext;
+                });
+
+                // Replace real inventory service with mock
+                services.RemoveAll<IInventoryService>();
+                services.AddSingleton(InventoryServiceMock);
+
+                services.RemoveAll<IHospitalService>();
+                services.AddSingleton(HospitalServiceMock);
+
+                // Disable actual MassTransit RabbitMQ connection
+                services.AddMassTransitTestHarness(cfg =>
+                {
+                    // Configure in-memory transport instead of RabbitMQ
+                    cfg.UsingInMemory((context, cfg) => cfg.ConfigureEndpoints(context));
+                });
+
             });
         }
 
@@ -44,7 +90,15 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
 
         public new async Task DisposeAsync()
         {
-            await _dbContainer.StopAsync();
+            try
+            {
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                await _dbContainer.StopAsync(cts.Token);
+            }
+            catch (TimeoutException ex)
+            {
+                Console.WriteLine($"Timeout stopping container: {ex.Message}");
+            }
         }
     }
 }

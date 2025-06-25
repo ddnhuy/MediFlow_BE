@@ -34,9 +34,7 @@ namespace HospitalService.Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasComment("Ngày tạo bản ghi");
 
                     b.Property<int>("CreatedBy")
@@ -67,9 +65,7 @@ namespace HospitalService.Infrastructure.Migrations
                         .HasComment("Trạng thái tạm ngưng");
 
                     b.Property<DateTime>("LastUpdatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
                     b.Property<int>("LastUpdatedBy")
@@ -125,9 +121,7 @@ namespace HospitalService.Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasComment("Ngày tạo bản ghi");
 
                     b.Property<int>("CreatedBy")
@@ -151,9 +145,7 @@ namespace HospitalService.Infrastructure.Migrations
                         .HasComment("Trạng thái tạm ngưng");
 
                     b.Property<DateTime>("LastUpdatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
                     b.Property<int>("LastUpdatedBy")
@@ -174,7 +166,8 @@ namespace HospitalService.Infrastructure.Migrations
 
                     b.HasIndex("DiseaseGroupId", "ServiceId")
                         .IsUnique()
-                        .HasDatabaseName("IX_DiseaseGroupServices_DiseaseGroupId_ServiceId");
+                        .HasDatabaseName("IX_DiseaseGroupServices_DiseaseGroupId_ServiceId")
+                        .HasFilter("\"IsCancelled\" = false");
 
                     b.ToTable("DiseaseGroupServices", "public", t =>
                         {
@@ -220,9 +213,7 @@ namespace HospitalService.Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasComment("Ngày tạo bản ghi");
 
                     b.Property<int>("CreatedBy")
@@ -246,9 +237,7 @@ namespace HospitalService.Infrastructure.Migrations
                         .HasComment("Trạng thái tạm ngưng");
 
                     b.Property<DateTime>("LastUpdatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
                     b.Property<int>("LastUpdatedBy")
@@ -332,9 +321,7 @@ namespace HospitalService.Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasComment("Ngày tạo bản ghi");
 
                     b.Property<int>("CreatedBy")
@@ -360,9 +347,7 @@ namespace HospitalService.Infrastructure.Migrations
                         .HasComment("Trạng thái tạm ngưng");
 
                     b.Property<DateTime>("LastUpdatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
                     b.Property<int>("LastUpdatedBy")
@@ -416,9 +401,7 @@ namespace HospitalService.Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasComment("Ngày tạo bản ghi");
 
                     b.Property<int>("CreatedBy")
@@ -438,9 +421,7 @@ namespace HospitalService.Infrastructure.Migrations
                         .HasComment("Trạng thái tạm ngưng");
 
                     b.Property<DateTime>("LastUpdatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP")
                         .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
                     b.Property<int>("LastUpdatedBy")
@@ -465,7 +446,8 @@ namespace HospitalService.Infrastructure.Migrations
 
                     b.HasIndex("ServiceGroupId", "ServiceId")
                         .IsUnique()
-                        .HasDatabaseName("IX_ServiceGroupServices_ServiceGroupId_ServiceId");
+                        .HasDatabaseName("IX_ServiceGroupServices_ServiceGroupId_ServiceId")
+                        .HasFilter("\"IsCancelled\" = false");
 
                     b.ToTable("ServiceGroupServices", "public", t =>
                         {

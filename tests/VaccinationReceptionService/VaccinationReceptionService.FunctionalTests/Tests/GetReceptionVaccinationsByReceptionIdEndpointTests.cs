@@ -1,4 +1,7 @@
-﻿using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
+﻿using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
+using NSubstitute;
+using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
+using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
@@ -34,7 +37,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Id = TestReceptionId,
                     ServiceTypeId = 1,
                     PatientId = 1,
-                    ReceptionDate = DateTime.Now,
+                    ReceptionDate = DateTime.UtcNow,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.UtcNow,
@@ -54,15 +57,16 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     VaccineId = TestVaccineId,
                     Quantity = 1,
                     IsReadyToUse = true,
-                    ScheduledDate = DateTime.Now,
-                    InvoiceDate = DateTime.Now,
-                    AppointmentDate = DateTime.Now,
-                    IsPaid = false,
+                    ScheduledDate = DateTime.UtcNow,
+                    InvoiceDate = DateTime.UtcNow,
+                    AppointmentDate = DateTime.UtcNow,
+                    PaymentStatus = PaymentStatusForItem.NotPaid,
                     IsConfirmed = false,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.UtcNow,
-                    LastUpdatedBy = 1
+                    LastUpdatedBy = 1,
+                    RequestNumber = "REQ-001"
                 };
                 dbContext.ReceptionVaccinations.Add(receptionVaccination);
             }
@@ -87,6 +91,31 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task GetReceptionVaccinationsByReceptionId_WithValidData_ReturnsOk()
         {
+            // Arrange
+            var medicineInfo1 = new GetMedicineInformationResponse
+            {
+                MedicineId = 1,
+                MedicineName = "COVID-19 Vaccine",
+                VaccineTypeName = "COVID-19",
+                MedicineTypeName = "Vaccine",
+                IsSuccess = true
+            };
+
+            var medicineInfo2 = new GetMedicineInformationResponse
+            {
+                MedicineId = 2,
+                MedicineName = "Flu Vaccine",
+                VaccineTypeName = "Influenza",
+                MedicineTypeName = "Vaccine",
+                IsSuccess = true
+            };
+
+            var medicineInfoList = new List<GetMedicineInformationResponse> { medicineInfo1, medicineInfo2 };
+
+            _factory.InventoryServiceMock!
+                .GetMedicineInformationAsync(Arg.Any<IEnumerable<int>>(), Arg.Any<CancellationToken>())
+                .Returns(medicineInfoList);
+
             // Act
             var response = await _client.GetAsync($"/receptions/{TestReceptionId}/vaccinations");
 

@@ -72,23 +72,36 @@ namespace CustomerInfo.Grpc.Services
 
         public override async Task<PatientDetailModel> GetPatient(GetPatientRequest request, ServerCallContext context)
         {
-            _logger.LogInformation(PatientLogMessages.GettingPatient, request.Id);
+            try
+            {
+                _logger.LogInformation(PatientLogMessages.GettingPatient, request.Id);
 
-            ExtractUserIdFromMetadata(context);
+                ExtractUserIdFromMetadata(context);
 
-            var patient = await _context.Patients
-                .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled, context.CancellationToken)
-                ?? throw new RpcException(
-                    new Status(
-                        StatusCode.NotFound,
-                        ExceptionKey.NOT_FOUND_PATIENT_WITH_ID.ToString()
-                    )
-                );
+                var patient = await _context.Patients
+                    .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled, context.CancellationToken)
+                    ?? throw new RpcException(
+                        new Status(
+                            StatusCode.NotFound,
+                            ExceptionKey.NOT_FOUND_PATIENT_WITH_ID.ToString()
+                        )
+                    );
 
-            _logger.LogInformation(PatientLogMessages.FoundPatient, patient.Name, patient.Id);
+                _logger.LogInformation(PatientLogMessages.FoundPatient, patient.Name, patient.Id);
 
-            return patient.Adapt<PatientDetailModel>();
+                return patient.Adapt<PatientDetailModel>();
+            }
+            catch (RpcException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error in GetPatient with ID {Id}", request.Id);
+                throw new RpcException(new Status(StatusCode.Internal, "Internal server error"));
+            }
         }
+
 
         public override async Task<PatientDetailModel> CreatePatient(CreatePatientRequest request, ServerCallContext context)
         {
@@ -201,6 +214,36 @@ namespace CustomerInfo.Grpc.Services
             _logger.LogInformation(PatientLogMessages.DeletedPatient, patient.Name, patient.Id);
 
             return new DeletePatientResponse { IsSuccess = true };
+        }
+
+        public override async Task<FilteredPatientsResponse> ListPatientsWithIdsAndSearch(
+            FilteredPatientsRequest request,
+            ServerCallContext context)
+        {
+            _logger.LogInformation("Fetching patients by IDs with optional search. IDs: {Count}, Search: {SearchTerm}",
+                request.PatientIds.Count, request.SearchTerm);
+
+            ExtractUserIdFromMetadata(context);
+
+            var query = _context.Patients
+                .Where(p => request.PatientIds.Contains(p.Id) && !p.IsCancelled);
+
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+            {
+                var normalizedSearch = request.SearchTerm.Trim().ToLower();
+                query = query.Where(p => p.Code.ToLower().Contains(normalizedSearch));
+            }
+
+            var patients = await query.ToListAsync(context.CancellationToken);
+
+            var mapped = patients.Adapt<List<PatientSummaryModel>>();
+
+            _logger.LogInformation("Returning {Count} filtered patients.", mapped.Count);
+
+            return new FilteredPatientsResponse
+            {
+                Data = { mapped }
+            };
         }
 
         private void ValidatePatientModel(Patient patient)

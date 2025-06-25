@@ -35,7 +35,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Id = TestReceptionId,
                     ServiceTypeId = 1,
                     PatientId = 1,
-                    ReceptionDate = DateTime.Now,
+                    ReceptionDate = DateTime.UtcNow,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.UtcNow,
@@ -91,7 +91,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var command = CreateValidCommand();
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/screeningevaluation/{TestReportId}", command);
+            var response = await _client.PutAsJsonAsync($"/screening-evaluation/{TestReportId}", command);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -104,7 +104,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var command = CreateValidCommand();
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/screeningevaluation/{TestReportId}", command);
+            var response = await _client.PutAsJsonAsync($"/screening-evaluation/{TestReportId}", command);
 
             var content = await response.Content.ReadAsStringAsync();
 
@@ -151,7 +151,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var differentId = TestReportId + 1;
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/screeningevaluation/{differentId}", command);
+            var response = await _client.PutAsJsonAsync($"/screening-evaluation/{differentId}", command);
            
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }

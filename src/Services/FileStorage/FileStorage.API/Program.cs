@@ -1,5 +1,6 @@
 using BuildingBlocks.Behaviors;
 using BuildingBlocks.Exceptions.Handler;
+using BuildingBlocks.Strings.Extensions;
 using CloudinaryDotNet;
 using FileStorage.API.Database;
 using FileStorage.API.Helpers;
@@ -58,6 +59,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 // Cross-Cutting Services
+builder.Services.AddSeqLogging(serviceName: Assembly.GetExecutingAssembly().GetName().Name!);
+
 builder.Services.AddMediatR(config =>
 {
     config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());

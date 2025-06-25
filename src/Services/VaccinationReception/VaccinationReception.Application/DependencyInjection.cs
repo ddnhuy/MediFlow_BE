@@ -3,6 +3,7 @@ using BuildingBlocks.Messaging.MassTransit;
 using CustomerInfo.Grpc.Protos;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using HumanResource.Grpc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +30,18 @@ namespace VaccinationReception.Application
                 return handler;
             });
 
+            services.AddGrpcClient<ApplicationUserProtoService.ApplicationUserProtoServiceClient>(options =>
+            {
+                options.Address = new Uri(configuration["GrpcSettings:HumanResourceUrl"]!);
+            }).ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                };
+                return handler;
+            });
+
             services.AddMediatR(config =>
             {
                 config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
@@ -43,9 +56,6 @@ namespace VaccinationReception.Application
             services.TryAddScoped<IPatientGrpcClient, PatientGrpcClient>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-            // Message Broker
-            services.AddMessageBroker(configuration);
 
             return services;
         }

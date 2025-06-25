@@ -1,20 +1,22 @@
-﻿using Testcontainers.RabbitMq;
+﻿using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
+using HumanResource.Grpc;
+using Testcontainers.RabbitMq;
 using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
 using VaccinationReception.Domain.Models;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {
-    public class CreateReceptionVaccinationEndpointTests : CreateReceptionVaccinationBaseTest
+    public class CreateReceptionVaccinationEndpointTests : BaseFunctionalTest
     {
         private readonly string _testToken;
-        private readonly CreateReceptionVaccinationFunctionalTestWebAppFactory _factory;
+        private readonly FunctionalTestWebAppFactory _factory;
         private const int TestReceptionId = 1;
         private const int TestVaccineId = 1;
         private const int TestDoctorId = 1;
         private const int TestServiceTypeId = 1;
 
-        public CreateReceptionVaccinationEndpointTests(CreateReceptionVaccinationFunctionalTestWebAppFactory factory) : base(factory)
+        public CreateReceptionVaccinationEndpointTests(FunctionalTestWebAppFactory factory) : base(factory)
         {
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
@@ -37,7 +39,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 {
                     Id = TestServiceTypeId,
                     Name = "Test Service Type",
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
@@ -54,7 +56,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Id = TestReceptionId,
                     ServiceTypeId = TestServiceTypeId,
                     PatientId = 1, // Thêm PatientId
-                    ReceptionDate = DateTime.Now,
+                    ReceptionDate = DateTime.UtcNow,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.UtcNow,
@@ -78,7 +80,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 ScheduledDate: DateTime.UtcNow,
                 InvoiceDate: DateTime.UtcNow,
                 AppointmentDate: DateTime.UtcNow,
-                IsPaid: false,
+                PaymentStatusForItem: VaccinationReception.Domain.Enums.PaymentStatusForItem.NotPaid,
                 IsConfirmed: false,
                 Note: null,
                 TestResultEntry: null,
@@ -104,7 +106,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 Code = "BN001",
                 Name = "Nguyen Van A",
                 Gender = 1,
-                Dob = Timestamp.FromDateTime(new DateTime(1990, 1, 1).ToUniversalTime()),
+                Dob = Timestamp.FromDateTime(DateTime.UtcNow),
                 PhoneNumber = "0123456789",
                 Email = "abcd@example.com",
                 IdentityCard = "123456789",
@@ -129,15 +131,42 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 .GetPatientAsync(Arg.Any<GetPatientRequest>(), Arg.Any<Metadata>())
                 .Returns(asyncUnaryCall);
 
+            // Configure the mock from factory
+
+            // Arrange
+            var medicineInfo1 = new GetMedicineInformationResponse
+            {
+                MedicineId = 1,
+                MedicineName = "COVID-19 Vaccine",
+                VaccineTypeName = "COVID-19",
+                MedicineTypeName = "Vaccine",
+                IsSuccess = true
+            };
+
+            var medicineInfo2 = new GetMedicineInformationResponse
+            {
+                MedicineId = 2,
+                MedicineName = "Flu Vaccine",
+                VaccineTypeName = "Influenza",
+                MedicineTypeName = "Vaccine",
+                IsSuccess = true
+            };
+
+            var medicineInfoList = new List<GetMedicineInformationResponse> { medicineInfo1, medicineInfo2 };
+
+            _factory.InventoryServiceMock!
+                .GetMedicineInformationAsync(Arg.Any<IEnumerable<int>>(), Arg.Any<CancellationToken>())
+                .Returns(medicineInfoList);
+
             var command = new CreateReceptionVaccinationCommand(
                 ReceptionId: TestReceptionId,
                 VaccineId: TestVaccineId,
                 Quantity: 1,
                 IsReadyToUse: true,
-                ScheduledDate: DateTime.Now.AddDays(7),
-                InvoiceDate: DateTime.Now,
-                AppointmentDate: DateTime.Now.AddDays(7),
-                IsPaid: false,
+                ScheduledDate: DateTime.UtcNow.AddDays(7),
+                InvoiceDate: DateTime.UtcNow,
+                AppointmentDate: DateTime.UtcNow.AddDays(7),
+                PaymentStatusForItem: VaccinationReception.Domain.Enums.PaymentStatusForItem.NotPaid,
                 IsConfirmed: false,
                 Note: null,
                 TestResultEntry: null,
@@ -165,10 +194,10 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 VaccineId: 0,
                 Quantity: 0,
                 IsReadyToUse: true,
-                ScheduledDate: DateTime.Now,
-                InvoiceDate: DateTime.Now,
-                AppointmentDate: DateTime.Now,
-                IsPaid: false,
+                ScheduledDate: DateTime.UtcNow,
+                InvoiceDate: DateTime.UtcNow,
+                AppointmentDate: DateTime.UtcNow,
+                PaymentStatusForItem: VaccinationReception.Domain.Enums.PaymentStatusForItem.NotPaid,
                 IsConfirmed: false,
                 Note: null,
                 TestResultEntry: null,
@@ -194,10 +223,10 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 VaccineId: TestVaccineId,
                 Quantity: 1,
                 IsReadyToUse: true,
-                ScheduledDate: DateTime.Now.AddDays(7),
-                InvoiceDate: DateTime.Now,
-                AppointmentDate: DateTime.Now.AddDays(7),
-                IsPaid: false,
+                ScheduledDate: DateTime.UtcNow.AddDays(7),
+                InvoiceDate: DateTime.UtcNow,
+                AppointmentDate: DateTime.UtcNow.AddDays(7),
+                PaymentStatusForItem: VaccinationReception.Domain.Enums.PaymentStatusForItem.NotPaid,
                 IsConfirmed: false,
                 Note: null,
                 TestResultEntry: null,

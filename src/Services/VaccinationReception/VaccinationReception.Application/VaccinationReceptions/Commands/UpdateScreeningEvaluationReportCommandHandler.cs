@@ -6,17 +6,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using VaccinationReception.Infrastructure.Data;
+using VaccinationReception.Application.Data;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
     public class UpdateScreeningEvaluationReportCommandHandler : ICommandHandler<UpdateScreeningEvaluationReportCommand, UpdateScreeningEvaluationReportResult>
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IApplicationDbContext _context;
         private readonly ILogger<UpdateScreeningEvaluationReportCommandHandler> _logger;
 
         public UpdateScreeningEvaluationReportCommandHandler(
-            ApplicationDbContext context,
+            IApplicationDbContext context,
             ILogger<UpdateScreeningEvaluationReportCommandHandler> logger)
         {
             _context = context;

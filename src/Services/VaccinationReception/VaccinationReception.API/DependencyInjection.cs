@@ -1,4 +1,7 @@
-﻿namespace VaccinationReception.API
+﻿using BuildingBlocks.Strings.Extensions;
+using System.Reflection;
+
+namespace VaccinationReception.API
 {
     public static class DependencyInjection
     {
@@ -20,6 +23,9 @@
                 };
             });
             services.AddAuthorization();
+
+            services.AddSeqLogging(serviceName: Assembly.GetExecutingAssembly().GetName().Name!);
+
             return services;
         }
 

@@ -1,5 +1,6 @@
 ﻿using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
+using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
@@ -18,7 +19,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _testToken);
-
             SeedData();
         }
 
@@ -37,7 +37,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Id = TestReceptionId,
                     ServiceTypeId = 1,
                     PatientId = 1,
-                    ReceptionDate = DateTime.Now,
+                    ReceptionDate = DateTime.UtcNow,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.UtcNow,
@@ -58,13 +58,14 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     VaccineId = TestVaccineId,
                     Quantity = 1,
                     IsReadyToUse = false,
-                    ScheduledDate = DateTime.Now,
-                    InvoiceDate = DateTime.Now,
-                    AppointmentDate = DateTime.Now,
-                    IsPaid = false,
+                    ScheduledDate = DateTime.UtcNow,
+                    InvoiceDate = DateTime.UtcNow,
+                    AppointmentDate = DateTime.UtcNow,
+                    PaymentStatus = PaymentStatusForItem.NotPaid,
                     IsConfirmed = false,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
+                    RequestNumber = "REQ-001",
                     LastUpdatedAt = DateTime.UtcNow,
                     LastUpdatedBy = 1
                 };
@@ -82,7 +83,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var command = CreateValidCommand();
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/receptionvaccinations/{TestReceptionVaccinationId}", command);
+            var response = await _client.PutAsJsonAsync($"/reception-vaccinations/{TestReceptionVaccinationId}", command);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -95,7 +96,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var command = CreateValidCommand();
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/receptionvaccinations/{TestReceptionVaccinationId}", command);
+            var response = await _client.PutAsJsonAsync($"/reception-vaccinations/{TestReceptionVaccinationId}", command);
 
             // Debug log
             var content = await response.Content.ReadAsStringAsync();
@@ -122,7 +123,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             receptionVaccination.InvoiceDate.Should().BeCloseTo(command.InvoiceDate, TimeSpan.FromSeconds(1));
             receptionVaccination.AppointmentDate.Should().BeCloseTo(command.AppointmentDate, TimeSpan.FromSeconds(1));
 
-            receptionVaccination.IsPaid.Should().Be(command.IsPaid);
+            receptionVaccination.PaymentStatus.Should().Be(command.PaymentStatus);
             receptionVaccination.IsConfirmed.Should().Be(command.IsConfirmed);
             receptionVaccination.Note.Should().Be(command.Note);
             receptionVaccination.TestResultEntry.Should().Be(command.TestResultEntry);
@@ -137,7 +138,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var differentId = TestReceptionVaccinationId + 1;
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/receptionvaccinations/{differentId}", command);
+            var response = await _client.PutAsJsonAsync($"/reception-vaccinations/{differentId}", command);
 
             // Debug log
             var content = await response.Content.ReadAsStringAsync();
@@ -152,10 +153,10 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 Id: TestReceptionVaccinationId,
                 Quantity: 2,
                 IsReadyToUse: true,
-                ScheduledDate: DateTime.Now.AddDays(1),
-                InvoiceDate: DateTime.Now,
-                AppointmentDate: DateTime.Now.AddDays(2),
-                IsPaid: true,
+                ScheduledDate: DateTime.UtcNow.AddDays(1),
+                InvoiceDate: DateTime.UtcNow,
+                AppointmentDate: DateTime.UtcNow.AddDays(2),
+                PaymentStatus: PaymentStatusForItem.Paid,
                 IsConfirmed: true,
                 Note: "Test note",
                 TestResultEntry: "Test result",

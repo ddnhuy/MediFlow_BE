@@ -19,6 +19,12 @@ namespace VaccinationReception.API
 
             builder.Services.AddFluentValidationAutoValidation();
 
+            var httpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+
+
             builder.Services
                 .AddHealthChecks()
                 .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);

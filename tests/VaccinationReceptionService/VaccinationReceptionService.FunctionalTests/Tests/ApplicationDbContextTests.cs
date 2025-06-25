@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VaccinationReception.Application.Abstractions.CurrentUser;
 using VaccinationReception.Domain.Models;
 using VaccinationReception.Infrastructure.Helpers;
 

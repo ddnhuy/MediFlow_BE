@@ -34,7 +34,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     Id = TestReceptionId,
                     ServiceTypeId = 1,
                     PatientId = 1,
-                    ReceptionDate = DateTime.Now,
+                    ReceptionDate = DateTime.UtcNow,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.UtcNow,
@@ -43,23 +43,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 dbContext.Receptions.Add(reception);
             }
 
-            // Create Service if not exists
-            var service = dbContext.Services.FirstOrDefault(s => s.Id == TestServiceId);
-            if (service == null)
-            {
-                service = new Service
-                {
-                    Id = TestServiceId,
-                    ServiceCode = "SVC001",
-                    ServiceName = "Test Service",
-                    UnitPrice = 100,
-                    CreatedAt = DateTime.UtcNow,
-                    CreatedBy = 1,
-                    LastUpdatedAt = DateTime.UtcNow,
-                    LastUpdatedBy = 1
-                };
-                dbContext.Services.Add(service);
-            }
+
 
             // Create RequestForm if not exists
             var requestForm = dbContext.RequestForms

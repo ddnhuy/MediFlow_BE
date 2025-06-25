@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 
 namespace VaccinationReception.Infrastructure.Data.Configurations
@@ -34,7 +35,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.CreatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày tạo bản ghi");
 
             builder.Property(x => x.CreatedBy)
@@ -43,7 +43,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
 
             builder.Property(x => x.LastUpdatedAt)
                 .IsRequired()
-                .HasDefaultValueSql("CURRENT_TIMESTAMP")
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
             builder.Property(x => x.LastUpdatedBy)
@@ -51,6 +50,17 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasComment("Người cập nhật bản ghi cuối cùng");
 
             // Properties
+            builder.Property(x => x.RequestNumber)
+                .IsRequired()
+                .HasMaxLength(15)
+                .HasComment("Số phiếu yêu cầu")
+                .HasColumnType("varchar(15)");
+
+            builder.Property(x => x.UnitPrice)
+                .IsRequired()
+                .HasPrecision(18, 2)
+                .HasComment("Đơn giá");
+
             builder.Property(x => x.ReceptionId)
                 .IsRequired()
                 .HasComment("Mã tiếp nhận");
@@ -69,21 +79,20 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasColumnType("boolean");
 
             builder.Property(x => x.ScheduledDate)
-                .HasColumnType("timestamp without time zone")
                 .HasComment("Ngày dự kiến tiêm");
 
             builder.Property(x => x.InvoiceDate)
-                .HasColumnType("timestamp without time zone")
                 .HasComment("Ngày xuất hóa đơn");
 
             builder.Property(x => x.AppointmentDate)
-                .HasColumnType("timestamp without time zone")
                 .HasComment("Ngày hẹn tiêm");
 
-            builder.Property(x => x.IsPaid)
+            builder.Property(x => x.PaymentStatus)
                 .IsRequired()
-                .HasComment("Đã thanh toán")
-                .HasColumnType("boolean");
+                .HasConversion<string>()
+                .HasColumnType("varchar(20)")
+                .HasDefaultValue(PaymentStatusForItem.NotPaid)
+                .HasComment("Trạng thái thanh toán");
 
             builder.Property(x => x.IsConfirmed)
                 .IsRequired()
