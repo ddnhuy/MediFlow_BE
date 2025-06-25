@@ -81,7 +81,16 @@ ingress:
               name: gateway
               port:
                 number: 80
-        - path: /logs
+    - host: logs.ddnhuy.tech
+      paths:
+        - path: /.well-known/acme-challenge/
+          pathType: Prefix
+          backend:
+            service:
+              name: cert-manager
+              port:
+                number: 9402
+        - path: /
           pathType: Prefix
           backend:
             service:
@@ -92,6 +101,9 @@ ingress:
     - hosts:
         - api.ddnhuy.tech
       secretName: mediflow-ingress-tls
+    - hosts:
+        - logs.ddnhuy.tech
+      secretName: logs-ingress-tls
 
 resources:
   requests:
@@ -116,16 +128,16 @@ livenessProbe:
   httpGet:
     path: /health
     port: 8080
-  initialDelaySeconds: 30
-  periodSeconds: 10
+  initialDelaySeconds: 60
+  periodSeconds: 30
   timeoutSeconds: 5
   failureThreshold: 5
 readinessProbe:
   httpGet:
     path: /health
     port: 8080
-  initialDelaySeconds: 25
-  periodSeconds: 10
+  initialDelaySeconds: 60
+  periodSeconds: 30
   timeoutSeconds: 5
   failureThreshold: 3
 

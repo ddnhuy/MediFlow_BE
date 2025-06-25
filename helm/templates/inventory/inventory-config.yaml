@@ -20,5 +20,10 @@ data:
         "Issuer": "MediFlowIssuer",
         "Audience": "MediFlowAudience",
         "ExpirationInMinutes": 60
+      },
+      "MessageBroker": {
+        "Host": "amqp://rabbitmq:5672",
+        "UserName": "mediflow",
+        "Password": "Mediflow@123"
       }
     }
