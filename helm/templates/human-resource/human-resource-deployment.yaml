@@ -29,9 +29,8 @@ spec:
               cpu: "100m"
               memory: "250Mi"
             limits:
-              cpu: "150m"
+              cpu: "120m"
               memory: "260Mi"
-          {{- end }}
           envFrom:
             - configMapRef:
                 name: human-resource-config
