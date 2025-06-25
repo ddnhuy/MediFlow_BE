@@ -22,7 +22,14 @@ data:
         "ExpirationInMinutes": 60
       },
       "GrpcSettings": {
-        "CustomerInfoUrl": "http://customer-info-grpc:80"
+        "CustomerInfoUrl": "http://customer-info-grpc:80",
+        "HumanResourceUrl": "http://human-resource-grpc:80"
+      },
+      "HospitalService": {
+        "BaseUrl": "http://hospital-service-service:80"
+      },
+      "InventoryService": {
+        "BaseUrl": "http://inventory-service:80"
       },
       "MessageBroker": {
         "Host": "amqp://rabbitmq:5672",
