@@ -74,6 +74,13 @@ data:
             },
             "Transforms": [ { "PathPattern": "{**catch-all}" } ]
           },
+          "file-storage-route": {
+            "ClusterId": "file-storage-cluster",
+            "Match": {
+              "Path": "/file-storage/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          }
         },
         "Clusters": {
           "authentication-cluster": {
@@ -115,6 +122,13 @@ data:
             "Destinations": {
               "default": {
                 "Address": "http://hospital-service-service:80"
+              }
+            }
+          },
+          "file-storage-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://file-storage-service:80"
               }
             }
           }
