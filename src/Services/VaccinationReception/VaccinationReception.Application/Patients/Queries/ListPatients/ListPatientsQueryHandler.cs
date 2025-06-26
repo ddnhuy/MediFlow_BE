@@ -30,7 +30,14 @@ namespace VaccinationReception.Application.Patients.Queries.ListPatients
 
             try
             {
-                var result = await _patientGrpcClient.ListPatientsAsync(request.PaginationRequest, cancellationToken);
+                var result = await _patientGrpcClient.ListPatientsAsync(
+                    request.PaginationRequest,
+                    request.Name,
+                    request.Code,
+                    request.IdentityCard,
+                    request.PhoneNumber,
+                    cancellationToken
+                );
                 _logger.LogInformation("Found {Count} patients", result.TotalItems);
                 return new ListPatientsResult(result);
             }

@@ -5,11 +5,17 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/patients", async ([AsParameters] PaginationRequest request, ISender sender) =>
+            app.MapGet("/patients", async (
+                [AsParameters] PaginationRequest request,
+                string? name,
+                string? code,
+                string? identityCard,
+                string? phoneNumber,
+                ISender sender) =>
             {
                 PaginationHelper.VerifyPaginationRequest(request.PageIndex, request.PageSize);
 
-                var result = await sender.Send(new ListPatientsQuery(request));
+                var result = await sender.Send(new ListPatientsQuery(request, name, code, identityCard, phoneNumber));
 
                 if (result == null || result.Patients.Data == null || !result.Patients.Data.Any())
                 {

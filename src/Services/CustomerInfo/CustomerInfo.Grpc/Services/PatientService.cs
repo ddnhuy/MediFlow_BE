@@ -49,10 +49,35 @@ namespace CustomerInfo.Grpc.Services
                 .Where(x => !x.IsCancelled)
                 .AsQueryable();
 
-            var count = await query.CountAsync();
+            if (!string.IsNullOrWhiteSpace(request.Name))
+            {
+                var name = request.Name.Trim().ToLower();
+                query = query.Where(p => !string.IsNullOrEmpty(p.Name) && p.Name.ToLower().Contains(name));
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Code))
+            {
+                var code = request.Code.Trim().ToLower();
+                query = query.Where(p => !string.IsNullOrEmpty(p.Code) && p.Code.ToLower().Contains(code));
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.IdentityCard))
+            {
+                var identityCard = request.IdentityCard.Trim().ToLower();
+                query = query.Where(p => !string.IsNullOrEmpty(p.IdentityCard) && p.IdentityCard.ToLower().Contains(identityCard));
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.PhoneNumber))
+            {
+                var phone = request.PhoneNumber.Trim().ToLower();
+                query = query.Where(p => !string.IsNullOrEmpty(p.PhoneNumber) && p.PhoneNumber.ToLower().Contains(phone));
+            }
+
+            var count = await query.CountAsync(context.CancellationToken);
             _logger.LogInformation(PatientLogMessages.FoundPatients, count);
 
             var patients = await query
+                .OrderByDescending(p => p.Id)
                 .Skip((request.PageIndex - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .ToListAsync(context.CancellationToken);

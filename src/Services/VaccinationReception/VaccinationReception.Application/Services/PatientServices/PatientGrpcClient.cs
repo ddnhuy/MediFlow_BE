@@ -42,7 +42,7 @@ namespace VaccinationReception.Application.Services.PatientServices
             };
         }
 
-        public async Task<PaginatedResult<PatientSummaryDTO>> ListPatientsAsync(PaginationRequest request, CancellationToken cancellationToken)
+        public async Task<PaginatedResult<PatientSummaryDTO>> ListPatientsAsync(PaginationRequest request, string? name, string? code, string? identityCard, string? phoneNumber, CancellationToken cancellationToken)
         {
             try
             {
@@ -51,7 +51,11 @@ namespace VaccinationReception.Application.Services.PatientServices
                 var grpcRequest = new ListPatientsRequest
                 {
                     PageIndex = request.PageIndex,
-                    PageSize = request.PageSize
+                    PageSize = request.PageSize,
+                    Name = name ?? string.Empty,
+                    Code = code ?? string.Empty,
+                    IdentityCard = identityCard ?? string.Empty,
+                    PhoneNumber = phoneNumber ?? string.Empty
                 };
 
                 var response = await _client.ListPatientsAsync(grpcRequest, _metadata, cancellationToken: cancellationToken);

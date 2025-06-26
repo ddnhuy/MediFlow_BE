@@ -18,6 +18,10 @@ service PatientProtoService {
 message ListPatientsRequest {
   int32 pageIndex = 1;
   int32 pageSize = 2;
+  string name = 3;
+  string code = 4;
+  string identityCard = 5;
+  string phoneNumber = 6;
 }
 
 message ListPatientsResponse {

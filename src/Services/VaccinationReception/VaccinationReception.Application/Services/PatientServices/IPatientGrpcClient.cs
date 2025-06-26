@@ -14,7 +14,7 @@ namespace VaccinationReception.Application.Services.PatientServices
 {
     public interface IPatientGrpcClient
     {
-        Task<PaginatedResult<PatientSummaryDTO>> ListPatientsAsync(PaginationRequest request, CancellationToken cancellationToken);
+        Task<PaginatedResult<PatientSummaryDTO>> ListPatientsAsync(PaginationRequest request, string? name, string? code, string? identityCard, string? phoneNumber, CancellationToken cancellationToken);
         Task<PatientDetailDTO> GetPatientAsync(int id, CancellationToken cancellationToken);
         Task<CreatePatientResult> CreatePatientAsync(CreatePatientCommand command, CancellationToken cancellationToken);
         Task<UpdatePatientResult> UpdatePatientAsync(UpdatePatientCommand command, CancellationToken cancellationToken);
