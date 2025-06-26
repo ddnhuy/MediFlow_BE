@@ -32,13 +32,14 @@ public class ListPatientsTests : BaseFunctionalTest
         // Arrange
         var pageIndex = 1;
         var pageSize = 10;
+        var searchTerm = "Lê";
 
         _grpcClientMock?
             .ListPatientsAsync(Arg.Any<ListPatientsRequest>(), Arg.Any<Metadata>())
             .Throws(new Exception("GRPC call failed"));
 
         // Act
-        var response = await _client.GetAsync($"/patients?pageIndex={pageIndex}&pageSize={pageSize}");
+        var response = await _client.GetAsync($"/patients?pageIndex={pageIndex}&pageSize={pageSize}&searchTerm={searchTerm}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);

@@ -9,6 +9,12 @@ using VaccinationReception.Application.DTOs.PatientDTOs;
 
 namespace VaccinationReception.Application.Patients.Queries.ListPatients
 {
-    public record ListPatientsQuery(PaginationRequest PaginationRequest) : IQuery<ListPatientsResult>;
+    public record ListPatientsQuery(
+        PaginationRequest PaginationRequest,
+        string? Name,
+        string? Code,
+        string? IdentityCard,
+        string? PhoneNumber
+    ) : IQuery<ListPatientsResult>;
     public record ListPatientsResult(PaginatedResult<PatientSummaryDTO> Patients);
 }

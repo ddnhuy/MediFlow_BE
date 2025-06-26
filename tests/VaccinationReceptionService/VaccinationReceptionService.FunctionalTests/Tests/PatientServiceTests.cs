@@ -16,31 +16,40 @@ public class PatientServiceTests : BaseFunctionalTest
     }
 
     [Fact]
-    public async Task ListPatients_WithValidPagination_ReturnsOk()
+    public async Task ListPatients_WithValidPaginationAndFilters_ReturnsOk()
     {
         // Arrange
         var pageIndex = 1;
         var pageSize = 10;
+        var name = "Test";
+        var code = "BN10";
+        var identityCard = "012";
+        var phoneNumber = "01";
+
         var grpcResponse = new ListPatientsResponse
         {
             PageIndex = pageIndex,
             PageSize = pageSize,
             TotalItem = 2,
             Data =
+        {
+            new PatientSummaryModel
             {
-                new PatientSummaryModel
-                {
-                    Id = 1,
-                    Code = "BN100",
-                    Name = "Test Patient 1"
-                },
-                new PatientSummaryModel
-                {
-                    Id = 2,
-                    Code = "BN101",
-                    Name = "Test Patient 2"
-                }
+                Id = 1,
+                Code = "BN100",
+                Name = "Test Patient 1",
+                IdentityCard = "01233434",
+                PhoneNumber = "0123456789"
+            },
+            new PatientSummaryModel
+            {
+                Id = 2,
+                Code = "BN101",
+                Name = "Test Patient 2",
+                IdentityCard = "01223456",
+                PhoneNumber = "0123456789"
             }
+        }
         };
 
         var asyncUnaryCall = new AsyncUnaryCall<ListPatientsResponse>(
@@ -55,9 +64,11 @@ public class PatientServiceTests : BaseFunctionalTest
             .Returns(asyncUnaryCall);
 
         // Act
-        var response = await _client.GetAsync($"/patients?pageIndex={pageIndex}&pageSize={pageSize}");
+        var response = await _client.GetAsync($"/patients?pageIndex={pageIndex}&pageSize={pageSize}&name={name}&code={code}&identityCard={identityCard}&phoneNumber={phoneNumber}");
 
         // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
         var jsonString = await response.Content.ReadAsStringAsync();
         var jObj = JObject.Parse(jsonString);
         var patients = jObj["patients"];
@@ -283,13 +294,14 @@ public class PatientServiceTests : BaseFunctionalTest
         // Arrange
         var pageIndex = 1;
         var pageSize = 10;
+        var searchTerm = "bn00";
 
         _grpcClientMock?
             .ListPatientsAsync(Arg.Any<ListPatientsRequest>(), Arg.Any<Metadata>())
             .Throws(new Exception("GRPC call failed"));
 
         // Act
-        var response = await _client.GetAsync($"/patients?pageIndex={pageIndex}&pageSize={pageSize}");
+        var response = await _client.GetAsync($"/patients?pageIndex={pageIndex}&pageSize={pageSize}&searchTerm={searchTerm}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);

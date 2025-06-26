@@ -13,7 +13,7 @@ namespace VaccinationReception.Application.Data
         DbSet<ServiceRequestDetail> ServiceRequestDetails { get; }
         DbSet<RequestForm> RequestForms { get; }
         DbSet<Vaccination> Vaccinations { get; }
-        DbSet<Payment> Payments { get; }    
+        DbSet<Payment> Payments { get; }
         DbSet<PaymentDetail> PaymentDetails { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
