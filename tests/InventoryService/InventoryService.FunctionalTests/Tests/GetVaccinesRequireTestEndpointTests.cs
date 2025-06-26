@@ -23,12 +23,14 @@ namespace InventoryService.FunctionalTests.Tests
         {
             // Arrange
             var request = new PaginationRequest { PageIndex = 1, PageSize = 10 };
-            var search = "test";
+            var search = "ISO123";
             // Act
             var response = await _client.GetAsync($"/medicines/vaccines-require-test?pageIndex={request.PageIndex}&pageSize={request.PageSize}&search={search}");
-
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetVaccinesRequireTestResponse>();
+            result.Should().NotBeNull();
+            result!.Vaccines.Data.Should().NotBeEmpty();
         }
 
         [Fact]

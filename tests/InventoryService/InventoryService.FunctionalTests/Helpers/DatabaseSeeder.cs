@@ -41,35 +41,61 @@ namespace InventoryService.FunctionalTests.Helpers
                 dbContext.SaveChanges();
             }
 
-            // Add test medicines if they don't exist
             if (!dbContext.Medicines.Any())
             {
                 var medicines = new List<Medicine>
                 {
-                    new Medicine
+                     new Medicine
                     {
+                        MedicineCode = "MED001",
                         MedicineName = "Paracetamol",
                         MedicineTypeId = 1,
                         VaccineTypeId = 1,
+                        IsRequiredTestingBeforeUse = true,
                         IsSuspended = false,
                         IsCancelled = false
                     },
                     new Medicine
                     {
+                        MedicineCode = "MED002",
                         MedicineName = "Ibuprofen",
                         MedicineTypeId = 1,
                         VaccineTypeId = 1,
+                        IsRequiredTestingBeforeUse = true,
                         IsSuspended = false,
                         IsCancelled = false
                     },
                     new Medicine
                     {
+                        MedicineCode = "MED003",
                         MedicineName = "Aspirin",
                         MedicineTypeId = 1,
                         VaccineTypeId = 1,
+                        IsRequiredTestingBeforeUse = true,
                         IsSuspended = false,
                         IsCancelled = false
                     },
+                    new Medicine
+                    {
+                        MedicineCode = "ISO123",
+                        MedicineName = "Isomina Vaccine",
+                        Unit = "ml",
+                        ActiveIngredient = "Isomina Active",
+                        UsageInstructions = "Inject once daily",
+                        Concentration = "10mg/ml",
+                        Indications = "Prevent Isomina virus",
+                        MedicineClassification = "Vaccine",
+                        RouteOfAdministration = "Injection",
+                        NationalMedicineCode = "VN-ISO-001",
+                        Description = "For testing use only",
+                        Note = null,
+                        RegistrationNumber = null,
+                        MedicineTypeId = 1,
+                        VaccineTypeId = 1,
+                        IsRequiredTestingBeforeUse = true,
+                        IsSuspended = false,
+                        IsCancelled = false
+                }
                 };
                 dbContext.Medicines.AddRange(medicines);
                 dbContext.SaveChanges();
