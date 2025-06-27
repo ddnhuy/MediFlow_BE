@@ -69,7 +69,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
                         var patientVaccinationItem = new PatientVaccinationItem(
                             ReceptionId: receptionVaccination.Reception.Id,
                             PatientCode: patient.Code,
-                            PatientVaccinationCode: receptionVaccination.RequestNumber,
+                            PatientVaccinationCode: "Todo: Handle later",
                             PatientName: patient.Name,
                             DateOfBirth: patient.DOB,
                             Gender: genderString,
