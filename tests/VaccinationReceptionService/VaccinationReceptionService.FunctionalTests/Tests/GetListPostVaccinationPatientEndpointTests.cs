@@ -2,16 +2,15 @@
 using VaccinationReception.Application.DTOs.PatientDTOs;
 using VaccinationReception.Application.Vaccinations.Queries.GetListPostVaccinationPatient;
 using VaccinationReception.Domain.Models;
-using ListPatientsResponse = CustomerInfo.Grpc.Protos.ListPatientsResponse;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
 {
-    public class GetListPostVaccinationPatientEndpointTests : BaseFunctionalTest
+    public class GetListPostVaccinationPatientEndpointTests : GetListPostVaccinationPatientBaseTest
     {
         private readonly string _testToken;
-        private readonly FunctionalTestWebAppFactory _factory;
+        private readonly GetListPostVaccinationPatientTestFactory _factory;
 
-        public GetListPostVaccinationPatientEndpointTests(FunctionalTestWebAppFactory factory) : base(factory)
+        public GetListPostVaccinationPatientEndpointTests(GetListPostVaccinationPatientTestFactory factory) : base(factory)
         {
             _factory = factory;
             _testToken = TokenHelper.GenerateTestToken();
@@ -52,60 +51,56 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 dbContext.SaveChanges();
             }
         }
-      
-        //[Fact]
-        //public async Task GetListPostVaccinationPatient_WithValidParameters_ReturnsOk()
-        //{
-        //    // Arrange - Create mock response for IPatientGrpcClient
-        //    var grpcResponse = new ListPatientsResponse
-        //    {
-        //        PageIndex = 1,
-        //        PageSize = 999,
-        //        TotalItem = 2,
-        //        Data =
-        //        {
-        //            new PatientSummaryModel
-        //            {
-        //                Id = 1,
-        //                Code = "BN100",
-        //                Name = "Test Patient 1",
-        //                IdentityCard = "01233434",
-        //                PhoneNumber = "0123456789"
-        //            },
-        //            new PatientSummaryModel
-        //            {
-        //                Id = 2,
-        //                Code = "BN101",
-        //                Name = "Test Patient 2",
-        //                IdentityCard = "01223456",
-        //                PhoneNumber = "0123456789"
-        //            }
-        //        }
-        //    };
 
-        //    var asyncUnaryCall = new AsyncUnaryCall<ListPatientsResponse>(
-        //    Task.FromResult(grpcResponse),
-        //    Task.FromResult(new Metadata()),
-        //    () => Status.DefaultSuccess,
-        //    () => new Metadata(),
-        //    () => { });
+        [Fact]
+        public async Task GetListPostVaccinationPatient_WithValidParameters_ReturnsOk()
+        {
+            // Arrange - Create mock response for IPatientGrpcClient
+            var patientsResponse = new PaginatedResult<PatientSummaryDTO>(
+                1, // pageIndex
+                999, // pageSize
+                2, // totalItems
+                new List<PatientSummaryDTO>
+                {
+                    new PatientSummaryDTO
+                    {
+                        Id = 1,
+                        Code = "BN100",
+                        Name = "Test Patient 1",
+                        IdentityCard = "01233434",
+                        PhoneNumber = "0123456789",
+                        DOB = new DateTime(1990, 1, 1),
+                        Gender = 1 // Male
+                    },
+                    new PatientSummaryDTO
+                    {
+                        Id = 2,
+                        Code = "BN101",
+                        Name = "Test Patient 2",
+                        IdentityCard = "01223456",
+                        PhoneNumber = "0123456789",
+                        DOB = new DateTime(1995, 1, 1),
+                        Gender = 0 // Female
+                    }
+                }
+            );
 
-        //    _grpcClientMock?
-        //        .ListPatientsAsync(Arg.Any<ListPatientsRequest>(), Arg.Any<Metadata>())
-        //        .Returns(asyncUnaryCall);
+            _patientGrpcClientMock
+                .ListPatientsAsync(Arg.Any<PaginationRequest>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+                .Returns(patientsResponse);
 
-        //    // Act
-        //    var response = await _client.GetAsync("/vaccination/post-vaccination?patientName=John");
+            // Act
+            var response = await _client.GetAsync("/vaccination/post-vaccination?patientName=John");
 
-        //    // Assert
-        //    response.StatusCode.Should().Be(HttpStatusCode.OK);
-        //    var result = await response.Content.ReadFromJsonAsync<List<GetListPostVaccinationPatientQueryResult>>();
-        //    result.Should().NotBeNull().And.NotBeEmpty();
-        //    result!.Count.Should().Be(1);
-        //    result.First().PatientName.Should().Be("John Doe");
-        //    result.First().PatientCode.Should().Be("BN100");
-        //    result.First().Gender.Should().Be("Nam"); // Male in Vietnamese
-        //}
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<List<GetListPostVaccinationPatientQueryResult>>();
+            result.Should().NotBeNull().And.NotBeEmpty();
+            result!.Count.Should().Be(1);
+            result.First().PatientName.Should().Be("Test Patient 1");
+            result.First().PatientCode.Should().Be("BN100");
+            result.First().Gender.Should().Be("Nam"); // Male in Vietnamese
+        }
 
         // Case unauthorized access
         [Fact]
@@ -118,6 +113,5 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
-
     }
 }
