@@ -79,7 +79,6 @@ namespace HospitalFee.FunctionalTests.Tests
                 ATMTransactionCode = null,
                 PaymentType = PaymentType.Receipt,
                 InvoiceNumber = "INV-001",
-                OfficialInvoiceNumber = "OFF-001",
                 Status = PaymentStatus.Pending,
                 OriginalPaymentId = null,
                 CreatedAt = DateTime.UtcNow,

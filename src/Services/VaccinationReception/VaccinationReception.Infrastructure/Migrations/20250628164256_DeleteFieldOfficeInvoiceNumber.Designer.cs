@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VaccinationReception.Infrastructure.Data;
@@ -11,9 +12,11 @@ using VaccinationReception.Infrastructure.Data;
 namespace VaccinationReception.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250628164256_DeleteFieldOfficeInvoiceNumber")]
+    partial class DeleteFieldOfficeInvoiceNumber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,9 +286,6 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.Property<bool>("IsConfirmed")
                         .HasColumnType("boolean")
                         .HasComment("Đã xác nhận");
-
-                    b.Property<bool>("IsPreExaminationTesting")
-                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsReadyToUse")
                         .HasColumnType("boolean")
