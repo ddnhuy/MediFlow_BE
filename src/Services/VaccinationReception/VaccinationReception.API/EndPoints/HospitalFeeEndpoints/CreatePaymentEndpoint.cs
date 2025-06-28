@@ -6,7 +6,6 @@ namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
     public record CreatePaymentRequest(
             PaymentMethod Method,
             string? Note,
-            string? OfficialInvoiceNumber,
             [FromQuery] List<int> ReceptionVaccinationIds,
             [FromQuery] List<int> ServiceRequestDetailIds);
 
@@ -22,7 +21,6 @@ namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
                     receptionId,
                     request.Method,
                     request.Note,
-                    request.OfficialInvoiceNumber,
                     request.ReceptionVaccinationIds,
                     request.ServiceRequestDetailIds
                 );

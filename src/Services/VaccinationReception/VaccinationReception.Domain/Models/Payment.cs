@@ -19,7 +19,6 @@ namespace VaccinationReception.Domain.Models
         public string? ATMTransactionCode { get; set; }
         public PaymentType PaymentType { get; set; }
         public string? InvoiceNumber { get; set; }
-        public string? OfficialInvoiceNumber { get; set; }
         public PaymentStatus? Status { get; set; }
 
         public int? OriginalPaymentId { get; set; }

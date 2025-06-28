@@ -41,7 +41,6 @@ namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
                     result.Payment.ATMTransactionCode,
                     result.Payment.PaymentType.ToString(),
                     result.Payment.InvoiceNumber,
-                    result.Payment.OfficialInvoiceNumber,
                     result.Payment.Status?.ToString(),
                     result.Payment.OriginalPaymentId,
                     result.Payment.CreatedAt,

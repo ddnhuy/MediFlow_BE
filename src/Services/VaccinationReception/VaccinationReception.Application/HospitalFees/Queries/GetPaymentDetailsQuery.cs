@@ -77,7 +77,6 @@ namespace VaccinationReception.Application.HospitalFees.Queries
                 payment.ATMTransactionCode,
                 payment.PaymentType,
                 payment.InvoiceNumber,
-                payment.OfficialInvoiceNumber,
                 payment.Status,
                 payment.OriginalPaymentId,
                 payment.CreatedAt,

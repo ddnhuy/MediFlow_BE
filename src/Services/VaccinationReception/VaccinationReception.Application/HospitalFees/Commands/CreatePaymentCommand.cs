@@ -14,7 +14,6 @@ namespace VaccinationReception.Application.HospitalFees.Commands
         int ReceptionId,
         PaymentMethod Method,
         string? Note,
-        string? OfficialInvoiceNumber,
         List<int> ReceptionVaccinationIds,
         List<int> ServiceRequestDetailIds) : ICommand<CreatePaymentResult>;
 
@@ -83,7 +82,6 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                     Method = request.Method,
                     Note = request.Note,
                     InvoiceNumber = UniqueStringGenerator.GenerateInvoiceNumber(),
-                    OfficialInvoiceNumber = request.OfficialInvoiceNumber,
                     PaymentType = PaymentType.Receipt,
                     Status = PaymentStatus.Completed,
                     PaymentDetails = paymentDetails

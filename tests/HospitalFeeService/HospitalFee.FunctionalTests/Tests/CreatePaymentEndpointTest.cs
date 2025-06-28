@@ -53,7 +53,6 @@ namespace HospitalFee.FunctionalTests.Tests
             var request = new CreatePaymentRequest(
                 Method: PaymentMethod.CreditCard,
                 Note: "First payment",
-                OfficialInvoiceNumber: null,
                 ReceptionVaccinationIds: new List<int> { unpaidVaccination.Id },
                 ServiceRequestDetailIds: new List<int> { unpaidService.Id }
             );
@@ -86,7 +85,6 @@ namespace HospitalFee.FunctionalTests.Tests
             var request = new CreatePaymentRequest(
                 Method: PaymentMethod.Cash,
                 Note: null,
-                OfficialInvoiceNumber: null,
                 ReceptionVaccinationIds: new List<int>(),
                 ServiceRequestDetailIds: new List<int> { paidService.Id }
             );
@@ -105,7 +103,7 @@ namespace HospitalFee.FunctionalTests.Tests
         {
             // Arrange
             _client.DefaultRequestHeaders.Authorization = null; // No token
-            var request = new CreatePaymentRequest(PaymentMethod.Cash, null, null, new List<int>(), new List<int>());
+            var request = new CreatePaymentRequest(PaymentMethod.Cash, null, new List<int>(), new List<int>());
 
             // Act
             var response = await _client.PostAsJsonAsync("/receptions/1/payments", request);
