@@ -25,7 +25,8 @@
                 Roles.ACCOUNTANT,
                 Roles.RECEPTIONIST,
                 Roles.IMAGING_TECHNICIAN,
-                Roles.HEAD_OF_DEPARTMENT
+                Roles.HEAD_OF_DEPARTMENT,
+                Roles.IT_SUPPORT
             };
             foreach (var role in roles)
             {
@@ -314,119 +315,102 @@
         private static async Task CreateDepartmentUsersAsync(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext)
         {
             string commonPassword = "Mediflow@123";
-
-            // Department-role mapping
-            var departmentRoleMap = new Dictionary<string, string>
-            {
-                ["CLINIC"] = Roles.DOCTOR,
-                ["LAB"] = Roles.LABORATORY_STAFF,
-                ["VACCINE"] = Roles.NURSE,
-                ["VACCINE_RECEPTION"] = Roles.RECEPTIONIST,
-                ["BILLING"] = Roles.ACCOUNTANT,
-                ["PHARMACY"] = Roles.PHARMACY_STAFF,
-                ["STORAGE"] = Roles.WAREHOUSE_STAFF,
-                ["IMAGING"] = Roles.IMAGING_TECHNICIAN,
-                ["EMERGENCY"] = Roles.DOCTOR,
-                ["INPATIENT"] = Roles.NURSE,
-                ["HEAD_OF_DEPARTMENT"] = Roles.HEAD_OF_DEPARTMENT
-            };
-
             int userIndex = 1;
-            foreach (var kvp in departmentRoleMap)
+
+            // Seed users according to Role - DepartmentType mapping to ensure policy coverage
+            foreach (var (resourceType, roleDeptList) in RoleDepartmentMappings)
             {
-                var departmentTypeCode = kvp.Key;
-                var roleName = kvp.Value;
-
-                var userName = $"user{userIndex:D3}";
-                var email = $"user{userIndex:D3}@mediflow.health.vn";
-
-                if (await userManager.FindByNameAsync(userName) is not null)
+                foreach (var (roleName, departmentTypeName) in roleDeptList)
                 {
-                    userIndex++;
-                    continue;
-                }
+                    var department = await dbContext.Departments
+                        .Include(d => d.DepartmentType)
+                        .FirstOrDefaultAsync(d => d.DepartmentType.Name == departmentTypeName);
 
-                var department = await dbContext.Departments.Include(d => d.DepartmentType).FirstOrDefaultAsync(d => d.DepartmentType.Code == departmentTypeCode);
-                if (department is null)
-                {
-                    userIndex++;
-                    continue;
-                }
+                    if (department == null)
+                        continue;
 
-                var user = new ApplicationUser
-                {
-                    UserName = userName,
-                    Email = email,
-                    Name = $"User {userIndex}",
-                    Code = $"USER{userIndex:D3}",
-                    Gender = userIndex % 2 == 0 ? Gender.Male : Gender.Female,
-                    Address = "Khu đô thị FPT City, Ngũ Hành Sơn, Đà Nẵng",
-                    CreatedAt = DateTime.UtcNow.AddDays(-userIndex),
-                    CreatedBy = 1,
-                    LastUpdatedAt = DateTime.UtcNow,
-                    LastUpdatedBy = 1,
-                    EmailConfirmed = true,
-                    PhoneNumberConfirmed = true,
-                    Departments = new List<Department> { department }
-                };
+                    // Make sure not to create duplicate users
+                    string userName = $"user{userIndex:D3}";
+                    string email = $"{userName}@mediflow.health.vn";
 
-                var result = await userManager.CreateAsync(user, commonPassword);
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(user, roleName);
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
+                    if (await userManager.FindByNameAsync(userName) is not null)
                     {
-                        Console.WriteLine($"Seed department user error: {error.Description}");
+                        userIndex++;
+                        continue;
                     }
-                }
 
-                userIndex++;
+                    var user = new ApplicationUser
+                    {
+                        UserName = userName,
+                        Email = email,
+                        Name = $"User {userIndex}",
+                        Code = $"USER{userIndex:D3}",
+                        Gender = userIndex % 2 == 0 ? Gender.Male : Gender.Female,
+                        Address = "Khu đô thị FPT City, Ngũ Hành Sơn, Đà Nẵng",
+                        CreatedAt = DateTime.UtcNow.AddDays(-userIndex),
+                        CreatedBy = 1,
+                        LastUpdatedAt = DateTime.UtcNow,
+                        LastUpdatedBy = 1,
+                        EmailConfirmed = true,
+                        PhoneNumberConfirmed = true,
+                        Departments = new List<Department> { department }
+                    };
+
+                    var result = await userManager.CreateAsync(user, commonPassword);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(user, roleName);
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            Console.WriteLine($"Seed user error ({userName}): {error.Description}");
+                        }
+                    }
+
+                    userIndex++;
+                }
             }
 
-            // Seed Head of Department user
+            // Seed a special user for Head of Department (if not already present)
             var headUserName = "ceo01";
-            var headEmail = "ceo01@mediflow.health.vn";
-
             if (await userManager.FindByNameAsync(headUserName) is null)
             {
-                var headUser = new ApplicationUser
+                var headDepartment = await dbContext.Departments
+                    .Include(d => d.DepartmentType)
+                    .FirstOrDefaultAsync(d => d.DepartmentType.Name == DepartmentTypes.MANAGEMENT);
+
+                if (headDepartment != null)
                 {
-                    UserName = headUserName,
-                    Email = headEmail,
-                    Name = "Head of Department",
-                    Code = "HEAD001",
-                    Gender = Gender.Male,
-                    Address = "Khu đô thị FPT City, Ngũ Hành Sơn, Đà Nẵng",
-                    CreatedAt = DateTime.UtcNow,
-                    CreatedBy = 1,
-                    LastUpdatedAt = DateTime.UtcNow,
-                    LastUpdatedBy = 1,
-                    EmailConfirmed = true,
-                    PhoneNumberConfirmed = true
-                };
-
-                var result = await userManager.CreateAsync(headUser, commonPassword);
-                if (result.Succeeded)
-                {
-                    await userManager.AddToRoleAsync(headUser, Roles.HEAD_OF_DEPARTMENT);
-
-                    // Assign departments to department heads
-                    var department = await dbContext.Departments.FirstOrDefaultAsync(d => d.Name == "Phòng ban giám đốc");
-
-                    if (department is not null)
+                    var headUser = new ApplicationUser
                     {
-                        headUser.Departments = [department];
-                        await dbContext.SaveChangesAsync();
+                        UserName = headUserName,
+                        Email = "ceo01@mediflow.health.vn",
+                        Name = "Head of Department",
+                        Code = "HEAD001",
+                        Gender = Gender.Male,
+                        Address = "Khu đô thị FPT City, Ngũ Hành Sơn, Đà Nẵng",
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = 1,
+                        LastUpdatedAt = DateTime.UtcNow,
+                        LastUpdatedBy = 1,
+                        EmailConfirmed = true,
+                        PhoneNumberConfirmed = true,
+                        Departments = new List<Department> { headDepartment }
+                    };
+
+                    var result = await userManager.CreateAsync(headUser, commonPassword);
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(headUser, Roles.HEAD_OF_DEPARTMENT);
                     }
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
+                    else
                     {
-                        Console.WriteLine($"Seed head of department user error: {error.Description}");
+                        foreach (var error in result.Errors)
+                        {
+                            Console.WriteLine($"Seed ceo01 error: {error.Description}");
+                        }
                     }
                 }
             }

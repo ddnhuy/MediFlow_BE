@@ -19,14 +19,14 @@ namespace HumanResource.Grpc.Services
                 query = query.Where(x => x.Code.Contains(request.Keyword) || x.Name.Contains(request.Keyword));
             }
 
-            result.Count = await query.CountAsync();
-
             var departmentList = await query
+                .Where(x => !x.IsCancelled)
                 .Skip((request.PageIndex - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .Include(x => x.DepartmentType)
-                .Where(x => !x.IsCancelled)
                 .ToListAsync();
+
+            result.Count = departmentList.Count;
 
             logger.LogInformation("Found {Count} departments matching the criteria.", result.Count);
 
