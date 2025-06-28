@@ -94,7 +94,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var serviceIds = new List<int> { TestServiceId };
 
             // Act
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"/request-forms/{TestReceptionId}/services")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/request-forms/{TestReceptionId}/services")
             {
                 Content = JsonContent.Create(serviceIds)
             };
@@ -111,7 +111,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var serviceIds = new List<int> { TestServiceId };
 
             // Act
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"/request-forms/{TestReceptionId}/services")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/request-forms/{TestReceptionId}/services")
             {
                 Content = JsonContent.Create(serviceIds)
             };
@@ -138,7 +138,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var serviceIds = new List<int>(); // Empty list
 
             // Act
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"/request-forms/{TestReceptionId}/services")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/request-forms/{TestReceptionId}/services")
             {
                 Content = JsonContent.Create(serviceIds)
             };
@@ -159,7 +159,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var serviceIds = new List<int> { TestServiceId };
 
             // Act
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"/request-forms/9999/services")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/request-forms/9999/services")
             {
                 Content = JsonContent.Create(serviceIds)
             };
@@ -179,7 +179,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var serviceIds = new List<int> { 99999 };
 
             // Act
-            var request = new HttpRequestMessage(HttpMethod.Delete, $"/request-forms/{TestReceptionId}/services")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/request-forms/{TestReceptionId}/services")
             {
                 Content = JsonContent.Create(serviceIds)
             };
