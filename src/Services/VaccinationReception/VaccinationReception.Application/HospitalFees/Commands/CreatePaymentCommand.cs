@@ -4,6 +4,7 @@ using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VaccinationReception.Application.Data;
+using VaccinationReception.Application.Helpers;
 using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 
@@ -13,8 +14,6 @@ namespace VaccinationReception.Application.HospitalFees.Commands
         int ReceptionId,
         PaymentMethod Method,
         string? Note,
-        string? InvoiceNumber,
-        string? OfficialInvoiceNumber,
         List<int> ReceptionVaccinationIds,
         List<int> ServiceRequestDetailIds) : ICommand<CreatePaymentResult>;
 
@@ -82,8 +81,7 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                     TotalAmount = totalAmount,
                     Method = request.Method,
                     Note = request.Note,
-                    InvoiceNumber = request.InvoiceNumber,
-                    OfficialInvoiceNumber = request.OfficialInvoiceNumber,
+                    InvoiceNumber = UniqueStringGenerator.GenerateInvoiceNumber(),
                     PaymentType = PaymentType.Receipt,
                     Status = PaymentStatus.Completed,
                     PaymentDetails = paymentDetails

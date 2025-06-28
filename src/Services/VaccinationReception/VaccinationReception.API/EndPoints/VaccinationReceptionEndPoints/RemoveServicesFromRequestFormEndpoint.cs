@@ -9,7 +9,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/request-forms/{receptionId}/services", async (
+            app.MapPost("/request-forms/{receptionId}/services", async (
                 int receptionId,
                 [FromBody] List<int> serviceIds,
                 ISender sender) =>

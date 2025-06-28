@@ -77,10 +77,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasComment("Loại thanh toán");
 
             builder.Property(x => x.InvoiceNumber)
-                .HasComment("Số hóa đơn tạm");
-
-            builder.Property(x => x.OfficialInvoiceNumber)
-                .HasComment("Số hóa đơn chính thức");
+                .HasComment("Số hóa đơn");
 
             builder.Property(x => x.Status)
                 .HasConversion<string>()

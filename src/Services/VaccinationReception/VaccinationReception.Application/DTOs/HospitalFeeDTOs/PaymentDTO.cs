@@ -16,7 +16,6 @@ namespace VaccinationReception.Application.DTOs.HospitalFeeDTOs
         string? ATMTransactionCode,
         PaymentType PaymentType,
         string? InvoiceNumber,
-        string? OfficialInvoiceNumber,
         PaymentStatus? Status,
         int? OriginalPaymentId,
         DateTime CreatedAt,

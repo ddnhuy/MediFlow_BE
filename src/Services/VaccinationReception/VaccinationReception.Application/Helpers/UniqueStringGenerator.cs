@@ -91,5 +91,28 @@ namespace VaccinationReception.Application.Helpers
         {
             return await Task.Run(() => GeneratePatientIdentifier());
         }
+        public static string GenerateInvoiceNumber()
+        {
+            lock (_lock)
+            {
+                string result;
+                do
+                {
+                    var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
+                    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                    var randomString = new string(Enumerable.Repeat(chars, 4)
+                        .Select(s => s[_random.Next(s.Length)]).ToArray());
+
+                    result = $"IVN-{timestamp}{randomString}";
+                } while (_usedStrings.Contains(result));
+
+                _usedStrings.Add(result);
+                return result;
+            }
+        }
+        public static async Task<string> GenerateInvoiceNumberAsync()
+        {
+            return await Task.Run(() => GenerateInvoiceNumber());
+        }
     }
 }
