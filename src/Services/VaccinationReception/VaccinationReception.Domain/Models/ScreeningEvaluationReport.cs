@@ -6,8 +6,8 @@ namespace VaccinationReception.Domain.Models
     public class ScreeningEvaluationReport : BaseEntity
     {
         // Parent information
-        public string ParentFullName { get; set; } = string.Empty;
-        public string ParentPhoneNumber { get; set; } = string.Empty;
+        public string? ParentFullName { get; set; } = string.Empty;
+        public string? ParentPhoneNumber { get; set; } = string.Empty;
 
         // Additional screening information
         public double WeightKg { get; set; }                          // Weight, e.g., 50 (kg)

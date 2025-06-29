@@ -37,13 +37,11 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
             // Parent Information
             builder.Property(x => x.ParentFullName)
                    .HasMaxLength(100)
-                   .IsRequired()
                    .HasColumnType("character varying(100)")
                    .HasComment("Họ tên phụ huynh");
 
             builder.Property(x => x.ParentPhoneNumber)
                    .HasMaxLength(20)
-                   .IsRequired()
                    .HasColumnType("character varying(20)")
                    .HasComment("Số điện thoại phụ huynh");
 

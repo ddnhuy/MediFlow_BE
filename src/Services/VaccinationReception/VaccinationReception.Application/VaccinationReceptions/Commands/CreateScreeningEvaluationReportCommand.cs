@@ -10,8 +10,8 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
 
     public record CreateScreeningEvaluationReportCommand(
-        string ParentFullName,
-        string ParentPhoneNumber,
+        string? ParentFullName,
+        string? ParentPhoneNumber,
 
         double WeightKg,
         double BodyTemperatureC,
