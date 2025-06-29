@@ -15,7 +15,7 @@
             }, cancellationToken: cancellationToken);
 
             Dictionary<string, string> resourceTypes = new();
-            for (int i = 0; i < result.ResourceTypes.Strings.Count; i += 2)
+            for (int i = 0; i < result.ResourceTypes.Strings.Count; i++)
             {
                 resourceTypes.Add(result.ResourceTypes.Strings[i], result.Actions.Strings[i]);
             }
