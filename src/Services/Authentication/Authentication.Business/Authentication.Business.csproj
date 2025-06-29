@@ -31,6 +31,9 @@
     <Protobuf Include="..\..\HumanResource\HumanResource.Grpc\Protos\department.proto" AdditionalImportDirs="..\..\HumanResource\HumanResource.Grpc" GrpcServices="Client">
       <Link>Protos\department.proto</Link>
     </Protobuf>
+    <Protobuf Include="..\..\HumanResource\HumanResource.Grpc\Protos\policy.proto" AdditionalImportDirs="..\..\HumanResource\HumanResource.Grpc" GrpcServices="Client">
+      <Link>Protos\policy.proto</Link>
+    </Protobuf>
   </ItemGroup>
 
 </Project>

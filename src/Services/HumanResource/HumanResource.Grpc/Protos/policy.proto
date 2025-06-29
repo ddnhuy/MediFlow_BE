@@ -20,6 +20,8 @@ service PolicyProtoService {
   rpc GetRoleDepartmentPolicies (GetRoleDepartmentPoliciesRequest) returns (GetRoleDepartmentPoliciesResponse);
   rpc AssignPolicyToRoleDepartment (AssignPolicyRequest) returns (RoleDepartmentPolicyModel);
   rpc RevokePolicyFromRoleDepartment (RevokePolicyRequest) returns (DeleteResponse);
+
+  rpc GetPoliciesByRolesAndDepartments(GetPoliciesByRolesAndDepartmentsRequest) returns (GetPoliciesByRolesAndDepartmentsResponse);
 }
 
 // ---------- Request & Response ----------
@@ -94,6 +96,22 @@ message AssignPolicyRequest {
 
 message RevokePolicyRequest {
   int32 roleDepartmentPolicyId = 1;
+}
+
+message GetPoliciesByRolesAndDepartmentsRequest {
+  string roles = 1;
+  string departments = 2;
+}
+
+message GetPoliciesByRolesAndDepartmentsResponse {
+  string roles = 1;
+  string departments = 2;
+  ListOfStrings resourceTypes = 3;
+  ListOfStrings actions = 4;
+}
+
+message ListOfStrings {
+    repeated string strings = 1;
 }
 
 // ---------- Data Models ----------

@@ -47,6 +47,18 @@ builder.Services.AddGrpcClient<ApplicationUserProtoService.ApplicationUserProtoS
     return handler;
 });
 
+builder.Services.AddGrpcClient<PolicyProtoService.PolicyProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration["GrpcSettings:HumanResourceUrl"]!);
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+    return handler;
+});
+
 // Cross-Cutting Services
 builder.Services.AddSeqLogging(serviceName: Assembly.GetExecutingAssembly().GetName().Name!);
 

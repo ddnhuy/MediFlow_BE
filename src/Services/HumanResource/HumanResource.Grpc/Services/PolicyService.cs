@@ -1,4 +1,6 @@
-﻿namespace HumanResource.Grpc.Services
+﻿using Google.Protobuf.Collections;
+
+namespace HumanResource.Grpc.Services
 {
     public class PolicyService(
         ICurrentUserHelper currentUserHelper,
@@ -402,6 +404,59 @@
                 Success = true,
                 Message = HumanResourceSuccessStrings.SUCCESS_REVOKE_PERMISSION
             };
+        }
+
+        public override async Task<GetPoliciesByRolesAndDepartmentsResponse> GetPoliciesByRolesAndDepartments(GetPoliciesByRolesAndDepartmentsRequest request, ServerCallContext context)
+        {
+            var roles = request.Roles.Trim().Split(',');
+            var department = request.Departments.Trim().Split(',');
+
+            logger.LogInformation("Getting policies for roles: {Roles}, departments: {Departments}",
+                string.Join(", ", roles), string.Join(", ", department));
+
+            var query = dbContext.RoleDepartmentPolicies
+                .Include(rdp => rdp.Role)
+                .Include(rdp => rdp.Department)
+                .Include(rdp => rdp.Policy)
+                .AsQueryable();
+
+            if (roles.Any())
+            {
+                query = query.Where(rdp => roles.Contains(rdp.Role.Name!));
+            }
+
+            if (department.Any())
+            {
+                query = query.Where(rdp => department.Contains(rdp.Department.NameInEnglish));
+            }
+
+            var roleDepartmentPolicies = await query.ToListAsync();
+
+            logger.LogInformation("Found {Count} role-department policies", roleDepartmentPolicies.Count);
+
+            var resourceTypes = roleDepartmentPolicies
+                .Select(rdp => rdp.Policy.ResourceType)
+                .ToList();
+
+            var action = roleDepartmentPolicies
+                .Select(rdp => string.Join('_', rdp.Policy.Actions))
+                .ToList();
+
+            var response = new GetPoliciesByRolesAndDepartmentsResponse
+            {
+                Roles = request.Roles,
+                Departments = request.Departments,
+                ResourceTypes = new ListOfStrings
+                {
+                    Strings = { resourceTypes }
+                },
+                Actions = new ListOfStrings
+                {
+                    Strings = { action }
+                }
+            };
+
+            return response;
         }
     }
 }
