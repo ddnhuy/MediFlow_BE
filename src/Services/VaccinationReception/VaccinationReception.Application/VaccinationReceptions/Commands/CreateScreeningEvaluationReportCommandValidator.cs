@@ -10,10 +10,12 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
         {
             RuleFor(x => x.ParentFullName)
                 .MaximumLength(100)
+                .When(x => !string.IsNullOrEmpty(x.ParentFullName))
                 .WithMessage(ExceptionKey.INVALID_PARENT_FULL_NAME_MAX_LENGTH.ToString());
 
             RuleFor(x => x.ParentPhoneNumber)
                 .Matches(@"^[0-9]{10,11}$")
+                .When(x => !string.IsNullOrEmpty(x.ParentPhoneNumber))
                 .WithMessage(ExceptionKey.INVALID_PARENT_PHONE_FORMAT.ToString());
 
             RuleFor(x => x.WeightKg)
