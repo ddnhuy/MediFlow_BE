@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VaccinationReception.Infrastructure.Data;
@@ -11,9 +12,11 @@ using VaccinationReception.Infrastructure.Data;
 namespace VaccinationReception.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250628161227_addFieldPreExaminationTesting")]
+    partial class addFieldPreExaminationTesting
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,7 +48,7 @@ namespace VaccinationReception.Infrastructure.Migrations
 
                     b.Property<string>("InvoiceNumber")
                         .HasColumnType("text")
-                        .HasComment("Số hóa đơn");
+                        .HasComment("Số hóa đơn tạm");
 
                     b.Property<bool>("IsCancelled")
                         .ValueGeneratedOnAdd()
@@ -73,6 +76,10 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("text")
                         .HasComment("Ghi chú");
+
+                    b.Property<string>("OfficialInvoiceNumber")
+                        .HasColumnType("text")
+                        .HasComment("Số hóa đơn chính thức");
 
                     b.Property<int?>("OriginalPaymentId")
                         .HasColumnType("integer");
