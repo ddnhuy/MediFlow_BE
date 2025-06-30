@@ -17,7 +17,7 @@ namespace VaccinationReception.Domain.Models
 
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
-        public DateTime InvoiceDate { get; set; }
+        public DateTime? InvoiceDate { get; set; }
         public PaymentStatusForItem PaymentStatus { get; set; }
     }
 }

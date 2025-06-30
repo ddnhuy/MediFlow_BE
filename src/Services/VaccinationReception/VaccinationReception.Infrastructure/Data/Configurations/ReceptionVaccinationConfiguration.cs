@@ -108,7 +108,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasComment("Kết quả thử");
 
             builder.Property(x => x.DoctorId)
-                .IsRequired()
                 .HasComment("Mã bác sĩ");
 
             // Relationships

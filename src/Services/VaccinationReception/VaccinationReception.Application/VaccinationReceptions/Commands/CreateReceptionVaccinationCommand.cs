@@ -14,13 +14,9 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             int Quantity,
             bool IsReadyToUse,
             DateTime ScheduledDate,
-            DateTime InvoiceDate,
             DateTime AppointmentDate,
-            PaymentStatusForItem PaymentStatusForItem,
             bool IsConfirmed,
-            string? Note,
-            string? TestResultEntry,
-            int DoctorId
+            string? Note
         ) : ICommand<CreateReceptionVaccinationResult>;
 
     public record CreateReceptionVaccinationResult(int ReceptionVaccinationId);

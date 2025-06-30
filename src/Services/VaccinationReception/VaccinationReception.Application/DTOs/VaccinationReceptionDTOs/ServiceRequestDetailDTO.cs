@@ -13,7 +13,7 @@ namespace VaccinationReception.Application.DTOs.VaccinationReceptionDTOs
         public int ServiceId { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
-        public DateTime InvoiceDate { get; set; }
+        public DateTime? InvoiceDate { get; set; }
         public PaymentStatusForItem PaymentStatus { get; set; }
         public string RequestNumber { get; set; } = null!;
         public string ServiceCode { get; set; } = null!;

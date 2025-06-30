@@ -65,7 +65,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
                     medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
                     rv.IsConfirmed,
                     rv.TestResultEntry,
-                    await GetDoctorName(rv.DoctorId)
+                    await GetDoctorName(rv.DoctorId.Value)
                 ))
                 .ToList();
 
@@ -80,7 +80,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
                     medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
                     rv.IsConfirmed,
                     rv.TestResultEntry,
-                   await GetDoctorName(rv.DoctorId) 
+                   await GetDoctorName(rv.DoctorId.Value) 
                 ))
                 .ToList();
 

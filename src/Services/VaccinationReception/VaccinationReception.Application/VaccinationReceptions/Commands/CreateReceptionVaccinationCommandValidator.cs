@@ -33,10 +33,6 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
                 .Must(date => date > DateTime.Now)
                 .WithMessage(ExceptionKey.INVALID_APPOINTMENT_DATE.ToString());
 
-            RuleFor(x => x.DoctorId)
-                .GreaterThan(0)
-                .WithMessage(ExceptionKey.INVALID_DOCTOR_ID.ToString());
-
             // Validate Note if provided
             When(x => !string.IsNullOrEmpty(x.Note), () =>
             {
@@ -45,20 +41,9 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
                     .WithMessage(ExceptionKey.INVALID_NOTE_MAX_LENGTH.ToString());
             });
 
-            When(x => !string.IsNullOrEmpty(x.TestResultEntry), () =>
-            {
-                RuleFor(x => x.TestResultEntry)
-                    .MaximumLength(1000)
-                    .WithMessage(ExceptionKey.INVALID_TEST_RESULT_ENTRY_MAX_LENGTH.ToString());
-            });
-
             RuleFor(x => x)
                 .Must(command =>
                 {
-                    if (command.PaymentStatusForItem == Domain.Enums.PaymentStatusForItem.Paid && command.InvoiceDate == default)
-                    {
-                        return false;
-                    }
 
                     if (command.IsConfirmed && command.AppointmentDate == default)
                     {
