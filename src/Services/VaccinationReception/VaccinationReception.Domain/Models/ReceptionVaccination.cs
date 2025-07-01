@@ -15,7 +15,7 @@ namespace VaccinationReception.Domain.Models
         public int Quantity { get; set; }
         public bool IsReadyToUse { get; set; }
         public DateTime ScheduledDate { get; set; }
-        public DateTime InvoiceDate { get; set; }
+        public DateTime? InvoiceDate { get; set; }
         public DateTime AppointmentDate { get; set; }
         public bool IsPreExaminationTesting { get; set; }
         public DateTime? VaccinationTestDate { get; set; }
@@ -23,7 +23,7 @@ namespace VaccinationReception.Domain.Models
         public bool IsConfirmed { get; set; }
         public string? Note { get; set; }
         public string? TestResultEntry { get; set; }
-        public int DoctorId { get; set; }
+        public int? DoctorId { get; set; }
         public string RequestNumber { get; set; } = null!;
         public decimal UnitPrice { get; set; }
 

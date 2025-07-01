@@ -13,8 +13,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         private readonly FunctionalTestWebAppFactory _factory;
         private const int TestReceptionId = 1;
         private const int TestVaccineId = 1;
-
-        // Use UTC DateTime for PostgreSQL compatibility
         private static readonly DateTime TestDateTime = DateTime.UtcNow;
 
         public DeleteReceptionVaccinationsEndpointTests(FunctionalTestWebAppFactory factory) : base(factory)
@@ -28,11 +26,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
 
         private void SeedData()
         {
-            // Seed test data before running tests
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            // Create Reception if not exists
             var reception = dbContext.Receptions.FirstOrDefault(r => r.Id == TestReceptionId);
             if (reception == null)
             {
@@ -50,7 +46,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 dbContext.Receptions.Add(reception);
             }
 
-            // Create ReceptionVaccination if not exists
             var receptionVaccination = dbContext.ReceptionVaccinations
                 .FirstOrDefault(rv => rv.ReceptionId == TestReceptionId && rv.VaccineId == TestVaccineId);
             if (receptionVaccination == null)
@@ -70,7 +65,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     CreatedAt = TestDateTime,
                     CreatedBy = 1,
                     LastUpdatedAt = TestDateTime,
-                    LastUpdatedBy = 1
+                    LastUpdatedBy = 1,
+                    IsCancelled = false
                 };
                 dbContext.ReceptionVaccinations.Add(receptionVaccination);
             }
@@ -84,8 +80,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             _client.DefaultRequestHeaders.Authorization = null;
 
             var serviceIds = new List<int> { TestVaccineId };
-
-            var request = new HttpRequestMessage(HttpMethod.Delete, "/reception-vaccinations")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/reception-vaccinations/{TestReceptionId}")
             {
                 Content = new StringContent(
                     JsonSerializer.Serialize(serviceIds),
@@ -101,10 +96,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task DeleteReceptionVaccinations_WithValidData_ReturnsOk()
         {
-            // Arrange
             var serviceIds = new List<int> { TestVaccineId };
-
-            var request = new HttpRequestMessage(HttpMethod.Delete, "/reception-vaccinations")
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/reception-vaccinations/{TestReceptionId}")
             {
                 Content = new StringContent(
                     JsonSerializer.Serialize(serviceIds),
@@ -112,39 +105,27 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     "application/json")
             };
 
-            // Act
             var response = await _client.SendAsync(request);
-
-            // Debug log
             var responseContent = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Response Status: {response.StatusCode}");
             Console.WriteLine($"Response Content: {responseContent}");
 
-            // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var result = await response.Content.ReadFromJsonAsync<DeleteReceptionVaccinationsResponse>();
             result.Should().NotBeNull();
             result!.IsSuccess.Should().BeTrue();
-
-            // Verify deletion
-            using var scope = _factory.Services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var deletedVaccination = await dbContext.ReceptionVaccinations
-                .FirstOrDefaultAsync(rv => rv.ReceptionId == TestReceptionId && rv.VaccineId == TestVaccineId);
-            deletedVaccination.Should().BeNull();
+            result.DeletedCount.Should().Be(1);
         }
 
         [Fact]
         public async Task DeleteReceptionVaccinations_WithInvalidData_ReturnsBadRequest()
         {
-            // Arrange
-            var serviceIds = new List<int>();
-
-            var request = new HttpRequestMessage(HttpMethod.Delete, "/reception-vaccinations")
+            var ids = new List<int>(); // empty list
+            var request = new HttpRequestMessage(HttpMethod.Post, $"/reception-vaccinations/{TestReceptionId}")
             {
                 Content = new StringContent(
-                    JsonSerializer.Serialize(serviceIds),
+                    JsonSerializer.Serialize(ids),
                     Encoding.UTF8,
                     "application/json")
             };

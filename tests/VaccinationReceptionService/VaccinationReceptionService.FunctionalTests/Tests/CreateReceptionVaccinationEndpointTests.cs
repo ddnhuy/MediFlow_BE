@@ -78,13 +78,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 Quantity: 1,
                 IsReadyToUse: true,
                 ScheduledDate: DateTime.UtcNow,
-                InvoiceDate: DateTime.UtcNow,
                 AppointmentDate: DateTime.UtcNow,
-                PaymentStatusForItem: VaccinationReception.Domain.Enums.PaymentStatusForItem.NotPaid,
                 IsConfirmed: false,
-                Note: null,
-                TestResultEntry: null,
-                DoctorId: TestDoctorId
+                Note: null
             );
             _client.DefaultRequestHeaders.Authorization = null;
 
@@ -164,13 +160,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 Quantity: 1,
                 IsReadyToUse: true,
                 ScheduledDate: DateTime.UtcNow.AddDays(7),
-                InvoiceDate: DateTime.UtcNow,
                 AppointmentDate: DateTime.UtcNow.AddDays(7),
-                PaymentStatusForItem: VaccinationReception.Domain.Enums.PaymentStatusForItem.NotPaid,
                 IsConfirmed: false,
-                Note: null,
-                TestResultEntry: null,
-                DoctorId: TestDoctorId
+                Note: null
             );
 
             // Act
@@ -195,13 +187,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 Quantity: 0,
                 IsReadyToUse: true,
                 ScheduledDate: DateTime.UtcNow,
-                InvoiceDate: DateTime.UtcNow,
                 AppointmentDate: DateTime.UtcNow,
-                PaymentStatusForItem: VaccinationReception.Domain.Enums.PaymentStatusForItem.NotPaid,
                 IsConfirmed: false,
-                Note: null,
-                TestResultEntry: null,
-                DoctorId: 0
+                Note: null
             );
 
             // Act
@@ -224,13 +212,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 Quantity: 1,
                 IsReadyToUse: true,
                 ScheduledDate: DateTime.UtcNow.AddDays(7),
-                InvoiceDate: DateTime.UtcNow,
                 AppointmentDate: DateTime.UtcNow.AddDays(7),
-                PaymentStatusForItem: VaccinationReception.Domain.Enums.PaymentStatusForItem.NotPaid,
                 IsConfirmed: false,
-                Note: null,
-                TestResultEntry: null,
-                DoctorId: TestDoctorId
+                Note: null
             );
 
             // Act

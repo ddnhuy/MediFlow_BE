@@ -31,18 +31,21 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
         public async Task<GetMedicineListForPreExaminationResult> Handle(GetMedicineListForPreExaminationQuery request, CancellationToken cancellationToken)
         {
             var receptionVaccinationsData = await _dbContext.ReceptionVaccinations
-            .Where(rv => rv.ReceptionId == request.ReceptionId && rv.IsPreExaminationTesting)
-            .Select(rv => new
-            {
-                rv.Id,
-                rv.Reception.PatientId,
-                rv.VaccineId,
-                rv.DoctorId,
-                rv.IsConfirmed,
-                rv.VaccinationTestDate,
-                rv.TestResultEntry
-            })
-            .ToListAsync(cancellationToken);
+                .Where(rv => rv.ReceptionId == request.ReceptionId
+                             && rv.IsPreExaminationTesting
+                             && rv.DoctorId.HasValue)
+                .Select(rv => new
+                {
+                    Id = rv.Id,
+                    PatientId = rv.Reception.PatientId,
+                    VaccineId = rv.VaccineId,
+                    DoctorId = rv.DoctorId.Value,
+                    IsConfirmed = rv.IsConfirmed,
+                    VaccinationTestDate = rv.VaccinationTestDate,
+                    TestResultEntry = rv.TestResultEntry
+                })
+                .ToListAsync(cancellationToken);
+
 
             if (!receptionVaccinationsData.Any())
             {

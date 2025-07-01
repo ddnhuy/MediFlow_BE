@@ -65,6 +65,7 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                     totalAmount += amount;
                     paymentDetails.Add(new PaymentDetail { ReceptionVaccinationId = vacc.Id, Amount = amount });
                     vacc.PaymentStatus = PaymentStatusForItem.Paid;
+                    vacc.InvoiceDate = DateTime.UtcNow;
                 }
 
                 foreach (var service in unpaidServices)
@@ -73,6 +74,7 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                     totalAmount += amount;
                     paymentDetails.Add(new PaymentDetail { ServiceRequestDetailId = service.Id, Amount = amount });
                     service.PaymentStatus = PaymentStatusForItem.Paid;
+                    service.InvoiceDate = DateTime.UtcNow;
                 }
 
                 var newPayment = new Payment

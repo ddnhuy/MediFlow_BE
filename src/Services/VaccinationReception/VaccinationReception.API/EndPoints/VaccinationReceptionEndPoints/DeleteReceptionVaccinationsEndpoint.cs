@@ -9,14 +9,17 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/reception-vaccinations", async ([FromBody] List<int> receptionVaccinationIds, ISender sender) =>
+            app.MapPost("/reception-vaccinations/{receptionId}", async (
+                 int receptionId,
+                [FromBody] List<int> receptionVaccinationIds, 
+                ISender sender) =>
             {
                 if (receptionVaccinationIds == null || !receptionVaccinationIds.Any())
                 {
                     throw new ArgumentException(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID_LIST.ToString());
                 }
 
-                var command = new DeleteReceptionVaccinationsCommand(receptionVaccinationIds);
+                var command = new DeleteReceptionVaccinationsCommand(receptionId, receptionVaccinationIds);
                 var result = await sender.Send(command);
 
                 if (!result.IsSuccess)

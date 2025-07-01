@@ -52,7 +52,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasComment("Đơn giá");
 
             builder.Property(x => x.InvoiceDate)
-                .IsRequired()
                 .HasComment("Ngày xuất hóa đơn");
 
             builder.Property(x => x.PaymentStatus)
