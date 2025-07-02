@@ -12,7 +12,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         private const int TestReceptionVaccinationId = 1;
         private const int TestReceptionId = 1;
         private const int TestVaccineId = 1;
-        private const int TestDoctorId = 1;
 
         public UpdateReceptionVaccinationEndpointTests(FunctionalTestWebAppFactory factory) : base(factory)
         {
@@ -119,15 +118,10 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             receptionVaccination!.Quantity.Should().Be(command.Quantity);
             receptionVaccination.IsReadyToUse.Should().Be(command.IsReadyToUse);
 
-            receptionVaccination.ScheduledDate.Should().BeCloseTo(command.ScheduledDate, TimeSpan.FromSeconds(1));
-            receptionVaccination.InvoiceDate.Should().BeCloseTo(command.InvoiceDate, TimeSpan.FromSeconds(1));
+            receptionVaccination.ScheduledDate.Should().BeCloseTo(command.ScheduledDate.Value, TimeSpan.FromSeconds(1));
             receptionVaccination.AppointmentDate.Should().BeCloseTo(command.AppointmentDate, TimeSpan.FromSeconds(1));
 
-            receptionVaccination.PaymentStatus.Should().Be(command.PaymentStatus);
-            receptionVaccination.IsConfirmed.Should().Be(command.IsConfirmed);
             receptionVaccination.Note.Should().Be(command.Note);
-            receptionVaccination.TestResultEntry.Should().Be(command.TestResultEntry);
-            receptionVaccination.DoctorId.Should().Be(command.DoctorId);
         }
 
         [Fact]
@@ -154,13 +148,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 Quantity: 2,
                 IsReadyToUse: true,
                 ScheduledDate: DateTime.UtcNow.AddDays(1),
-                InvoiceDate: DateTime.UtcNow,
                 AppointmentDate: DateTime.UtcNow.AddDays(2),
-                PaymentStatus: PaymentStatusForItem.Paid,
-                IsConfirmed: true,
-                Note: "Test note",
-                TestResultEntry: "Test result",
-                DoctorId: TestDoctorId
+                Note: "Test note"
             );
         }
     }

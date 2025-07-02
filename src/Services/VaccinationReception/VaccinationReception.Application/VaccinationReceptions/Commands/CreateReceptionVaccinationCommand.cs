@@ -13,9 +13,8 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             int VaccineId,
             int Quantity,
             bool IsReadyToUse,
-            DateTime ScheduledDate,
+            DateTime? ScheduledDate,
             DateTime AppointmentDate,
-            bool IsConfirmed,
             string? Note
         ) : ICommand<CreateReceptionVaccinationResult>;
 

@@ -21,11 +21,8 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
                 .WithMessage(ExceptionKey.INVALID_QUANTITY.ToString());
 
             RuleFor(x => x.ScheduledDate)
-                .NotEmpty()
-                .WithMessage(ExceptionKey.REQUIRED_SCHEDULED_DATE.ToString())
-                .Must(date => date > DateTime.Now)
+                .Must(date => date == null || date > DateTime.Now)
                 .WithMessage(ExceptionKey.INVALID_SCHEDULED_DATE.ToString());
-
 
             RuleFor(x => x.AppointmentDate)
                 .NotEmpty()
@@ -44,12 +41,6 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
             RuleFor(x => x)
                 .Must(command =>
                 {
-
-                    if (command.IsConfirmed && command.AppointmentDate == default)
-                    {
-                        return false;
-                    }
-
                     if (command.IsReadyToUse && command.ScheduledDate == default)
                     {
                         return false;

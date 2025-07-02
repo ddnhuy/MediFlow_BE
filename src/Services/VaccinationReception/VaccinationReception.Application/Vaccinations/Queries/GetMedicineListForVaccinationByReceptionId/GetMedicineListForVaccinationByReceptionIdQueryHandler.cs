@@ -38,11 +38,11 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
                 .ToList();
 
             var doctorPrescribedVaccines = receptionVaccinations
-                .Where(rv => rv.ScheduledDate.Date == today)
+                .Where(rv => rv.ScheduledDate?.Date == today)
                 .ToList();
 
             var customerWarehouseVaccines = receptionVaccinations
-                .Where(rv => rv.ScheduledDate.Date > today)
+                .Where(rv => rv.ScheduledDate?.Date > today)
                 .ToList();
 
             // Get unique vaccine IDs for inventory service call
