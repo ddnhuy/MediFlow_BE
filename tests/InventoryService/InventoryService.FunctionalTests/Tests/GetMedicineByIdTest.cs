@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Inventory.API.Endpoints;
 using Inventory.Application.DTOs;
 using InventoryService.FunctionalTests.Abstractions;
 using System.Net;
@@ -23,6 +24,8 @@ namespace Inventory.FunctionalTests.Tests
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetMedicineByIdResponse>();
+            result!.Medicine.UnitPrice.Should().Be(625000m); // From seed data
         }
 
         [Fact]
@@ -38,10 +41,30 @@ namespace Inventory.FunctionalTests.Tests
         }
 
         [Fact]
+        public async Task GetMedicineById_WithValidIdAndNoPrice_ReturnsOkWithNullPrice()
+        {
+            // Arrange
+            var medicineId = 6; // This medicine might not have a price in test data
+
+            // Act
+            var response = await _client.GetAsync($"/medicines/{medicineId}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetMedicineByIdResponse>();
+            result.Should().NotBeNull();
+            result!.Medicine.Should().NotBeNull();
+            result.Medicine.Id.Should().Be(medicineId);
+
+            // Verify UnitPrice field is present (can be null)
+            result.Medicine.UnitPrice.Should().BeNull();
+        }
+
+        [Fact]
         public async Task GetMedicineById_WithInvalidId_ReturnsNotFound()
         {
             // Arrange
-            var medicineId = 999; // ID that doesn't exist
+            var medicineId = 9999; // ID that doesn't exist
 
             // Act
             var response = await _client.GetAsync($"/medicines/{medicineId}");
