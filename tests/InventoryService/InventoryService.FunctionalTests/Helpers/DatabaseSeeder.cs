@@ -47,7 +47,6 @@ namespace InventoryService.FunctionalTests.Helpers
                 {
                     new Medicine
                     {
-                        Id = 1,
                         MedicineCode = "VAC-001",
                         MedicineName = "COVID-19 Vaccine",
                         Unit = "Dose",
@@ -72,7 +71,6 @@ namespace InventoryService.FunctionalTests.Helpers
                     },
                     new Medicine
                     {
-                        Id = 2,
                         MedicineCode = "MED001",
                         MedicineName = "Paracetamol",
                         Unit = "Tablet",
@@ -97,7 +95,6 @@ namespace InventoryService.FunctionalTests.Helpers
                     },
                     new Medicine
                     {
-                        Id = 3,
                         MedicineCode = "MED002",
                         MedicineName = "Ibuprofen",
                         Unit = "Tablet",
@@ -122,7 +119,6 @@ namespace InventoryService.FunctionalTests.Helpers
                     },
                     new Medicine
                     {
-                        Id = 4,
                         MedicineCode = "VAC-002",
                         MedicineName = "Influenza Vaccine",
                         Unit = "Dose",
@@ -146,8 +142,7 @@ namespace InventoryService.FunctionalTests.Helpers
                         LastUpdatedBy = 1
                     },
                     new Medicine
-                    {
-                        Id = 5,
+                    {  
                         MedicineCode = "MED003",
                         MedicineName = "Aspirin",
                         Unit = "Tablet",
@@ -172,7 +167,6 @@ namespace InventoryService.FunctionalTests.Helpers
                     },
                     new Medicine
                     {
-                        Id = 6,
                         MedicineCode = "ISO123",
                         MedicineName = "Isomina Vaccine",
                         Unit = "ml",
@@ -199,7 +193,6 @@ namespace InventoryService.FunctionalTests.Helpers
                     // Add a suspended medicine for testing
                     new Medicine
                     {
-                        Id = 7,
                         MedicineCode = "SUS001",
                         MedicineName = "Suspended Medicine",
                         Unit = "Tablet",
@@ -225,7 +218,6 @@ namespace InventoryService.FunctionalTests.Helpers
                     // Add a cancelled medicine for testing
                     new Medicine
                     {
-                        Id = 8,
                         MedicineCode = "CAN001",
                         MedicineName = "Cancelled Medicine",
                         Unit = "Tablet",

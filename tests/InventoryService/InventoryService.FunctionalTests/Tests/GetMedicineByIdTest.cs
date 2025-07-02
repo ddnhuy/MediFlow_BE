@@ -44,7 +44,7 @@ namespace Inventory.FunctionalTests.Tests
         public async Task GetMedicineById_WithValidIdAndNoPrice_ReturnsOkWithNullPrice()
         {
             // Arrange
-            var medicineId = 3; // This medicine might not have a price in test data
+            var medicineId = 6; // This medicine might not have a price in test data
 
             // Act
             var response = await _client.GetAsync($"/medicines/{medicineId}");
@@ -64,7 +64,7 @@ namespace Inventory.FunctionalTests.Tests
         public async Task GetMedicineById_WithInvalidId_ReturnsNotFound()
         {
             // Arrange
-            var medicineId = 999; // ID that doesn't exist
+            var medicineId = 9999; // ID that doesn't exist
 
             // Act
             var response = await _client.GetAsync($"/medicines/{medicineId}");
