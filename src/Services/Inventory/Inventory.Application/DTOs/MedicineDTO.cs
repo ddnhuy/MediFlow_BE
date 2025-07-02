@@ -6,7 +6,6 @@
         public string? MedicineCode { get; set; } 
         public string? MedicineName { get; set; } 
         public string? Unit { get; set; } 
-        public string? Manufacturer { get; set; } 
         public string? ActiveIngredient { get; set; } 
         public string? UsageInstructions { get; set; } 
         public string? Concentration { get; set; } 
@@ -25,5 +24,6 @@
         public int CreatedBy { get; set; }
         public DateTime LastUpdatedAt { get; set; }
         public int LastUpdatedBy { get; set; }
+        public decimal? UnitPrice { get; set; }
     }
 }

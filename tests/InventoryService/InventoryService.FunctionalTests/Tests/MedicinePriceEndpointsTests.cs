@@ -71,7 +71,7 @@ namespace Inventory.FunctionalTests.Tests
         public async Task GetMedicinePrices_WithNonExistentMedicinePrice_ReturnsNotFound()
         {
             // Arrange
-            var medicineId = 3; // Assuming this ID exists but has no prices
+            var medicineId = 6; // Assuming this ID exists but has no prices
             // Act
             var response = await _client.GetAsync($"/medicine-prices/{medicineId}");
             // Assert
