@@ -23,29 +23,29 @@
             // Convert to DTO and include unit price
             var medicineDTO = new MedicineDTO
             {
-                Id = medicine.Id,
                 MedicineCode = medicine.MedicineCode,
-                MedicineName = medicine.MedicineName,
+                Id = medicine.Id,
                 Unit = medicine.Unit,
-                ActiveIngredient = medicine.ActiveIngredient,
+                MedicineName = medicine.MedicineName,
                 UsageInstructions = medicine.UsageInstructions,
-                Concentration = medicine.Concentration,
+                ActiveIngredient = medicine.ActiveIngredient,
                 Indications = medicine.Indications,
+                Concentration = medicine.Concentration,
+                NationalMedicineCode = medicine.NationalMedicineCode,
                 MedicineClassification = medicine.MedicineClassification,
                 RouteOfAdministration = medicine.RouteOfAdministration,
-                NationalMedicineCode = medicine.NationalMedicineCode,
-                Description = medicine.Description,
                 Note = medicine.Note,
-                RegistrationNumber = medicine.RegistrationNumber,
+                Description = medicine.Description,
                 MedicineTypeId = medicine.MedicineTypeId ?? 0,
-                VaccineTypeId = medicine.VaccineTypeId ?? 0,
+                RegistrationNumber = medicine.RegistrationNumber,
                 IsSuspended = medicine.IsSuspended,
-                IsCancelled = medicine.IsCancelled,
+                VaccineTypeId = medicine.VaccineTypeId ?? 0,
                 CreatedAt = medicine.CreatedAt,
-                CreatedBy = medicine.CreatedBy,
+                IsCancelled = medicine.IsCancelled,
                 LastUpdatedAt = medicine.LastUpdatedAt,
+                CreatedBy = medicine.CreatedBy,
+                UnitPrice = latestPrice?.UnitPrice,
                 LastUpdatedBy = medicine.LastUpdatedBy,
-                UnitPrice = latestPrice?.UnitPrice
             };
 
             return new GetMedicineByIdResult(medicineDTO);
