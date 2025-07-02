@@ -6,10 +6,10 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/medicines", async ([AsParameters] PaginationRequest request, ISender sender) =>
+            app.MapGet("/medicines", async ([AsParameters] PaginationRequest request, string? searchKeyword, ISender sender) =>
             {
                 PaginationHelper.VerifyPaginationRequest(request.PageIndex, request.PageSize);
-                var result = await sender.Send(new GetMedicinesQuery(request));
+                var result = await sender.Send(new GetMedicinesQuery(request, searchKeyword));
                 var response = result.Adapt<GetMedicinesResponse>();
                 return Results.Ok(response);
             })
@@ -19,7 +19,7 @@
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithSummary("Get all medicines")
-            .WithDescription("Get all medicines with pagination support.");
+            .WithDescription("Get all medicines with pagination support and search by medicine name or code.");
         }
     }
 }

@@ -45,38 +45,134 @@ namespace InventoryService.FunctionalTests.Helpers
             {
                 var medicines = new List<Medicine>
                 {
-                     new Medicine
+                    new Medicine
                     {
+                        Id = 1,
+                        MedicineCode = "VAC-001",
+                        MedicineName = "COVID-19 Vaccine",
+                        Unit = "Dose",
+                        ActiveIngredient = "mRNA-1273",
+                        UsageInstructions = "Inject 0.5ml intramuscularly",
+                        Concentration = "100 mcg/0.5ml",
+                        Indications = "Prevention of COVID-19",
+                        MedicineClassification = "Vaccine",
+                        RouteOfAdministration = "Intramuscular",
+                        NationalMedicineCode = "12345-678-90",
+                        Description = "COVID-19 mRNA Vaccine",
+                        Note = "Store at -20°C",
+                        RegistrationNumber = "REG12345",
+                        MedicineTypeId = 1,
+                        VaccineTypeId = 1,
+                        IsSuspended = false,
+                        IsCancelled = false,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = 1,
+                        LastUpdatedAt = DateTime.UtcNow,
+                        LastUpdatedBy = 1
+                    },
+                    new Medicine
+                    {
+                        Id = 2,
                         MedicineCode = "MED001",
                         MedicineName = "Paracetamol",
+                        Unit = "Tablet",
+                        ActiveIngredient = "Paracetamol",
+                        UsageInstructions = "Take 1-2 tablets every 4-6 hours",
+                        Concentration = "500mg",
+                        Indications = "Pain relief and fever reduction",
+                        MedicineClassification = "Analgesic",
+                        RouteOfAdministration = "Oral",
+                        NationalMedicineCode = "23456-789-01",
+                        Description = "Common pain reliever",
+                        Note = "Take with food",
+                        RegistrationNumber = "REG23456",
                         MedicineTypeId = 1,
                         VaccineTypeId = 1,
-                        IsRequiredTestingBeforeUse = true,
                         IsSuspended = false,
-                        IsCancelled = false
+                        IsCancelled = false,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = 1,
+                        LastUpdatedAt = DateTime.UtcNow,
+                        LastUpdatedBy = 1
                     },
                     new Medicine
                     {
+                        Id = 3,
                         MedicineCode = "MED002",
                         MedicineName = "Ibuprofen",
+                        Unit = "Tablet",
+                        ActiveIngredient = "Ibuprofen",
+                        UsageInstructions = "Take 1-2 tablets every 6-8 hours",
+                        Concentration = "400mg",
+                        Indications = "Pain relief and anti-inflammatory",
+                        MedicineClassification = "NSAID",
+                        RouteOfAdministration = "Oral",
+                        NationalMedicineCode = "34567-890-12",
+                        Description = "Anti-inflammatory medication",
+                        Note = "Take with food",
+                        RegistrationNumber = "REG34567",
                         MedicineTypeId = 1,
                         VaccineTypeId = 1,
-                        IsRequiredTestingBeforeUse = true,
                         IsSuspended = false,
-                        IsCancelled = false
+                        IsCancelled = false,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = 1,
+                        LastUpdatedAt = DateTime.UtcNow,
+                        LastUpdatedBy = 1
                     },
                     new Medicine
                     {
+                        Id = 4,
+                        MedicineCode = "VAC-002",
+                        MedicineName = "Influenza Vaccine",
+                        Unit = "Dose",
+                        ActiveIngredient = "Inactivated Influenza Virus",
+                        UsageInstructions = "Inject 0.5ml intramuscularly",
+                        Concentration = "15 mcg/0.5ml",
+                        Indications = "Prevention of seasonal influenza",
+                        MedicineClassification = "Vaccine",
+                        RouteOfAdministration = "Intramuscular",
+                        NationalMedicineCode = "45678-901-23",
+                        Description = "Seasonal influenza vaccine",
+                        Note = "Store at 2-8°C",
+                        RegistrationNumber = "REG45678",
+                        MedicineTypeId = 1,
+                        VaccineTypeId = 1,
+                        IsSuspended = false,
+                        IsCancelled = false,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = 1,
+                        LastUpdatedAt = DateTime.UtcNow,
+                        LastUpdatedBy = 1
+                    },
+                    new Medicine
+                    {
+                        Id = 5,
                         MedicineCode = "MED003",
                         MedicineName = "Aspirin",
+                        Unit = "Tablet",
+                        ActiveIngredient = "Acetylsalicylic Acid",
+                        UsageInstructions = "Take 1 tablet daily",
+                        Concentration = "100mg",
+                        Indications = "Blood thinning and pain relief",
+                        MedicineClassification = "Antiplatelet",
+                        RouteOfAdministration = "Oral",
+                        NationalMedicineCode = "56789-012-34",
+                        Description = "Blood thinner medication",
+                        Note = "Take with food",
+                        RegistrationNumber = "REG56789",
                         MedicineTypeId = 1,
                         VaccineTypeId = 1,
-                        IsRequiredTestingBeforeUse = true,
                         IsSuspended = false,
-                        IsCancelled = false
+                        IsCancelled = false,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = 1,
+                        LastUpdatedAt = DateTime.UtcNow,
+                        LastUpdatedBy = 1
                     },
                     new Medicine
                     {
+                        Id = 6,
                         MedicineCode = "ISO123",
                         MedicineName = "Isomina Vaccine",
                         Unit = "ml",
@@ -94,10 +190,182 @@ namespace InventoryService.FunctionalTests.Helpers
                         VaccineTypeId = 1,
                         IsRequiredTestingBeforeUse = true,
                         IsSuspended = false,
-                        IsCancelled = false
-                }
+                        IsCancelled = false,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = 1,
+                        LastUpdatedAt = DateTime.UtcNow,
+                        LastUpdatedBy = 1
+                    },
+                    // Add a suspended medicine for testing
+                    new Medicine
+                    {
+                        Id = 7,
+                        MedicineCode = "SUS001",
+                        MedicineName = "Suspended Medicine",
+                        Unit = "Tablet",
+                        ActiveIngredient = "Test Ingredient",
+                        UsageInstructions = "Test usage",
+                        Concentration = "100mg",
+                        Indications = "Test indications",
+                        MedicineClassification = "Test",
+                        RouteOfAdministration = "Oral",
+                        NationalMedicineCode = "SUS-001",
+                        Description = "Suspended medicine for testing",
+                        Note = "This medicine is suspended",
+                        RegistrationNumber = "REGSUS001",
+                        MedicineTypeId = 1,
+                        VaccineTypeId = 1,
+                        IsSuspended = true,
+                        IsCancelled = false,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = 1,
+                        LastUpdatedAt = DateTime.UtcNow,
+                        LastUpdatedBy = 1
+                    },
+                    // Add a cancelled medicine for testing
+                    new Medicine
+                    {
+                        Id = 8,
+                        MedicineCode = "CAN001",
+                        MedicineName = "Cancelled Medicine",
+                        Unit = "Tablet",
+                        ActiveIngredient = "Test Ingredient",
+                        UsageInstructions = "Test usage",
+                        Concentration = "100mg",
+                        Indications = "Test indications",
+                        MedicineClassification = "Test",
+                        RouteOfAdministration = "Oral",
+                        NationalMedicineCode = "CAN-001",
+                        Description = "Cancelled medicine for testing",
+                        Note = "This medicine is cancelled",
+                        RegistrationNumber = "REGCAN001",
+                        MedicineTypeId = 1,
+                        VaccineTypeId = 1,
+                        IsSuspended = false,
+                        IsCancelled = true,
+                        CreatedAt = DateTime.UtcNow,
+                        CreatedBy = 1,
+                        LastUpdatedAt = DateTime.UtcNow,
+                        LastUpdatedBy = 1
+                    }
                 };
                 dbContext.Medicines.AddRange(medicines);
+                dbContext.SaveChanges();
+            }
+
+            // Add test medicine prices if they don't exist
+            if (!dbContext.MedicinePrices.Any())
+            {
+                var now = DateTime.UtcNow;
+                var medicinePrices = new List<MedicinePrice>
+                {
+                    // COVID-19 Vaccine
+                    new MedicinePrice
+                    {
+                        MedicineId = 1,
+                        UnitPrice = 625000m,
+                        Currency = "VND",
+                        VatRate = 0.05,
+                        VatAmount = 31250m,
+                        OriginalPriceBeforeVat = 625000m,
+                        OriginalPriceAfterVat = 656250m,
+                        IsSuspended = false,
+                        IsCancelled = false,
+                        CreatedAt = now,
+                        CreatedBy = 1,
+                        LastUpdatedAt = now,
+                        LastUpdatedBy = 1
+                    },
+                    // Paracetamol
+                    new MedicinePrice
+                    {
+                        MedicineId = 2,
+                        UnitPrice = 5000m,
+                        Currency = "VND",
+                        VatRate = 0.05,
+                        VatAmount = 250m,
+                        OriginalPriceBeforeVat = 5000m,
+                        OriginalPriceAfterVat = 5250m,
+                        IsSuspended = false,
+                        IsCancelled = false,
+                        CreatedAt = now,
+                        CreatedBy = 1,
+                        LastUpdatedAt = now,
+                        LastUpdatedBy = 1
+                    },
+                    // Ibuprofen
+                    new MedicinePrice
+                    {
+                        MedicineId = 3,
+                        UnitPrice = 7500m,
+                        Currency = "VND",
+                        VatRate = 0.05,
+                        VatAmount = 375m,
+                        OriginalPriceBeforeVat = 7500m,
+                        OriginalPriceAfterVat = 7875m,
+                        IsSuspended = false,
+                        IsCancelled = false,
+                        CreatedAt = now,
+                        CreatedBy = 1,
+                        LastUpdatedAt = now,
+                        LastUpdatedBy = 1
+                    },
+                    // Influenza Vaccine
+                    new MedicinePrice
+                    {
+                        MedicineId = 4,
+                        UnitPrice = 387500m,
+                        Currency = "VND",
+                        VatRate = 0.05,
+                        VatAmount = 19375m,
+                        OriginalPriceBeforeVat = 387500m,
+                        OriginalPriceAfterVat = 406875m,
+                        IsSuspended = false,
+                        IsCancelled = false,
+                        CreatedAt = now,
+                        CreatedBy = 1,
+                        LastUpdatedAt = now,
+                        LastUpdatedBy = 1
+                    },
+                    // Aspirin
+                    new MedicinePrice
+                    {
+                        MedicineId = 5,
+                        UnitPrice = 3000m,
+                        Currency = "VND",
+                        VatRate = 0.05,
+                        VatAmount = 150m,
+                        OriginalPriceBeforeVat = 3000m,
+                        OriginalPriceAfterVat = 3150m,
+                        IsSuspended = false,
+                        IsCancelled = false,
+                        CreatedAt = now,
+                        CreatedBy = 1,
+                        LastUpdatedAt = now,
+                        LastUpdatedBy = 1
+                    },
+                    // Isomina Vaccine (no price - for testing null price scenario)
+                    // Note: Medicine 6 (Isomina Vaccine) intentionally has no price
+                    
+                    // Historical price for COVID-19 Vaccine (older price)
+                    new MedicinePrice
+                    {
+                        MedicineId = 1,
+                        UnitPrice = 575000m,
+                        Currency = "VND",
+                        VatRate = 0.05,
+                        VatAmount = 28750m,
+                        OriginalPriceBeforeVat = 575000m,
+                        OriginalPriceAfterVat = 603750m,
+                        IsSuspended = false,
+                        IsCancelled = false,
+                        CreatedAt = now.AddMonths(-3),
+                        CreatedBy = 1,
+                        LastUpdatedAt = now.AddMonths(-3),
+                        LastUpdatedBy = 1
+                    }
+                };
+                dbContext.MedicinePrices.AddRange(medicinePrices);
                 dbContext.SaveChanges();
             }
 
@@ -188,6 +456,7 @@ namespace InventoryService.FunctionalTests.Helpers
                 dbContext.Warehouses.AddRange(warehouses);
                 dbContext.SaveChanges();
             }
+
             // Add test suppliers if they don't exist
             if (!dbContext.Suppliers.Any())
             {
@@ -239,6 +508,7 @@ namespace InventoryService.FunctionalTests.Helpers
                 dbContext.Suppliers.AddRange(suppliers);
                 dbContext.SaveChanges();
             }
+
             // Check if manufacturer with ID 1 exists, if not add it
             if (!dbContext.Manufacturers.Any(m => m.Id == 1))
             {
@@ -251,6 +521,7 @@ namespace InventoryService.FunctionalTests.Helpers
                 });
                 dbContext.SaveChanges();
             }
+
             // Check if country with ID 1 exists, if not add it
             if (!dbContext.Countries.Any(c => c.Id == 1))
             {
@@ -264,6 +535,5 @@ namespace InventoryService.FunctionalTests.Helpers
                 dbContext.SaveChanges();
             }
         }
-    }   
+    }
 }
-
