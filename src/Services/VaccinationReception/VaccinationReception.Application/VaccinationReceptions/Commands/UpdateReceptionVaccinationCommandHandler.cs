@@ -39,13 +39,8 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 receptionVaccination.Quantity = request.Quantity;
                 receptionVaccination.IsReadyToUse = request.IsReadyToUse;
                 receptionVaccination.ScheduledDate = request.ScheduledDate;
-                receptionVaccination.InvoiceDate = request.InvoiceDate;
                 receptionVaccination.AppointmentDate = request.AppointmentDate;
-                receptionVaccination.PaymentStatus = request.PaymentStatus;
-                receptionVaccination.IsConfirmed = request.IsConfirmed;
                 receptionVaccination.Note = request.Note;
-                receptionVaccination.TestResultEntry = request.TestResultEntry;
-                receptionVaccination.DoctorId = request.DoctorId;
 
                 await _context.SaveChangesAsync(cancellationToken);
 

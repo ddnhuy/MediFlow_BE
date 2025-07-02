@@ -12,14 +12,9 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             int Id,
             int Quantity,
             bool IsReadyToUse,
-            DateTime ScheduledDate,
-            DateTime InvoiceDate,
+            DateTime? ScheduledDate,
             DateTime AppointmentDate,
-            PaymentStatusForItem PaymentStatus,
-            bool IsConfirmed,
-            string? Note,
-            string? TestResultEntry,
-            int DoctorId
+            string? Note
         ) : ICommand<UpdateReceptionVaccinationResult>;
 
     public record UpdateReceptionVaccinationResult(bool IsSuccess);

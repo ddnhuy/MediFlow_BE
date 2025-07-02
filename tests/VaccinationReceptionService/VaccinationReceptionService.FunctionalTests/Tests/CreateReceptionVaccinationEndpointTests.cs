@@ -79,7 +79,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 IsReadyToUse: true,
                 ScheduledDate: DateTime.UtcNow,
                 AppointmentDate: DateTime.UtcNow,
-                IsConfirmed: false,
                 Note: null
             );
             _client.DefaultRequestHeaders.Authorization = null;
@@ -161,7 +160,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 IsReadyToUse: true,
                 ScheduledDate: DateTime.UtcNow.AddDays(7),
                 AppointmentDate: DateTime.UtcNow.AddDays(7),
-                IsConfirmed: false,
                 Note: null
             );
 
@@ -188,7 +186,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 IsReadyToUse: true,
                 ScheduledDate: DateTime.UtcNow,
                 AppointmentDate: DateTime.UtcNow,
-                IsConfirmed: false,
                 Note: null
             );
 
@@ -213,7 +210,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 IsReadyToUse: true,
                 ScheduledDate: DateTime.UtcNow.AddDays(7),
                 AppointmentDate: DateTime.UtcNow.AddDays(7),
-                IsConfirmed: false,
                 Note: null
             );
 
