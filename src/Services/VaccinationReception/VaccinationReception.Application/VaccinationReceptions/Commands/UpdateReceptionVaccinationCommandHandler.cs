@@ -28,11 +28,14 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             try
             {
                 var receptionVaccination = await _context.ReceptionVaccinations
-                    .FirstOrDefaultAsync(rv => rv.Id == request.Id && !rv.IsCancelled, cancellationToken);
+                    .FirstOrDefaultAsync(rv =>
+                        rv.Id == request.Id &&
+                        rv.ReceptionId == request.ReceptionId &&
+                        !rv.IsCancelled, cancellationToken);
 
                 if (receptionVaccination == null)
                 {
-                    _logger.LogWarning("Không tìm thấy ReceptionVaccination với Id: {Id}", request.Id);
+                    _logger.LogWarning("Không tìm thấy ReceptionVaccination với Id: {Id} trong ReceptionId: {ReceptionId}", request.Id, request.ReceptionId);
                     return new UpdateReceptionVaccinationResult(false);
                 }
 
@@ -45,7 +48,6 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 await _context.SaveChangesAsync(cancellationToken);
 
                 _logger.LogInformation("Đã cập nhật thành công ReceptionVaccination với Id: {Id}", request.Id);
-
                 return new UpdateReceptionVaccinationResult(true);
             }
             catch (Exception ex)

@@ -10,6 +10,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
     public record UpdateReceptionVaccinationCommand(
             int Id,
+            int ReceptionId,
             int Quantity,
             bool IsReadyToUse,
             DateTime? ScheduledDate,

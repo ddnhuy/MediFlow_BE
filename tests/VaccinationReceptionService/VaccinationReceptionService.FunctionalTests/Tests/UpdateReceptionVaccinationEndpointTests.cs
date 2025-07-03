@@ -73,16 +73,15 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
 
             dbContext.SaveChanges();
         }
-
         [Fact]
         public async Task UpdateReceptionVaccination_WithoutAuthorization_ReturnsUnauthorized()
         {
             // Arrange
             _client.DefaultRequestHeaders.Authorization = null;
-            var command = CreateValidCommand();
+            var request = CreateValidRequest();
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/reception-vaccinations/{TestReceptionVaccinationId}", command);
+            var response = await _client.PutAsJsonAsync($"/receptions/{TestReceptionId}/reception-vaccinations", request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -92,12 +91,11 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         public async Task UpdateReceptionVaccination_WithValidData_ReturnsOk()
         {
             // Arrange
-            var command = CreateValidCommand();
+            var request = CreateValidRequest();
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/reception-vaccinations/{TestReceptionVaccinationId}", command);
+            var response = await _client.PutAsJsonAsync($"/receptions/{TestReceptionId}/reception-vaccinations", request);
 
-            // Debug log
             var content = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Response Status: {response.StatusCode}");
             Console.WriteLine($"Response Content: {content}");
@@ -115,35 +113,30 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 .FirstOrDefaultAsync(rv => rv.Id == TestReceptionVaccinationId);
 
             receptionVaccination.Should().NotBeNull();
-            receptionVaccination!.Quantity.Should().Be(command.Quantity);
-            receptionVaccination.IsReadyToUse.Should().Be(command.IsReadyToUse);
-
-            receptionVaccination.ScheduledDate.Should().BeCloseTo(command.ScheduledDate.Value, TimeSpan.FromSeconds(1));
-            receptionVaccination.AppointmentDate.Should().BeCloseTo(command.AppointmentDate, TimeSpan.FromSeconds(1));
-
-            receptionVaccination.Note.Should().Be(command.Note);
+            receptionVaccination!.Quantity.Should().Be(request.Quantity);
+            receptionVaccination.IsReadyToUse.Should().Be(request.IsReadyToUse);
+            receptionVaccination.ScheduledDate.Should().BeCloseTo(request.ScheduledDate!.Value, TimeSpan.FromSeconds(1));
+            receptionVaccination.AppointmentDate.Should().BeCloseTo(request.AppointmentDate, TimeSpan.FromSeconds(1));
+            receptionVaccination.Note.Should().Be(request.Note);
         }
 
         [Fact]
-        public async Task UpdateReceptionVaccination_WithMismatchedId_ReturnsBadRequest()
+        public async Task UpdateReceptionVaccination_WithInvalidReceptionId_ReturnsNotFound()
         {
             // Arrange
-            var command = CreateValidCommand();
-            var differentId = TestReceptionVaccinationId + 1;
+            var request = CreateValidRequest();
+            var invalidReceptionId = TestReceptionId + 999;
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/reception-vaccinations/{differentId}", command);
-
-            // Debug log
-            var content = await response.Content.ReadAsStringAsync();
+            var response = await _client.PutAsJsonAsync($"/receptions/{invalidReceptionId}/reception-vaccinations", request);
 
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
-        private UpdateReceptionVaccinationCommand CreateValidCommand()
+        private UpdateReceptionVaccinationRequest CreateValidRequest()
         {
-            return new UpdateReceptionVaccinationCommand(
+            return new UpdateReceptionVaccinationRequest(
                 Id: TestReceptionVaccinationId,
                 Quantity: 2,
                 IsReadyToUse: true,
