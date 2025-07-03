@@ -21,7 +21,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
                 .WithMessage(ExceptionKey.INVALID_QUANTITY.ToString());
 
             RuleFor(x => x.ScheduledDate)
-                .Must(date => date == null || date > DateTime.Now)
+                .Must(date => date == null || date >= DateTime.Now)
                 .WithMessage(ExceptionKey.INVALID_SCHEDULED_DATE.ToString());
 
             RuleFor(x => x.AppointmentDate)
