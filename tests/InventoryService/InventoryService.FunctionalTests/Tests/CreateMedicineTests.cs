@@ -100,5 +100,55 @@ namespace Inventory.FunctionalTests.Tests
 
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         }
+
+        [Fact]
+        public async Task Create_WithDuplicateMedicineCode_ReturnsBadRequest()
+        {
+            // Arrange: First, create a medicine with a unique code
+            var command = new CreateMedicineCommand(
+                MedicineCode: "DUPLICATE_CODE",
+                MedicineName: "First Medicine",
+                Unit: "Tablet",
+                IsRequiredTestingBeforeUse: false,
+                ActiveIngredient: "Ingredient",
+                UsageInstructions: "Use as directed",
+                Concentration: "500mg",
+                Indications: "Pain relief",
+                MedicineClassification: "Analgesic",
+                RouteOfAdministration: "Oral",
+                NationalMedicineCode: "NMC200",
+                Description: "Description",
+                Note: "Note",
+                RegistrationNumber: "REG200",
+                MedicineTypeId: 1,
+                VaccineTypeId: 1
+            );
+            var response1 = await _client.PostAsJsonAsync("/medicines", command);
+            response1.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            // Act: Try to create another medicine with the same code
+            var duplicateCommand = new CreateMedicineCommand(
+                MedicineCode: "DUPLICATE_CODE", // Same code as above
+                MedicineName: "Second Medicine",
+                Unit: "Capsule",
+                IsRequiredTestingBeforeUse: false,
+                ActiveIngredient: "Ingredient2",
+                UsageInstructions: "Use as directed",
+                Concentration: "250mg",
+                Indications: "Fever",
+                MedicineClassification: "Antipyretic",
+                RouteOfAdministration: "Oral",
+                NationalMedicineCode: "NMC201",
+                Description: "Description2",
+                Note: "Note2",
+                RegistrationNumber: "REG201",
+                MedicineTypeId: 2,
+                VaccineTypeId: 2
+            );
+            var response2 = await _client.PostAsJsonAsync("/medicines", duplicateCommand);
+
+            // Assert
+            response2.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
     }
 }

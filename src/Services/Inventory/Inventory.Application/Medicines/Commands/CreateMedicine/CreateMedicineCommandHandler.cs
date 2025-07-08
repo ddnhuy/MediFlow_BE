@@ -4,6 +4,11 @@
     {
         public async Task<CreateMedicineResult> Handle(CreateMedicineCommand request, CancellationToken cancellationToken)
         {
+            if (await dbContext.Medicines.AnyAsync(m => m.MedicineCode == request.MedicineCode, cancellationToken))
+            {
+                throw new BadRequestException(ExceptionKey.DUPLICATE_MEDICINE_CODE);
+            }
+
             var medicine = new Medicine
             {
                 MedicineCode = request.MedicineCode,
