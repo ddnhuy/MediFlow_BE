@@ -149,7 +149,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-            var result = await response.Content.ReadFromJsonAsync<UnpaidServicesResponseDTO>();
+            var result = await response.Content.ReadFromJsonAsync<UnpaidServicesByPatientResponseDTO>();
 
             result.Should().NotBeNull();
             result!.Services.Should().NotBeEmpty();
@@ -157,6 +157,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
 
             result.Vaccinations.Should().NotBeEmpty();
             result.Vaccinations.First().VaccineId.Should().Be(TestVaccineId);
+
+            result!.ReceptionId.Should().BeGreaterThan(0);
         }
 
         [Fact]

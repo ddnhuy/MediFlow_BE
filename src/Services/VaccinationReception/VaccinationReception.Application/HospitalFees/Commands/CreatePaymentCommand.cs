@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VaccinationReception.Application.Data;
@@ -11,6 +12,7 @@ using VaccinationReception.Domain.Models;
 namespace VaccinationReception.Application.HospitalFees.Commands
 {
     public record CreatePaymentCommand(
+        int PatientId,
         int ReceptionId,
         PaymentMethod Method,
         string? Note,
@@ -36,6 +38,19 @@ namespace VaccinationReception.Application.HospitalFees.Commands
 
             try
             {
+                var reception = await _context.Receptions
+                    .FirstOrDefaultAsync(r => r.Id == request.ReceptionId, cancellationToken);
+
+                if (reception == null)
+                {
+                    throw new NotFoundException(ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
+                }
+
+                if (reception.PatientId != request.PatientId)
+                {
+                    throw new BadRequestException(ExceptionKey.RECEPTION_DOES_NOT_BELONG_TO_PATIENT);
+                }
+
                 var unpaidVaccinations = await _context.ReceptionVaccinations
                     .Where(x => request.ReceptionVaccinationIds.Contains(x.Id)
                              && x.ReceptionId == request.ReceptionId

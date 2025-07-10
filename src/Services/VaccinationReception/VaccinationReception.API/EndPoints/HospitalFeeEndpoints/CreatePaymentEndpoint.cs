@@ -4,6 +4,7 @@ using VaccinationReception.Domain.Enums;
 namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
 {
     public record CreatePaymentRequest(
+            int ReceptionId,
             PaymentMethod Method,
             string? Note,
             List<int> ReceptionVaccinationIds,
@@ -15,10 +16,11 @@ namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/receptions/{receptionId:int}/payments", async (int receptionId, CreatePaymentRequest request, ISender sender) =>
+            app.MapPost("/receptions/{patientId:int}/payments", async (int patientId, CreatePaymentRequest request, ISender sender) =>
             {
                 var command = new CreatePaymentCommand(
-                    receptionId,
+                    patientId,
+                    request.ReceptionId,
                     request.Method,
                     request.Note,
                     request.ReceptionVaccinationIds,
