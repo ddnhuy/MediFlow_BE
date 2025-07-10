@@ -11,6 +11,12 @@ namespace VaccinationReception.Application.DTOs.VaccinationReceptionDTOs
             List<UnpaidVaccinationDTO> Vaccinations
         );
 
+    public record UnpaidServicesByPatientResponseDTO(
+        int ReceptionId,
+        List<UnpaidVaccinationDTO> Vaccinations,
+        List<UnpaidServiceDTO> Services
+    );
+
     public record UnpaidServiceDTO(
         int Id,
         string RequestNumber,

@@ -30,7 +30,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
             })
             .RequireAuthorization()
             .WithName("GetUnpaidServicesByPatientId")
-            .Produces<UnpaidServicesResponseDTO>(StatusCodes.Status200OK)
+            .Produces<UnpaidServicesByPatientResponseDTO>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .WithSummary("Get unpaid services and vaccinations by patient ID")
             .WithDescription("Retrieves a list of unpaid services and vaccinations for a specific patient across all their receptions");

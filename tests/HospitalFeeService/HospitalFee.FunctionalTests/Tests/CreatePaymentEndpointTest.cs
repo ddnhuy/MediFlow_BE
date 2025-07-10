@@ -51,6 +51,7 @@ namespace HospitalFee.FunctionalTests.Tests
             await SeedEntityAsync(unpaidVaccination);
 
             var request = new CreatePaymentRequest(
+                ReceptionId: reception.Id,
                 Method: PaymentMethod.CreditCard,
                 Note: "First payment",
                 ReceptionVaccinationIds: new List<int> { unpaidVaccination.Id },
@@ -58,7 +59,7 @@ namespace HospitalFee.FunctionalTests.Tests
             );
 
             // Act
-            var response = await _client.PostAsJsonAsync($"/receptions/{reception.Id}/payments", request);
+            var response = await _client.PostAsJsonAsync($"/receptions/{reception.PatientId}/payments", request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -83,6 +84,7 @@ namespace HospitalFee.FunctionalTests.Tests
             await SeedEntityAsync(paidService);
 
             var request = new CreatePaymentRequest(
+                ReceptionId: reception.Id,
                 Method: PaymentMethod.Cash,
                 Note: null,
                 ReceptionVaccinationIds: new List<int>(),
@@ -90,7 +92,7 @@ namespace HospitalFee.FunctionalTests.Tests
             );
 
             // Act
-            var response = await _client.PostAsJsonAsync($"/receptions/{reception.Id}/payments", request);
+            var response = await _client.PostAsJsonAsync($"/receptions/{reception.PatientId}/payments", request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -103,13 +105,36 @@ namespace HospitalFee.FunctionalTests.Tests
         {
             // Arrange
             _client.DefaultRequestHeaders.Authorization = null; // No token
-            var request = new CreatePaymentRequest(PaymentMethod.Cash, null, new List<int>(), new List<int>());
+            var request = new CreatePaymentRequest(0,PaymentMethod.Cash, null, new List<int>(), new List<int>());
 
             // Act
             var response = await _client.PostAsJsonAsync("/receptions/1/payments", request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task CreatePayment_WithReceptionNotBelongingToPatient_ReturnsBadRequest()
+        {
+            SetAuthHeader();
+            var reception = new Reception { PatientId = 10, ServiceTypeId = 1 };
+            await SeedEntityAsync(reception);
+
+            var request = new CreatePaymentRequest(
+                Method: PaymentMethod.Cash,
+                Note: null,
+                ReceptionVaccinationIds: new List<int>(),
+                ServiceRequestDetailIds: new List<int>(),
+                ReceptionId: reception.Id
+            );
+
+            // Provide a wrong patientId (not 10)
+            var response = await _client.PostAsJsonAsync($"/receptions/1/payments", request);
+
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var content = await response.Content.ReadAsStringAsync();
+            content.Should().Contain(ExceptionKey.RECEPTION_DOES_NOT_BELONG_TO_PATIENT.ToString());
         }
     }
 }

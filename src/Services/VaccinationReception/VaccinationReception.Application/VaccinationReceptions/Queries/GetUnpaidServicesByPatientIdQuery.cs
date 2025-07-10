@@ -15,8 +15,8 @@ using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Queries
 {
-    public record GetUnpaidServicesByPatientIdQuery(int PatientId) : IQuery<UnpaidServicesResponseDTO>;
-    public class GetUnpaidServicesByPatientIdQueryHandler : IQueryHandler<GetUnpaidServicesByPatientIdQuery, UnpaidServicesResponseDTO>
+    public record GetUnpaidServicesByPatientIdQuery(int PatientId) : IQuery<UnpaidServicesByPatientResponseDTO>;
+    public class GetUnpaidServicesByPatientIdQueryHandler : IQueryHandler<GetUnpaidServicesByPatientIdQuery, UnpaidServicesByPatientResponseDTO>
     {
         private readonly IApplicationDbContext _context;
         private readonly ILogger<GetUnpaidServicesByPatientIdQuery> _logger;
@@ -35,24 +35,27 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
             _inventoryService = inventoryService;
         }
 
-        public async Task<UnpaidServicesResponseDTO> Handle(GetUnpaidServicesByPatientIdQuery request, CancellationToken cancellationToken)
+        public async Task<UnpaidServicesByPatientResponseDTO> Handle(GetUnpaidServicesByPatientIdQuery request, CancellationToken cancellationToken)
         {
             try
             {
-                var receptionIds = await _context.Receptions
+                var latestReceptionId = await _context.Receptions
                     .Where(r => r.PatientId == request.PatientId && !r.IsCancelled)
+                    .OrderByDescending(r => r.ReceptionDate)
                     .Select(r => r.Id)
-                    .ToListAsync(cancellationToken);
-
-                if (!receptionIds.Any())
+                    .FirstOrDefaultAsync(cancellationToken);
+                if (latestReceptionId == 0)
                 {
-                    return new UnpaidServicesResponseDTO(new List<UnpaidServiceDTO>(), new List<UnpaidVaccinationDTO>());
+                    return new UnpaidServicesByPatientResponseDTO(
+                        ReceptionId: 0,
+                        Vaccinations: new List<UnpaidVaccinationDTO>(),
+                        Services: new List<UnpaidServiceDTO>()
+                    );
                 }
-
                 var unpaidServices = await _context.ServiceRequestDetails
                     .Include(srd => srd.RequestForm)
                     .Where(srd =>
-                        receptionIds.Contains(srd.RequestForm.ReceptionId) &&
+                        srd.RequestForm.ReceptionId == latestReceptionId &&
                         srd.PaymentStatus == PaymentStatusForItem.NotPaid &&
                         !srd.IsCancelled)
                     .ToListAsync(cancellationToken);
@@ -80,7 +83,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
 
                 var unpaidVaccinationsRaw = await _context.ReceptionVaccinations
                     .Where(rv =>
-                        receptionIds.Contains(rv.ReceptionId) &&
+                        rv.ReceptionId == latestReceptionId &&
                         rv.PaymentStatus == PaymentStatusForItem.NotPaid &&
                         !rv.IsCancelled)
                     .ToListAsync(cancellationToken);
@@ -113,7 +116,11 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                     );
                 }).ToList();
 
-                return new UnpaidServicesResponseDTO(unpaidServicesDTO, unpaidVaccinations);
+                return new UnpaidServicesByPatientResponseDTO(
+                         ReceptionId: latestReceptionId,
+                         Vaccinations: unpaidVaccinations,
+                         Services: unpaidServicesDTO
+                     );
             }
             catch (Exception ex)
             {
