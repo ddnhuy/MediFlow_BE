@@ -101,7 +101,9 @@ if (!builder.Environment.IsEnvironment("Test"))
         q.AddTrigger(opts => opts
             .ForJob(jobKey)
             .WithIdentity("DailyAppointmentNotificationJob-trigger")
-            .WithCronSchedule("0 30 19 * * ?")); // 19h30
+            .WithCronSchedule(
+                "0 30 19 * * ?",
+                x => x.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")))); // 19h30
     });
 
     builder.Services.AddQuartzHostedService(options =>

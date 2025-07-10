@@ -34,12 +34,12 @@ spec:
           {{- end }}
           {{- with .Values.resources }}
           resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-            valueFrom:
-              secretKeyRef:
-                name: aws-secret
-                key: SECRET_KEY
+            requests:
+              cpu: "100m"
+              memory: "250Mi"
+            limits:
+              cpu: "120m"
+              memory: "260Mi"
           envFrom:
             - configMapRef:
                 name: hospital-service-config

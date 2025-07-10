@@ -32,10 +32,13 @@ spec:
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.resources }}
           resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            requests:
+              cpu: "100m"
+              memory: "250Mi"
+            limits:
+              cpu: "120m"
+              memory: "260Mi"
           envFrom:
             - configMapRef:
                 name: inventory-config
