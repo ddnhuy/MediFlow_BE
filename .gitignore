@@ -361,3 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Ignore all .env files in any folder
+**/.env
+# Ignore specific variations of .env files
+**/.env.*
+# Allow .env.example
+!.env.example

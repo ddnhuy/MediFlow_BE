@@ -67,17 +67,17 @@ services:
       context: .
       dockerfile: src/Services/FileStorage/FileStorage.API/Dockerfile
 
-  workers.email:
-    image: ${DOCKER_REGISTRY-}workersemail
-    build:
-      context: .
-      dockerfile: src/Workers/Workers.Email/Dockerfile
-
   appointment.api:
     image: ${DOCKER_REGISTRY-}appointmentapi
     build:
       context: .
       dockerfile: src/Services/Appointment/Appointment.API/Dockerfile
+
+  workers.email:
+    image: ${DOCKER_REGISTRY-}workersemail
+    build:
+      context: .
+      dockerfile: src/Workers/Workers.Email/Dockerfile
 
 volumes:
   postgres_db:

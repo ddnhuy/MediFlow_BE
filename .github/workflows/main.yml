@@ -1,8 +1,8 @@
-﻿name: Deploy BE App
+﻿name: Deploy BE App To Production Environment
 
 on:
   push:
-    branches: ["main", "develop"]
+    branches: ["main"]
 
 env:
   CHART_DIR: ./helm
@@ -26,7 +26,7 @@ jobs:
         run: |
           curl -H "Content-Type: application/json" \
           -X POST \
-          -d "{\"content\": \"🚀 **mediflow » mediflow-be - #${{ github.run_number }}** Started by \`${{ github.actor }}\` ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+          -d "{\"content\": \"🚀 **mediflow » mediflow-be (main) - #${{ github.run_number }}** Started by \`${{ github.actor }}\` ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
           ${{ secrets.DISCORD_WEBHOOK_URL }}
 
   build-and-test:
@@ -193,5 +193,5 @@ jobs:
 
           curl -H "Content-Type: application/json" \
             -X POST \
-            -d "{\"content\": \"$EMOJI **mediflow » mediflow-be - #${{ github.run_number }}** $MESSAGE ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+            -d "{\"content\": \"$EMOJI **mediflow » mediflow-be (main) - #${{ github.run_number }}** $MESSAGE ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
             ${{ secrets.DISCORD_WEBHOOK_URL }}

@@ -1,0 +1,261 @@
+version: '3.4'
+
+services:
+  postgres_db:
+    image: postgres:14
+    container_name: Postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+      
+  redis:
+    image: redis:8.0
+    container_name: Redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --save 20 1 --loglevel warning --requirepass Mediflow@123
+
+  messagebroker:
+    image: rabbitmq:4-management-alpine
+    container_name: MessageBroker
+    hostname: mediflow-mq
+    environment:
+      - RABBITMQ_DEFAULT_USER=mediflow
+      - RABBITMQ_DEFAULT_PASS=Mediflow@123
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINPASSWORD=Mediflow@123
+    ports:
+      - "5342:80"     # Web UI
+      - "5341:5341"   # Ingestion port
+
+  yarpapigateway:
+    image: ${DOCKER_REGISTRY-}yarpapigateway
+    build:
+      context: .
+      dockerfile: src/ApiGateways/YarpApiGateWay/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=${CERT_KEYPATH}
+    ports:
+      - "6060:8080"
+      - "8081"
+    depends_on:
+      - humanresource.grpc
+      - redis
+    volumes:
+      - /etc/letsencrypt/live/${DOMAIN}/fullchain.pem:/https/fullchain.pem:ro
+      - /etc/letsencrypt/live/${DOMAIN}/privkey.pem:/https/privkey.pem:ro
+
+  humanresource.grpc:
+    image: ${DOCKER_REGISTRY-}humanresourcegrpc
+    build:
+      context: .
+      dockerfile: src/Services/HumanResource/HumanResource.Grpc/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=${CERT_KEYPATH}
+    depends_on:
+      - postgres_db
+    ports:
+      - "6061:8080"
+      - "8081"
+    volumes:
+      - /etc/letsencrypt/live/${DOMAIN}/fullchain.pem:/https/fullchain.pem:ro
+      - /etc/letsencrypt/live/${DOMAIN}/privkey.pem:/https/privkey.pem:ro
+
+  authentication.api:
+    image: ${DOCKER_REGISTRY-}authenticationapi
+    build:
+      context: .
+      dockerfile: src/Services/Authentication/Authentication.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_HTTP_PORTS=8080
+    depends_on:
+      - postgres_db
+      - humanresource.grpc
+    ports:
+      - "6062:8080"
+  
+  inventory.api:
+    image: ${DOCKER_REGISTRY-}inventoryapi
+    build: 
+      context: .
+      dockerfile: src/Services/Inventory/Inventory.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_HTTP_PORTS=8080
+    depends_on:
+      - postgres_db
+      - messagebroker
+    ports:
+      - "6063:8080"
+
+  customerinfo.grpc:
+    image: ${DOCKER_REGISTRY-}customerinfogrpc
+    build:
+      context: .
+      dockerfile: src/Services/CustomerInfo/CustomerInfo.Grpc/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=${CERT_KEYPATH}
+    depends_on:
+      - postgres_db
+    ports:
+      - "6064:8080"
+      - "8081"
+    volumes:
+      - /etc/letsencrypt/live/${DOMAIN}/fullchain.pem:/https/fullchain.pem:ro
+      - /etc/letsencrypt/live/${DOMAIN}/privkey.pem:/https/privkey.pem:ro
+
+  vaccinationreception.api:
+    image: ${DOCKER_REGISTRY-}vaccinationreceptionapi
+    build:
+      context: .
+      dockerfile: src/Services/VaccinationReception/VaccinationReception.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=${CERT_KEYPATH}
+    depends_on:
+      - postgres_db
+      - customerinfo.grpc
+      - messagebroker
+    ports:
+      - "6065:8080"
+      - "8081"
+    volumes:
+      - /etc/letsencrypt/live/${DOMAIN}/fullchain.pem:/https/fullchain.pem:ro
+      - /etc/letsencrypt/live/${DOMAIN}/privkey.pem:/https/privkey.pem:ro
+
+  management.api:
+    image: ${DOCKER_REGISTRY-}managementapi
+    build:
+      context: .
+      dockerfile: src/Services/Management/Management.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=${CERT_KEYPATH}
+    depends_on:
+      - humanresource.grpc
+    ports:
+      - "6066:8080"
+
+  hospitalservice.api:
+    image: ${DOCKER_REGISTRY-}hospitalserviceapi
+    build:
+      context: .
+      dockerfile: src/Services/HospitalService/HospitalService.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=${CERT_KEYPATH}
+    depends_on:
+      - postgres_db
+    ports:
+      - "6067:8080"
+      - "8081"
+    volumes:
+      - /etc/letsencrypt/live/${DOMAIN}/fullchain.pem:/https/fullchain.pem:ro
+      - /etc/letsencrypt/live/${DOMAIN}/privkey.pem:/https/privkey.pem:ro
+
+  filestorage.api:
+    image: ${DOCKER_REGISTRY-}filestorageapi
+    build:
+      context: .
+      dockerfile: src/Services/FileStorage/FileStorage.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=${CERT_KEYPATH}
+      - Cloudinary__CloudName=${CLOUDINARY_CLOUD_NAME}
+      - Cloudinary__ApiKey=${CLOUDINARY_API_KEY}
+      - Cloudinary__ApiSecret=${CLOUDINARY_API_SECRET}
+      - AWS__BucketName=${AWS_BUCKET_NAME}
+      - AWS__Region=${AWS_REGION}
+      - AWS__AccessKey=${AWS_ACCESS_KEY}
+      - AWS__SecretKey=${AWS_SECRET_KEY}
+    depends_on:
+      - postgres_db
+    ports:
+      - "6068:8080"
+      - "8081"
+    volumes:
+      - /etc/letsencrypt/live/${DOMAIN}/fullchain.pem:/https/fullchain.pem:ro
+      - /etc/letsencrypt/live/${DOMAIN}/privkey.pem:/https/privkey.pem:ro
+
+  appointment.api:
+    image: ${DOCKER_REGISTRY-}appointmentapi
+    build:
+      context: .
+      dockerfile: src/Services/Appointment/Appointment.API/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=${CERT_KEYPATH}
+    ports:
+      - "6069:8080"
+      - "8081"
+    depends_on:
+      - postgres_db
+      - customerinfo.grpc
+      - humanresource.grpc
+    volumes:
+      - /etc/letsencrypt/live/${DOMAIN}/fullchain.pem:/https/fullchain.pem:ro
+      - /etc/letsencrypt/live/${DOMAIN}/privkey.pem:/https/privkey.pem:ro
+
+  workers.email:
+    image: ${DOCKER_REGISTRY-}workersemail
+    build:
+      context: .
+      dockerfile: src/Workers/Workers.Email/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - EmailSettings__Server=${EMAIL_SERVER}
+      - EmailSettings__Port=${EMAIL_PORT}
+      - EmailSettings__SenderName=${EMAIL_SENDER_NAME}
+      - EmailSettings__SenderEmail=${EMAIL_SENDER_EMAIL}
+      - EmailSettings__SenderPassword=${EMAIL_SENDER_PASSWORD}
+    depends_on:
+      - messagebroker
+
+volumes:
+  postgres_db:
+  redis_data:
