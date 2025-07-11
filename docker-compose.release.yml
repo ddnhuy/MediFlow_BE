@@ -171,6 +171,9 @@ services:
       - humanresource.grpc
     ports:
       - "6066:8080"
+    volumes:
+      - /etc/letsencrypt/live/${DOMAIN}/fullchain.pem:/https/fullchain.pem:ro
+      - /etc/letsencrypt/live/${DOMAIN}/privkey.pem:/https/privkey.pem:ro
 
   hospitalservice.api:
     image: ${DOCKER_REGISTRY-}hospitalserviceapi
