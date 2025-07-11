@@ -166,6 +166,7 @@ jobs:
       - build-and-push-grpc
       - build-and-push-api
       - build-and-push-gateways
+      - notify-start
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
