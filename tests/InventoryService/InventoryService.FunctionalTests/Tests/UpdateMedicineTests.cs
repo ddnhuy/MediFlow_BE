@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using BuildingBlocks.Strings.Enums;
+using FluentAssertions;
 using Inventory.Application.Medicines.Commands.UpdateMedicine;
 using Inventory.Domain.Models;
 using InventoryService.FunctionalTests.Abstractions;
@@ -28,7 +29,7 @@ namespace Inventory.FunctionalTests.Tests
                 Concentration: "500mg",
                 Indications: "Pain relief",
                 MedicineClassification: "Analgesic",
-                RouteOfAdministration: "Oral",
+                RouteOfAdministration: RouteOfAdministration.IM,
                 NationalMedicineCode: "12345-678-90",
                 Description: "For pain relief",
                 Note: "Updated in test",
@@ -61,7 +62,7 @@ namespace Inventory.FunctionalTests.Tests
                 Concentration: "500mg",
                 Indications: "Pain relief",
                 MedicineClassification: "Analgesic",
-                RouteOfAdministration: "Oral",
+                RouteOfAdministration: RouteOfAdministration.IM,
                 NationalMedicineCode: "12345-678-90",
                 Description: "For pain relief",
                 Note: "Updated in test",
@@ -95,7 +96,7 @@ namespace Inventory.FunctionalTests.Tests
                 Concentration: "500mg",
                 Indications: "Pain relief",
                 MedicineClassification: "Analgesic",
-                RouteOfAdministration: "Oral",
+                RouteOfAdministration: RouteOfAdministration.IM,
                 NationalMedicineCode: "12345-678-90",
                 Description: "For pain relief",
                 Note: "Updated in test",

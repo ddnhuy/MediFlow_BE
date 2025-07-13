@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application.Medicines.Queries.GetMedicineRequireTest
+﻿using Inventory.Application.Helpers;
+
+namespace Inventory.Application.Medicines.Queries.GetMedicineRequireTest
 {
     public record ListVaccinesRequireTestQuery(
         PaginationRequest PaginationRequest,
@@ -46,7 +48,7 @@
                     Concentration = m.Concentration,
                     Indications = m.Indications,
                     MedicineClassification = m.MedicineClassification,
-                    RouteOfAdministration = m.RouteOfAdministration,
+                    RouteOfAdministration = EnumHelper.ToEnumString(m.RouteOfAdministration),
                     NationalMedicineCode = m.NationalMedicineCode,
                     Description = m.Description,
                     Note = m.Note,

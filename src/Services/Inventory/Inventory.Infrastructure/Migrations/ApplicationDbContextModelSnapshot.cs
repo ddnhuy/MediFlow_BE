@@ -266,8 +266,8 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<string>("RegistrationNumber")
                         .HasColumnType("text");
 
-                    b.Property<string>("RouteOfAdministration")
-                        .HasColumnType("text");
+                    b.Property<int?>("RouteOfAdministration")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Unit")
                         .HasColumnType("text");

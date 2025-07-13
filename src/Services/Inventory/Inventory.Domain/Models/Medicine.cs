@@ -1,4 +1,6 @@
-﻿namespace Inventory.Domain.Models
+﻿using BuildingBlocks.Strings.Enums;
+
+namespace Inventory.Domain.Models
 {
     public class Medicine : Entity
     {
@@ -10,7 +12,7 @@
         public string? Concentration { get; set; } = string.Empty;
         public string? Indications { get; set; } = string.Empty;
         public string? MedicineClassification { get; set; } = string.Empty;
-        public string? RouteOfAdministration { get; set; } = string.Empty;
+        public RouteOfAdministration? RouteOfAdministration { get; set; }
         public string? NationalMedicineCode { get; set; } = string.Empty;
         public string? Description { get; set; } = string.Empty;
         public string? Note { get; set; } = string.Empty;

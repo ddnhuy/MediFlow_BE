@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using BuildingBlocks.Strings.Enums;
+using FluentAssertions;
 using Inventory.Application.Medicines.Commands.CreateMedicine;
 using InventoryService.FunctionalTests.Abstractions;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +29,7 @@ namespace Inventory.FunctionalTests.Tests
                 Concentration: "100mg",
                 Indications: "Test indications",
                 MedicineClassification: "Test classification",
-                RouteOfAdministration: "Oral",
+                RouteOfAdministration: RouteOfAdministration.IM,
                 NationalMedicineCode: "12345",
                 Description: "Test description",
                 Note: "Test note",
@@ -59,7 +60,7 @@ namespace Inventory.FunctionalTests.Tests
                 Concentration: "500mg",
                 Indications: "Pain relief",
                 MedicineClassification: "Analgesic",
-                RouteOfAdministration: "Oral",
+                RouteOfAdministration: RouteOfAdministration.PO,
                 NationalMedicineCode: "NMC100",
                 Description: "Description",
                 Note: "Note",
@@ -87,7 +88,7 @@ namespace Inventory.FunctionalTests.Tests
                 Concentration: "500mg",
                 Indications: "Pain relief",
                 MedicineClassification: "Analgesic",
-                RouteOfAdministration: "Oral",
+                RouteOfAdministration: RouteOfAdministration.SC,
                 NationalMedicineCode: "NMC101",
                 Description: "Description",
                 Note: "Note",
@@ -115,7 +116,7 @@ namespace Inventory.FunctionalTests.Tests
                 Concentration: "500mg",
                 Indications: "Pain relief",
                 MedicineClassification: "Analgesic",
-                RouteOfAdministration: "Oral",
+                RouteOfAdministration: RouteOfAdministration.IM,
                 NationalMedicineCode: "NMC200",
                 Description: "Description",
                 Note: "Note",
@@ -137,7 +138,7 @@ namespace Inventory.FunctionalTests.Tests
                 Concentration: "250mg",
                 Indications: "Fever",
                 MedicineClassification: "Antipyretic",
-                RouteOfAdministration: "Oral",
+                RouteOfAdministration: RouteOfAdministration.IM,
                 NationalMedicineCode: "NMC201",
                 Description: "Description2",
                 Note: "Note2",

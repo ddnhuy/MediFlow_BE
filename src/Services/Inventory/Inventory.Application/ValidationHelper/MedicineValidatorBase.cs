@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application.ValidationHelper
+﻿using BuildingBlocks.Strings.Enums;
+
+namespace Inventory.Application.ValidationHelper
 {
     public static class MedicineValidatorBase
     {
@@ -10,7 +12,7 @@
                                               IRuleBuilder<T, string> ruleForConcentration,
                                               IRuleBuilder<T, string> ruleForIndications,
                                               IRuleBuilder<T, string> ruleForMedicineClassification,
-                                              IRuleBuilder<T, string> ruleForRouteOfAdministration,
+                                              IRuleBuilder<T, RouteOfAdministration> ruleForRouteOfAdministration,
                                               IRuleBuilder<T, string> ruleForNationalMedicineCode,
                                               IRuleBuilder<T, string> ruleForRegistrationNumber,
                                               IRuleBuilder<T, int> ruleForMedicineTypeId,
@@ -52,8 +54,7 @@
                 .MaximumLength(100).WithMessage(ExceptionKey.INVALID_MEDICINE_CLASSIFICATION_MAX_LENGTH.ToString());
 
             ruleForRouteOfAdministration
-                .NotEmpty().WithMessage(ExceptionKey.REQUIRED_ROUTE_OF_ADMINISTRATION.ToString())
-                .MaximumLength(100).WithMessage(ExceptionKey.INVALID_ROUTE_OF_ADMINISTRATION_MAX_LENGTH.ToString());
+                .IsInEnum().WithMessage(ExceptionKey.REQUIRED_ROUTE_OF_ADMINISTRATION.ToString());
 
             ruleForNationalMedicineCode
                 .NotEmpty().WithMessage(ExceptionKey.REQUIRED_NATIONAL_MEDICINE_CODE.ToString())

@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.Messaging.Contracts.Inventory;
 using BuildingBlocks.Messaging.Contracts.Inventory.MedicineBatchInformation.NearestExpiryMedicineBatch;
 using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
+using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInteraction;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
@@ -11,16 +12,19 @@ namespace VaccinationReception.Infrastructure.Services.InventoryMessaging
     {
         private readonly IRequestClient<GetMedicineInformationRequest> _medicineInformationRequestClient;
         private readonly IRequestClient<GetNearestExpiryMedicineBatchRequest> _nearestExpiryMedicineBatchRequestClient;
+        private readonly IRequestClient<GetMedicineInteractionsRequest> _medicineInteractionsRequestClient;
         private readonly ILogger<InventoryService> _logger;
 
         public InventoryService(
             IRequestClient<GetMedicineInformationRequest> medicineInformationRequestClient,
             ILogger<InventoryService> logger,
-            IRequestClient<GetNearestExpiryMedicineBatchRequest> nearestExpiryMedicineBatchRequestClient)
+            IRequestClient<GetNearestExpiryMedicineBatchRequest> nearestExpiryMedicineBatchRequestClient,
+            IRequestClient<GetMedicineInteractionsRequest> medicineInteractionsRequestClient)
         {
             _medicineInformationRequestClient = medicineInformationRequestClient;
             _logger = logger;
             _nearestExpiryMedicineBatchRequestClient = nearestExpiryMedicineBatchRequestClient;
+            _medicineInteractionsRequestClient = medicineInteractionsRequestClient;
         }
 
         public async Task<List<GetMedicineInformationResponse>> GetMedicineInformationAsync(IEnumerable<int> medicineIdList, CancellationToken cancellationToken = default)
@@ -60,6 +64,39 @@ namespace VaccinationReception.Infrastructure.Services.InventoryMessaging
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error requesting medicine information for multiple medicines");
+                throw;
+            }
+        }
+
+        public async Task<GetMedicineInteractionsResponse> GetMedicineInteractionsResponseAsync(int medicineId, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var request = new GetMedicineInteractionsRequest
+                {
+                    MedicineId = medicineId
+                };
+
+                _logger.LogInformation("Requesting medicine interactions for MedicineId: {MedicineId}, RequestId: {RequestId}",
+                    medicineId, request.RequestId);
+
+                var response = await _medicineInteractionsRequestClient.GetResponse<GetMedicineInteractionsResponse>(request, cancellationToken);
+
+                if (response.Message.IsSuccess)
+                {
+                    _logger.LogInformation("Successfully received medicine interactions for MedicineId: {MedicineId}, RequestId: {RequestId}",
+                        medicineId, request.RequestId);
+                }
+                else
+                {
+                    _logger.LogWarning("Failed to get medicine interactions for MedicineId: {MedicineId}, Error: {Error}, RequestId: {RequestId}",
+                        medicineId, response.Message.ErrorMessage, request.RequestId);
+                }
+                return response.Message;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error requesting medicine interactions for MedicineId: {MedicineId}", medicineId);
                 throw;
             }
         }

@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application.Medicines.Commands.CreateMedicine
+﻿using BuildingBlocks.Strings.Enums;
+
+namespace Inventory.Application.Medicines.Commands.CreateMedicine
 {
     public record CreateMedicineCommand(
        string MedicineCode,
@@ -10,7 +12,7 @@
        string Concentration,
        string Indications,
        string MedicineClassification,
-       string RouteOfAdministration,
+       RouteOfAdministration RouteOfAdministration,
        string NationalMedicineCode,
        string Description,
        string Note,

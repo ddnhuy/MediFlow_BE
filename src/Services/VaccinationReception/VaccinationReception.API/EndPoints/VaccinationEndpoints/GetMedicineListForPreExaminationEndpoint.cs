@@ -12,7 +12,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
                 var query = new GetMedicineListForPreExaminationQuery(receptionId);
                 var result = await sender.Send(query, cancellationToken);
                 var response = new GetMedicineListForPreExaminationResponse(result.PreExaminationMedicineItems);    
-                return Results.Ok(result);
+                return Results.Ok(response);
             }) .RequireAuthorization()
               .WithName("GetMedicineListForPreExamination")
               .Produces<GetMedicineListForPreExaminationResponse>(StatusCodes.Status200OK)
