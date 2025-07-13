@@ -35,21 +35,22 @@ namespace Inventory.Infrastructure.Comsumers
                                   && mb.ExpiryDate > today
                                   && id.Quantity > 0
                             orderby mb.ExpiryDate
-                            select new {
-                                mb.Id, 
-                                mb.BatchNumber, 
+                            select new
+                            {
+                                mb.Id,
+                                mb.BatchNumber,
                                 mb.MedicineId,
                                 mb.Medicine!.MedicineName,
-                                mb.ExpiryDate 
+                                mb.ExpiryDate
                             };
 
-                var result = await query.FirstOrDefaultAsync(context.CancellationToken);
+                var results = await query.ToListAsync(context.CancellationToken);
 
-                if (result is null)
+                if (results == null || results.Count == 0)
                 {
                     var errorResponse = new GetNearestExpiryMedicineBatchResponse
                     {
-                        MedicineId = request.MedicineId,
+                        MedicineBatches = new List<GetNearestExpiryMedicineBatchItem>(),
                         RequestId = request.RequestId,
                         RequestedAt = request.RequestedAt,
                         IsSuccess = false,
@@ -63,11 +64,14 @@ namespace Inventory.Infrastructure.Comsumers
 
                 var response = new GetNearestExpiryMedicineBatchResponse
                 {
-                    MedicineBatchId = result.Id,
-                    MedicineBatchNumber = result.BatchNumber,
-                    MedicineId = request.MedicineId,
-                    MedicineName = result.MedicineName,
-                    ExpiryDate = result.ExpiryDate,
+                    MedicineBatches = results.Select(r => new GetNearestExpiryMedicineBatchItem
+                    {
+                        MedicineBatchId = r.Id,
+                        MedicineBatchNumber = r.BatchNumber,
+                        MedicineId = r.MedicineId,
+                        MedicineName = r.MedicineName,
+                        ExpiryDate = r.ExpiryDate
+                    }).ToList(),
                     RequestId = request.RequestId,
                     RequestedAt = request.RequestedAt,
                     IsSuccess = true
@@ -86,7 +90,6 @@ namespace Inventory.Infrastructure.Comsumers
 
                 var errorResponse = new GetNearestExpiryMedicineBatchResponse
                 {
-                    MedicineId = request.MedicineId,
                     RequestId = request.RequestId,
                     RequestedAt = request.RequestedAt,
                     IsSuccess = false,

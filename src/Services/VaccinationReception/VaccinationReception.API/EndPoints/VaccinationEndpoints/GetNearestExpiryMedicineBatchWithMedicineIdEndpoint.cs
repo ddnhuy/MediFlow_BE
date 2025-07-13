@@ -1,14 +1,11 @@
 ﻿
+using BuildingBlocks.Messaging.Contracts.Inventory.MedicineBatchInformation.NearestExpiryMedicineBatch;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
 using VaccinationReception.Application.Vaccinations.Queries.GetNearestExpiryMedicineBatchWithMedicineId;
 
 namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
 {
-    public record GetNearestExpiryMedicineBatchWithMedicineIdResponse(int MedicineId,
-        string? MedicineName,
-        int MedicineBatchId,
-        string? MedicineBatchNumber,
-        DateOnly? ExpiryDate,
+    public record GetNearestExpiryMedicineBatchWithMedicineIdResponse(List<GetNearestExpiryMedicineBatchItem> MedicineBatches,
         string? RequestId,
         DateTime RequestedAt,
         bool IsSuccess,
