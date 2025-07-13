@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application.Medicines.Commands.UpdateMedicine
+﻿using BuildingBlocks.Strings.Enums;
+
+namespace Inventory.Application.Medicines.Commands.UpdateMedicine
 {
     public record UpdateMedicineCommand(
         int Id,
@@ -11,7 +13,7 @@
         string Concentration,
         string Indications,
         string MedicineClassification,
-        string RouteOfAdministration,
+        RouteOfAdministration RouteOfAdministration,
         string NationalMedicineCode,
         string Description,
         string Note,

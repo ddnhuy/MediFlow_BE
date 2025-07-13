@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application.Medicines.Queries.GetMedicines
+﻿using Inventory.Application.Helpers;
+
+namespace Inventory.Application.Medicines.Queries.GetMedicines
 {
     public class GetMedicineQueryHandler(IApplicationDbContext dbContext) : IQueryHandler<GetMedicinesQuery, GetMedicinesResult>
     {
@@ -47,7 +49,7 @@
                 Concentration = medicine.Concentration,
                 Indications = medicine.Indications,
                 MedicineClassification = medicine.MedicineClassification,
-                RouteOfAdministration = medicine.RouteOfAdministration,
+                RouteOfAdministration = EnumHelper.ToEnumString(medicine.RouteOfAdministration),
                 NationalMedicineCode = medicine.NationalMedicineCode,
                 Description = medicine.Description,
                 Note = medicine.Note,

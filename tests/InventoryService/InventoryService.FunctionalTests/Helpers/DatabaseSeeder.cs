@@ -1,4 +1,5 @@
-﻿using Inventory.Domain.Models;
+﻿using BuildingBlocks.Strings.Enums;
+using Inventory.Domain.Models;
 using Inventory.Infrastructure.Data;
 
 namespace InventoryService.FunctionalTests.Helpers
@@ -55,7 +56,7 @@ namespace InventoryService.FunctionalTests.Helpers
                         Concentration = "100 mcg/0.5ml",
                         Indications = "Prevention of COVID-19",
                         MedicineClassification = "Vaccine",
-                        RouteOfAdministration = "Intramuscular",
+                        RouteOfAdministration =  RouteOfAdministration.IM,
                         NationalMedicineCode = "12345-678-90",
                         Description = "COVID-19 mRNA Vaccine",
                         Note = "Store at -20°C",
@@ -79,7 +80,7 @@ namespace InventoryService.FunctionalTests.Helpers
                         Concentration = "500mg",
                         Indications = "Pain relief and fever reduction",
                         MedicineClassification = "Analgesic",
-                        RouteOfAdministration = "Oral",
+                        RouteOfAdministration =  RouteOfAdministration.IM,
                         NationalMedicineCode = "23456-789-01",
                         Description = "Common pain reliever",
                         Note = "Take with food",
@@ -103,7 +104,7 @@ namespace InventoryService.FunctionalTests.Helpers
                         Concentration = "400mg",
                         Indications = "Pain relief and anti-inflammatory",
                         MedicineClassification = "NSAID",
-                        RouteOfAdministration = "Oral",
+                        RouteOfAdministration =  RouteOfAdministration.IM,
                         NationalMedicineCode = "34567-890-12",
                         Description = "Anti-inflammatory medication",
                         Note = "Take with food",
@@ -127,7 +128,7 @@ namespace InventoryService.FunctionalTests.Helpers
                         Concentration = "15 mcg/0.5ml",
                         Indications = "Prevention of seasonal influenza",
                         MedicineClassification = "Vaccine",
-                        RouteOfAdministration = "Intramuscular",
+                        RouteOfAdministration =  RouteOfAdministration.IM,
                         NationalMedicineCode = "45678-901-23",
                         Description = "Seasonal influenza vaccine",
                         Note = "Store at 2-8°C",
@@ -151,7 +152,7 @@ namespace InventoryService.FunctionalTests.Helpers
                         Concentration = "100mg",
                         Indications = "Blood thinning and pain relief",
                         MedicineClassification = "Antiplatelet",
-                        RouteOfAdministration = "Oral",
+                        RouteOfAdministration =  RouteOfAdministration.IM,
                         NationalMedicineCode = "56789-012-34",
                         Description = "Blood thinner medication",
                         Note = "Take with food",
@@ -175,7 +176,7 @@ namespace InventoryService.FunctionalTests.Helpers
                         Concentration = "10mg/ml",
                         Indications = "Prevent Isomina virus",
                         MedicineClassification = "Vaccine",
-                        RouteOfAdministration = "Injection",
+                        RouteOfAdministration =  RouteOfAdministration.IM,
                         NationalMedicineCode = "VN-ISO-001",
                         Description = "For testing use only",
                         Note = null,
@@ -201,7 +202,7 @@ namespace InventoryService.FunctionalTests.Helpers
                         Concentration = "100mg",
                         Indications = "Test indications",
                         MedicineClassification = "Test",
-                        RouteOfAdministration = "Oral",
+                        RouteOfAdministration =  RouteOfAdministration.IM,
                         NationalMedicineCode = "SUS-001",
                         Description = "Suspended medicine for testing",
                         Note = "This medicine is suspended",
@@ -226,7 +227,7 @@ namespace InventoryService.FunctionalTests.Helpers
                         Concentration = "100mg",
                         Indications = "Test indications",
                         MedicineClassification = "Test",
-                        RouteOfAdministration = "Oral",
+                        RouteOfAdministration =  RouteOfAdministration.IM,
                         NationalMedicineCode = "CAN-001",
                         Description = "Cancelled medicine for testing",
                         Note = "This medicine is cancelled",

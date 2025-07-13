@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application.DTOs
+﻿using BuildingBlocks.Strings.Enums;
+
+namespace Inventory.Application.DTOs
 {
     public class MedicineDTO
     {
@@ -10,8 +12,8 @@
         public string? UsageInstructions { get; set; } 
         public string? Concentration { get; set; } 
         public string? Indications { get; set; } 
-        public string? MedicineClassification { get; set; } 
-        public string? RouteOfAdministration { get; set; } 
+        public string? MedicineClassification { get; set; }
+        public string? RouteOfAdministration { get; set; }
         public string? NationalMedicineCode { get; set; } 
         public string? Description { get; set; } 
         public string? Note { get; set; } 

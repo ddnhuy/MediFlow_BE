@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.Messaging.Contracts.Inventory;
 using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
+using Inventory.Application.Helpers;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
@@ -64,7 +65,7 @@ namespace Inventory.Infrastructure.Comsumers
                     Concentration = medicine.Concentration,
                     Indications = medicine.Indications,
                     MedicineClassification = medicine.MedicineClassification,
-                    RouteOfAdministration = medicine.RouteOfAdministration,
+                    RouteOfAdministration = EnumHelper.ToEnumString(medicine.RouteOfAdministration),
                     NationalMedicineCode = medicine.NationalMedicineCode,
                     Description = medicine.Description,
                     Note = medicine.Note,

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Inventory.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250528153710_addNeccesaryTableForImportMedicineFromSupplier")]
-    partial class addNeccesaryTableForImportMedicineFromSupplier
+    [Migration("20250713134511_initDb")]
+    partial class initDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,9 +92,6 @@ namespace Inventory.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("MedicineBatchId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MedicineId")
                         .HasColumnType("integer");
 
                     b.Property<decimal>("Quantity")
@@ -239,6 +236,9 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<bool>("IsCancelled")
                         .HasColumnType("boolean");
 
+                    b.Property<bool?>("IsRequiredTestingBeforeUse")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsSuspended")
                         .HasColumnType("boolean");
 
@@ -247,9 +247,6 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.Property<int>("LastUpdatedBy")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Manufacturer")
-                        .HasColumnType("text");
 
                     b.Property<string>("MedicineClassification")
                         .HasColumnType("text");
@@ -272,8 +269,8 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<string>("RegistrationNumber")
                         .HasColumnType("text");
 
-                    b.Property<string>("RouteOfAdministration")
-                        .HasColumnType("text");
+                    b.Property<int?>("RouteOfAdministration")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Unit")
                         .HasColumnType("text");
@@ -350,6 +347,8 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ManufacturerId");
+
+                    b.HasIndex("MedicineId");
 
                     b.HasIndex("SupplierId");
 
@@ -900,6 +899,12 @@ namespace Inventory.Infrastructure.Migrations
                         .HasForeignKey("ManufacturerId")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("Inventory.Domain.Models.Medicine", "Medicine")
+                        .WithMany()
+                        .HasForeignKey("MedicineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Inventory.Domain.Models.Supplier", "Supplier")
                         .WithMany()
                         .HasForeignKey("SupplierId")
@@ -907,6 +912,8 @@ namespace Inventory.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Manufacturer");
+
+                    b.Navigation("Medicine");
 
                     b.Navigation("Supplier");
                 });
