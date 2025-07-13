@@ -10,13 +10,5 @@
         {
             return value?.ToString();
         }
-
-        /// <summary>
-        /// Converts a non-nullable enum value to its string name.
-        /// </summary>
-        public static string ToEnumString<TEnum>(TEnum value) where TEnum : struct, Enum
-        {
-            return value.ToString();
-        }
     }
 }
