@@ -1,9 +1,11 @@
-﻿namespace BuildingBlocks.Exceptions
+﻿using BuildingBlocks.Strings;
+
+namespace BuildingBlocks.Exceptions
 {
     public class NotFoundException : Exception
     {
-        public NotFoundException(string message) : base(message) { }
+        public NotFoundException(ExceptionKey key) : base(key.ToString()) { }
 
-        public NotFoundException(string name, object key) : base($"Entity \"{name}\" ({key}) was not found.") { }
+        public NotFoundException(ExceptionKey key, object obj) : base($"Entity \"{key.ToString()}\" ({obj}) was not found.") { }
     }
 }

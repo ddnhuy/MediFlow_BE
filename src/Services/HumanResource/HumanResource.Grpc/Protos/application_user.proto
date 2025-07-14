@@ -18,9 +18,6 @@ service ApplicationUserProtoService {
   rpc ChangePassword (ChangePasswordRequest) returns (ChangePasswordResponse);
   rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordResponse);
 
-  rpc FindApplicationUserByName (FindApplicationUserByNameRequest) returns (FindApplicationUserByNameResponse);
-  rpc FindApplicationUserByUserName (FindApplicationUserByUserNameRequest) returns (FindApplicationUserByUserNameResponse);
-
   rpc Login (LoginRequest) returns (LoginResponse);
 }
 
@@ -51,6 +48,8 @@ message CreateApplicationUserRequest {
   string name = 6;
   repeated string roleNames = 7;
   repeated int32 departmentIds = 8;
+  string address = 9;
+  string profilePictureUrl = 10;
 }
 
 message UpdateApplicationUserRequest {
@@ -60,9 +59,11 @@ message UpdateApplicationUserRequest {
   string phoneNumber = 4;
   string name = 5;
   bool isSuspended = 6;
-  bool isCancelled = 7;
-  repeated string roleNames = 8;
-  repeated int32 departmentIds = 9;
+  repeated string roleNames = 7;
+  repeated int32 departmentIds = 8;
+  string address = 9;
+  string profilePictureUrl = 10;
+  string code = 11;
 }
 
 message DeleteApplicationUserRequest {
@@ -70,7 +71,7 @@ message DeleteApplicationUserRequest {
 }
 
 message DeleteApplicationUserResponse {
-  bool success = 1;
+  bool isSuccess = 1;
 }
 
 message ChangePasswordRequest {
@@ -93,22 +94,6 @@ message ResetPasswordResponse {
   string message = 2;
 }
 
-message FindApplicationUserByNameRequest {
-  string name = 1;
-}
-
-message FindApplicationUserByNameResponse {
-  repeated ApplicationUserSummaryModel users = 1;
-}
-
-message FindApplicationUserByUserNameRequest {
-  string userName = 1;
-}
-
-message FindApplicationUserByUserNameResponse {
-  repeated ApplicationUserSummaryModel users = 1;
-}
-
 message LoginRequest {
   string userName = 1;
   string password = 2;
@@ -129,6 +114,7 @@ message ApplicationUserSummaryModel {
   string name = 5;
   bool isSuspended = 6;
   string roles = 7;
+  string profilePictureUrl = 8;
 }
 
 message ApplicationUserDetailModel {
@@ -149,4 +135,6 @@ message ApplicationUserDetailModel {
   int32 lastUpdatedBy = 15;
   string roles = 16;
   repeated department.DepartmentSummaryModel departments = 17;
+  string address = 18;
+  string profilePictureUrl = 19;
 }

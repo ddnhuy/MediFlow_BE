@@ -13,17 +13,16 @@
     <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageReference Include="Carter" Version="8.2.0" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.49.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\..\HumanResource\HumanResource.Grpc\Protos\application_user.proto" AdditionalImportDirs="..\..\HumanResource\HumanResource.Grpc" GrpcServices="Client">
-      <Link>Protos\application_user.proto</Link>
-    </Protobuf>
-    <Protobuf Include="..\..\HumanResource\HumanResource.Grpc\Protos\department.proto" AdditionalImportDirs="..\..\HumanResource\HumanResource.Grpc" GrpcServices="Client">
-      <Link>Protos\department.proto</Link>
-    </Protobuf>
+    <ProjectReference Include="..\Authentication.Business\Authentication.Business.csproj" />
   </ItemGroup>
 
 </Project>

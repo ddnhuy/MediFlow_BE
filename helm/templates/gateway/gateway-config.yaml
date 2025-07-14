@@ -1,0 +1,137 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "ConnectionStrings": {
+        "Redis": "redis:6379,password=Mediflow@123,allowAdmin=true"
+      },
+      "GrpcSettings": {
+        "HumanResourceUrl": "http://human-resource-grpc:80"
+      },
+      "Jwt": {
+        "Secret": "super-duper-secret-value-that-should-be-in-user-secrets",
+        "Issuer": "MediFlowIssuer",
+        "Audience": "MediFlowAudience",
+        "ExpirationInMinutes": 60
+      },
+      "RateLimiting": {
+        "PermitLimit": 100,
+        "Window": 60,
+        "SegmentsPerWindow": 4,
+        "QueueLimit": 0
+      },
+      "ReverseProxy": {
+        "Routes": {
+          "authentication-route": {
+            "ClusterId": "authentication-cluster",
+            "Match": {
+              "Path": "/authentication/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          },
+          "inventory-route": {
+            "ClusterId": "inventory-cluster",
+            "Match": {
+              "Path": "/inventory/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          },
+          "management-route": {
+            "ClusterId": "management-cluster",
+            "Match": {
+              "Path": "/management/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          },
+          "vaccination-reception-route": {
+            "ClusterId": "vaccination-reception-cluster",
+            "Match": {
+              "Path": "/vaccination-reception/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          },
+          "appointment-route": {
+            "ClusterId": "appointment-cluster",
+            "Match": {
+              "Path": "/appointments/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          },
+          "hospital-service-route": {
+            "ClusterId": "hospital-service-cluster",
+            "Match": {
+              "Path": "/hospital-service/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          },
+          "file-storage-route": {
+            "ClusterId": "file-storage-cluster",
+            "Match": {
+              "Path": "/file-storage/{**catch-all}"
+            },
+            "Transforms": [ { "PathPattern": "{**catch-all}" } ]
+          }
+        },
+        "Clusters": {
+          "authentication-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://authentication-service:80"
+              }
+            }
+          },
+          "inventory-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://inventory-service:80"
+              }
+            }
+          },
+          "management-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://management-service:80"
+              }
+            }
+          },
+          "vaccination-reception-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://vaccination-reception-service:80"
+              }
+            }
+          },
+          "appointment-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://appointment-service:80"
+              }
+            }
+          },
+          "hospital-service-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://hospital-service-service:80"
+              }
+            }
+          },
+          "file-storage-cluster": {
+            "Destinations": {
+              "default": {
+                "Address": "http://file-storage-service:80"
+              }
+            }
+          }
+        }
+      }
+    }

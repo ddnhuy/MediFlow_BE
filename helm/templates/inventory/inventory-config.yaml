@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: inventory-config
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "ConnectionStrings": {
+        "Database": "Server=Postgres;Port=5432;Database=InventoryDb;User Id=postgres;Password=postgres;Include Error Detail=true;Pooling=true;MinPoolSize=5;MaxPoolSize=100;CommandTimeout=30;"
+      },
+      "Jwt": {
+        "Secret": "super-duper-secret-value-that-should-be-in-user-secrets",
+        "Issuer": "MediFlowIssuer",
+        "Audience": "MediFlowAudience",
+        "ExpirationInMinutes": 60
+      },
+      "MessageBroker": {
+        "Host": "amqp://rabbitmq:5672",
+        "UserName": "mediflow",
+        "Password": "Mediflow@123"
+      }
+    }

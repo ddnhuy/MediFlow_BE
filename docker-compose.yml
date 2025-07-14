@@ -4,6 +4,21 @@ services:
   postgres_db:
     image: postgres:14
 
+  redis:
+    image: redis:8.0
+
+  messagebroker:
+    image: rabbitmq:4-management-alpine
+
+  seq:
+    image: datalust/seq:latest
+
+  yarpapigateway:
+    image: ${DOCKER_REGISTRY-}yarpapigateway
+    build:
+      context: .
+      dockerfile: src/ApiGateways/YarpApiGateWay/Dockerfile
+
   humanresource.grpc:
     image: ${DOCKER_REGISTRY-}humanresourcegrpc
     build:
@@ -16,5 +31,55 @@ services:
       context: .
       dockerfile: src/Services/Authentication/Authentication.API/Dockerfile
 
+  inventory.api:
+    image: ${DOCKER_REGISTRY-}inventoryapi
+    build: 
+      context: .
+      dockerfile: src/Services/Inventory/Inventory.API/Dockerfile
+
+  customerinfo.grpc:
+    image: ${DOCKER_REGISTRY-}customerinfogrpc
+    build:
+      context: .
+      dockerfile: src/Services/CustomerInfo/CustomerInfo.Grpc/Dockerfile
+
+  vaccinationreception.api:
+    image: ${DOCKER_REGISTRY-}vaccinationreceptionapi
+    build:
+      context: .
+      dockerfile: src/Services/VaccinationReception/VaccinationReception.API/Dockerfile
+
+  management.api:
+    image: ${DOCKER_REGISTRY-}managementapi
+    build:
+      context: .
+      dockerfile: src/Services/Management/Management.API/Dockerfile
+
+  hospitalservice.api:
+    image: ${DOCKER_REGISTRY-}hospitalserviceapi
+    build:
+      context: .
+      dockerfile: src/Services/HospitalService/HospitalService.API/Dockerfile
+
+  filestorage.api:
+    image: ${DOCKER_REGISTRY-}filestorageapi
+    build:
+      context: .
+      dockerfile: src/Services/FileStorage/FileStorage.API/Dockerfile
+
+  appointment.api:
+    image: ${DOCKER_REGISTRY-}appointmentapi
+    build:
+      context: .
+      dockerfile: src/Services/Appointment/Appointment.API/Dockerfile
+
+  workers.email:
+    image: ${DOCKER_REGISTRY-}workersemail
+    build:
+      context: .
+      dockerfile: src/Workers/Workers.Email/Dockerfile
+
 volumes:
   postgres_db:
+  redis_data:
+

@@ -1,0 +1,79 @@
+﻿using HospitalService.Domain.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HospitalService.Infrastructure.Data.Configurations
+{
+    public class ServiceGroupConfiguration : IEntityTypeConfiguration<ServiceGroup>
+    {
+        public void Configure(EntityTypeBuilder<ServiceGroup> builder)
+        {
+            builder.ToTable("ServiceGroups", schema: "public");
+
+            // Primary Key
+            builder.HasKey(x => x.Id);
+            builder.Property(x => x.Id)
+                .UseIdentityColumn()
+                .ValueGeneratedOnAdd()
+                .HasComment("Primary key")
+                .HasAnnotation("Npgsql:IdentityIncrement", 1)
+                .HasAnnotation("Npgsql:IdentityStartValue", 1);
+
+            // BaseEntity Properties
+            builder.Property(x => x.CreatedBy)
+                .IsRequired()
+                .HasComment("Người tạo bản ghi");
+
+            builder.Property(x => x.IsCancelled)
+                .IsRequired()
+                .HasDefaultValue(false)
+                .HasComment("Trạng thái hủy")
+                .HasColumnType("boolean");
+
+            builder.Property(x => x.CreatedAt)
+                .IsRequired()
+                .HasComment("Ngày tạo bản ghi");
+
+            builder.Property(x => x.IsSuspended)
+                .IsRequired()
+                .HasDefaultValue(false)
+                .HasComment("Trạng thái tạm ngưng")
+                .HasColumnType("boolean");
+
+            builder.Property(x => x.LastUpdatedBy)
+                .IsRequired()
+                .HasComment("Người cập nhật bản ghi cuối cùng");
+
+            builder.Property(x => x.LastUpdatedAt)
+                .IsRequired()
+                .HasComment("Ngày cập nhật bản ghi cuối cùng");
+
+            // Relationships
+            builder.HasMany(x => x.ServiceGroupServices)
+                .WithOne(x => x.ServiceGroup)
+                .HasForeignKey(x => x.ServiceGroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Indexes
+            builder.HasIndex(x => x.GroupName)
+                .HasDatabaseName("IX_ServiceGroups_GroupName");
+
+            // Properties
+            builder.Property(x => x.GroupName)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasComment("Tên nhóm dịch vụ");
+
+            // Global Query Filter
+            builder.HasQueryFilter(x => !x.IsCancelled);
+
+            // Table Comment
+            builder.ToTable(t => t.HasComment("Bảng nhóm dịch vụ"));
+        }
+    }
+}

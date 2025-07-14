@@ -4,9 +4,16 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "authenticationservice": "StartDebugging",
+        "postgres_db": "StartWithoutDebugging",
         "authentication.api": "StartDebugging",
-        "humanresource.grpc": "StartDebugging"
+        "humanresource.grpc": "StartDebugging",
+        "yarpapigateway": "StartDebugging",
+        "customerinfo.grpc": "StartDebugging",
+        "vaccinationreception.api": "StartDebugging",
+        "management.api": "StartDebugging",
+        "hospitalservice.api": "StartDebugging",
+        "workers.email": "StartDebugging",
+        "filestorage.api": "StartDebugging"
       }
     }
   }

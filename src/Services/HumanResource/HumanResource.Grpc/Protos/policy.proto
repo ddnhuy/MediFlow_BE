@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+option csharp_namespace = "HumanResource.Grpc";
+
+package policy;
+
+// ---------- gRPC Service ----------
+service PolicyProtoService {
+  // Get policies
+  rpc GetPolicies (GetPoliciesRequest) returns (GetPoliciesResponse);
+  rpc CheckIfHasPermission (CheckIfHasPermissionRequest) returns (CheckIfHasPermissionResponse);
+  
+  // Standard CRUD operations
+  rpc GetPolicy (GetPolicyRequest) returns (PolicyModel);
+  rpc CreatePolicy (CreatePolicyRequest) returns (PolicyModel);
+  rpc UpdatePolicy (UpdatePolicyRequest) returns (PolicyModel);
+  rpc DeletePolicy (DeletePolicyRequest) returns (DeleteResponse);
+  
+  // Role-Department-Policy operations
+  rpc GetRoleDepartmentPolicies (GetRoleDepartmentPoliciesRequest) returns (GetRoleDepartmentPoliciesResponse);
+  rpc AssignPolicyToRoleDepartment (AssignPolicyRequest) returns (RoleDepartmentPolicyModel);
+  rpc RevokePolicyFromRoleDepartment (RevokePolicyRequest) returns (DeleteResponse);
+
+  rpc GetPoliciesByRolesAndDepartments(GetPoliciesByRolesAndDepartmentsRequest) returns (GetPoliciesByRolesAndDepartmentsResponse);
+}
+
+// ---------- Request & Response ----------
+message GetPoliciesRequest {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+}
+
+message GetPoliciesResponse {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  int32 totalCount = 3;
+  repeated PolicyModel policies = 4;
+}
+
+message CheckIfHasPermissionRequest {
+  string roleName = 1;
+  string departmentNameInEnglish = 2;
+  string resourceType = 3;
+}
+
+message CheckIfHasPermissionResponse {
+  bool hasPermission = 1;
+  string actions = 2;
+}
+
+
+message GetPolicyRequest {
+  int32 id = 1;
+}
+
+message CreatePolicyRequest {
+  string resourceType = 1;
+  repeated string actions = 2;
+}
+
+message UpdatePolicyRequest {
+  int32 id = 1;
+  string resourceType = 2;
+  repeated string actions = 3;
+}
+
+message DeletePolicyRequest {
+  int32 id = 1;
+}
+
+message DeleteResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetRoleDepartmentPoliciesRequest {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  string roleName = 3;
+  string departmentName = 4;
+  string resourceType = 5;
+}
+
+message GetRoleDepartmentPoliciesResponse {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  int32 totalCount = 3;
+  repeated RoleDepartmentPolicyModel policies = 4;
+}
+
+message AssignPolicyRequest {
+  int32 roleId = 1;
+  int32 departmentId = 2;
+  int32 policyId = 3;
+}
+
+message RevokePolicyRequest {
+  int32 roleDepartmentPolicyId = 1;
+}
+
+message GetPoliciesByRolesAndDepartmentsRequest {
+  string roles = 1;
+  string departments = 2;
+}
+
+message GetPoliciesByRolesAndDepartmentsResponse {
+  string roles = 1;
+  string departments = 2;
+  ListOfStrings resourceTypes = 3;
+  ListOfStrings actions = 4;
+}
+
+message ListOfStrings {
+    repeated string strings = 1;
+}
+
+// ---------- Data Models ----------
+message PolicyModel {
+  int32 id = 1;
+  string resourceType = 2;
+  repeated string actions = 3;
+}
+
+message RoleDepartmentPolicyModel {
+  int32 id = 1;
+  RoleModel role = 2;
+  DepartmentModel department = 3;
+  PolicyModel policy = 4;
+}
+
+message RoleModel {
+  int32 id = 1;
+  string name = 2;
+}
+
+message DepartmentModel {
+  int32 id = 1;
+  string name = 2;
+  string code = 3;
+}

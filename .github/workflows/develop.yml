@@ -1,0 +1,130 @@
+name: Deploy BE App To Testing Environment
+
+on:
+  push:
+    branches: ["develop"]
+
+jobs:
+  notify-start:
+    runs-on: ubuntu-latest
+    outputs:
+      start_time: ${{ steps.set-start-time.outputs.start_time }}
+    steps:
+      - name: Set start time
+        id: set-start-time
+        run: echo "start_time=$(date +%s)" >> $GITHUB_OUTPUT
+
+      - name: Send Discord notification - Workflow started
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d "{\"content\": \"🚀 **mediflow » mediflow-be (develop) - #${{ github.run_number }}** Started by \`${{ github.actor }}\` ([view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+          ${{ secrets.DISCORD_WEBHOOK_URL }}
+
+  build-and-test:
+    runs-on: ubuntu-latest
+    needs: [notify-start]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore ./MediFlow.sln
+
+      - name: Build solution
+        run: dotnet build ./MediFlow.sln --configuration Release --no-restore
+
+      - name: Run tests
+        run: |
+          if [ -f ./test.runsettings ]; then
+            dotnet test MediFlow.sln --settings ./test.runsettings --configuration Release --no-build
+          else
+            dotnet test MediFlow.sln --configuration Release --no-build
+          fi
+      - name: Post status to Discord
+        if: failure()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          START=${{ needs.notify-start.outputs.start_time }}
+          END=$(date +%s)
+          diff=$(( END - START ))
+          mins=$(( diff / 60 ))
+          secs=$(( diff % 60 ))
+
+          EMOJI="❌"
+          MSG="**Failed** after ${mins} min ${secs} sec"
+
+          curl -H "Content-Type: application/json" -X POST \
+          -d "{\"content\": \"$EMOJI **mediflow‑be (develop) › ${{ github.job }} (run #${{ github.run_number }})** $MSG ([view](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+          "$DISCORD_WEBHOOK_URL"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-and-test, notify-start]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+
+      - name: Deploy to VPS
+        env:
+          PATH_TO_PROJECT: "/projects/MediFlow/MediFlow_BE"
+          PROJECT_NAME: "MediFlow_BE"
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            if [ ! -d ${{ env.PATH_TO_PROJECT }} ]; then
+              mkdir -p ${{ env.PATH_TO_PROJECT }}
+            fi
+
+            if [ ! -d ${{ env.PATH_TO_PROJECT }}/.git ]; then
+              git clone git@github.com:ddnhuy/${{ env.PROJECT_NAME }}.git ${{ env.PATH_TO_PROJECT }}
+            fi
+
+            cd ${{ env.PATH_TO_PROJECT }}
+
+            git checkout develop
+            git pull
+
+            docker compose -f docker-compose.release.yml down --remove-orphans --volumes
+            docker builder prune -af
+
+            docker compose -f docker-compose.release.yml up -d --build
+          "
+
+      - name: Clean up
+        run: rm -rf ~/.ssh
+
+      - name: Post status to Discord
+        if: always()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          START=${{ needs.notify-start.outputs.start_time }}
+          END=$(date +%s)
+          diff=$(( END - START ))
+          mins=$(( diff / 60 ))
+          secs=$(( diff % 60 ))
+
+          case "${{ job.status }}" in
+          success)  EMOJI="✅"; MSG="**Success** after ${mins} min ${secs} sec" ;;
+          failure)  EMOJI="❌"; MSG="**Failed** after ${mins} min ${secs} sec" ;;
+          cancelled) EMOJI="⚠️"; MSG="**Cancelled** after ${mins} min ${secs} sec" ;;
+          *)        EMOJI="ℹ️"; MSG="finished (state: ${{ job.status }})" ;;
+          esac
+
+          curl -H "Content-Type: application/json" -X POST \
+          -d "{\"content\": \"$EMOJI **mediflow‑be (develop) › ${{ github.job }} (run #${{ github.run_number }})** $MSG ([view](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))\"}" \
+          "$DISCORD_WEBHOOK_URL"

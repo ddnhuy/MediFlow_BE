@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-email-service
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: worker-email-service
+  {{- with .Values.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: worker-email-service
+    spec:
+      containers:
+        - name: worker-email-service
+          image: "ddnhuy/worker-email:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+          - name: EmailSettings__SenderPassword
+            valueFrom:
+              secretKeyRef:
+                name: email-secret
+                key: EMAIL_SENDER_PASSWORD
+          envFrom:
+            - configMapRef:
+                name: worker-email-config
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+      initContainers:
+        - name: wait-for-rabbitmq
+          image: busybox
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done']
+      volumes:
+        - name: config-volume
+          configMap:
+            name: worker-email-config
+            items:
+              - key: appsettings.json
+                path: appsettings.json

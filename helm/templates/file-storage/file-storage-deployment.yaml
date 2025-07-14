@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-storage-service
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: file-storage-service
+  {{- with .Values.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: file-storage-service
+    spec:
+      containers:
+        - name: file-storage-service
+          image: "ddnhuy/filestorage-service:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+          - name: Cloudinary__CloudName
+            valueFrom:
+              secretKeyRef:
+                name: cloudinary-secret
+                key: CLOUDINARY_CLOUD_NAME
+          - name: Cloudinary__ApiKey
+            valueFrom:
+              secretKeyRef:
+                name: cloudinary-secret
+                key: CLOUDINARY_API_KEY
+          - name: Cloudinary__ApiSecret
+            valueFrom:
+              secretKeyRef:
+                name: cloudinary-secret
+                key: CLOUDINARY_API_SECRET
+          - name: AWS__BucketName
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: BUCKET_NAME
+          - name: AWS__Region
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: REGION
+          - name: AWS__AccessKey
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: ACCESS_KEY
+          - name: AWS__SecretKey
+            valueFrom:
+              secretKeyRef:
+                name: aws-secret
+                key: SECRET_KEY
+          envFrom:
+            - configMapRef:
+                name: file-storage-config
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/appsettings.json
+              subPath: appsettings.json
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command: ['sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done']
+      volumes:
+        - name: config-volume
+          configMap:
+            name: file-storage-config
+            items:
+              - key: appsettings.json
+                path: appsettings.json

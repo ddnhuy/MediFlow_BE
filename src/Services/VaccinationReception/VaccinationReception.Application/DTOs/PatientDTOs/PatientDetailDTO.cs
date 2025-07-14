@@ -1,0 +1,26 @@
+﻿namespace VaccinationReception.Application.DTOs.PatientDTOs
+{
+    public class PatientDetailDTO
+    {
+        public int Id { get; set; }
+        public string Code { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public int Gender { get; set; }
+        public DateTime DOB { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? Email { get; set; }
+        public string? IdentityCard { get; set; }
+        public string? AddressDetail { get; set; }
+        public string? Province { get; set; }
+        public string? District { get; set; }
+        public string? Ward { get; set; }
+        public bool IsPregnant { get; set; }
+        public bool IsForeigner { get; set; }
+        public bool IsSuspended { get; set; }
+        public bool IsCancelled { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime LastUpdatedAt { get; set; }
+        public int LastUpdatedBy { get; set; }
+    }
+}

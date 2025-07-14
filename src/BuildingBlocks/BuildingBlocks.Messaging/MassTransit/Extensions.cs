@@ -7,7 +7,11 @@ namespace BuildingBlocks.Messaging.MassTransit
 {
     public static class Extensions
     {
-        public static IServiceCollection AddMessageBroker(this IServiceCollection services, IConfiguration configuration, Assembly? assembly = null)
+        public static IServiceCollection AddMessageBroker(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            Assembly? assembly = null,
+            bool useCompetingConsumers = false)
         {
             services.AddMassTransit(config =>
             {
@@ -18,12 +22,37 @@ namespace BuildingBlocks.Messaging.MassTransit
 
                 config.UsingRabbitMq((context, configurator) =>
                 {
-                    configurator.Host(new Uri(configuration["MessageBroker:Host"]!), host =>
+                    var host = configuration["MessageBroker:Host"]
+                        ?? throw new InvalidOperationException("MessageBroker:Host is not configured.");
+                    var username = configuration["MessageBroker:UserName"]
+                        ?? throw new InvalidOperationException("MessageBroker:UserName is not configured.");
+                    var password = configuration["MessageBroker:Password"]
+                        ?? throw new InvalidOperationException("MessageBroker:Password is not configured.");
+
+                    configurator.Host(new Uri(host), host =>
                     {
-                        host.Username(configuration["MessageBroker:UserName"]!);
-                        host.Password(configuration["MessageBroker:Password"]!);
+                        host.Username(username);
+                        host.Password(password);
                     });
-                    configurator.ConfigureEndpoints(context);
+
+                    if (useCompetingConsumers && assembly != null)
+                    {
+                        var consumerTypes = assembly.GetTypes()
+                            .Where(t => typeof(IConsumer).IsAssignableFrom(t) && !t.IsAbstract && t.IsClass);
+
+                        foreach (var consumerType in consumerTypes)
+                        {
+                            var queueName = $"{consumerType.Name.ToLowerInvariant()}-queue";
+                            configurator.ReceiveEndpoint(queueName, endpoint =>
+                            {
+                                endpoint.ConfigureConsumer(context, consumerType);
+                            });
+                        }
+                    }
+                    else
+                    {
+                        configurator.ConfigureEndpoints(context);
+                    }
                 });
             });
 

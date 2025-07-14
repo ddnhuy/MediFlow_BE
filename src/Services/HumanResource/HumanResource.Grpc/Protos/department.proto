@@ -13,6 +13,8 @@ service DepartmentProtoService {
   rpc CreateDepartment (CreateDepartmentRequest) returns (DepartmentDetailModel);
   rpc UpdateDepartment (UpdateDepartmentRequest) returns (DepartmentDetailModel);
   rpc DeleteDepartment (DeleteDepartmentRequest) returns (DeleteDepartmentResponse);
+  
+  rpc ListEmployees (ListEmployeesRequest) returns (ListEmployeesResponse);
 }
 
 // ---------- Request & Response ----------
@@ -36,16 +38,18 @@ message GetDepartmentRequest {
 message CreateDepartmentRequest {
   string code = 1;
   string name = 2;
-  int32 departmentTypeId = 3;
+  string nameInEnglish = 3;
+  int32 departmentTypeId = 4;
 }
 
 message UpdateDepartmentRequest {
   int32 id = 1;
   string code = 2;
   string name = 3;
-  int32 departmentTypeId = 4;
-  bool isSuspended = 5;
-  bool isCancelled = 6;
+  string nameInEnglish = 4;
+  int32 departmentTypeId = 5;
+  bool isSuspended = 6;
+  bool isCancelled = 7;
 }
 
 message DeleteDepartmentRequest {
@@ -56,31 +60,50 @@ message DeleteDepartmentResponse {
   bool isSuccess = 1;
 }
 
+message ListEmployeesRequest {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  int32 id = 3;
+}
+
+message ListEmployeesResponse {
+  int32 pageIndex = 1;
+  int32 pageSize = 2;
+  int32 count = 3;
+  repeated EmployeeSummaryModel data = 4;
+}
+
 // ---------- Data Models ----------
 message DepartmentSummaryModel {
   int32 id = 1;
   string code = 2;
   string name = 3;
-  string departmentTypeName = 4;
-  bool isSuspended = 5;
+  string nameInEnglish = 4;
+  string departmentTypeName = 5;
+  string departmentTypeNameInEnglish = 6;
+  bool isSuspended = 7;
 }
 
 message DepartmentDetailModel {
   int32 id = 1;
   string code = 2;
   string name = 3;
-  int32 departmentTypeId = 4;
-  string departmentTypeName = 5;
-  bool isSuspended = 6;
-  bool isCancelled = 7;
-  google.protobuf.Timestamp createdAt = 8;
-  int32 createdBy = 9;
-  google.protobuf.Timestamp lastUpdatedAt = 10;
-  int32 lastUpdatedBy = 11;
+  string nameInEnglish = 4;
+  int32 departmentTypeId = 5;
+  string departmentTypeName = 6;
+  string departmentTypeNameInEnglish = 7;
+  bool isSuspended = 8;
+  bool isCancelled = 9;
+  google.protobuf.Timestamp createdAt = 10;
+  int32 createdBy = 11;
+  google.protobuf.Timestamp lastUpdatedAt = 12;
+  int32 lastUpdatedBy = 13;
 }
 
-message DepartmentTypeModel {
+message EmployeeSummaryModel {
   int32 id = 1;
   string code = 2;
   string name = 3;
+  bool isSuspended = 4;
+  string profilePictureUrl = 5;
 }

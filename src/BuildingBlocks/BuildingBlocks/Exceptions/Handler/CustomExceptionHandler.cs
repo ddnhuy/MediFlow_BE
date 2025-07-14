@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Grpc.Core;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,26 @@ namespace BuildingBlocks.Exceptions.Handler
                     exception.GetType().Name,
                     context.Response.StatusCode = StatusCodes.Status404NotFound
                 ),
+                RpcException =>
+                (
+                    ((RpcException)exception).Status.Detail,
+                    exception.GetType().Name,
+                    context.Response.StatusCode = ((RpcException)exception).Status.StatusCode == StatusCode.NotFound
+                        ? StatusCodes.Status404NotFound
+                        : StatusCodes.Status400BadRequest
+                ),
+                UnauthorizedAccessException =>
+                (
+                    exception.Message,
+                    exception.GetType().Name,
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized
+                ),
+                ArgumentException =>
+                (
+                    exception.Message,
+                    exception.GetType().Name,
+                    context.Response.StatusCode = StatusCodes.Status400BadRequest
+                ),
                 _ =>
                 (
                     exception.Message,
@@ -61,7 +82,8 @@ namespace BuildingBlocks.Exceptions.Handler
 
             if (exception is ValidationException validationException)
             {
-                problemDetails.Extensions.Add("ValidationErrors", validationException.Errors);
+                //problemDetails.Extensions.Add("ValidationErrors", validationException.Errors);
+                problemDetails.Detail = validationException.Errors.First().ErrorMessage;
             }
 
             await context.Response.WriteAsJsonAsync(problemDetails, cancellationToken);

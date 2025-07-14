@@ -10,6 +10,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Services/HumanResource/HumanResource.Grpc/HumanResource.Grpc.csproj", "src/Services/HumanResource/HumanResource.Grpc/"]
+COPY ["src/BuildingBlocks/BuildingBlocks.Strings/BuildingBlocks.Strings.csproj", "src/BuildingBlocks/BuildingBlocks.Strings/"]
 RUN dotnet restore "./src/Services/HumanResource/HumanResource.Grpc/HumanResource.Grpc.csproj"
 COPY . .
 WORKDIR "/src/src/Services/HumanResource/HumanResource.Grpc"

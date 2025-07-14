@@ -1,0 +1,17 @@
+﻿global using Appointment.API.Dtos;
+global using Appointment.API.Helpers;
+global using Appointment.API.Repositories;
+global using BuildingBlocks.CQRS;
+global using BuildingBlocks.Exceptions;
+global using BuildingBlocks.Strings;
+global using BuildingBlocks.Strings.Enums;
+global using BuildingBlocks.Strings.SuccessStrings;
+global using Carter;
+global using CustomerInfo.Grpc.Protos;
+global using FluentValidation;
+global using HumanResource.Grpc;
+global using Mapster;
+global using MediatR;
+global using static CustomerInfo.Grpc.Protos.PatientProtoService;
+global using static HumanResource.Grpc.ApplicationUserProtoService;
+global using static HumanResource.Grpc.DepartmentProtoService;

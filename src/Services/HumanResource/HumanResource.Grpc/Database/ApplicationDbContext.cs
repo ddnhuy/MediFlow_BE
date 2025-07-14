@@ -1,19 +1,24 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.Reflection;
 
 namespace HumanResource.Grpc.Database
 {
     public class ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options,
-        ICurrentUserHelper userHelper)
+        ICurrentUserHelper currentUserHelper)
         : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>(options)
     {
         public virtual DbSet<DepartmentType> DepartmentTypes { get; set; }
         public virtual DbSet<Department> Departments { get; set; }
+        public virtual DbSet<Policy> Policies { get; set; }
+        public virtual DbSet<RoleDepartmentPolicy> RoleDepartmentPolicies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
             base.OnModelCreating(builder);
 
             foreach (IMutableEntityType entityType in builder.Model.GetEntityTypes())
@@ -42,7 +47,7 @@ namespace HumanResource.Grpc.Database
             IEnumerable<EntityEntry> entries = ChangeTracker.Entries()
                 .Where(e => e.Entity is IEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
 
-            var userId = userHelper.UserId;
+            var userId = currentUserHelper.UserId;
 
             foreach (EntityEntry entry in entries)
             {

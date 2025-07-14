@@ -8,6 +8,8 @@ namespace HumanResource.Grpc.Database.Configurations
         {
             builder.HasIndex(x => x.Name);
             builder.HasIndex(x => x.UserName);
+
+            builder.Property(x => x.Gender).HasConversion<string>();
         }
     }
 }

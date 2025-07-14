@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-top: 5px solid #98d2c0;
+        }
+
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+            .header h1 {
+                color: #98d2c0;
+                font-size: 24px;
+                margin: 0;
+            }
+
+        .content {
+            color: #333333;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+            .content strong {
+                color: #98d2c0;
+            }
+
+            .content a {
+                color: #98d2c0;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+                .content a:hover {
+                    text-decoration: underline;
+                }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #777777;
+            font-size: 14px;
+        }
+
+            .footer span {
+                color: #98d2c0;
+                font-weight: bold;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nhắc lịch hẹn tiêm chủng</h1>
+        </div>
+        <div class="content">
+            <p>Xin chào <strong>@Model["PatientFullName"]</strong> (<strong>@Model["PatientCode"]</strong>),</p>
+            <p>Đây là email nhắc lịch hẹn tiêm chủng của bạn:</p>
+            <p>
+                <strong>Ngày giờ hẹn:</strong> @Model["AppointmentDate"]<br />
+                <strong>Loại dịch vụ:</strong> @Model["AppointmentType"]<br />
+                <strong>Vaccine:</strong> @Model["VaccineName"]<br />
+                <strong>Ghi chú:</strong> @Model["Note"]
+            </p>
+            <p>Vui lòng đến đúng giờ để được phục vụ tốt nhất.</p>
+            <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với chúng tôi.</p>
+        </div>
+        <div class="footer">
+            <p>Trân trọng,<br /><span>Đội ngũ MediFlow</span></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,6 +1,4 @@
 ﻿using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
-using HumanResource.Grpc.Database;
 
 namespace HumanResource.Grpc.Services
 {
@@ -21,14 +19,14 @@ namespace HumanResource.Grpc.Services
                 query = query.Where(x => x.Code.Contains(request.Keyword) || x.Name.Contains(request.Keyword));
             }
 
-            result.Count = await query.CountAsync();
-
             var departmentList = await query
+                .Where(x => !x.IsCancelled)
                 .Skip((request.PageIndex - 1) * request.PageSize)
                 .Take(request.PageSize)
                 .Include(x => x.DepartmentType)
-                .Where(x => !x.IsCancelled)
                 .ToListAsync();
+
+            result.Count = departmentList.Count;
 
             logger.LogInformation("Found {Count} departments matching the criteria.", result.Count);
 
@@ -39,7 +37,9 @@ namespace HumanResource.Grpc.Services
                 Id = department.Id,
                 Code = department.Code,
                 Name = department.Name,
+                NameInEnglish = department.NameInEnglish,
                 DepartmentTypeName = department.DepartmentType.Name,
+                DepartmentTypeNameInEnglish = department.DepartmentType.NameInEnglish,
                 IsSuspended = department.IsSuspended
             }));
 
@@ -58,7 +58,7 @@ namespace HumanResource.Grpc.Services
             if (department is null)
             {
                 logger.LogWarning("Department with id={Id} not found.", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, $"Department with id={request.Id} is not found."));
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_DEPARTMENT_WITH_ID.ToString()));
             }
 
             logger.LogInformation("Department with id={Id} retrieved successfully.", request.Id);
@@ -68,8 +68,10 @@ namespace HumanResource.Grpc.Services
                 Id = department.Id,
                 Code = department.Code,
                 Name = department.Name,
+                NameInEnglish = department.NameInEnglish,
                 DepartmentTypeId = department.DepartmentType.Id,
                 DepartmentTypeName = department.DepartmentType.Name,
+                DepartmentTypeNameInEnglish = department.DepartmentType.NameInEnglish,
                 IsSuspended = department.IsSuspended,
                 IsCancelled = department.IsCancelled,
                 CreatedAt = Timestamp.FromDateTime(department.CreatedAt),
@@ -85,13 +87,20 @@ namespace HumanResource.Grpc.Services
         {
             logger.LogInformation("Creating new department with name={Name}", request.Name);
 
-            var department = request.Adapt<Department>() ?? throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid request object."));
+            var department = request.Adapt<Department>() ?? throw new RpcException(new Status(StatusCode.InvalidArgument, ExceptionKey.INVALID_REQUEST.ToString()));
+
+            var checkIfDepartmentCodeExist = await dbContext.Departments.AnyAsync(x => x.Code == request.Code && !x.IsCancelled);
+            if (checkIfDepartmentCodeExist)
+            {
+                logger.LogWarning("Department code {Code} already exists.", request.Code);
+                throw new RpcException(new Status(StatusCode.AlreadyExists, ExceptionKey.EXISTED_DEPARTMENT_CODE.ToString()));
+            }
 
             var departmentType = await dbContext.DepartmentTypes.FirstOrDefaultAsync(x => x.Id == request.DepartmentTypeId);
             if (departmentType is null)
             {
                 logger.LogWarning("Invalid department type id={Id} during creation.", request.DepartmentTypeId);
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid department type."));
+                throw new RpcException(new Status(StatusCode.InvalidArgument, ExceptionKey.INVALID_DEPARTMENT_TYPE.ToString()));
             }
 
             department.DepartmentType = departmentType;
@@ -106,8 +115,10 @@ namespace HumanResource.Grpc.Services
                 Id = department.Id,
                 Code = department.Code,
                 Name = department.Name,
+                NameInEnglish = department.NameInEnglish,
                 DepartmentTypeId = department.DepartmentType.Id,
                 DepartmentTypeName = department.DepartmentType.Name,
+                DepartmentTypeNameInEnglish = department.DepartmentType.NameInEnglish,
                 IsSuspended = department.IsSuspended,
                 IsCancelled = department.IsCancelled,
                 CreatedAt = Timestamp.FromDateTime(department.CreatedAt),
@@ -130,19 +141,27 @@ namespace HumanResource.Grpc.Services
             if (department == null)
             {
                 logger.LogWarning("Department with id={Id} not found for update.", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, $"Department with id={request.Id} is not found."));
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_DEPARTMENT_WITH_ID.ToString()));
+            }
+
+            var checkIfDepartmentCodeExist = await dbContext.Departments.AnyAsync(x => x.Id != request.Id && (x.Code == request.Code && !x.IsCancelled));
+            if (checkIfDepartmentCodeExist)
+            {
+                logger.LogWarning("Department code {Code} already exists.", request.Code);
+                throw new RpcException(new Status(StatusCode.AlreadyExists, ExceptionKey.EXISTED_DEPARTMENT_CODE.ToString()));
             }
 
             var departmentType = await dbContext.DepartmentTypes.FirstOrDefaultAsync(x => x.Id == request.DepartmentTypeId);
             if (departmentType is null)
             {
                 logger.LogWarning("Invalid department type id={Id} during update.", request.DepartmentTypeId);
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid department type."));
+                throw new RpcException(new Status(StatusCode.InvalidArgument, ExceptionKey.INVALID_DEPARTMENT_TYPE.ToString()));
             }
 
             department.DepartmentType = departmentType;
             department.Code = request.Code;
             department.Name = request.Name;
+            department.NameInEnglish = request.NameInEnglish;
             department.IsSuspended = request.IsSuspended;
             department.IsCancelled = request.IsCancelled;
 
@@ -156,8 +175,10 @@ namespace HumanResource.Grpc.Services
                 Id = department.Id,
                 Code = department.Code,
                 Name = department.Name,
+                NameInEnglish = department.NameInEnglish,
                 DepartmentTypeId = department.DepartmentType.Id,
                 DepartmentTypeName = department.DepartmentType.Name,
+                DepartmentTypeNameInEnglish = department.DepartmentType.NameInEnglish,
                 IsSuspended = department.IsSuspended,
                 IsCancelled = department.IsCancelled,
                 CreatedAt = Timestamp.FromDateTime(department.CreatedAt),
@@ -173,12 +194,12 @@ namespace HumanResource.Grpc.Services
         {
             logger.LogInformation("Deleting department with id={Id}", request.Id);
 
-            var department = await dbContext.Departments.FirstOrDefaultAsync(x => x.Id == request.Id);
+            var department = await dbContext.Departments.FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsCancelled);
 
             if (department is null)
             {
                 logger.LogWarning("Department with id={Id} not found for deletion.", request.Id);
-                throw new RpcException(new Status(StatusCode.NotFound, $"Department with id={request.Id} is not found."));
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_DEPARTMENT_WITH_ID.ToString()));
             }
 
             department.IsSuspended = true;
@@ -190,6 +211,45 @@ namespace HumanResource.Grpc.Services
             logger.LogInformation("Department with id={Id} deleted successfully.", request.Id);
 
             return new DeleteDepartmentResponse { IsSuccess = true };
+        }
+
+        public override async Task<ListEmployeesResponse> ListEmployees(ListEmployeesRequest request, ServerCallContext context)
+        {
+            logger.LogInformation("Listing employees for department with id={Id}", request.Id);
+
+            var result = new ListEmployeesResponse();
+
+            var department = await dbContext.Departments
+                .Include(d => d.Users)
+                .FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsCancelled);
+
+            if (department is null)
+            {
+                logger.LogWarning("Department with id={Id} not found for employee listing.", request.Id);
+                throw new RpcException(new Status(StatusCode.NotFound, ExceptionKey.NOT_FOUND_DEPARTMENT_WITH_ID.ToString()));
+            }
+
+            logger.LogInformation("Found {Count} employees in department with id={Id}.", department.Users.Count(), request.Id);
+
+            var employeeList = department.Users
+                .Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(user => new EmployeeSummaryModel
+                {
+                    Id = user.Id,
+                    Code = user.Code,
+                    Name = user.Name,
+                    IsSuspended = user.IsSuspended,
+                    ProfilePictureUrl = user.ProfilePictureUrl ?? string.Empty
+                })
+                .ToList();
+
+            result.Count = department.Users.Count();
+            result.PageIndex = request.PageIndex;
+            result.PageSize = request.PageSize;
+            result.Data.AddRange(employeeList);
+
+            return result;
         }
     }
 }
