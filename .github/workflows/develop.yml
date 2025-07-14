@@ -85,13 +85,29 @@ jobs:
           PROJECT_NAME: "MediFlow_BE"
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-          if [ ! -d ${{ env.PATH_TO_PROJECT }} ]; then
-            mkdir ${{ env.PATH_TO_PROJECT }}
-          fi
-          if [ ! -d ${{ env.PATH_TO_PROJECT }}/.git ]; then
-            git clone git@github.com:ddnhuy/${{ env.PROJECT_NAME }}.git ${{ env.PATH_TO_PROJECT }}
-          fi
-          cd ${{ env.PATH_TO_PROJECT }} && git checkout develop && git pull && docker-compose -f "docker-compose.release.yml" up -d --build"
+            if [ ! -d ${{ env.PATH_TO_PROJECT }} ]; then
+              mkdir -p ${{ env.PATH_TO_PROJECT }}
+            fi
+
+            if [ ! -d ${{ env.PATH_TO_PROJECT }}/.git ]; then
+              git clone git@github.com:ddnhuy/${{ env.PROJECT_NAME }}.git ${{ env.PATH_TO_PROJECT }}
+            fi
+
+            cd ${{ env.PATH_TO_PROJECT }}
+
+            git checkout develop
+            git pull
+
+            docker compose -f docker-compose.release.yml down --remove-orphans --volumes
+            docker builder prune -af
+
+            BUILDKIT_STEP_MAX_PARALLEL=3 \
+            DOCKER_BUILDKIT=1 \
+            docker compose -f docker-compose.release.yml \
+              build --pull --force-rm --parallel --progress plain
+
+            docker compose -f docker-compose.release.yml up -d
+          "
 
       - name: Clean up
         run: rm -rf ~/.ssh
