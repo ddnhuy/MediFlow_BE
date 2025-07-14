@@ -17,6 +17,7 @@
         DbSet<MedicinePrice> MedicinePrices { get; }    
         DbSet<InventoryDetail> InventoryDetails { get; }
         DbSet<InventoryHistory> InventoryHistories { get; }
+        DbSet<Inventory.Domain.Models.InventoryLimitStock> InventoryLimitStocks { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         DatabaseFacade Database { get; }
     }
