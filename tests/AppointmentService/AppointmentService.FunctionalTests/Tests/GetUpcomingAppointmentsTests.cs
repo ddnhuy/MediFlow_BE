@@ -24,7 +24,7 @@ namespace AppointmentService.FunctionalTests.Tests
             SetAuthHeader();
 
             // Act
-            var response = await _client.GetAsync("/upcoming");
+            var response = await _client.GetAsync("/upcoming?pageIndex=1&pageSize=5");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
