@@ -21,11 +21,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetNearestExpiry
             var response = await _inventoryService.GetNearestExpiryMedicineBatchAsync(request.MedicineId, cancellationToken);
 
             return new GetNearestExpiryMedicineBatchWithMedicineIdResult(
-                response.MedicineId,
-                response.MedicineName,
-                response.MedicineBatchId,
-                response.MedicineBatchNumber,
-                response.ExpiryDate,
+                response.MedicineBatches,
                 response.RequestId,
                 response.RequestedAt,
                 response.IsSuccess,

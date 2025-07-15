@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Messaging.Contracts.Inventory.MedicineBatchInformation.NearestExpiryMedicineBatch;
 using MediatR;
 
 namespace VaccinationReception.Application.Vaccinations.Queries.GetNearestExpiryMedicineBatchWithMedicineId
@@ -7,11 +8,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetNearestExpiry
         : IQuery<GetNearestExpiryMedicineBatchWithMedicineIdResult>;
 
     public record GetNearestExpiryMedicineBatchWithMedicineIdResult(
-        int MedicineId,
-        string? MedicineName,
-        int MedicineBatchId,
-        string? MedicineBatchNumber,
-        DateOnly? ExpiryDate,
+        List<GetNearestExpiryMedicineBatchItem> MedicineBatches,
         string? RequestId,
         DateTime RequestedAt,
         bool IsSuccess,

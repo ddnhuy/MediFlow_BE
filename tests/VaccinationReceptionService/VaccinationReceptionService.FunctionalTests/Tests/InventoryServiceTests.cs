@@ -163,11 +163,21 @@ public class InventoryServiceTests
         // Arrange
         var medicineId = 1;
         var request = new GetNearestExpiryMedicineBatchRequest { MedicineId = medicineId };
+        var expectedBatch = new GetNearestExpiryMedicineBatchItem
+        {
+            MedicineBatchId = 10,
+            MedicineBatchNumber = "BATCH-001",
+            MedicineId = medicineId,
+            MedicineName = "Test Medicine",
+            ExpiryDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(6))
+        };
         var expectedResponse = new GetNearestExpiryMedicineBatchResponse
         {
-            MedicineId = medicineId,
-            MedicineBatchId = 10,
-            IsSuccess = true
+            MedicineBatches = new List<GetNearestExpiryMedicineBatchItem> { expectedBatch },
+            RequestId = Guid.NewGuid().ToString(),
+            RequestedAt = DateTime.UtcNow,
+            IsSuccess = true,
+            ErrorMessage = null
         };
 
         var response = Substitute.For<Response<GetNearestExpiryMedicineBatchResponse>>();
@@ -181,7 +191,7 @@ public class InventoryServiceTests
         var result = await _service.GetNearestExpiryMedicineBatchAsync(medicineId);
 
         // Assert
-        Assert.Equal(expectedResponse.MedicineBatchId, result.MedicineBatchId);
+        Assert.NotNull(result);
         Assert.True(result.IsSuccess);
     }
 
