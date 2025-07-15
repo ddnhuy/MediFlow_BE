@@ -1,7 +1,7 @@
 ﻿namespace Appointment.API.Appointments.Commands
 {
     public record CreateAppointmentResult(bool IsSuccess, string Message);
-    public record CreateAppointmentCommand(int UserId, int PatientId, DateTime AppointmentDate, AppointmentType AppointmentType, string PatientCode, string PatientFullName, DateTime PatientDOB, string PatientEmail, string? PatientPhoneNumber, string? VaccineName, string? Note) : ICommand<CreateAppointmentResult>;
+    public record CreateAppointmentCommand(int UserId, int PatientId, DateTime AppointmentDate, AppointmentType AppointmentType, string PatientCode, string PatientFullName, DateTime PatientDOB, string PatientEmail, string? PatientPhoneNumber, string? VaccineName, string? Note, int DoctorId, int VaccineId, string? Dose) : ICommand<CreateAppointmentResult>;
 
     public class CreateAppointmentCommandValidator : AbstractValidator<CreateAppointmentCommand>
     {
@@ -15,6 +15,10 @@
             RuleFor(x => x.PatientDOB).LessThan(DateTime.UtcNow).WithMessage(ExceptionKey.INVALID_PATIENT_DOB.ToString());
             RuleFor(x => x.PatientEmail).NotEmpty().EmailAddress().WithMessage(ExceptionKey.INVALID_PATIENT_EMAIL.ToString());
             RuleFor(x => x.PatientPhoneNumber).Matches(@"^\+?[0-9]*$").When(x => !string.IsNullOrEmpty(x.PatientPhoneNumber)).WithMessage(ExceptionKey.INVALID_PATIENT_PHONE_NUMBER.ToString());
+            RuleFor(x => x.DoctorId).GreaterThan(0)
+                .WithMessage(ExceptionKey.INVALID_DOCTOR_ID.ToString());
+            RuleFor(x => x.VaccineId).GreaterThan(0).WithMessage(ExceptionKey.INVALID_VACCINE_ID.ToString());
+            RuleFor(x => x.VaccineName).NotEmpty().WithMessage(ExceptionKey.REQUIRED_MEDICINE_NAME.ToString());
         }
     }
 
@@ -43,7 +47,10 @@
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = command.UserId,
                 LastUpdatedAt = DateTime.UtcNow,
-                LastUpdatedBy = command.UserId
+                LastUpdatedBy = command.UserId,
+                DoctorId = command.DoctorId,
+                VaccineId = command.VaccineId,
+                Dose = command.Dose ?? string.Empty
             };
 
             await _appointmentRepository.AddAsync(appointment);

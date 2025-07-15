@@ -23,7 +23,7 @@ namespace AppointmentService.FunctionalTests.Tests
         {
             // Arrange
             SetAuthHeader();
-            var create_request = new CreateAppointmentRequest(1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "PATIENT1", "Patient 1", DateTime.UtcNow.AddDays(-1), "patient@example.com", "84123456789", null, null);
+            var create_request = new CreateAppointmentRequest(1, DateTime.UtcNow.AddDays(1), AppointmentType.Vaccination, "PATIENT1", "Patient 1", DateTime.UtcNow.AddDays(-1), "patient@example.com", "84123456789", null, null, 1, 1, "");
             await _client.PostAsJsonAsync("/", create_request);
 
             var appointmentId = "1";

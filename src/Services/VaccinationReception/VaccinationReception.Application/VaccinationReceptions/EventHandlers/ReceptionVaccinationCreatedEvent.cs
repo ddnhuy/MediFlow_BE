@@ -12,8 +12,11 @@ namespace VaccinationReception.Application.VaccinationReceptions.EventHandlers
 {
     internal class ReceptionVaccinationCreatedEvent : IDomainEvent
     {
+        public int DoctorId { get; set; }
         public int PatientId { get; set; }
         public int VaccineId { get; set; }
+        public string? VaccineName { get; set; } = string.Empty;
+        public string? Dose { get; set; } = string.Empty;
         public DateTime AppointmentDate { get; set; }
         public string? Note { get; set; }
     }
@@ -73,7 +76,10 @@ namespace VaccinationReception.Application.VaccinationReceptions.EventHandlers
                 PatientEmail = patient.Email,
                 PatientPhoneNumber = patient.PhoneNumber,
                 VaccineName = vaccine.MedicineName,
-                Note = notification.Note
+                Note = notification.Note,
+                DoctorId = currentUserHelper.UserId,
+                VaccineId  = notification.VaccineId,
+                Dose = "N/A"
             };
 
             // Publish the event to the message bus

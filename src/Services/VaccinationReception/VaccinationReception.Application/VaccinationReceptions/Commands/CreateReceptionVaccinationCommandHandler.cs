@@ -78,7 +78,10 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     PatientId = reception.PatientId,
                     VaccineId = receptionVaccination.VaccineId,
                     AppointmentDate = receptionVaccination.AppointmentDate,
-                    Note = receptionVaccination.Note
+                    Note = receptionVaccination.Note,
+                    VaccineName = medicine!.MedicineName,
+                    Dose = "N/A",   
+                    DoctorId = receptionVaccination.DoctorId.Value
                 };
                 await _publisher.Publish(createdEvent, cancellationToken);
 
