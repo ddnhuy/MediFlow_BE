@@ -7,13 +7,18 @@
         public DateTime RequestedAt { get; init; } = DateTime.UtcNow;
     }
 
-    public record GetNearestExpiryMedicineBatchResponse
+    public record GetNearestExpiryMedicineBatchItem
     {
         public int MedicineBatchId { get; init; }
         public string? MedicineBatchNumber { get; init; }
         public int MedicineId { get; init; }
         public string? MedicineName { get; init; }
         public DateOnly? ExpiryDate { get; init; }
+    }
+
+    public record GetNearestExpiryMedicineBatchResponse
+    {
+        public List<GetNearestExpiryMedicineBatchItem> MedicineBatches { get; init; } = new List<GetNearestExpiryMedicineBatchItem>();
         public string? RequestId { get; init; }
         public DateTime RequestedAt { get; init; }
         public bool IsSuccess { get; init; }
