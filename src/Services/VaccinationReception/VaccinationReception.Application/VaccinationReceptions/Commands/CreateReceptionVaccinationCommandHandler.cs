@@ -3,18 +3,20 @@ using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
 using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using VaccinationReception.Application.Helpers;
-using VaccinationReception.Application.Data;
-using VaccinationReception.Domain.Models;
-using VaccinationReception.Application.VaccinationReceptions.EventHandlers;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
+using VaccinationReception.Application.Data;
+using VaccinationReception.Application.Helpers;
+using VaccinationReception.Application.VaccinationReceptions.EventHandlers;
+using VaccinationReception.Domain.Models;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
@@ -24,17 +26,20 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
         private readonly ILogger<CreateReceptionVaccinationCommandHandler> _logger;
         private readonly IInventoryService _inventoryService;
         private readonly IPublisher _publisher;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public CreateReceptionVaccinationCommandHandler(
             ILogger<CreateReceptionVaccinationCommandHandler> logger,
             IInventoryService inventoryService,
             IPublisher publisher,
-            IApplicationDbContext context)
+            IApplicationDbContext context,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _logger = logger;
             _publisher = publisher;
             _inventoryService = inventoryService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<CreateReceptionVaccinationResult> Handle(CreateReceptionVaccinationCommand request, CancellationToken cancellationToken)
@@ -57,6 +62,9 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 receptionVaccination.PaymentStatus = Domain.Enums.PaymentStatusForItem.NotPaid;
                 receptionVaccination.RequestNumber = UniqueStringGenerator.GenerateUniqueString();
                 receptionVaccination.UnitPrice = medicine?.UnitPrice ?? 0;
+                receptionVaccination.DoctorId = int.Parse(_httpContextAccessor.HttpContext!.User!
+                 .FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
                 await _context.ReceptionVaccinations.AddAsync(receptionVaccination);
 
                 await _context.SaveChangesAsync(cancellationToken);
