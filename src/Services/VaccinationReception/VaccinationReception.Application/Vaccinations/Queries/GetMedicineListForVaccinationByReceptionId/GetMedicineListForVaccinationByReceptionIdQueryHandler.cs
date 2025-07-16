@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using HumanResource.Grpc;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
@@ -37,6 +38,18 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
                 .Where(rv => rv.ReceptionId == request.ReceptionId && rv.IsReadyToUse == true)
                 .ToList();
 
+            var receptionVaccinationIds = receptionVaccinations.Select(rv => rv.Id).ToList();
+
+            // Query all Vaccinations for these ReceptionVaccinationIds
+            var vaccinations = _dbContext.Vaccinations
+                .Where(v => receptionVaccinationIds.Contains(v.ReceptionVaccinationId))
+                .ToList();
+
+            // Build lookup
+            var vaccinationLookup = vaccinations
+                .GroupBy(v => v.ReceptionVaccinationId)
+                .ToDictionary(g => g.Key, g => g.OrderByDescending(v => v.VaccinationDate).FirstOrDefault());
+
             var doctorPrescribedVaccines = receptionVaccinations
                 .Where(rv => rv.ScheduledDate?.Date == today)
                 .ToList();
@@ -59,14 +72,20 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
             // Map to result types for doctor prescribed vaccines
             var doctorPrescribedTasks = doctorPrescribedVaccines
                 .Where(rv => medicineLookup.ContainsKey(rv.VaccineId))
-                .Select(async rv => new MedicineInfo(
-                    rv.Id,
-                    medicineLookup[rv.VaccineId].MedicineId,
-                    medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
-                    rv.IsConfirmed,
-                    rv.TestResultEntry,
-                    await GetDoctorName(rv.DoctorId.Value)
-                ))
+                .Select(async rv => {
+                    var vaccination = vaccinationLookup.GetValueOrDefault(rv.Id);
+                    return new MedicineInfo(
+                        rv.Id,
+                        medicineLookup[rv.VaccineId].MedicineId,
+                        medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
+                        vaccination?.MedicineBatchId ?? 0,
+                        vaccination?.BatchNumber ?? "",
+                        rv.Quantity,
+                        rv.IsConfirmed,
+                        rv.TestResultEntry,
+                        await GetDoctorName(rv.DoctorId.Value)
+                    );
+                })
                 .ToList();
 
             var doctorPrescribedResult = await Task.WhenAll(doctorPrescribedTasks);
@@ -74,14 +93,20 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
             // Map to result types for customer warehouse vaccines
             var customerWarehouseTasks = customerWarehouseVaccines
                 .Where(rv => medicineLookup.ContainsKey(rv.VaccineId))
-                .Select(async rv => new MedicineInfo(
-                    rv.Id,
-                    medicineLookup[rv.VaccineId].MedicineId,
-                    medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
-                    rv.IsConfirmed,
-                    rv.TestResultEntry,
-                   await GetDoctorName(rv.DoctorId.Value) 
-                ))
+                .Select(async rv => {
+                    var vaccination = vaccinationLookup.GetValueOrDefault(rv.Id);
+                    return new MedicineInfo(
+                        rv.Id,
+                        medicineLookup[rv.VaccineId].MedicineId,
+                        medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
+                        vaccination?.MedicineBatchId ?? 0,
+                        vaccination?.BatchNumber ?? "",
+                        rv.Quantity,
+                        rv.IsConfirmed,
+                        rv.TestResultEntry,
+                        await GetDoctorName(rv.DoctorId.Value)
+                    );
+                })
                 .ToList();
 
             var customerWarehouseResult = await Task.WhenAll(customerWarehouseTasks);

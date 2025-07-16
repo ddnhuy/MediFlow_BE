@@ -11,6 +11,9 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
         int ReceptionVaccinationId,
         int MedicineId,
         string MedicineName,
+        int MedicineBatchId,
+        string MedicineBatchNumber,
+        int Quantity,
         bool IsConfirmed,
         string? TestResultEntry,
         string? DoctorName
@@ -31,6 +34,9 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
                         m.ReceptionVaccinationId,
                         m.MedicineId,
                         m.MedicineName,
+                        m.MedicineBatchId,
+                        m.MedicineBatchNumber,
+                        m.Quantity,
                         m.IsConfirmed,
                         m.TestResultEntry,
                         m.doctorName
@@ -39,6 +45,9 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
                         m.ReceptionVaccinationId,
                         m.MedicineId,
                         m.MedicineName,
+                        m.MedicineBatchId,
+                        m.MedicineBatchNumber,
+                        m.Quantity,
                         m.IsConfirmed,
                         m.TestResultEntry,
                         m.doctorName
