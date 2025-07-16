@@ -73,16 +73,16 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
             var doctorPrescribedTasks = doctorPrescribedVaccines
                 .Where(rv => medicineLookup.ContainsKey(rv.VaccineId))
                 .Select(async rv => {
-                    var vaccination = vaccinationLookup.GetValueOrDefault(rv.Id);
+                    var vaccinationForDoctorPrescribed = vaccinationLookup.GetValueOrDefault(rv.Id);
                     return new MedicineInfo(
-                        rv.Id,
-                        medicineLookup[rv.VaccineId].MedicineId,
+                        ReceptionVaccinationId: rv.Id,
+                        MedicineId: medicineLookup[rv.VaccineId].MedicineId,
                         medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
-                        vaccination?.MedicineBatchId ?? 0,
-                        vaccination?.BatchNumber ?? "",
-                        rv.Quantity,
-                        rv.IsConfirmed,
-                        rv.TestResultEntry,
+                        MedicineBatchId: vaccinationForDoctorPrescribed?.MedicineBatchId ?? 0,
+                        MedicineBatchNumber: vaccinationForDoctorPrescribed?.BatchNumber ?? "",
+                        Quantity: rv.Quantity,
+                        IsConfirmed: rv.IsConfirmed,
+                        TestResultEntry: rv.TestResultEntry,
                         await GetDoctorName(rv.DoctorId.Value)
                     );
                 })
@@ -94,13 +94,13 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
             var customerWarehouseTasks = customerWarehouseVaccines
                 .Where(rv => medicineLookup.ContainsKey(rv.VaccineId))
                 .Select(async rv => {
-                    var vaccination = vaccinationLookup.GetValueOrDefault(rv.Id);
+                    var vaccinationForCustomerWarehouse = vaccinationLookup.GetValueOrDefault(rv.Id);
                     return new MedicineInfo(
                         rv.Id,
                         medicineLookup[rv.VaccineId].MedicineId,
                         medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
-                        vaccination?.MedicineBatchId ?? 0,
-                        vaccination?.BatchNumber ?? "",
+                        vaccinationForCustomerWarehouse?.MedicineBatchId ?? 0,
+                        vaccinationForCustomerWarehouse?.BatchNumber ?? "",
                         rv.Quantity,
                         rv.IsConfirmed,
                         rv.TestResultEntry,
