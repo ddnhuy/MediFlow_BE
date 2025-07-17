@@ -20,12 +20,12 @@ namespace VaccinationReception.Domain.Models
         public bool IsPreExaminationTesting { get; set; }
         public DateTime? VaccinationTestDate { get; set; }
         public PaymentStatusForItem PaymentStatus { get; set; }
-        public bool IsConfirmed { get; set; }
         public string? Note { get; set; }
         public string? TestResultEntry { get; set; }
         public int? DoctorId { get; set; }
         public string RequestNumber { get; set; } = null!;
         public decimal UnitPrice { get; set; }
+        public int? DoseNumber { get; set; } 
 
         // Navigation
         public Reception Reception { get; set; } = null!;

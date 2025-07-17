@@ -131,7 +131,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     InvoiceDate = DateTime.UtcNow,
                     AppointmentDate = DateTime.UtcNow,
                     PaymentStatus = VaccinationReception.Domain.Enums.PaymentStatusForItem.Paid,
-                    IsConfirmed = false,
+                    //IsConfirmed = false,
                     VaccinationTestDate = DateTime.UtcNow.AddDays(-1),
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,

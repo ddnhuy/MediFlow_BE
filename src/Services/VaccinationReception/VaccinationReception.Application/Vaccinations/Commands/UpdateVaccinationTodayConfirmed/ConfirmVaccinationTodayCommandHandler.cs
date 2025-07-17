@@ -29,13 +29,16 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdateVaccinati
 
             var rvIds = reception.ReceptionVaccinations.Select(rv => rv.Id).ToList();
 
-            if (reception.ReceptionVaccinations.Any(rv => !rv.IsConfirmed))
-                throw new BadRequestException(ExceptionKey.ANY_VACCINATION_NOT_CONFIRMED);
-
+            // Get all doses for this reception
             var vaccinations = await _context.Vaccinations
                 .Where(v => rvIds.Contains(v.ReceptionVaccinationId))
                 .ToListAsync(cancellationToken);
-           
+
+            // Check if any dose is not confirmed
+            if (vaccinations.Any(v => !v.IsConfirmed))
+                throw new BadRequestException(ExceptionKey.ANY_VACCINATION_NOT_CONFIRMED);
+
+            // Check if any dose is missing post-vaccination observation confirmation
             foreach (var rvId in rvIds)
             {
                 var related = vaccinations.Where(v => v.ReceptionVaccinationId == rvId).ToList();

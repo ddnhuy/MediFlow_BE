@@ -40,7 +40,6 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                     PatientId = rv.Reception.PatientId,
                     VaccineId = rv.VaccineId,
                     DoctorId = rv.DoctorId.Value,
-                    IsConfirmed = rv.IsConfirmed,
                     VaccinationTestDate = rv.VaccinationTestDate,
                     TestResultEntry = rv.TestResultEntry
                 })
@@ -76,21 +75,28 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                 doctorDictionary[doctorId] = response?.Name ?? string.Empty;
             }
 
+            var receptionVaccinationIds = receptionVaccinationsData.Select(rv => rv.Id).ToList();
+            var vaccinations = await _dbContext.Vaccinations
+                .Where(v => receptionVaccinationIds.Contains(v.ReceptionVaccinationId))
+                .ToListAsync(cancellationToken);
+
             var receptionVaccinations = new List<PreExaminationMedicineItem>();
             foreach (var rv in receptionVaccinationsData)
             {
                 var patientName = patientDictionary.GetValueOrDefault(rv.PatientId, "");
                 var vaccineName = vaccineDictionary.GetValueOrDefault(rv.VaccineId, "");
+                var hasAnyVaccinated = vaccinations.Any(v => v.ReceptionVaccinationId == rv.Id);
 
                 receptionVaccinations.Add(new PreExaminationMedicineItem(
                     ReceptionVaccinationId: rv.Id,
                     PatientName: patientName,
-                    VaccineName: vaccineName??"",
-                    IsConfirmed: rv.IsConfirmed,
+                    VaccineName: vaccineName ?? "",
+                    IsConfirmed: hasAnyVaccinated, // Per-dose confirmation
                     VaccinationTestDate: rv.VaccinationTestDate ?? DateTime.MinValue,
                     TestResultEntry: rv.TestResultEntry ?? string.Empty,
                     DoctorName: doctorDictionary.TryGetValue(rv.DoctorId, out var doctorName) ? doctorName : ""
                 ));
+                
             }
 
             return new GetMedicineListForPreExaminationResult(receptionVaccinations);

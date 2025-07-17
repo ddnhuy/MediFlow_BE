@@ -9,11 +9,11 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
 
     public record MedicineInfoResponse(
         int ReceptionVaccinationId,
+        int? VaccinationId, // Nullable in case it's not yet created
         int MedicineId,
         string MedicineName,
         int MedicineBatchId,
         string MedicineBatchNumber,
-        int Quantity,
         bool IsConfirmed,
         string? TestResultEntry,
         string? DoctorName
@@ -32,22 +32,22 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
                 var response = new GetMedicineListForVaccinationByReceptionIdResponse(
                     result.DoctorPrescribedVaccines.Select(m => new MedicineInfoResponse(
                         m.ReceptionVaccinationId,
+                        m.VaccinationId,
                         m.MedicineId,
                         m.MedicineName,
                         m.MedicineBatchId,
                         m.MedicineBatchNumber,
-                        m.Quantity,
                         m.IsConfirmed,
                         m.TestResultEntry,
                         m.doctorName
                     )).ToList(),
                     result.CustomerWarehouseVaccines.Select(m => new MedicineInfoResponse(
                         m.ReceptionVaccinationId,
+                        m.VaccinationId,
                         m.MedicineId,
                         m.MedicineName,
                         m.MedicineBatchId,
                         m.MedicineBatchNumber,
-                        m.Quantity,
                         m.IsConfirmed,
                         m.TestResultEntry,
                         m.doctorName

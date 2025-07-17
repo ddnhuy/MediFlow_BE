@@ -44,7 +44,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 VaccineId = 1,
                 Quantity = 1,
                 RequestNumber = "REQ-001",
-                IsConfirmed = true
+                //IsConfirmed = true
             };
             dbContext.ReceptionVaccinations.Add(rv);
 
@@ -52,7 +52,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             {
                 ReceptionVaccinationId = rv.Id,
                 PatientId = 1,
-                ObservationConfirmed = true
+                ObservationConfirmed = true,
+                IsConfirmed = true
             };
             dbContext.Vaccinations.Add(vaccination);
 
@@ -96,7 +97,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 VaccineId = 1,
                 Quantity = 1,
                 RequestNumber = "REQ-002",
-                IsConfirmed = false // Chưa xác nhận
+                //IsConfirmed = false // Chưa xác nhận
             };
             dbContext.ReceptionVaccinations.Add(rv);
 
@@ -140,7 +141,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 VaccineId = 1,
                 Quantity = 1,
                 RequestNumber = "REQ-003",
-                IsConfirmed = true
+                //IsConfirmed = true
             };
             dbContext.ReceptionVaccinations.Add(rv);
 

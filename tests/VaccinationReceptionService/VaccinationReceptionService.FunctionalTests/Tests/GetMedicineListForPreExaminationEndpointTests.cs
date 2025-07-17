@@ -135,7 +135,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     InvoiceDate = DateTime.UtcNow,
                     AppointmentDate = DateTime.UtcNow,
                     PaymentStatus = PaymentStatusForItem.NotPaid,
-                    IsConfirmed = false,
+                    //IsConfirmed = false,
                     IsPreExaminationTesting = true, // This is the key field for this query
                     VaccinationTestDate = DateTime.UtcNow.AddDays(-1),
                     TestResultEntry = "Normal",

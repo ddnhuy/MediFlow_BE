@@ -87,7 +87,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     InvoiceDate = DateTime.UtcNow,
                     AppointmentDate = DateTime.UtcNow,
                     PaymentStatus = PaymentStatusForItem.Paid, 
-                    IsConfirmed = false, 
+                    //IsConfirmed = false, 
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     RequestNumber = "REQ-001",
@@ -139,7 +139,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
 
             if (receptionVaccination != null)
             {
-                receptionVaccination.IsConfirmed = true;
+                //receptionVaccination.IsConfirmed = true;
                 await dbContext.SaveChangesAsync();
             }
 
@@ -156,7 +156,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             // Clean up - restore the original state
             if (receptionVaccination != null)
             {
-                receptionVaccination.IsConfirmed = false;
+                //receptionVaccination.IsConfirmed = false;
                 await dbContext.SaveChangesAsync();
             }
         }
