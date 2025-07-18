@@ -38,6 +38,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
                 var paidReceptionVaccinations = await _context.ReceptionVaccinations
                     .Include(rv => rv.Reception)
                     .ThenInclude(r => r.ScreeningEvaluationReport)
+                    .Where(rv => rv.Reception.IsVaccinationTodayConfirmed == false)
                     .Where(rv => rv.PaymentStatus == PaymentStatusForItem.Paid && !rv.IsCancelled)
                     .ToListAsync(cancellationToken);
 
