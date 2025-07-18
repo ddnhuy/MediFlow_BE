@@ -30,5 +30,8 @@ namespace VaccinationReception.Domain.Models
         public bool HasInjectionSiteReaction { get; set; }
         public bool HasOtherReaction { get; set; }
         public string? OtherReactionDescription { get; set; }
+
+        public bool IsConfirmed { get; set; }
+        public int DoseNumber { get; set; }
     }
 }

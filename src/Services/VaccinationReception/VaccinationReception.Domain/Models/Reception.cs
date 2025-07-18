@@ -19,5 +19,7 @@ namespace VaccinationReception.Domain.Models
 
         public ICollection<RequestForm> RequestForms { get; set; } = new List<RequestForm>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
+
+        public bool IsVaccinationTodayConfirmed { get; set; }
     }
 }

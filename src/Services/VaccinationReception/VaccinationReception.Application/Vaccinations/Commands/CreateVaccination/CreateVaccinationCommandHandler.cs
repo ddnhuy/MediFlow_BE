@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Data;
@@ -19,7 +20,37 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
         }
 
         public async Task<CreateVaccinationResponse> Handle(CreateVaccinationCommand request, CancellationToken cancellationToken)
-        {
+        {            
+            // Get all existing doses for this ReceptionVaccination
+            var existingDoses = await _dbContext.Vaccinations
+                .Where(v => v.ReceptionVaccinationId == request.ReceptionVaccinationId)
+                .ToListAsync(cancellationToken);
+
+            var receptionVaccination = await _dbContext.ReceptionVaccinations
+                .FirstOrDefaultAsync(rv => rv.Id == request.ReceptionVaccinationId, cancellationToken);
+
+            if (receptionVaccination == null)
+            {
+                throw new BadRequestException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
+            }
+
+            var medicineInformationList = await _inventoryService.GetMedicineInformationAsync([request.MedicineId], cancellationToken);
+
+            var medicineInformation = medicineInformationList.FirstOrDefault(m => m.MedicineId == request.MedicineId);
+
+            if (medicineInformation!.IsRequiredTestingBeforeUse == true 
+                && (receptionVaccination!.IsPreExaminationTesting == false || string.IsNullOrEmpty(receptionVaccination.TestResultEntry)))
+            { 
+                throw new BadRequestException(ExceptionKey.VACCINE_REQUIRED_PRE_EXAMINATION_TESTING_BEFORE_VACCINATION);
+            }
+
+            // Check if the number of doses already equals or exceeds the allowed quantity
+            if (existingDoses.Count >= receptionVaccination!.Quantity)
+            {
+                throw new BadRequestException(ExceptionKey.ENOUGH_VACCINATION_DOSE_FOR_VACCINATION_RECEPTION);
+            }
+
+            int nextDoseNumber = existingDoses.Count + 1;
 
             var vaccination = new Vaccination
             {
@@ -31,22 +62,11 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
                 MedicineName = request.MedicineName,
                 Note = request.Note,
                 DoctorId = request.DoctorId,
-                VaccinationDate = DateTime.UtcNow
+                VaccinationDate = DateTime.UtcNow,
+                IsConfirmed = true,
+                DoseNumber = nextDoseNumber
             };
 
-            // Update the status of reception vaccination
-            var receptionVaccination = await _dbContext.ReceptionVaccinations
-                .FirstOrDefaultAsync(rv => rv.Id == request.ReceptionVaccinationId, cancellationToken);
-
-            if (receptionVaccination == null)
-            {
-                throw new BadRequestException(BuildingBlocks.Strings.ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
-            } else
-            {
-                receptionVaccination.IsConfirmed = true;
-                await _dbContext.SaveChangesAsync(cancellationToken);
-            }
-                         
             _dbContext.Vaccinations.Add(vaccination);
             await _dbContext.SaveChangesAsync(cancellationToken);
 

@@ -12,6 +12,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         private const int TestReceptionVaccinationId = 1;
         private const int TestReceptionId = 1;
         private const int TestVaccineId = 1;
+        private int _testVaccinationId;
 
         public UpdateVaccinationStatusEndpointTests(FunctionalTestWebAppFactory factory) : base(factory)
         {
@@ -61,7 +62,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     InvoiceDate = DateTime.UtcNow,
                     AppointmentDate = DateTime.UtcNow,
                     PaymentStatus = PaymentStatusForItem.NotPaid,
-                    IsConfirmed = false,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     RequestNumber = "REQ-001",
@@ -71,7 +71,29 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 dbContext.ReceptionVaccinations.Add(receptionVaccination);
             }
 
-            dbContext.SaveChanges();
+            // Create Vaccination if not exists
+            var vaccination = dbContext.Vaccinations
+                .FirstOrDefault(v => v.ReceptionVaccinationId == TestReceptionVaccinationId);
+            if (vaccination == null)
+            {
+                vaccination = new Vaccination
+                {
+                    ReceptionVaccinationId = TestReceptionVaccinationId,
+                    PatientId = 1,
+                    MedicineBatchId = TestVaccineId,
+                    BatchNumber = "BATCH-001",
+                    MedicineId = TestVaccineId,
+                    MedicineName = "Test Vaccine",
+                    Note = "Initial",
+                    DoctorId = 1,
+                    VaccinationDate = DateTime.UtcNow,
+                    IsConfirmed = false,
+                    DoseNumber = 1
+                };
+                dbContext.Vaccinations.Add(vaccination);
+                dbContext.SaveChanges();
+            }
+            _testVaccinationId = vaccination.Id;
         }
 
         [Fact]
@@ -79,12 +101,12 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         {
             // Arrange
             var command = new UpdateVaccinationStatusCommand(
-                ReceptionVaccinationId: TestReceptionVaccinationId,
+                VaccinationId: _testVaccinationId,
                 Status: true
             );
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/vaccination/{TestReceptionVaccinationId}/status", command);
+            var response = await _client.PutAsJsonAsync($"/vaccination/{_testVaccinationId}/status", command);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -95,8 +117,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             // Verify that the vaccination status was updated in the database
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            var updatedVaccination = await dbContext.ReceptionVaccinations
-                .FirstOrDefaultAsync(rv => rv.Id == TestReceptionVaccinationId);
+            var updatedVaccination = await dbContext.Vaccinations
+                .FirstOrDefaultAsync(v => v.Id == _testVaccinationId);
 
             updatedVaccination.Should().NotBeNull();
             updatedVaccination!.IsConfirmed.Should().BeTrue();
@@ -107,13 +129,13 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         {
             // Arrange
             var command = new UpdateVaccinationStatusCommand(
-                ReceptionVaccinationId: TestReceptionVaccinationId,
+                VaccinationId: _testVaccinationId,
                 Status: true
             );
             _client.DefaultRequestHeaders.Authorization = null;
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/vaccination/{TestReceptionVaccinationId}/status", command);
+            var response = await _client.PutAsJsonAsync($"/vaccination/{_testVaccinationId}/status", command);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -123,9 +145,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         public async Task UpdateVaccinationStatus_WithMismatchedId_ReturnsBadRequest()
         {
             // Arrange
-            var mismatchedId = TestReceptionVaccinationId + 1;
+            var mismatchedId = _testVaccinationId + 1;
             var command = new UpdateVaccinationStatusCommand(
-                ReceptionVaccinationId: TestReceptionVaccinationId,
+                VaccinationId: _testVaccinationId,
                 Status: true
             );
 
@@ -142,7 +164,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             // Arrange
             var nonExistentId = 9999;
             var command = new UpdateVaccinationStatusCommand(
-                ReceptionVaccinationId: nonExistentId,
+                VaccinationId: nonExistentId,
                 Status: true
             );
 

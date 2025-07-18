@@ -61,7 +61,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     AppointmentDate = TestDateTime,
                     PaymentStatus = PaymentStatusForItem.NotPaid,
                     RequestNumber = "REQ-001",
-                    IsConfirmed = false,
+                    //IsConfirmed = false,
                     CreatedAt = TestDateTime,
                     CreatedBy = 1,
                     LastUpdatedAt = TestDateTime,

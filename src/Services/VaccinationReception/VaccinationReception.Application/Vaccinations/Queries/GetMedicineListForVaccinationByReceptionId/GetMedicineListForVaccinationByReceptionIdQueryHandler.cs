@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using HumanResource.Grpc;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
@@ -17,8 +18,8 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ApplicationUserProtoService.ApplicationUserProtoServiceClient _applicationUserProto;
 
-        public GetMedicineListForVaccinationByReceptionIdQueryHandler(IApplicationDbContext dbContext, 
-            IInventoryService inventoryService, 
+        public GetMedicineListForVaccinationByReceptionIdQueryHandler(IApplicationDbContext dbContext,
+            IInventoryService inventoryService,
             IHttpContextAccessor httpContextAccessor,
             ApplicationUserProtoService.ApplicationUserProtoServiceClient applicationUserProto)
         {
@@ -37,12 +38,11 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
                 .Where(rv => rv.ReceptionId == request.ReceptionId && rv.IsReadyToUse == true)
                 .ToList();
 
-            var doctorPrescribedVaccines = receptionVaccinations
-                .Where(rv => rv.ScheduledDate?.Date == today)
-                .ToList();
+            var receptionVaccinationIds = receptionVaccinations.Select(rv => rv.Id).ToList();
 
-            var customerWarehouseVaccines = receptionVaccinations
-                .Where(rv => rv.ScheduledDate?.Date > today)
+            // Query all Vaccinations for these ReceptionVaccinationIds
+            var vaccinations = _dbContext.Vaccinations
+                .Where(v => receptionVaccinationIds.Contains(v.ReceptionVaccinationId))
                 .ToList();
 
             // Get unique vaccine IDs for inventory service call
@@ -56,39 +56,65 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
             // Create medicine info lookup
             var medicineLookup = medicineInformationList.ToDictionary(m => m.MedicineId, m => m);
 
-            // Map to result types for doctor prescribed vaccines
-            var doctorPrescribedTasks = doctorPrescribedVaccines
-                .Where(rv => medicineLookup.ContainsKey(rv.VaccineId))
-                .Select(async rv => new MedicineInfo(
-                    rv.Id,
-                    medicineLookup[rv.VaccineId].MedicineId,
-                    medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
-                    rv.IsConfirmed,
-                    rv.TestResultEntry,
-                    await GetDoctorName(rv.DoctorId.Value)
-                ))
+            // Map to result types for doctor prescribed vaccines (ScheduledDate == today)
+            var doctorPrescribedVaccines = receptionVaccinations
+                .Where(rv => rv.ScheduledDate?.Date == today)
                 .ToList();
 
-            var doctorPrescribedResult = await Task.WhenAll(doctorPrescribedTasks);
+            var doctorPrescribedResult = new List<MedicineInfo>();
+            foreach (var rv in doctorPrescribedVaccines)
+            {
+                if (!medicineLookup.ContainsKey(rv.VaccineId)) continue;
+                var doses = vaccinations.Where(v => v.ReceptionVaccinationId == rv.Id).ToList();
 
-            // Map to result types for customer warehouse vaccines
-            var customerWarehouseTasks = customerWarehouseVaccines
-                .Where(rv => medicineLookup.ContainsKey(rv.VaccineId))
-                .Select(async rv => new MedicineInfo(
-                    rv.Id,
-                    medicineLookup[rv.VaccineId].MedicineId,
-                    medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
-                    rv.IsConfirmed,
-                    rv.TestResultEntry,
-                   await GetDoctorName(rv.DoctorId.Value) 
-                ))
+                for (int i = 1; i <= rv.Quantity; i++)
+                {
+                    var dose = doses.FirstOrDefault(d => d.DoseNumber == i);
+                    doctorPrescribedResult.Add(new MedicineInfo(
+                        ReceptionVaccinationId: rv.Id,
+                        VaccinationId: dose?.Id, // Nullable in case it's not yet created
+                        MedicineId: medicineLookup[rv.VaccineId].MedicineId,
+                        MedicineName: medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
+                        MedicineBatchId: dose?.MedicineBatchId ?? 0,
+                        MedicineBatchNumber: dose?.BatchNumber ?? "",
+                        IsConfirmed: dose?.IsConfirmed ?? false,
+                        TestResultEntry: rv.TestResultEntry,
+                        doctorName: rv.DoctorId.HasValue ? await GetDoctorName(rv.DoctorId.Value) : ""
+                    ));
+                }
+            }
+
+            // Map to result types for customer warehouse vaccines (ScheduledDate > today)
+            var customerWarehouseVaccines = receptionVaccinations
+                .Where(rv => rv.ScheduledDate?.Date > today)
                 .ToList();
 
-            var customerWarehouseResult = await Task.WhenAll(customerWarehouseTasks);
+            var customerWarehouseResult = new List<MedicineInfo>();
+            foreach (var rv in customerWarehouseVaccines)
+            {
+                if (!medicineLookup.ContainsKey(rv.VaccineId)) continue;
+                var doses = vaccinations.Where(v => v.ReceptionVaccinationId == rv.Id).ToList();
+
+                for (int i = 1; i <= rv.Quantity; i++)
+                {
+                    var dose = doses.FirstOrDefault(d => d.DoseNumber == i);
+                    customerWarehouseResult.Add(new MedicineInfo(
+                        rv.Id,
+                        dose?.Id,
+                        medicineLookup[rv.VaccineId].MedicineId,
+                        medicineLookup[rv.VaccineId].MedicineName ?? string.Empty,
+                        dose?.MedicineBatchId ?? 0,
+                        dose?.BatchNumber ?? "",
+                        dose?.IsConfirmed ?? false,
+                        rv.TestResultEntry,
+                        doctorName: rv.DoctorId.HasValue ? await GetDoctorName(rv.DoctorId.Value) : ""
+                    ));
+                }
+            }
 
             return new GetMedicineListForVaccinationByReceptionIdResult(
-                doctorPrescribedResult.ToList(),
-                customerWarehouseResult.ToList()
+                doctorPrescribedResult,
+                customerWarehouseResult
             );
         }
 
@@ -103,10 +129,10 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
 
             var doctor = await _applicationUserProto.GetApplicationUserAsync(new GetApplicationUserRequest
             {
-                Id = id
+                Id = doctorId
             }, metadata);
 
-            return $"B.S {doctor.Name}"; 
+            return $"B.S {doctor.Name}";
         }
     }
 }

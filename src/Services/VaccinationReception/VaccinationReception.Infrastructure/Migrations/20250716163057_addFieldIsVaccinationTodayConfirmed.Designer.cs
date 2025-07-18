@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VaccinationReception.Infrastructure.Data;
@@ -11,9 +12,11 @@ using VaccinationReception.Infrastructure.Data;
 namespace VaccinationReception.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250716163057_addFieldIsVaccinationTodayConfirmed")]
+    partial class addFieldIsVaccinationTodayConfirmed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,9 +276,6 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasComment("Mã bác sĩ");
 
-                    b.Property<int?>("DoseNumber")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime?>("InvoiceDate")
                         .HasColumnType("timestamp with time zone")
                         .HasComment("Ngày xuất hóa đơn");
@@ -285,6 +285,10 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasComment("Trạng thái hủy");
+
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnType("boolean")
+                        .HasComment("Đã xác nhận");
 
                     b.Property<bool>("IsPreExaminationTesting")
                         .HasColumnType("boolean");
@@ -755,9 +759,6 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("DoseNumber")
-                        .HasColumnType("integer");
-
                     b.Property<bool>("HasFeverAbove39")
                         .HasColumnType("boolean");
 
@@ -771,9 +772,6 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsCancelled")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsConfirmed")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsSuspended")

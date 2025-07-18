@@ -10,7 +10,7 @@ using VaccinationReception.Application.Services.PatientServices;
 
 namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHistoryByPatientId
 {
-    public class GetVaccinationHistoryByPatientIdQueryHandler: IQueryHandler<GetVaccinationHistoryByPatientIdQuery, GetVaccinationHistoryByPatientIdResult>
+    public class GetVaccinationHistoryByPatientIdQueryHandler : IQueryHandler<GetVaccinationHistoryByPatientIdQuery, GetVaccinationHistoryByPatientIdResult>
     {
         private readonly IApplicationDbContext _dbContext;
         private readonly IPatientGrpcClient _patientGrpcClient;
@@ -52,17 +52,17 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHi
 
                 var metadata = GrpcMetaDataHelper.CreateAuthMetadata(roles: rolesClaim);
 
-                var doctor = await _applicationUserProto.GetApplicationUserAsync(new GetApplicationUserRequest { Id = v.DoctorId}, metadata);
+                var doctor = await _applicationUserProto.GetApplicationUserAsync(new GetApplicationUserRequest { Id = v.DoctorId }, metadata);
                 var doctorName = doctor.Name ?? string.Empty;
 
                 return new VaccinationHistoryItem(
                     Id: v.Id,
                     MedicineTypeName: medicineInfo?.VaccineTypeName ?? string.Empty,
                     MedicineName: v.MedicineName ?? string.Empty,
-                    Concentration: medicineInfo?.Concentration ?? string.Empty,
+                    DoseNumber: $"Mũi thứ {v.DoseNumber}",
                     VaccinationTestDate: v.ReceptionVaccination?.VaccinationTestDate,
                     VaccinationDate: v.VaccinationDate!.Value,
-                    VaccinationConfirmation: v.ReceptionVaccination?.IsConfirmed == false,
+                    VaccinationConfirmation: v.IsConfirmed,
                     DoctorName: $"B.S {doctorName}"
                 );
             }).ToList();
@@ -79,7 +79,10 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHi
                 Ward: patientInfo.Ward ?? "",
                 District: patientInfo.District ?? "",
                 Province: patientInfo.Province ?? "",
-                VaccinationHistoryItems: vaccinationHistoryItems.ToList()
+                VaccinationHistoryItems: vaccinationHistoryItems
+                    .OrderByDescending(x => x.VaccinationDate)
+                    .OrderBy(x => x.MedicineName)
+                    .ThenBy(x => x.DoseNumber).ToList()
             );
 
             return history;

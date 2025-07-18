@@ -61,7 +61,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     InvoiceDate = DateTime.UtcNow,
                     AppointmentDate = DateTime.UtcNow,
                     PaymentStatus = PaymentStatusForItem.NotPaid,
-                    IsConfirmed = false,
+                    //IsConfirmed = false,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,
                     LastUpdatedAt = DateTime.UtcNow,

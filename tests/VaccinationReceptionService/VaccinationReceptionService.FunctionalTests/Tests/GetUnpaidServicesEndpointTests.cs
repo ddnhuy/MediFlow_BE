@@ -102,7 +102,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     ScheduledDate = now.AddDays(2),
                     AppointmentDate = now.AddDays(3),
                     IsReadyToUse = false,
-                    IsConfirmed = false
+                    //IsConfirmed = false
                 };
 
                 dbContext.ReceptionVaccinations.Add(receptionVaccination);

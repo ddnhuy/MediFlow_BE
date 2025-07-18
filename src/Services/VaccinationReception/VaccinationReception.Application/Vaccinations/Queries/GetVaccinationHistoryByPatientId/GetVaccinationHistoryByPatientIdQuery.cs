@@ -8,7 +8,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHi
         int Id,
         string MedicineTypeName,
         string MedicineName,
-        string Concentration,
+        string DoseNumber,
         DateTime? VaccinationTestDate,
         DateTime VaccinationDate,
         bool VaccinationConfirmation,
