@@ -7,7 +7,15 @@ namespace Appointment.API.Repositories
     {
         Task<Models.Appointment?> GetByIdAsync(int id);
         Task<IEnumerable<Models.Appointment>> GetAllAsync();
-        Task<IEnumerable<Models.Appointment>> GetUpcomingAppointmentsAsync(DateTime fromDate);
+        Task<(IEnumerable<Models.Appointment>, int totalCount)> GetUpcomingAppointmentsAsync(
+            DateTime? fromDate = null,
+            DateTime? toDate = null,
+            int? doctorId = null,
+            TimeOfDayFilter? timeOfDay = null,
+            int? vaccineId = null,
+            int pageIndex = 1,
+            int pageSize = 10
+        );
         Task<IEnumerable<Models.Appointment>> GetAppointmentsByPatientIdAsync(int patientId);
 
         Task AddAsync(Models.Appointment appointment);
@@ -38,12 +46,69 @@ namespace Appointment.API.Repositories
             return await _appointments.AsNoTracking().ToListAsync();
         }
 
-        public async Task<IEnumerable<Models.Appointment>> GetUpcomingAppointmentsAsync(DateTime fromDate)
+        public async Task<(IEnumerable<Models.Appointment>, int totalCount)> GetUpcomingAppointmentsAsync(
+            DateTime? fromDate = null,
+            DateTime? toDate = null,
+            int? doctorId = null,
+            TimeOfDayFilter? timeOfDay = null,
+            int? vaccineId = null,
+            int pageIndex = 1,
+            int pageSize = 10)
         {
-            return await _appointments
-                .Where(a => a.AppointmentDate >= fromDate && !a.IsSuspended && !a.IsCancelled)
-                .OrderBy(a => a.AppointmentDate)
+            var query = _appointments.AsQueryable();
+
+            if (fromDate.HasValue)
+            {
+                // Convert to UTC and get the date part only
+                var utcFromDate = fromDate.Value.Kind == DateTimeKind.Unspecified
+                    ? DateTime.SpecifyKind(fromDate.Value, DateTimeKind.Utc).Date
+                    : fromDate.Value.ToUniversalTime().Date;
+                query = query.Where(a => a.AppointmentDate.Date >= utcFromDate);
+            }
+
+            if (toDate.HasValue)
+            {
+                // Convert to UTC and get the date part only
+                var utcToDate = toDate.Value.Kind == DateTimeKind.Unspecified
+                    ? DateTime.SpecifyKind(toDate.Value, DateTimeKind.Utc).Date
+                    : toDate.Value.ToUniversalTime().Date;
+                query = query.Where(a => a.AppointmentDate.Date <= utcToDate);
+            }
+
+            if (doctorId.HasValue)
+                query = query.Where(a => a.DoctorId == doctorId.Value);
+
+            if (vaccineId.HasValue)
+                query = query.Where(a => a.VaccineId == vaccineId.Value);
+
+            if (timeOfDay.HasValue)
+            {
+                if (timeOfDay == TimeOfDayFilter.Morning)
+                {
+                    var morningStart = TimeSpan.Zero;
+                    var morningEnd = new TimeSpan(12, 0, 0);
+                    query = query.Where(a => a.AppointmentDate.TimeOfDay >= morningStart
+                                         && a.AppointmentDate.TimeOfDay < morningEnd);
+                }
+                else if (timeOfDay == TimeOfDayFilter.Afternoon)
+                {
+                    var afternoonStart = new TimeSpan(12, 0, 0);
+                    var afternoonEnd = new TimeSpan(24, 0, 0);
+                    query = query.Where(a => a.AppointmentDate.TimeOfDay >= afternoonStart
+                                         && a.AppointmentDate.TimeOfDay < afternoonEnd);
+                }
+            }
+
+            query = query.Where(a => !a.IsSuspended && !a.IsCancelled);
+
+            var totalCount = await query.CountAsync();
+
+            var data = await query
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return (data, totalCount);
         }
 
         public async Task<IEnumerable<Models.Appointment>> GetAppointmentsByPatientIdAsync(int patientId)

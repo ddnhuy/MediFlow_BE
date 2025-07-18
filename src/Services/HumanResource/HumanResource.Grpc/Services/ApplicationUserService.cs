@@ -341,7 +341,7 @@ namespace HumanResource.Grpc.Services
                 TemplateData = new Dictionary<string, string>
                 {
                     ["FullName"] = user.Name ?? user.Email!,
-                    ["ResetTime"] = DateTime.Now.ToString("HH:mm dd/MM/yyyy"),
+                    ["ResetTime"] = DateTime.UtcNow.ToString("HH:mm dd/MM/yyyy"),
                     ["NewPassword"] = newPassword,
                 }
             }, context.CancellationToken);
