@@ -15,7 +15,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         int DepartmentId,
         string StandardValue,
         string EquipmentUsed,
-        string Quantity,
+        int Quantity,
         string Unit) : ICommand<UpdateServiceResult>;
 
     public record UpdateServiceResult(int ServiceId);
@@ -56,6 +56,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
                 service.StandardValue = request.StandardValue;
                 service.EquipmentUsed = request.EquipmentUsed;
                 service.Unit = request.Unit;
+                service.Quantity = request.Quantity;
 
                 await _serviceRepository.UpdateAsync(service, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
