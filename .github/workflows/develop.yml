@@ -98,7 +98,7 @@ jobs:
             git checkout develop
             git pull
 
-            docker compose -f docker-compose.release.yml down --remove-orphans --volumes
+            docker compose -f docker-compose.release.yml down --remove-orphans
             docker builder prune -af
 
             docker compose -f docker-compose.release.yml up -d --build
