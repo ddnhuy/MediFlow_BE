@@ -5,7 +5,7 @@ using System.Security.Claims;
 namespace Appointment.API.Endpoints
 {
     public record CreateAppointmentResponse(bool IsSuccess, string Message);
-    public record CreateAppointmentRequest(int PatientId, DateTime AppointmentDate, AppointmentType AppointmentType, string PatientCode, string PatientFullName, DateTime PatientDOB, string PatientEmail, string? PatientPhoneNumber, string? VaccineName, string? Note);
+    public record CreateAppointmentRequest(int PatientId, DateTime AppointmentDate, AppointmentType AppointmentType, string PatientCode, string PatientFullName, DateTime PatientDOB, string PatientEmail, string? PatientPhoneNumber, string? VaccineName, string? Note, int DoctorId, int VaccineId, string? Dose);
 
     public class CreateAppointmentEndpoint : ICarterModule
     {
@@ -24,7 +24,10 @@ namespace Appointment.API.Endpoints
                     request.PatientEmail,
                     request.PatientPhoneNumber,
                     request.VaccineName,
-                    request.Note);
+                    request.Note,
+                    request.DoctorId,
+                    request.VaccineId,
+                    request.Dose);
 
                 var result = await sender.Send(command);
 
