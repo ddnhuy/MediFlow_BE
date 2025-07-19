@@ -50,25 +50,26 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             }
 
             // Create RequestForm with unpaid service if not exists
-            var requestForm = dbContext.RequestForms
-                .FirstOrDefault(rf => rf.ReceptionId == TestReceptionId);
-            if (requestForm == null)
-            {
-                requestForm = new RequestForm
-                {
-                    ReceptionId = TestReceptionId,
-                    RequestNumber = "REQ001",
-                    CreatedAt = now,
-                    CreatedBy = 1,
-                    LastUpdatedAt = now,
-                    LastUpdatedBy = 1
-                };
-                dbContext.RequestForms.Add(requestForm);
-                dbContext.SaveChanges();
+            //var requestForm = dbContext.RequestForms
+            //    .FirstOrDefault(rf => rf.ReceptionId == TestReceptionId);
+            //if (requestForm == null)
+            //{
+            //    requestForm = new RequestForm
+            //    {
+            //        ReceptionId = TestReceptionId,
+            //        RequestNumber = "REQ001",
+            //        CreatedAt = now,
+            //        CreatedBy = 1,
+            //        LastUpdatedAt = now,
+            //        LastUpdatedBy = 1
+            //    };
+            //    dbContext.RequestForms.Add(requestForm);
+            //    dbContext.SaveChanges();
 
                 var requestFormService = new ServiceRequestDetail
                 {
-                    RequestFormId = requestForm.Id,
+                    ReceptionId = TestReceptionId,
+                    RequestNumber = "REQ001",
                     ServiceId = TestServiceId,
                     Quantity = 1,
                     UnitPrice = 100,
@@ -80,7 +81,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     InvoiceDate = now
                 };
                 dbContext.ServiceRequestDetails.Add(requestFormService);
-            }
+            //}
 
             // Create ReceptionVaccination with unpaid status if not exists
             var receptionVaccination = dbContext.ReceptionVaccinations

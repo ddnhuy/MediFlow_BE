@@ -75,7 +75,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasForeignKey(x => x.ServiceTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(x => x.RequestForms)
+            builder.HasMany(x => x.ServiceRequestDetails)
                .WithOne(x => x.Reception)
                .HasForeignKey(x => x.ReceptionId)
                .OnDelete(DeleteBehavior.Cascade);

@@ -40,7 +40,39 @@ namespace HospitalService.Infrastructure.SeedDatas
                     ServiceName = SeedConstants.Services.Vac6in1,
                     UnitPrice = SeedConstants.Services.Vac6in1Price,
                     DepartmentId = SeedConstants.Services.VaccinationDepartmentId
-                })
+                }),
+                SetBaseProperties(new Service
+                {
+                    Id = 3,
+                    ServiceCode = SeedConstants.Services.ExamFeeCode,
+                    ServiceName = SeedConstants.Services.ExamFee,
+                    UnitPrice = SeedConstants.Services.ExamFeePrice,
+                    DepartmentId = SeedConstants.Services.VaccinationDepartmentId
+                }),
+                SetBaseProperties(new Service
+                {
+                    Id = 4,
+                    ServiceCode = SeedConstants.Services.InjectIMCode,
+                    ServiceName = SeedConstants.Services.InjectIMName,
+                    UnitPrice = SeedConstants.Services.InjectIMPrice,
+                    DepartmentId = SeedConstants.Services.VaccinationDepartmentId
+                }),
+                SetBaseProperties(new Service
+                {
+                    Id = 5,
+                    ServiceCode = SeedConstants.Services.InjectSCCode,
+                    ServiceName = SeedConstants.Services.InjectSCName,
+                    UnitPrice = SeedConstants.Services.InjectSCPrice,
+                    DepartmentId = SeedConstants.Services.VaccinationDepartmentId
+                }),
+                SetBaseProperties(new Service
+                {
+                    Id = 6,
+                    ServiceCode = SeedConstants.Services.InjectIDCode,
+                    ServiceName = SeedConstants.Services.InjectIDName,
+                    UnitPrice = SeedConstants.Services.InjectIDPrice,
+                    DepartmentId = SeedConstants.Services.VaccinationDepartmentId
+                }),
             };
         }
     }

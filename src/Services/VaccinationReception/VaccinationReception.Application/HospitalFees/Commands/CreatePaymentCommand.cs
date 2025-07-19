@@ -58,9 +58,8 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                     .ToListAsync(cancellationToken);
 
                 var unpaidServices = await _context.ServiceRequestDetails
-                    .Include(x => x.RequestForm)
                     .Where(x => request.ServiceRequestDetailIds.Contains(x.Id)
-                             && x.RequestForm.ReceptionId == request.ReceptionId
+                             && x.ReceptionId == request.ReceptionId
                              && x.PaymentStatus == PaymentStatusForItem.NotPaid)
                     .ToListAsync(cancellationToken);
 

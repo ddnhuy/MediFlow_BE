@@ -144,5 +144,19 @@ namespace HospitalService.Infrastructure.Repositories
                     .ThenInclude(dgs => dgs.DiseaseGroup)
                 .ToListAsync(cancellationToken);
         }
+
+        public async Task<IEnumerable<Service>> GetByServiceCodesAsync(List<string> serviceCodes, CancellationToken cancellationToken)
+        {
+            if (serviceCodes == null || !serviceCodes.Any())
+            {
+                return new List<Service>();
+            }
+
+            return await _context.Services
+                .Where(s => serviceCodes.Contains(s.ServiceCode) && !s.IsCancelled)
+                .Include(s => s.ServiceGroupServices)
+                .Include(s => s.DiseaseGroupServices)
+                .ToListAsync(cancellationToken);
+        }
     }
 }

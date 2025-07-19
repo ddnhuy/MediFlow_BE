@@ -30,14 +30,8 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 if (reception == null)
                     throw new NotFoundException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
 
-                var requestForm = await _context.RequestForms
-                    .FirstOrDefaultAsync(rf => rf.ReceptionId == request.ReceptionId, cancellationToken);
-
-                if (requestForm == null)
-                    throw new NotFoundException(ExceptionKey.NOT_FOUND_REQUEST_FORM_WITH_RECEPTION_ID);
-
                 var serviceRequestDetails = await _context.ServiceRequestDetails
-                    .Where(srd => srd.RequestFormId == requestForm.Id && request.ServiceIds.Contains(srd.ServiceId))
+                    .Where(srd => srd.ReceptionId == reception.Id && request.ServiceIds.Contains(srd.ServiceId))
                     .ToListAsync(cancellationToken);
 
                 if (!serviceRequestDetails.Any())
@@ -50,21 +44,11 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 }
 
                 var activeServices = await _context.ServiceRequestDetails
-                    .AnyAsync(srd => srd.RequestFormId == requestForm.Id && !srd.IsCancelled, cancellationToken);
-
-                if (!activeServices)
-                {
-                    requestForm.IsCancelled = true;
-                    requestForm.LastUpdatedAt = DateTime.UtcNow;
-                    _logger.LogInformation("All services cancelled, marking request form {RequestFormId} as cancelled", requestForm.Id);
-                }
+                    .AnyAsync(srd => srd.ReceptionId == reception.Id && !srd.IsCancelled, cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                _logger.LogInformation("Cancelled {Count} services from request form {RequestFormId} for reception {ReceptionId}",
-                    serviceRequestDetails.Count, requestForm.Id, request.ReceptionId);
-
-                return new RemoveServicesFromRequestFormResult(requestForm.Id);
+                return new RemoveServicesFromRequestFormResult(reception.Id);
             }
             catch (Exception ex)
             {

@@ -43,8 +43,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
             try
             {
                 var details = await _context.ServiceRequestDetails
-                    .Include(d => d.RequestForm)
-                    .Where(d => d.RequestForm.ReceptionId == request.ReceptionId)
+                    .Where(d => d.ReceptionId == request.ReceptionId)
                     .ToListAsync(cancellationToken);
 
                 var serviceIds = details
@@ -75,7 +74,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                         UnitPrice = d.UnitPrice,
                         InvoiceDate = d.InvoiceDate,
                         PaymentStatus = d.PaymentStatus,
-                        RequestNumber = d.RequestForm?.RequestNumber ?? "N/A",
+                        RequestNumber = d.RequestNumber ?? "N/A",
                         ServiceCode = serviceDto.ServiceCode ?? "",
                         ServiceName = serviceDto.ServiceName ?? ""
                     };

@@ -33,11 +33,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasComment("Ngày cập nhật bản ghi cuối cùng");
 
-            // Properties
-            builder.Property(x => x.RequestFormId)
-                .IsRequired()
-                .HasComment("Mã phiếu yêu cầu");
-
             builder.Property(x => x.ServiceId)
                 .IsRequired()
                 .HasComment("Mã dịch vụ");
@@ -81,15 +76,21 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasComment("Ngày tạo bản ghi");
 
-            // Relationships
-            builder.HasOne(x => x.RequestForm)
-                .WithMany(x => x.ServiceRequestDetails)
-                .HasForeignKey(x => x.RequestFormId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(x => x.RequestNumber)
+                .IsRequired()
+                .HasMaxLength(15)
+                .HasComment("Số phiếu yêu cầu")
+                .HasColumnType("varchar(15)");
 
-            // Indexes
-            builder.HasIndex(x => x.RequestFormId)
-                .HasDatabaseName("IX_ServiceRequestDetails_RequestFormId");
+            builder.Property(x => x.ReceptionId)
+                .IsRequired()
+                .HasComment("Mã tiếp nhận");
+
+            // Relationships
+            builder.HasOne(x => x.Reception)
+                .WithMany(x => x.ServiceRequestDetails)
+                .HasForeignKey(x => x.ReceptionId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasIndex(x => x.ServiceId)
                 .HasDatabaseName("IX_ServiceRequestDetails_ServiceId");

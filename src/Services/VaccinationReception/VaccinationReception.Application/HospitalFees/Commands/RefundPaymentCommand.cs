@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.Data;
+using VaccinationReception.Application.Helpers;
 using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 
@@ -53,8 +54,7 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                     .ToListAsync(cancellationToken);
 
                 var itemsToRefundService = await _dbContext.ServiceRequestDetails
-                    .Where(sd => request.RefundedServiceRequestDetailIds.Contains(sd.Id) && sd.RequestForm.ReceptionId == request.ReceptionId && sd.PaymentStatus == PaymentStatusForItem.Paid)
-                    .Include(sd => sd.RequestForm)
+                    .Where(sd => request.RefundedServiceRequestDetailIds.Contains(sd.Id) && sd.ReceptionId == request.ReceptionId && sd.PaymentStatus == PaymentStatusForItem.Paid)
                     .ToListAsync(cancellationToken);
 
                 if (itemsToRefundVaccination.Count != (request.RefundedReceptionVaccinationIds?.Count ?? 0) ||
@@ -91,6 +91,7 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                     TotalAmount = totalRefundAmount,
                     Method = request.Method,
                     Note = request.Note,
+                    InvoiceNumber = UniqueStringGenerator.GenerateInvoiceNumber(),
                     PaymentType = PaymentType.Refund,
                     Status = PaymentStatus.Completed,
                     OriginalPaymentId = request.OriginalPaymentId,

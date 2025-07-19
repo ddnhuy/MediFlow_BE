@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Messaging.Contracts.HospitalService;
+using BuildingBlocks.Messaging.Contracts.HospitalService.GetServiceByServiceCodes;
 using BuildingBlocks.Messaging.Contracts.HospitalService.GetServicesByGroup;
 using BuildingBlocks.Messaging.Contracts.HospitalService.GetServicesByIds;
 using MassTransit;
@@ -11,16 +12,19 @@ namespace VaccinationReception.Infrastructure.Services.HospitalServiceMessaging
     {
         private readonly IRequestClient<GetServicesByGroupRequest> _groupRequestClient;
         private readonly IRequestClient<GetServicesByIdsRequest> _idsRequestClient;
+        private readonly IRequestClient<GetServiceByServiceCode> _serviceCodesRequestClient;
         private readonly ILogger<HospitalService> _logger;
 
         public HospitalService(
             IRequestClient<GetServicesByGroupRequest> groupRequestClient,
             IRequestClient<GetServicesByIdsRequest> idsRequestClient,
+            IRequestClient<GetServiceByServiceCode> serviceCodesRequestClient,
             ILogger<HospitalService> logger)
         {
             _groupRequestClient = groupRequestClient;
             _idsRequestClient = idsRequestClient;
             _logger = logger;
+            _serviceCodesRequestClient = serviceCodesRequestClient;
         }
 
         public async Task<List<ServiceDTO>> GetServicesByGroupAsync(int groupId, string groupType, CancellationToken cancellationToken)
@@ -34,6 +38,12 @@ namespace VaccinationReception.Infrastructure.Services.HospitalServiceMessaging
         {
             var request = new GetServicesByIdsRequest { ServiceIds = serviceIds };
             var response = await _idsRequestClient.GetResponse<GetServicesByIdsResponse>(request, cancellationToken);
+            return response.Message.Services ?? new List<ServiceDTO>();
+        }
+        public async Task<List<ServiceDTO>> GetServicesByServiceCodeAsync(List<string> serviceCodes, CancellationToken cancellationToken)
+        {
+            var request = new GetServiceByServiceCode { ServiceCodes = serviceCodes };
+            var response = await _serviceCodesRequestClient.GetResponse<GetServicesByServiceCodeResponse>(request, cancellationToken);
             return response.Message.Services ?? new List<ServiceDTO>();
         }
     }

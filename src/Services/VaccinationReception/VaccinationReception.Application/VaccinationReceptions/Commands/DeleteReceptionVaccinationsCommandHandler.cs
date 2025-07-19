@@ -35,7 +35,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 
                 if (!receptionVaccinations.Any())
                 {
-                    _logger.LogWarning("Không tìm thấy ReceptionVaccination nào để xóa với Ids: {Ids} và ReceptionId: {ReceptionId}",
+                    _logger.LogWarning("No ReceptionVaccination found to delete with Ids: {Ids} and ReceptionId: {ReceptionId}",
                         string.Join(", ", request.ReceptionVaccinationIds),
                         request.ReceptionId);
                     return new DeleteReceptionVaccinationsResult(false, 0);
@@ -48,7 +48,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                _logger.LogInformation("Đã xóa thành công {Count} ReceptionVaccination với Ids: {Ids} cho ReceptionId: {ReceptionId}",
+                _logger.LogInformation("Successfully deleted {Count} ReceptionVaccination with Ids: {Ids} for ReceptionId: {ReceptionId}",
                     receptionVaccinations.Count,
                     string.Join(", ", receptionVaccinations.Select(rv => rv.Id)),
                     request.ReceptionId);
@@ -57,7 +57,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Lỗi khi xóa ReceptionVaccination với Ids: {Ids} và ReceptionId: {ReceptionId}",
+                _logger.LogError(ex, "Error while deleting ReceptionVaccination with Ids: {Ids} and ReceptionId: {ReceptionId}",
                     string.Join(", ", request.ReceptionVaccinationIds),
                     request.ReceptionId);
                 throw;

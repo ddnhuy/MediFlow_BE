@@ -17,7 +17,7 @@ namespace VaccinationReception.Domain.Models
         public ScreeningEvaluationReport? ScreeningEvaluationReport { get; set; }
         public ICollection<ReceptionVaccination> ReceptionVaccinations { get; set; } = new List<ReceptionVaccination>();
 
-        public ICollection<RequestForm> RequestForms { get; set; } = new List<RequestForm>();
+        public ICollection<ServiceRequestDetail> ServiceRequestDetails { get; set; } = new List<ServiceRequestDetail>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
         public bool IsVaccinationTodayConfirmed { get; set; }
