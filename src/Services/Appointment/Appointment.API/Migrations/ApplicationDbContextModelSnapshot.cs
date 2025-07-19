@@ -43,6 +43,12 @@ namespace Appointment.API.Migrations
                     b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
+                    b.Property<int>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Dose")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsCancelled")
                         .HasColumnType("boolean");
 
@@ -78,6 +84,9 @@ namespace Appointment.API.Migrations
 
                     b.Property<string>("PatientPhoneNumber")
                         .HasColumnType("text");
+
+                    b.Property<int>("VaccineId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("VaccineName")
                         .HasColumnType("text");

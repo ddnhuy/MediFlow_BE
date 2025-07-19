@@ -94,10 +94,10 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasDefaultValue(PaymentStatusForItem.NotPaid)
                 .HasComment("Trạng thái thanh toán");
 
-            builder.Property(x => x.IsConfirmed)
-                .IsRequired()
-                .HasComment("Đã xác nhận")
-                .HasColumnType("boolean");
+            //builder.Property(x => x.IsConfirmed)
+            //    .IsRequired()
+            //    .HasComment("Đã xác nhận")
+            //    .HasColumnType("boolean");
 
             builder.Property(x => x.Note)
                 .HasMaxLength(255)

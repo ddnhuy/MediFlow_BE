@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MediatR;
+using NSubstitute.ReceivedExtensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +41,11 @@ namespace HospitalService.FunctionalTests.Tests
                 ServiceCode = "SVC001",
                 ServiceName = "Updated Service",
                 UnitPrice = 100.50m,
-                DepartmentId = 1
+                DepartmentId = 1,
+                Unit = "Test",
+                StandardValue = "Test",
+                Quantity = 1,
+                EquipmentUsed = "test"
             };
 
             var response = await _client.PutAsJsonAsync("/services/1", request);

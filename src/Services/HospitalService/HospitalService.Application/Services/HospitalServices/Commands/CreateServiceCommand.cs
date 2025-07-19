@@ -15,7 +15,11 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         string ServiceCode,
         string ServiceName,
         decimal UnitPrice,
-        int DepartmentId
+        int DepartmentId,
+        string Unit,
+        string StandardValue,
+        int Quantity,
+        string EquipmentUsed
     ) : ICommand<CreateServiceResult>;
     public record CreateServiceResult(int ServiceId);
 
@@ -47,6 +51,10 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
                     ServiceName = request.ServiceName,
                     UnitPrice = request.UnitPrice,
                     DepartmentId = request.DepartmentId,
+                    StandardValue = request.StandardValue,
+                    EquipmentUsed = request.EquipmentUsed,
+                    Unit = request.Unit,
+                    Quantity = request.Quantity
                 };
 
                 await _serviceRepository.AddAsync(service, cancellationToken);

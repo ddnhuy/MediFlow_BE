@@ -23,13 +23,18 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         public async Task GetNearestExpiryMedicineBatch_WithValidData_ReturnsSuccess()
         {
             // Arrange
-            var expectedResponse = new GetNearestExpiryMedicineBatchResponse
+            var expectedBatch = new GetNearestExpiryMedicineBatchItem
             {
                 MedicineBatchId = 123,
                 MedicineBatchNumber = "BATCH-001",
                 MedicineId = TestMedicineId,
                 MedicineName = "Test Medicine",
-                ExpiryDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(6)),
+                ExpiryDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(6))
+            };
+
+            var expectedResponse = new GetNearestExpiryMedicineBatchResponse
+            {
+                MedicineBatches = new List<GetNearestExpiryMedicineBatchItem> { expectedBatch },
                 RequestId = Guid.NewGuid().ToString(),
                 RequestedAt = DateTime.UtcNow,
                 IsSuccess = true,
@@ -48,11 +53,14 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var result = await response.Content.ReadFromJsonAsync<GetNearestExpiryMedicineBatchWithMedicineIdResult>();
             result.Should().NotBeNull();
             result!.IsSuccess.Should().BeTrue();
-            result.MedicineBatchId.Should().Be(expectedResponse.MedicineBatchId);
-            result.MedicineBatchNumber.Should().Be(expectedResponse.MedicineBatchNumber);
-            result.MedicineId.Should().Be(expectedResponse.MedicineId);
-            result.MedicineName.Should().Be(expectedResponse.MedicineName);
-            result.ExpiryDate.Should().Be(expectedResponse.ExpiryDate);
+            result.MedicineBatches.Should().NotBeNull();
+            result.MedicineBatches.Should().HaveCount(1);
+            var batch = result.MedicineBatches.First();
+            batch.MedicineBatchId.Should().Be(expectedBatch.MedicineBatchId);
+            batch.MedicineBatchNumber.Should().Be(expectedBatch.MedicineBatchNumber);
+            batch.MedicineId.Should().Be(expectedBatch.MedicineId);
+            batch.MedicineName.Should().Be(expectedBatch.MedicineName);
+            batch.ExpiryDate.Should().Be(expectedBatch.ExpiryDate);
         }
 
         [Fact]
@@ -74,11 +82,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             // Arrange
             var errorResponse = new GetNearestExpiryMedicineBatchResponse
             {
-                MedicineBatchId = 0,
-                MedicineBatchNumber = null,
-                MedicineId = TestMedicineId,
-                MedicineName = null,
-                ExpiryDate = null,
+                MedicineBatches = new List<GetNearestExpiryMedicineBatchItem>(), // Empty list for not found
                 RequestId = Guid.NewGuid().ToString(),
                 RequestedAt = DateTime.UtcNow,
                 IsSuccess = false,
@@ -98,6 +102,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             result.Should().NotBeNull();
             result!.IsSuccess.Should().BeFalse();
             result.ErrorMessage.Should().Be("Not found");
+            result.MedicineBatches.Should().BeEmpty();
         }
     }
 }

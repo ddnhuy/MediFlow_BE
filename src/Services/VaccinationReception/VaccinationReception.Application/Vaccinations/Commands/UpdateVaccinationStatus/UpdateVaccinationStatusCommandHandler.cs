@@ -16,15 +16,15 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdateVaccinati
 
         public async Task<UpdateVaccinationStatusCommandResult> Handle(UpdateVaccinationStatusCommand request, CancellationToken cancellationToken)
         {
-            var receptionVacciation = await  _dbContext.ReceptionVaccinations
-                .FirstOrDefaultAsync(v => v.Id == request.ReceptionVaccinationId);
+            var vaccination = await _dbContext.Vaccinations
+                .FirstOrDefaultAsync(v => v.Id == request.VaccinationId, cancellationToken);
 
-            if (receptionVacciation == null)
+            if (vaccination == null)
             {
-                throw new BadRequestException(BuildingBlocks.Strings.ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
+                throw new BadRequestException(BuildingBlocks.Strings.ExceptionKey.NOT_FOUND_VACCINATION_WITH_ID);
             }
 
-            receptionVacciation.IsConfirmed = request.Status;
+            vaccination.IsConfirmed = request.Status;
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new UpdateVaccinationStatusCommandResult(true);

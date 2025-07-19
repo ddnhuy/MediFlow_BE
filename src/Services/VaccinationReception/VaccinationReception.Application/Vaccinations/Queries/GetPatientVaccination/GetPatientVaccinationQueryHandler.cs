@@ -34,27 +34,42 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
             {
                 _logger.LogInformation("Retrieving all reception vaccinations with paid payment status");
 
-                // Get all reception vaccinations with paid payment status
+                // Get all paid, not-cancelled reception vaccinations, including Reception and ScreeningEvaluationReport
                 var paidReceptionVaccinations = await _context.ReceptionVaccinations
                     .Include(rv => rv.Reception)
-                    .ThenInclude(rv => rv.ScreeningEvaluationReport)
+                    .ThenInclude(r => r.ScreeningEvaluationReport)
+                    .Where(rv => rv.Reception.IsVaccinationTodayConfirmed == false)
                     .Where(rv => rv.PaymentStatus == PaymentStatusForItem.Paid && !rv.IsCancelled)
                     .ToListAsync(cancellationToken);
 
-                // Group by reception and include those with at least one unconfirmed vaccination
-                var receptionsWithUnconfirmedVaccinations = paidReceptionVaccinations
+                // Get all ReceptionVaccinationIds
+                var paidReceptionVaccinationIds = paidReceptionVaccinations.Select(rv => rv.Id).ToList();
+
+                // Get all Vaccinations for these ReceptionVaccinations
+                var vaccinations = await _context.Vaccinations
+                    .Where(v => paidReceptionVaccinationIds.Contains(v.ReceptionVaccinationId))
+                    .ToListAsync(cancellationToken);
+
+                // Find ReceptionVaccinations where number of Vaccination records <= Quantity
+                var pendingReceptionVaccinations = paidReceptionVaccinations
+                    .Where(rv =>
+                    {
+                        var relatedVaccinations = vaccinations.Where(v => v.ReceptionVaccinationId == rv.Id).ToList();
+                        return relatedVaccinations.Count <= rv.Quantity;
+                    }).ToList();
+
+                // Group by ReceptionId and select the first for each Reception
+                var receptionsWithPendingVaccinations = pendingReceptionVaccinations
                     .GroupBy(rv => rv.Reception.Id)
-                    .Where(group => group.Any(rv => !rv.IsConfirmed))
                     .Select(group => group.First())
                     .OrderBy(rv => rv.Reception.ReceptionDate)
                     .ToList();
 
-                _logger.LogInformation("Found {Count} receptions with unconfirmed vaccinations", receptionsWithUnconfirmedVaccinations.Count);
-
+                _logger.LogInformation("Found {Count} receptions with pending vaccinations", receptionsWithPendingVaccinations.Count);
 
                 var patientVaccinationItems = new List<PatientVaccinationItem>();
 
-                foreach (var receptionVaccination in receptionsWithUnconfirmedVaccinations)
+                foreach (var receptionVaccination in receptionsWithPendingVaccinations)
                 {
                     try
                     {
@@ -65,9 +80,9 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
 
                         var genderString = patient.Gender == 0 ? "Nữ" : "Nam";
 
-
                         var patientVaccinationItem = new PatientVaccinationItem(
                             ReceptionId: receptionVaccination.Reception.Id,
+                            PatientId: receptionVaccination.Reception.PatientId,
                             PatientCode: patient.Code,
                             PatientVaccinationCode: "Todo: Handle later",
                             PatientName: patient.Name,

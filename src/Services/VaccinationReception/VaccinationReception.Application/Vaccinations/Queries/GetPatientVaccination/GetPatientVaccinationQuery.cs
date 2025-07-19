@@ -14,6 +14,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
 
     public record PatientVaccinationItem(
         int ReceptionId,
+        int PatientId,
         string PatientCode,
         string PatientVaccinationCode,
         string PatientName,

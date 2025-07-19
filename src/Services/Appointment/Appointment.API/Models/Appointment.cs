@@ -3,6 +3,7 @@
     public class Appointment : BaseEntity
     {
         public int PatientId { get; set; }
+        public int DoctorId { get; set; }
         public DateTime AppointmentDate { get; set; }
         public AppointmentType AppointmentType { get; set; }
         public string PatientCode { get; set; } = default!;
@@ -10,7 +11,9 @@
         public DateTime PatientDOB { get; set; }
         public string PatientEmail { get; set; } = default!;
         public string? PatientPhoneNumber { get; set; } = default!;
+        public int VaccineId { get; set; }
         public string? VaccineName { get; set; } = default!;
+        public string? Dose { get; set; } = string.Empty;
         public string? Note { get; set; }
     }
 }

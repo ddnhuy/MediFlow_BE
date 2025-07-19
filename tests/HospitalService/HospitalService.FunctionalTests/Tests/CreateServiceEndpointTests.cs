@@ -44,7 +44,8 @@ namespace HospitalService.FunctionalTests.Tests
         [Fact]
         public async Task CreateService_ValidRequest_Returns200()
         {
-            var request = new { ServiceCode = "Abc123", ServiceName = "Test Description", UnitPrice = 100, DepartmentId = 1 };
+            var request = new { ServiceCode = "Abc123", ServiceName = "Test Description", UnitPrice = 100, DepartmentId = 1, Unit = "Test", StandardValue = "Test", Quantity = 1, EquipmentUsed = "test"
+            };
 
             // Act
             var response = await _client.PostAsJsonAsync("/services", request);

@@ -8,10 +8,10 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPut("/vaccination/{receptionVaccinationId}/status", async (int receptionVaccinationId, UpdateVaccinationStatusCommand command, ISender sender) =>
+            app.MapPut("/vaccination/{vaccinationId}/status", async (int vaccinationId, UpdateVaccinationStatusCommand command, ISender sender) =>
             {
                 // Ensure the command has the correct ReceptionVaccinationId
-                if (command.ReceptionVaccinationId != receptionVaccinationId)
+                if (command.VaccinationId != vaccinationId)
                 {
                     return Results.BadRequest("The ReceptionVaccinationId in the command does not match the ID in the URL.");
                 }

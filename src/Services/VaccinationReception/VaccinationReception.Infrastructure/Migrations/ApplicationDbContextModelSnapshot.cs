@@ -207,6 +207,9 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasDefaultValue(false)
                         .HasComment("Trạng thái tạm ngưng");
 
+                    b.Property<bool>("IsVaccinationTodayConfirmed")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("LastUpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasComment("Ngày cập nhật bản ghi cuối cùng");
@@ -270,6 +273,9 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasComment("Mã bác sĩ");
 
+                    b.Property<int?>("DoseNumber")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime?>("InvoiceDate")
                         .HasColumnType("timestamp with time zone")
                         .HasComment("Ngày xuất hóa đơn");
@@ -279,10 +285,6 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(false)
                         .HasComment("Trạng thái hủy");
-
-                    b.Property<bool>("IsConfirmed")
-                        .HasColumnType("boolean")
-                        .HasComment("Đã xác nhận");
 
                     b.Property<bool>("IsPreExaminationTesting")
                         .HasColumnType("boolean");
@@ -753,6 +755,9 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("DoseNumber")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("HasFeverAbove39")
                         .HasColumnType("boolean");
 
@@ -766,6 +771,9 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsConfirmed")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsSuspended")

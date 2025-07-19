@@ -11,8 +11,11 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
 
     public record MedicineInfo(
         int ReceptionVaccinationId,
+        int? VaccinationId, // Nullable in case it's not yet created
         int MedicineId,
         string MedicineName,
+        int MedicineBatchId,
+        string MedicineBatchNumber,
         bool IsConfirmed,
         string? TestResultEntry,
         string? doctorName

@@ -15,5 +15,8 @@ namespace BuildingBlocks.Messaging.Events
         public string? PatientPhoneNumber { get; set; } = default!;
         public string? VaccineName { get; set; } = default!;
         public string? Note { get; set; }
+        public int VaccineId { get; set; }
+        public int DoctorId { get; set; }
+        public string? Dose { get; set; } = string.Empty;
     }
 }

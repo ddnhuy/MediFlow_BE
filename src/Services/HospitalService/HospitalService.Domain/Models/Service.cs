@@ -13,7 +13,10 @@ namespace HospitalService.Domain.Models
         public string ServiceName { get; set; } = null!;
         public decimal UnitPrice { get; set; }
         public int DepartmentId { get; set; }
-
+        public string StandardValue { get; set; } = string.Empty;
+        public string EquipmentUsed { get; set; } = string.Empty;
+        public int Quantity { get; set; } = 0;
+        public string Unit { get; set; } = string.Empty;
         public virtual ICollection<ServiceGroupService> ServiceGroupServices { get; set; } = new List<ServiceGroupService>();
         public virtual ICollection<DiseaseGroupService> DiseaseGroupServices { get; set; } = new List<DiseaseGroupService>();
     }
