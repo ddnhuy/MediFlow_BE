@@ -105,8 +105,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
 
             var result = await response.Content.ReadFromJsonAsync<AddServiceToRequestFormResponse>();
             result.Should().NotBeNull();
-            result!.RequestFormId.Should().BeGreaterThan(0);
-            result.RequestNumber.Should().NotBeNullOrEmpty();
         }
 
         [Fact]

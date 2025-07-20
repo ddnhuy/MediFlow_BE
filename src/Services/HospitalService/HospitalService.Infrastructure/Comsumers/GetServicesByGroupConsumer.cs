@@ -2,6 +2,7 @@
 using BuildingBlocks.Messaging.Contracts.HospitalService.GetServicesByGroup;
 using HospitalService.Application.DTOs;
 using HospitalService.Application.Services.HospitalServices.Queries;
+using HospitalService.Infrastructure.Comsumers;
 using MassTransit;
 using MediatR;
 

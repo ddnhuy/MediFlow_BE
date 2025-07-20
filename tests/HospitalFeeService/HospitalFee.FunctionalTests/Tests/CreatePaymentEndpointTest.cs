@@ -42,10 +42,8 @@ namespace HospitalFee.FunctionalTests.Tests
             SetAuthHeader();
             var reception = new Reception { PatientId = 1, ServiceTypeId = 1 };
             await SeedEntityAsync(reception);
-            var requestForm = new RequestForm { ReceptionId = reception.Id, RequestNumber = "REQ-001" };
-            await SeedEntityAsync(requestForm);
 
-            var unpaidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 50, Quantity = 2, InvoiceDate = DateTime.UtcNow }; // Total 100
+            var unpaidService = new ServiceRequestDetail { ReceptionId = reception.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 50, Quantity = 2, InvoiceDate = DateTime.UtcNow, RequestNumber = "REQ-001" }; // Total 100
             var unpaidVaccination = new ReceptionVaccination { ReceptionId = reception.Id, VaccineId = 201, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 150, Quantity = 1, RequestNumber = "RV-001" }; // Total 150
             await SeedEntityAsync(unpaidService);
             await SeedEntityAsync(unpaidVaccination);
@@ -77,10 +75,10 @@ namespace HospitalFee.FunctionalTests.Tests
             var reception = new Reception { PatientId = 1, ServiceTypeId = 1 };
             await SeedEntityAsync(reception);
 
-            var requestForm = new RequestForm { ReceptionId = reception.Id, RequestNumber = "REQ-PAID-002" };
-            await SeedEntityAsync(requestForm);
+            //var requestForm = new RequestForm { ReceptionId = reception.Id, RequestNumber = "REQ-PAID-002" };
+            //await SeedEntityAsync(requestForm);
 
-            var paidService = new ServiceRequestDetail { RequestFormId = requestForm.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.Paid, UnitPrice = 50, Quantity = 1, InvoiceDate = DateTime.UtcNow };
+            var paidService = new ServiceRequestDetail { ReceptionId = reception.Id, ServiceId = 101, PaymentStatus = PaymentStatusForItem.Paid, UnitPrice = 50, Quantity = 1, InvoiceDate = DateTime.UtcNow, RequestNumber = "REQ-PAID-002" };
             await SeedEntityAsync(paidService);
 
             var request = new CreatePaymentRequest(

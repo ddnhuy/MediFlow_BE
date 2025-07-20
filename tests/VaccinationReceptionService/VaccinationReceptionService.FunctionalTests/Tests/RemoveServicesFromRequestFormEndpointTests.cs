@@ -43,33 +43,15 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 dbContext.Receptions.Add(reception);
             }
 
-
-
-            // Create RequestForm if not exists
-            var requestForm = dbContext.RequestForms
-                .FirstOrDefault(rf => rf.ReceptionId == TestReceptionId);
-            if (requestForm == null)
-            {
-                requestForm = new RequestForm
-                {
-                    ReceptionId = TestReceptionId,
-                    RequestNumber = "REQ001",
-                    CreatedAt = DateTime.UtcNow,
-                    CreatedBy = 1,
-                    LastUpdatedAt = DateTime.UtcNow,
-                    LastUpdatedBy = 1
-                };
-                dbContext.RequestForms.Add(requestForm);
-                dbContext.SaveChanges();
-
                 // Create RequestFormService if not exists
                 var requestFormService = dbContext.ServiceRequestDetails
-                    .FirstOrDefault(rfs => rfs.RequestFormId == requestForm.Id && rfs.ServiceId == TestServiceId);
+                    .FirstOrDefault(rfs => rfs.ReceptionId == reception.Id && rfs.ServiceId == TestServiceId);
                 if (requestFormService == null)
                 {
                     requestFormService = new ServiceRequestDetail
                     {
-                        RequestFormId = requestForm.Id,
+                        ReceptionId = TestReceptionId,
+                        RequestNumber = "REQ001",
                         ServiceId = TestServiceId,
                         Quantity = 1,
                         UnitPrice = 100,
@@ -81,8 +63,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     };
                     dbContext.ServiceRequestDetails.Add(requestFormService);
                 }
-            }
-
             dbContext.SaveChanges();
         }
 

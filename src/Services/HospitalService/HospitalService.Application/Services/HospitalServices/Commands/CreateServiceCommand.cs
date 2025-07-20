@@ -51,10 +51,10 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
                     ServiceName = request.ServiceName,
                     UnitPrice = request.UnitPrice,
                     DepartmentId = request.DepartmentId,
-                    StandardValue = request.StandardValue,
-                    EquipmentUsed = request.EquipmentUsed,
-                    Unit = request.Unit,
-                    Quantity = request.Quantity
+                    //StandardValue = request.StandardValue,
+                    //EquipmentUsed = request.EquipmentUsed,
+                    //Unit = request.Unit,
+                    //Quantity = request.Quantity
                 };
 
                 await _serviceRepository.AddAsync(service, cancellationToken);

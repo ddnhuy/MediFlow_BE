@@ -34,7 +34,6 @@ namespace VaccinationReception.Infrastructure.Data
         public virtual DbSet<ServiceType> ServiceTypes { get; set; }
         public virtual DbSet<ReceptionVaccination> ReceptionVaccinations { get; set; }
         public virtual DbSet<ServiceRequestDetail> ServiceRequestDetails { get; set; }
-        public virtual DbSet<RequestForm> RequestForms { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<PaymentDetail> PaymentDetails { get; set; }
         public virtual DbSet<Vaccination> Vaccinations { get; set; }

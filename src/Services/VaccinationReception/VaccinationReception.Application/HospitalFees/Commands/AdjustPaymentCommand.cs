@@ -4,6 +4,7 @@ using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VaccinationReception.Application.Data;
+using VaccinationReception.Application.Helpers;
 using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 
@@ -54,9 +55,8 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                     .ToListAsync(cancellationToken);
 
                 var itemsToCancelService = await _context.ServiceRequestDetails
-                    .Include(x => x.RequestForm)
                     .Where(x => request.CancelledServiceRequestDetailIds.Contains(x.Id)
-                             && x.RequestForm.ReceptionId == request.ReceptionId
+                             && x.ReceptionId == request.ReceptionId
                              && x.PaymentStatus == PaymentStatusForItem.Paid)
                     .ToListAsync(cancellationToken);
 
@@ -67,9 +67,8 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                     .ToListAsync(cancellationToken);
 
                 var itemsToAddService = await _context.ServiceRequestDetails
-                    .Include(x => x.RequestForm)
                     .Where(x => request.NewServiceRequestDetailIds.Contains(x.Id)
-                             && x.RequestForm.ReceptionId == request.ReceptionId
+                             && x.ReceptionId == request.ReceptionId
                              && x.PaymentStatus == PaymentStatusForItem.NotPaid)
                     .ToListAsync(cancellationToken);
 
@@ -126,6 +125,7 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                     TotalAmount = totalAmountDifference,
                     Method = request.Method,
                     Note = request.Note,
+                    InvoiceNumber = UniqueStringGenerator.GenerateInvoiceNumber(),
                     PaymentType = PaymentType.Adjustment,
                     Status = PaymentStatus.Completed,
                     OriginalPaymentId = request.OriginalPaymentId,

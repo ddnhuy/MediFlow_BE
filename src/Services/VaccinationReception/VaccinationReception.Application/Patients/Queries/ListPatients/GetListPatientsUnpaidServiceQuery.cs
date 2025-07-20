@@ -47,7 +47,7 @@ namespace VaccinationReception.Application.Patients.Queries.ListPatients
 
             var patientIdsFromServiceRequests = await _dbContext.ServiceRequestDetails
                 .Where(srd => srd.PaymentStatus == PaymentStatusForItem.NotPaid && !srd.IsCancelled)
-                .Select(srd => srd.RequestForm.Reception.PatientId)
+                .Select(srd => srd.Reception.PatientId)
                 .Distinct()
                 .ToListAsync(cancellationToken);
 

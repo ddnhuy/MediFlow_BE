@@ -53,9 +53,8 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                     );
                 }
                 var unpaidServices = await _context.ServiceRequestDetails
-                    .Include(srd => srd.RequestForm)
                     .Where(srd =>
-                        srd.RequestForm.ReceptionId == latestReceptionId &&
+                        srd.ReceptionId == latestReceptionId &&
                         srd.PaymentStatus == PaymentStatusForItem.NotPaid &&
                         !srd.IsCancelled)
                     .ToListAsync(cancellationToken);
@@ -72,7 +71,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
 
                     return new UnpaidServiceDTO(
                         srd.Id,
-                        srd.RequestForm.RequestNumber,
+                        srd.RequestNumber,
                         srd.ServiceId,
                         serviceName ?? string.Empty,
                         srd.Quantity,

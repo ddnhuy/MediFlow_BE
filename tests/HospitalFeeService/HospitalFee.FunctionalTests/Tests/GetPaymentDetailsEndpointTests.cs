@@ -60,14 +60,6 @@ namespace HospitalFee.FunctionalTests.Tests
                 LastUpdatedAt = DateTime.UtcNow
             };
 
-            var requestForm = new RequestForm
-            {
-                Id = 1,
-                ReceptionId = 1,
-                RequestNumber = "REQ-001",
-                CreatedAt = DateTime.UtcNow,
-                LastUpdatedAt = DateTime.UtcNow
-            };
 
             var payment = new Payment
             {
@@ -115,7 +107,8 @@ namespace HospitalFee.FunctionalTests.Tests
             {
                 Id = 1,
                 ServiceId = serviceId,
-                RequestFormId = requestForm.Id
+                ReceptionId = 1,
+                RequestNumber = "REQ-001"
             };
 
             var receptionVaccination = new ReceptionVaccination
@@ -132,7 +125,7 @@ namespace HospitalFee.FunctionalTests.Tests
 
             await SeedEntityAsync(serviceType);
             await SeedEntityAsync(reception);
-            await SeedEntityAsync(requestForm);
+           // await SeedEntityAsync(requestForm);
             await SeedEntityAsync(serviceRequestDetail);
             await SeedEntityAsync(receptionVaccination);
             await SeedEntityAsync(payment);

@@ -21,19 +21,12 @@ namespace HospitalFee.FunctionalTests.DataTest
                 ServiceTypeId = 1,
             };
 
-            var requestForm = new RequestForm
-            {
-                Id = 1,
-                ReceptionId = 1,
-                RequestNumber = "REQ-001"
-            };
-
             var serviceRequestDetail = new ServiceRequestDetail
             {
                 Id = 1,
                 ServiceId = 101,
-                RequestFormId = 1,
-                RequestForm = requestForm
+                ReceptionId = 1,
+                RequestNumber = "REQ-001"
             };
 
             var paymentDetail = new PaymentDetail
@@ -65,11 +58,11 @@ namespace HospitalFee.FunctionalTests.DataTest
         {
             var reception = new Reception { Id = 2, PatientId = 2, ServiceTypeId = 1 };
 
-            var requestForm = new RequestForm { Id = 2, Reception = reception, RequestNumber = "REQ-002" };
+            //var requestForm = new RequestForm { Id = 2, Reception = reception, RequestNumber = "REQ-002" };
 
             var originalPayment = new Payment { Id = 2, Reception = reception, Method = PaymentMethod.Cash, Status = PaymentStatus.Completed, TotalAmount = 0 };
 
-            var unpaidService = new ServiceRequestDetail { Id = 12, RequestForm = requestForm, ServiceId = 102, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 50, Quantity = 1 };
+            var unpaidService = new ServiceRequestDetail { Id = 12, Reception = reception, ServiceId = 102, PaymentStatus = PaymentStatusForItem.NotPaid, UnitPrice = 50, Quantity = 1, RequestNumber = "REQ-002"};
 
             // Add aggregate roots. EF Core will track the rest.
             dbContext.Receptions.Add(reception);

@@ -53,25 +53,11 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 dbContext.Receptions.Add(reception);
             }
 
-            // Create RequestForm & Service
-            var requestForm = dbContext.RequestForms.FirstOrDefault(rf => rf.ReceptionId == TestReceptionId);
-            if (requestForm == null)
-            {
-                requestForm = new RequestForm
-                {
-                    ReceptionId = TestReceptionId,
-                    RequestNumber = "REQ-PATIENT",
-                    CreatedAt = now,
-                    CreatedBy = 1,
-                    LastUpdatedAt = now,
-                    LastUpdatedBy = 1
-                };
-                dbContext.RequestForms.Add(requestForm);
-                dbContext.SaveChanges();
 
                 dbContext.ServiceRequestDetails.Add(new ServiceRequestDetail
                 {
-                    RequestFormId = requestForm.Id,
+                    ReceptionId = TestReceptionId,
+                    RequestNumber = "REQ-PATIENT",
                     ServiceId = TestServiceId,
                     Quantity = 2,
                     UnitPrice = 200,
@@ -82,7 +68,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     LastUpdatedBy = 1,
                     InvoiceDate = now
                 });
-            }
 
             // Add unpaid ReceptionVaccination
             if (!dbContext.ReceptionVaccinations.Any(rv => rv.ReceptionId == TestReceptionId))
