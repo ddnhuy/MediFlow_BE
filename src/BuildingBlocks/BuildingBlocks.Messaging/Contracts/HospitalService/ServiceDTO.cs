@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuildingBlocks.Strings.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,5 +14,16 @@ namespace BuildingBlocks.Messaging.Contracts.HospitalService
         public string? ServiceName { get; set; }
         public decimal UnitPrice { get; set; }
         public int DepartmentId { get; set; }
+        public int? Quantity { get; set; }
+        public ExaminationService? ExaminationService { get; set; }
+        public List<ServiceTestParameterDTO>? ServiceTestParameters { get; set; } = new List<ServiceTestParameterDTO>();
+    }
+
+    public class ServiceTestParameterDTO
+    {
+        public int ServiceId { get; set; }
+        public string ParameterName { get; set; } = default!;
+        public string Unit { get; set; } = default!;
+        public string StandardValue { get; set; } = string.Empty;
     }
 }

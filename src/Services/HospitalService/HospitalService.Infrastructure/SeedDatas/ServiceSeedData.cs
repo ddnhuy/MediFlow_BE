@@ -73,6 +73,24 @@ namespace HospitalService.Infrastructure.SeedDatas
                     UnitPrice = SeedConstants.Services.InjectIDPrice,
                     DepartmentId = SeedConstants.Services.VaccinationDepartmentId
                 }),
+                // Blood Test Service
+                SetBaseProperties(new Service
+                {
+                    Id = 7,
+                    ServiceCode = SeedConstants.Services.BloodTestCode,
+                    ServiceName = SeedConstants.Services.BloodTest,
+                    UnitPrice = SeedConstants.Services.BloodTestPrice,
+                    DepartmentId = SeedConstants.Services.LaboratoryDepartmentId
+                }),
+                // Hepatitis B Test Service
+                SetBaseProperties(new Service
+                {
+                    Id = 8,
+                    ServiceCode = SeedConstants.Services.HepatitisBTestCode,
+                    ServiceName = SeedConstants.Services.HepatitisBTest,
+                    UnitPrice = SeedConstants.Services.HepatitisBTestPrice,
+                    DepartmentId = SeedConstants.Services.LaboratoryDepartmentId
+                }),
             };
         }
     }

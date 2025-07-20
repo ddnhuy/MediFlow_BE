@@ -1,6 +1,8 @@
 ﻿using BuildingBlocks.Messaging.Contracts.HospitalService;
 using BuildingBlocks.Messaging.Contracts.HospitalService.GetServicesByIds;
 using HospitalService.Application.Services.HospitalServices.Queries;
+using HospitalService.Domain.Models;
+using Mapster;
 using MassTransit;
 using MediatR;
 
@@ -29,7 +31,15 @@ namespace HospitalService.Infrastructure.Comsumers
                     ServiceCode = s.ServiceCode,
                     ServiceName = s.ServiceName,
                     UnitPrice = s.UnitPrice,
-                    DepartmentId = s.DepartmentId
+                    DepartmentId = s.DepartmentId,
+                    ExaminationService = s.ExaminationService,
+                    ServiceTestParameters = s.ServiceTestParameters?.Select(e => new ServiceTestParameterDTO
+                    {
+                        ServiceId = e.ServiceId,
+                        StandardValue = e.StandardValue,
+                        ParameterName = e.ParameterName,
+                        Unit = e.Unit
+                    }).ToList(),
                 }).ToList()
             };
 

@@ -37,6 +37,8 @@ namespace VaccinationReception.Infrastructure.Data
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<PaymentDetail> PaymentDetails { get; set; }
         public virtual DbSet<Vaccination> Vaccinations { get; set; }
+        public virtual DbSet<Examination> Examinations { get; set; }
+        public virtual DbSet<ExaminationTestResult> ExaminationTestResults { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

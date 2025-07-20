@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BuildingBlocks.Strings.Enums;
+using HospitalService.Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +13,8 @@ namespace HospitalService.Application.DTOs
         string ServiceCode,
         string ServiceName,
         decimal UnitPrice,
-        int DepartmentId
+        int DepartmentId,
+        ExaminationService? ExaminationService,
+        ICollection<ServiceTestParameter>? ServiceTestParameters = null!
     );
 }

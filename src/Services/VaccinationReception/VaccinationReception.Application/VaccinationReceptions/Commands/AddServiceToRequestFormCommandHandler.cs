@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
@@ -16,15 +17,18 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
         private readonly IApplicationDbContext _context;
         private readonly ILogger<AddServiceToRequestFormCommand> _logger;
         private readonly IHospitalService _hospitalService;
+        private readonly IMediator _mediator;
 
         public AddServiceToRequestFormCommandHandler(
             IApplicationDbContext context,
             IHospitalService hospitalService,
-            ILogger<AddServiceToRequestFormCommand> logger)
+            ILogger<AddServiceToRequestFormCommand> logger,
+            IMediator mediator)
         {
             _context = context;
             _hospitalService = hospitalService;
             _logger = logger;
+            _mediator = mediator;
         }
 
         public async Task<AddServiceToRequestFormResult> Handle(AddServiceToRequestFormCommand request, CancellationToken cancellationToken)
@@ -84,6 +88,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                                     UnitPrice = unitPrice
                                 };
                                 await _context.ServiceRequestDetails.AddAsync(serviceRequestDetail, cancellationToken);
+                                await CreateExaminationCommand(serviceRequestDetail, cancellationToken);
 
                                 processedServiceReferences.Add(new ServiceIdAndRequestNumberDTO(
                                     serviceRequestDetail.ServiceId,
@@ -102,6 +107,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                                 UnitPrice = unitPrice
                             };
                             await _context.ServiceRequestDetails.AddAsync(serviceRequestDetail, cancellationToken);
+                            await CreateExaminationCommand(serviceRequestDetail, cancellationToken);
 
                             processedServiceReferences.Add(new ServiceIdAndRequestNumberDTO(
                                 serviceRequestDetail.ServiceId,
@@ -148,7 +154,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                                     UnitPrice = service.UnitPrice
                                 };
                                 await _context.ServiceRequestDetails.AddAsync(serviceRequestDetail, cancellationToken);
-
+                                await CreateExaminationCommand(serviceRequestDetail, cancellationToken);
                                 processedServiceReferences.Add(new ServiceIdAndRequestNumberDTO(
                                     serviceRequestDetail.ServiceId,
                                     serviceRequestDetail.RequestNumber
@@ -166,7 +172,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                                 UnitPrice = service.UnitPrice
                             };
                             await _context.ServiceRequestDetails.AddAsync(serviceRequestDetail, cancellationToken);
-
+                            await CreateExaminationCommand(serviceRequestDetail, cancellationToken);
                             processedServiceReferences.Add(new ServiceIdAndRequestNumberDTO(
                                 serviceRequestDetail.ServiceId,
                                 serviceRequestDetail.RequestNumber
@@ -186,6 +192,31 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             {
                 _logger.LogError(ex, "Error occurred while handling AddServiceToRequestFormCommand");
                 throw;
+            }
+        }
+
+        private async Task CreateExaminationCommand(ServiceRequestDetail serviceRequestDetail, CancellationToken cancellationToken)
+        {
+            var services = await _hospitalService.GetServicesByIdsAsync(
+                new List<int> { serviceRequestDetail.ServiceId }, cancellationToken);
+
+            foreach (var service in services)
+            {
+                if (service.ExaminationService != null)
+                {
+                    var examination = new CreateExaminationCommand(
+                        ReceptionId: serviceRequestDetail.ReceptionId,
+                        ServiceId: serviceRequestDetail.ServiceId,
+                        RequestNumber: serviceRequestDetail.RequestNumber,
+                        PatientId: serviceRequestDetail.Reception.PatientId,
+                        ReceptionTime: serviceRequestDetail.Reception.ReceptionDate
+                    );
+                    await _mediator.Send(examination, cancellationToken);
+                } else
+                {
+                    continue;
+                }
+
             }
         }
     }
