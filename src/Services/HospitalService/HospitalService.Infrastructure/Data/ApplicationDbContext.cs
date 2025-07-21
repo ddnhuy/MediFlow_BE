@@ -33,6 +33,7 @@ namespace HospitalService.Infrastructure.Data
         public virtual DbSet<DiseaseGroupService> DiseaseGroupServices { get; set; }
         public virtual DbSet<ServiceGroupService> ServiceGroupServices { get; set; }
         public virtual DbSet<Service> Services { get; set; }
+        public virtual DbSet<ServiceTestParameter> ServiceTestParameters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

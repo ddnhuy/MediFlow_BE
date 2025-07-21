@@ -45,6 +45,11 @@ namespace HospitalService.Infrastructure.SeedDatas
                 {
                     Id = 4,
                     GroupName = SeedConstants.ServiceGroups.InjectionFee
+                }),
+                SetBaseProperties(new ServiceGroup
+                {
+                    Id = 5,
+                    GroupName = SeedConstants.ServiceGroups.LaboratoryTest
                 })
             };
         }

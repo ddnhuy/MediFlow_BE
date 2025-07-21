@@ -60,6 +60,20 @@ namespace HospitalService.Infrastructure.SeedDatas
                     Id = 6,
                     ServiceGroupId = 4,
                     ServiceId = 6
+                }),
+                // Blood Test Service belongs to Laboratory Test group
+                SetBaseProperties(new ServiceGroupService
+                {
+                    Id = 7,
+                    ServiceGroupId = 5,
+                    ServiceId = 7
+                }),
+                // Hepatitis B Test Service belongs to Laboratory Test group
+                SetBaseProperties(new ServiceGroupService
+                {
+                    Id = 8,
+                    ServiceGroupId = 5,
+                    ServiceId = 8
                 })
             };
         }

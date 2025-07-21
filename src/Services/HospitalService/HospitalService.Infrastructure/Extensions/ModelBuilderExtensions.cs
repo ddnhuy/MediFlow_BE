@@ -18,6 +18,7 @@ namespace HospitalService.Infrastructure.Extensions
             modelBuilder.Entity<Service>().HasData(ServiceSeedData.GetSeedData());
             modelBuilder.Entity<DiseaseGroupService>().HasData(DiseaseGroupServiceSeedData.GetSeedData());
             modelBuilder.Entity<ServiceGroupService>().HasData(ServiceGroupServiceSeedData.GetSeedData());
+            modelBuilder.Entity<ServiceTestParameter>().HasData(ServiceTestParameterSeedData.GetSeedData());
         }
     }
 }
