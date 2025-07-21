@@ -79,6 +79,7 @@ namespace HospitalService.Infrastructure.SeedDatas
                     Id = 7,
                     ServiceCode = SeedConstants.Services.BloodTestCode,
                     ServiceName = SeedConstants.Services.BloodTest,
+                    ExaminationService = BuildingBlocks.Strings.Enums.ExaminationService.Blood,
                     UnitPrice = SeedConstants.Services.BloodTestPrice,
                     DepartmentId = SeedConstants.Services.LaboratoryDepartmentId
                 }),
@@ -88,6 +89,7 @@ namespace HospitalService.Infrastructure.SeedDatas
                     Id = 8,
                     ServiceCode = SeedConstants.Services.HepatitisBTestCode,
                     ServiceName = SeedConstants.Services.HepatitisBTest,
+                    ExaminationService = BuildingBlocks.Strings.Enums.ExaminationService.Anti_HBs,
                     UnitPrice = SeedConstants.Services.HepatitisBTestPrice,
                     DepartmentId = SeedConstants.Services.LaboratoryDepartmentId
                 }),

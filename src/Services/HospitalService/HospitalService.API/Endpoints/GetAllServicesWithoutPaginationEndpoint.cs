@@ -17,7 +17,7 @@ namespace HospitalService.API.Endpoints
                 var query = new GetAllServicesWithoutPaginationQuery(searchTerm);
                 var result = await sender.Send(query);
 
-                var response = result.Adapt<GetAllServicesWithoutPaginationResponse>();
+                var response = new GetAllServicesWithoutPaginationResponse(result.Services);
                 return Results.Ok(response);
             })
             .RequireAuthorization()

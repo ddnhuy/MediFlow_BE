@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace HospitalService.Domain.Models
@@ -11,6 +12,7 @@ namespace HospitalService.Domain.Models
     public class ServiceTestParameter : BaseEntity
     {
         public int ServiceId { get; set; }
+        [JsonIgnore]
         public Service? Service { get; set; }
         public string ParameterName { get; set; } = default!;
         public string Unit { get; set; } = default!;
