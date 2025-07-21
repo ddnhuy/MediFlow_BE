@@ -1,8 +1,4 @@
-
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
 using VaccinationReception.Domain.Abstractions;
-using VaccinationReception.Domain.Models;
 
 namespace VaccinationReception.Domain.Models
 {

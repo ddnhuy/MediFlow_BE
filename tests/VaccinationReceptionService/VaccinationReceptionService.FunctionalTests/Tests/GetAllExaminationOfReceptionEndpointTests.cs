@@ -40,7 +40,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     UnitPrice = 150000m,
                     DepartmentId = 2,
                     ExaminationService = null,
-                    ServiceTestParameters = new List<ServiceTestParameterDTO>()
+                    ServiceTestParameters = new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceTestParameterDTO>()
                 },
                 new ServiceDTO
                 {
@@ -50,7 +50,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     UnitPrice = 200000m,
                     DepartmentId = 2,
                     ExaminationService = null,
-                    ServiceTestParameters = new List<ServiceTestParameterDTO>()
+                    ServiceTestParameters = new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceTestParameterDTO>()
                 }
             };
 

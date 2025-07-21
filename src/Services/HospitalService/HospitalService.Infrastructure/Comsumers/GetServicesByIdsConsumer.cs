@@ -38,7 +38,9 @@ namespace HospitalService.Infrastructure.Comsumers
                         ServiceId = e.ServiceId,
                         StandardValue = e.StandardValue,
                         ParameterName = e.ParameterName,
-                        Unit = e.Unit
+                        Unit = e.Unit,
+                        EquipmentName = e.EquipmentName,
+                        SpecimenType = e.SpecimenType
                     }).ToList(),
                 }).ToList()
             };
