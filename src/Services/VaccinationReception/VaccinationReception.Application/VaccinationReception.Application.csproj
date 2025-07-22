@@ -40,7 +40,4 @@
 		  <Link>Protos\role.proto</Link>
 		</Protobuf>
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Examinations\Handlers\" />
-	</ItemGroup>
 </Project>

@@ -25,5 +25,7 @@ namespace BuildingBlocks.Messaging.Contracts.HospitalService
         public string ParameterName { get; set; } = default!;
         public string Unit { get; set; } = default!;
         public string StandardValue { get; set; } = string.Empty;
+        public string? EquipmentName { get; set; } = string.Empty;
+        public string? SpecimenType { get; set; } = string.Empty;
     }
 }
