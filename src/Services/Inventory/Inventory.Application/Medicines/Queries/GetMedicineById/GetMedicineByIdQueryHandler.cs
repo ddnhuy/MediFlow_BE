@@ -7,6 +7,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineById
         public async Task<GetMedicineByIdResult> Handle(GetMedicineByIdQuery request, CancellationToken cancellationToken)
         {
             var medicine = await dbContext.Medicines
+                .Include(m => m.VaccineType)
                 .Where(x => !x.IsSuspended && !x.IsCancelled)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == request.Id, cancellationToken);
@@ -42,6 +43,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineById
                 RegistrationNumber = medicine.RegistrationNumber,
                 IsSuspended = medicine.IsSuspended,
                 VaccineTypeId = medicine.VaccineTypeId ?? 0,
+                VaccineTypeName = medicine.VaccineType?.VaccineTypeName,
                 CreatedAt = medicine.CreatedAt,
                 IsCancelled = medicine.IsCancelled,
                 LastUpdatedAt = medicine.LastUpdatedAt,

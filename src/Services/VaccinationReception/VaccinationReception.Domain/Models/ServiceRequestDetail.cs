@@ -10,14 +10,13 @@ namespace VaccinationReception.Domain.Models
 {
     public class ServiceRequestDetail : BaseEntity
     {
-        public int RequestFormId { get; set; }
-        public RequestForm RequestForm { get; set; } = null!;
-
+        public int ReceptionId { get; set; }
+        public string RequestNumber { get; set; } = null!;
         public int ServiceId { get; set; }
-
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public DateTime? InvoiceDate { get; set; }
         public PaymentStatusForItem PaymentStatus { get; set; }
+        public Reception Reception { get; set; } = null!;
     }
 }

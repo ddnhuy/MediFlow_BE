@@ -224,6 +224,9 @@ namespace HospitalService.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasComment("Mã phòng ban");
 
+                    b.Property<int?>("ExaminationService")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsCancelled")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -306,6 +309,92 @@ namespace HospitalService.Infrastructure.Migrations
                             ServiceCode = "VAC002",
                             ServiceName = "Tiêm vắc xin 6 trong 1",
                             UnitPrice = 600000m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            DepartmentId = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceCode = "EXAMFEE",
+                            ServiceName = "Công khám",
+                            UnitPrice = 50000m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            DepartmentId = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceCode = "IM",
+                            ServiceName = "Công tiêm bắp (IM)",
+                            UnitPrice = 30000m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            DepartmentId = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceCode = "SC",
+                            ServiceName = "Công tiêm dưới da (SC)",
+                            UnitPrice = 25000m
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            DepartmentId = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceCode = "ID",
+                            ServiceName = "Công tiêm trong da (ID)",
+                            UnitPrice = 35000m
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            DepartmentId = 2,
+                            ExaminationService = 0,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceCode = "BLOOD001",
+                            ServiceName = "Xét nghiệm công thức máu",
+                            UnitPrice = 150000m
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            DepartmentId = 2,
+                            ExaminationService = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceCode = "HEPB001",
+                            ServiceName = "Xét nghiệm kháng thể viêm gan B",
+                            UnitPrice = 250000m
                         });
                 });
 
@@ -382,6 +471,39 @@ namespace HospitalService.Infrastructure.Migrations
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 1,
                             GroupName = "Nhóm dịch vụ tiêm chủng đặc biệt",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            GroupName = "Công khám",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            GroupName = "Công tiêm",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            GroupName = "Nhóm dịch vụ xét nghiệm",
                             IsCancelled = false,
                             IsSuspended = false,
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -478,6 +600,614 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedBy = 1,
                             ServiceGroupId = 2,
                             ServiceId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceGroupId = 3,
+                            ServiceId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceGroupId = 4,
+                            ServiceId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceGroupId = 4,
+                            ServiceId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceGroupId = 4,
+                            ServiceId = 6
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceGroupId = 5,
+                            ServiceId = 7
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ServiceGroupId = 5,
+                            ServiceId = 8
+                        });
+                });
+
+            modelBuilder.Entity("HospitalService.Domain.Models.ServiceTestParameter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("EquipmentName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ParameterName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SpecimenType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StandardValue")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("ServiceTestParameters");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "WBC (White Blood Cell)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "4.0 - 11.0",
+                            Unit = "G/L"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "LYM (Lymphocyte)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "20.0 - 40.0",
+                            Unit = "%"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "NEU (Neutrophil)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "50.0 - 70.0",
+                            Unit = "%"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "MON (Monocyte)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "2.0 - 8.0",
+                            Unit = "%"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "EOS (Eosinophils)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "1.0 - 4.0",
+                            Unit = "%"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "BASO (Basophils)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "0.0 - 1.0",
+                            Unit = "%"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "RBC (Red Blood Cell)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "4.0 - 5.5",
+                            Unit = "T/L"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "HGB (Hemoglobin)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "130 - 175",
+                            Unit = "g/L"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "HCT (Hematocrit)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "40.0 - 50.0",
+                            Unit = "%"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "MCV (Mean Corpuscular Volume)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "80.0 - 100.0",
+                            Unit = "fL"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "MCH (Mean Corpuscular Hemoglobin)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "27.0 - 32.0",
+                            Unit = "pg"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "MCHC (Mean Corpuscular Hemoglobin Concentration)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "320 - 360",
+                            Unit = "g/L"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "RDW (Red Cell Distribution Width)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "11.5 - 14.5",
+                            Unit = "%"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "PLT (Platelet Count)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "150 - 450",
+                            Unit = "G/L"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "PCT (Plateletcrit)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "0.1 - 0.3",
+                            Unit = "%"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "PDW (Platelet Distribution Width)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "10.0 - 17.0",
+                            Unit = "%"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "MPV (Mean Platelet Volume)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "7.0 - 11.0",
+                            Unit = "fL"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy phân tích huyết học tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "P-LCR (Plateletcrit Larger Cell Ratio)",
+                            ServiceId = 7,
+                            SpecimenType = "Máu toàn phần",
+                            StandardValue = "15.0 - 35.0",
+                            Unit = "%"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy ELISA tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "HBsAb (Anti-HBs)",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "> 10",
+                            Unit = "mIU/mL"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy ELISA tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "HBsAg",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "< 0.05",
+                            Unit = "IU/mL"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy ELISA tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "HBeAg",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "< 1.0",
+                            Unit = "S/CO"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy ELISA tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "Anti-HBe",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "> 1.0",
+                            Unit = "S/CO"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy ELISA tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "Anti-HBc IgM",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "< 1.0",
+                            Unit = "S/CO"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy ELISA tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "Anti-HBc IgG",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "> 1.0",
+                            Unit = "S/CO"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy PCR real-time",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "HBV-DNA",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "< 20",
+                            Unit = "IU/mL"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy sinh hóa tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "AST (SGOT)",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "7 - 40",
+                            Unit = "U/L"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy sinh hóa tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "ALT (SGPT)",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "7 - 40",
+                            Unit = "U/L"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy sinh hóa tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "GGT",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "7 - 32",
+                            Unit = "U/L"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy sinh hóa tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "Bilirubin toàn phần",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "0.3 - 1.2",
+                            Unit = "mg/dL"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            EquipmentName = "Máy sinh hóa tự động",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            ParameterName = "Albumin",
+                            ServiceId = 8,
+                            SpecimenType = "Huyết thanh",
+                            StandardValue = "3.5 - 5.0",
+                            Unit = "g/dL"
                         });
                 });
 
@@ -519,6 +1249,17 @@ namespace HospitalService.Infrastructure.Migrations
                     b.Navigation("ServiceGroup");
                 });
 
+            modelBuilder.Entity("HospitalService.Domain.Models.ServiceTestParameter", b =>
+                {
+                    b.HasOne("HospitalService.Domain.Models.Service", "Service")
+                        .WithMany("ServiceTestParameters")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+                });
+
             modelBuilder.Entity("HospitalService.Domain.Models.DiseaseGroup", b =>
                 {
                     b.Navigation("DiseaseGroupServices");
@@ -529,6 +1270,8 @@ namespace HospitalService.Infrastructure.Migrations
                     b.Navigation("DiseaseGroupServices");
 
                     b.Navigation("ServiceGroupServices");
+
+                    b.Navigation("ServiceTestParameters");
                 });
 
             modelBuilder.Entity("HospitalService.Domain.Models.ServiceGroup", b =>

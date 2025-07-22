@@ -35,7 +35,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 
                 if (receptionVaccination == null)
                 {
-                    _logger.LogWarning("Không tìm thấy ReceptionVaccination với Id: {Id} trong ReceptionId: {ReceptionId}", request.Id, request.ReceptionId);
+                    _logger.LogWarning("ReceptionVaccination with Id: {Id} not found in ReceptionId: {ReceptionId}", request.Id, request.ReceptionId);
                     return new UpdateReceptionVaccinationResult(false);
                 }
 
@@ -47,12 +47,12 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                _logger.LogInformation("Đã cập nhật thành công ReceptionVaccination với Id: {Id}", request.Id);
+                _logger.LogInformation("Successfully updated ReceptionVaccination with Id: {Id}", request.Id);
                 return new UpdateReceptionVaccinationResult(true);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Lỗi khi cập nhật ReceptionVaccination với Id: {Id}", request.Id);
+                _logger.LogError(ex, "Error while updating ReceptionVaccination with Id: {Id}", request.Id);
                 throw;
             }
         }

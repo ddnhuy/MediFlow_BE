@@ -22,6 +22,135 @@ namespace VaccinationReception.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("VaccinationReception.Domain.Models.Examination", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Conclusion")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Diagnose")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("DoctorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DoctorName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ExecutionTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("PatientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PerformTechnicianId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PerformTechnicianName")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ReceptionId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("ReceptionTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RequestNumber")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ReturnTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("SampleQuality")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SampleType")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ServiceId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceptionId");
+
+                    b.ToTable("Examinations");
+                });
+
+            modelBuilder.Entity("VaccinationReception.Domain.Models.ExaminationTestResult", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ExaminationId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ParameterName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ResultValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StandardValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExaminationId");
+
+                    b.ToTable("ExaminationTestResults");
+                });
+
             modelBuilder.Entity("VaccinationReception.Domain.Models.Payment", b =>
                 {
                     b.Property<int>("Id")
@@ -368,70 +497,6 @@ namespace VaccinationReception.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("VaccinationReception.Domain.Models.RequestForm", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasComment("Primary key")
-                        .HasAnnotation("Npgsql:IdentityIncrement", 1)
-                        .HasAnnotation("Npgsql:IdentityStartValue", 1);
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasComment("Ngày tạo phiếu");
-
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("integer")
-                        .HasComment("Người tạo phiếu");
-
-                    b.Property<bool>("IsCancelled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái hủy");
-
-                    b.Property<bool>("IsSuspended")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasComment("Trạng thái tạm ngưng");
-
-                    b.Property<DateTime>("LastUpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasComment("Ngày cập nhật bản ghi cuối cùng");
-
-                    b.Property<int>("LastUpdatedBy")
-                        .HasColumnType("integer")
-                        .HasComment("Người cập nhật bản ghi cuối cùng");
-
-                    b.Property<int>("ReceptionId")
-                        .HasColumnType("integer")
-                        .HasComment("Mã tiếp nhận");
-
-                    b.Property<string>("RequestNumber")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("varchar(15)")
-                        .HasComment("Số phiếu yêu cầu");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceptionId")
-                        .HasDatabaseName("IX_RequestForms_ReceptionId");
-
-                    b.HasIndex("RequestNumber")
-                        .IsUnique()
-                        .HasDatabaseName("IX_RequestForms_RequestNumber");
-
-                    b.ToTable("RequestForms", "public", t =>
-                        {
-                            t.HasComment("Bảng phiếu yêu cầu dịch vụ");
-                        });
-                });
-
             modelBuilder.Entity("VaccinationReception.Domain.Models.ScreeningEvaluationReport", b =>
                 {
                     b.Property<int>("Id")
@@ -619,9 +684,15 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasComment("Số lượng");
 
-                    b.Property<int>("RequestFormId")
+                    b.Property<int>("ReceptionId")
                         .HasColumnType("integer")
-                        .HasComment("Mã phiếu yêu cầu");
+                        .HasComment("Mã tiếp nhận");
+
+                    b.Property<string>("RequestNumber")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("varchar(15)")
+                        .HasComment("Số phiếu yêu cầu");
 
                     b.Property<int>("ServiceId")
                         .HasColumnType("integer")
@@ -634,8 +705,7 @@ namespace VaccinationReception.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RequestFormId")
-                        .HasDatabaseName("IX_ServiceRequestDetails_RequestFormId");
+                    b.HasIndex("ReceptionId");
 
                     b.HasIndex("ServiceId")
                         .HasDatabaseName("IX_ServiceRequestDetails_ServiceId");
@@ -828,6 +898,24 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.ToTable("Vaccinations");
                 });
 
+            modelBuilder.Entity("VaccinationReception.Domain.Models.Examination", b =>
+                {
+                    b.HasOne("VaccinationReception.Domain.Models.Reception", "Reception")
+                        .WithMany()
+                        .HasForeignKey("ReceptionId");
+
+                    b.Navigation("Reception");
+                });
+
+            modelBuilder.Entity("VaccinationReception.Domain.Models.ExaminationTestResult", b =>
+                {
+                    b.HasOne("VaccinationReception.Domain.Models.Examination", "Examination")
+                        .WithMany("ExaminationTestResults")
+                        .HasForeignKey("ExaminationId");
+
+                    b.Navigation("Examination");
+                });
+
             modelBuilder.Entity("VaccinationReception.Domain.Models.Payment", b =>
                 {
                     b.HasOne("VaccinationReception.Domain.Models.Payment", "OriginalPayment")
@@ -893,17 +981,6 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.Navigation("Reception");
                 });
 
-            modelBuilder.Entity("VaccinationReception.Domain.Models.RequestForm", b =>
-                {
-                    b.HasOne("VaccinationReception.Domain.Models.Reception", "Reception")
-                        .WithMany("RequestForms")
-                        .HasForeignKey("ReceptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Reception");
-                });
-
             modelBuilder.Entity("VaccinationReception.Domain.Models.ScreeningEvaluationReport", b =>
                 {
                     b.HasOne("VaccinationReception.Domain.Models.Reception", "Reception")
@@ -917,13 +994,13 @@ namespace VaccinationReception.Infrastructure.Migrations
 
             modelBuilder.Entity("VaccinationReception.Domain.Models.ServiceRequestDetail", b =>
                 {
-                    b.HasOne("VaccinationReception.Domain.Models.RequestForm", "RequestForm")
+                    b.HasOne("VaccinationReception.Domain.Models.Reception", "Reception")
                         .WithMany("ServiceRequestDetails")
-                        .HasForeignKey("RequestFormId")
+                        .HasForeignKey("ReceptionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("RequestForm");
+                    b.Navigation("Reception");
                 });
 
             modelBuilder.Entity("VaccinationReception.Domain.Models.Vaccination", b =>
@@ -937,6 +1014,11 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.Navigation("ReceptionVaccination");
                 });
 
+            modelBuilder.Entity("VaccinationReception.Domain.Models.Examination", b =>
+                {
+                    b.Navigation("ExaminationTestResults");
+                });
+
             modelBuilder.Entity("VaccinationReception.Domain.Models.Payment", b =>
                 {
                     b.Navigation("PaymentDetails");
@@ -948,13 +1030,8 @@ namespace VaccinationReception.Infrastructure.Migrations
 
                     b.Navigation("ReceptionVaccinations");
 
-                    b.Navigation("RequestForms");
-
                     b.Navigation("ScreeningEvaluationReport");
-                });
 
-            modelBuilder.Entity("VaccinationReception.Domain.Models.RequestForm", b =>
-                {
                     b.Navigation("ServiceRequestDetails");
                 });
 

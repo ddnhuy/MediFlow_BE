@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
@@ -16,15 +17,18 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
         private readonly IApplicationDbContext _context;
         private readonly ILogger<AddServiceToRequestFormCommand> _logger;
         private readonly IHospitalService _hospitalService;
+        private readonly IMediator _mediator;
 
         public AddServiceToRequestFormCommandHandler(
             IApplicationDbContext context,
             IHospitalService hospitalService,
-            ILogger<AddServiceToRequestFormCommand> logger)
+            ILogger<AddServiceToRequestFormCommand> logger,
+            IMediator mediator)
         {
             _context = context;
             _hospitalService = hospitalService;
             _logger = logger;
+            _mediator = mediator;
         }
 
         public async Task<AddServiceToRequestFormResult> Handle(AddServiceToRequestFormCommand request, CancellationToken cancellationToken)
@@ -37,19 +41,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 if (reception == null)
                     throw new BadRequestException(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID);
 
-                var requestForm = await _context.RequestForms
-                    .FirstOrDefaultAsync(rf => rf.ReceptionId == request.ReceptionId, cancellationToken);
-
-                if (requestForm == null)
-                {
-                    requestForm = new RequestForm
-                    {
-                        ReceptionId = request.ReceptionId,
-                        RequestNumber = UniqueStringGenerator.GenerateUniqueString()
-                    };
-                    await _context.RequestForms.AddAsync(requestForm, cancellationToken);
-                    await _context.SaveChangesAsync(cancellationToken);
-                }
+                var processedServiceReferences = new List<ServiceIdAndRequestNumberDTO>();
 
                 if (request.Services != null && request.Services.Any())
                 {
@@ -65,7 +57,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     {
                         var existingService = await _context.ServiceRequestDetails
                             .FirstOrDefaultAsync(srd =>
-                                srd.RequestFormId == requestForm.Id &&
+                                srd.ReceptionId == reception.Id &&
                                 srd.ServiceId == service.ServiceId,
                                 cancellationToken);
 
@@ -79,29 +71,48 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                             {
                                 existingService.Quantity += service.Quantity;
                                 existingService.UnitPrice = unitPrice;
+
+                                processedServiceReferences.Add(new ServiceIdAndRequestNumberDTO(
+                                    existingService.ServiceId,
+                                    existingService.RequestNumber
+                                ));
                             }
                             else
                             {
                                 var serviceRequestDetail = new ServiceRequestDetail
                                 {
-                                    RequestFormId = requestForm.Id,
+                                    RequestNumber = UniqueStringGenerator.GenerateUniqueString(),
+                                    ReceptionId = reception.Id,
                                     ServiceId = service.ServiceId,
                                     Quantity = service.Quantity,
                                     UnitPrice = unitPrice
                                 };
                                 await _context.ServiceRequestDetails.AddAsync(serviceRequestDetail, cancellationToken);
+                                await CreateExaminationCommand(serviceRequestDetail, cancellationToken);
+
+                                processedServiceReferences.Add(new ServiceIdAndRequestNumberDTO(
+                                    serviceRequestDetail.ServiceId,
+                                    serviceRequestDetail.RequestNumber
+                                ));
                             }
                         }
                         else
                         {
                             var serviceRequestDetail = new ServiceRequestDetail
                             {
-                                RequestFormId = requestForm.Id,
+                                RequestNumber = UniqueStringGenerator.GenerateUniqueString(),
+                                ReceptionId = reception.Id,
                                 ServiceId = service.ServiceId,
                                 Quantity = service.Quantity,
                                 UnitPrice = unitPrice
                             };
                             await _context.ServiceRequestDetails.AddAsync(serviceRequestDetail, cancellationToken);
+                            await CreateExaminationCommand(serviceRequestDetail, cancellationToken);
+
+                            processedServiceReferences.Add(new ServiceIdAndRequestNumberDTO(
+                                serviceRequestDetail.ServiceId,
+                                serviceRequestDetail.RequestNumber
+                            ));
                         }
                     }
                 }
@@ -116,7 +127,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     {
                         var existingService = await _context.ServiceRequestDetails
                             .FirstOrDefaultAsync(srd =>
-                                srd.RequestFormId == requestForm.Id &&
+                                srd.ReceptionId == reception.Id &&
                                 srd.ServiceId == service.Id,
                                 cancellationToken);
 
@@ -126,29 +137,46 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                             {
                                 existingService.Quantity += request.DefaultQuantity;
                                 existingService.UnitPrice = service.UnitPrice;
+
+                                processedServiceReferences.Add(new ServiceIdAndRequestNumberDTO(
+                                    existingService.ServiceId,
+                                    existingService.RequestNumber
+                                ));
                             }
                             else
                             {
                                 var serviceRequestDetail = new ServiceRequestDetail
                                 {
-                                    RequestFormId = requestForm.Id,
+                                    RequestNumber = UniqueStringGenerator.GenerateUniqueString(),
+                                    ReceptionId = reception.Id,
                                     ServiceId = service.Id,
                                     Quantity = request.DefaultQuantity,
                                     UnitPrice = service.UnitPrice
                                 };
                                 await _context.ServiceRequestDetails.AddAsync(serviceRequestDetail, cancellationToken);
+                                await CreateExaminationCommand(serviceRequestDetail, cancellationToken);
+                                processedServiceReferences.Add(new ServiceIdAndRequestNumberDTO(
+                                    serviceRequestDetail.ServiceId,
+                                    serviceRequestDetail.RequestNumber
+                                ));
                             }
                         }
                         else
                         {
                             var serviceRequestDetail = new ServiceRequestDetail
                             {
-                                RequestFormId = requestForm.Id,
+                                RequestNumber = UniqueStringGenerator.GenerateUniqueString(),
+                                ReceptionId = reception.Id,
                                 ServiceId = service.Id,
                                 Quantity = request.DefaultQuantity,
                                 UnitPrice = service.UnitPrice
                             };
                             await _context.ServiceRequestDetails.AddAsync(serviceRequestDetail, cancellationToken);
+                            await CreateExaminationCommand(serviceRequestDetail, cancellationToken);
+                            processedServiceReferences.Add(new ServiceIdAndRequestNumberDTO(
+                                serviceRequestDetail.ServiceId,
+                                serviceRequestDetail.RequestNumber
+                            ));
                         }
                     }
                 }
@@ -158,12 +186,37 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);
-                return new AddServiceToRequestFormResult(requestForm.Id, requestForm.RequestNumber);
+                return new AddServiceToRequestFormResult(reception.Id, processedServiceReferences);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while handling AddServiceToRequestFormCommand");
                 throw;
+            }
+        }
+
+        private async Task CreateExaminationCommand(ServiceRequestDetail serviceRequestDetail, CancellationToken cancellationToken)
+        {
+            var services = await _hospitalService.GetServicesByIdsAsync(
+                new List<int> { serviceRequestDetail.ServiceId }, cancellationToken);
+
+            foreach (var service in services)
+            {
+                if (service.ExaminationService != null)
+                {
+                    var examination = new CreateExaminationCommand(
+                        ReceptionId: serviceRequestDetail.ReceptionId,
+                        ServiceId: serviceRequestDetail.ServiceId,
+                        RequestNumber: serviceRequestDetail.RequestNumber,
+                        PatientId: serviceRequestDetail.Reception.PatientId,
+                        ReceptionTime: serviceRequestDetail.Reception.ReceptionDate
+                    );
+                    await _mediator.Send(examination, cancellationToken);
+                } else
+                {
+                    continue;
+                }
+
             }
         }
     }

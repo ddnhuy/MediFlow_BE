@@ -21,5 +21,6 @@ namespace HospitalService.Domain.Repositories
         Task<IEnumerable<Service>> GetServicesByGroupIdAsync(int groupId, string groupType, CancellationToken cancellationToken);
         Task<IEnumerable<Service>> GetByIdsAsync(List<int> serviceIds, CancellationToken cancellationToken);
         Task<List<Service>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<Service>> GetByServiceCodesAsync(List<string> serviceCodes, CancellationToken cancellationToken);
     }
 }

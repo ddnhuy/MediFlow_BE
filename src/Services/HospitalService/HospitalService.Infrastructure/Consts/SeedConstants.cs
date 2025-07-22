@@ -21,6 +21,9 @@ namespace HospitalService.Infrastructure.Consts
         {
             public const string BasicVaccination = "Nhóm dịch vụ tiêm chủng cơ bản";
             public const string SpecialVaccination = "Nhóm dịch vụ tiêm chủng đặc biệt";
+            public const string InjectionFee = "Công tiêm";
+            public const string ExamFee = "Công khám";
+            public const string LaboratoryTest = "Nhóm dịch vụ xét nghiệm";
         }
 
         public static class DiseaseGroups
@@ -40,7 +43,34 @@ namespace HospitalService.Infrastructure.Consts
             public const decimal Vac5in1Price = 500000;
             public const decimal Vac6in1Price = 600000;
 
+            public const string ExamFeeCode = "EXAMFEE";
+            public const string ExamFee = "Công khám";
+            public const decimal ExamFeePrice = 50000;
+
+            public const string InjectIMCode = "IM";
+            public const string InjectIMName = "Công tiêm bắp (IM)";
+            public const decimal InjectIMPrice = 30000;
+
+            public const string InjectSCCode = "SC";
+            public const string InjectSCName = "Công tiêm dưới da (SC)";
+            public const decimal InjectSCPrice = 25000;
+
+            public const string InjectIDCode = "ID";
+            public const string InjectIDName = "Công tiêm trong da (ID)";
+            public const decimal InjectIDPrice = 35000;
+
+            // Blood Test Service
+            public const string BloodTestCode = "BLOOD001";
+            public const string BloodTest = "Xét nghiệm công thức máu";
+            public const decimal BloodTestPrice = 150000;
+
+            // Hepatitis B Test Service
+            public const string HepatitisBTestCode = "HEPB001";
+            public const string HepatitisBTest = "Xét nghiệm kháng thể viêm gan B";
+            public const decimal HepatitisBTestPrice = 250000;
+
             public const int VaccinationDepartmentId = 1;
+            public const int LaboratoryDepartmentId = 2;
         }
     }
 }

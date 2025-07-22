@@ -52,7 +52,9 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
                     s.ServiceCode,
                     s.ServiceName,
                     s.UnitPrice,
-                    s.DepartmentId
+                    s.DepartmentId,
+                    s.ExaminationService,
+                    s.ServiceTestParameters
                 )).ToList();
 
                 _logger.LogInformation("Found {Count} services", items.Count);

@@ -27,6 +27,7 @@ namespace HospitalService.Infrastructure.Repositories
             return await _context.Services
                 .Include(s => s.ServiceGroupServices)
                 .Include(s => s.DiseaseGroupServices)
+                .Include(s => s.ServiceTestParameters)
                 .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         }
 
@@ -35,6 +36,7 @@ namespace HospitalService.Infrastructure.Repositories
             return await _context.Services
                 .Include(s => s.ServiceGroupServices)
                 .Include(s => s.DiseaseGroupServices)
+                .Include(s => s.ServiceTestParameters)
                 .ToListAsync(cancellationToken);
         }
 
@@ -70,6 +72,7 @@ namespace HospitalService.Infrastructure.Repositories
                 .Where(s => s.DepartmentId == departmentId)
                 .Include(s => s.ServiceGroupServices)
                 .Include(s => s.DiseaseGroupServices)
+                .Include(s => s.ServiceTestParameters)
                 .ToListAsync(cancellationToken);
         }
 
@@ -80,6 +83,7 @@ namespace HospitalService.Infrastructure.Repositories
                            s.ServiceCode.ToLower().Contains(searchTerm.ToLower()))
                 .Include(s => s.ServiceGroupServices)
                 .Include(s => s.DiseaseGroupServices)
+                .Include(s => s.ServiceTestParameters)
                 .ToListAsync(cancellationToken);
         }
 
@@ -119,6 +123,7 @@ namespace HospitalService.Infrastructure.Repositories
             return await query
                 .Include(s => s.ServiceGroupServices)
                 .Include(s => s.DiseaseGroupServices)
+                .Include(s => s.ServiceTestParameters)
                 .ToListAsync(cancellationToken);
         }
         public async Task<IEnumerable<Service>> GetByIdsAsync(List<int> serviceIds, CancellationToken cancellationToken)
@@ -132,16 +137,33 @@ namespace HospitalService.Infrastructure.Repositories
                 .Where(s => serviceIds.Contains(s.Id) && !s.IsCancelled)
                 .Include(s => s.ServiceGroupServices)
                 .Include(s => s.DiseaseGroupServices)
+                .Include(s => s.ServiceTestParameters)
                 .ToListAsync(cancellationToken);
         }
         public async Task<List<Service>> GetAllWithDetailsAsync(CancellationToken cancellationToken = default)
         {
             return await _context.Services
                 .Where(s => !s.IsCancelled)
+                .Include(s => s.ServiceTestParameters)
                 .Include(s => s.ServiceGroupServices)
                     .ThenInclude(sgs => sgs.ServiceGroup)
                 .Include(s => s.DiseaseGroupServices)
                     .ThenInclude(dgs => dgs.DiseaseGroup)
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<Service>> GetByServiceCodesAsync(List<string> serviceCodes, CancellationToken cancellationToken)
+        {
+            if (serviceCodes == null || !serviceCodes.Any())
+            {
+                return new List<Service>();
+            }
+
+            return await _context.Services
+                .Where(s => serviceCodes.Contains(s.ServiceCode) && !s.IsCancelled)
+                .Include(s => s.ServiceGroupServices)
+                .Include(s => s.DiseaseGroupServices)
+                .Include(s => s.ServiceTestParameters)
                 .ToListAsync(cancellationToken);
         }
     }

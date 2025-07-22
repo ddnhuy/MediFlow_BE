@@ -11,10 +11,11 @@ namespace VaccinationReception.Application.Data
         DbSet<ServiceType> ServiceTypes { get; }
         DbSet<ReceptionVaccination> ReceptionVaccinations { get; }
         DbSet<ServiceRequestDetail> ServiceRequestDetails { get; }
-        DbSet<RequestForm> RequestForms { get; }
         DbSet<Vaccination> Vaccinations { get; }
         DbSet<Payment> Payments { get; }
         DbSet<PaymentDetail> PaymentDetails { get; }
+        DbSet<Examination> Examinations { get; }
+        DbSet<ExaminationTestResult> ExaminationTestResults { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
         DatabaseFacade Database { get; }

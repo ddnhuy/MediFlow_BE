@@ -25,7 +25,6 @@
                 Description = request.Description,
                 Note = request.Note,
                 RegistrationNumber = request.RegistrationNumber,
-                MedicineTypeId = request.MedicineTypeId,
                 VaccineTypeId = request.VaccineTypeId,
                 IsSuspended = false,
                 IsCancelled = false,

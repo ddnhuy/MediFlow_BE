@@ -1,4 +1,8 @@
-﻿using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
+﻿using BuildingBlocks.Messaging.Contracts.HospitalService;
+using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
+using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInteraction;
+using BuildingBlocks.Messaging.Contracts.Inventory.MedicineStockStatus;
+using BuildingBlocks.Strings.Enums;
 using HumanResource.Grpc;
 using Testcontainers.RabbitMq;
 using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
@@ -134,6 +138,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 MedicineId = 1,
                 MedicineName = "COVID-19 Vaccine",
                 VaccineTypeName = "COVID-19",
+                RouteOfAdministration = RouteOfAdministration.IM.ToString(),
                 MedicineTypeName = "Vaccine",
                 IsSuccess = true
             };
@@ -143,6 +148,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 MedicineId = 2,
                 MedicineName = "Flu Vaccine",
                 VaccineTypeName = "Influenza",
+                RouteOfAdministration = RouteOfAdministration.IM.ToString(),
                 MedicineTypeName = "Vaccine",
                 IsSuccess = true
             };
@@ -153,6 +159,51 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 .GetMedicineInformationAsync(Arg.Any<IEnumerable<int>>(), Arg.Any<CancellationToken>())
                 .Returns(medicineInfoList);
 
+            _factory.HospitalServiceMock
+                 .GetServicesByServiceCodeAsync(Arg.Any<List<string>>(), Arg.Any<CancellationToken>())
+                 .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>
+                 {
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 1,
+                        ServiceCode = "ExamFee",
+                        ServiceName = "dasdsa",
+                        UnitPrice = 100000
+                    },
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 2,
+                        ServiceCode = "IM",
+                        ServiceName = "dasdsa",
+                        UnitPrice = 100000
+                    }
+                 });
+
+            var medicineInteractionInfo = new MedicineInteractionInfo()
+            {
+                Id = 1,
+                MedicineId1 = 1,
+                Medicine1Name = "Covid 19 ",
+                MedicineId2 = 2,
+                Medicine2Name = "Influenza",
+                HarmfulEffects = "fsadf",
+                Mechanism = "dasd",
+                PreventiveActions = "sdadasd",
+                ReferenceInfo = "dasdsad",
+                Notes = "dadsa"
+            };
+
+
+            _factory.InventoryServiceMock
+                .GetMedicineInteractionsResponseAsync(Arg.Any<int>(), Arg.Any<CancellationToken>())
+                .Returns(new GetMedicineInteractionsResponse()
+                {
+                    MedicineId = 1,
+                    MedicineName = "dsadsa",
+                    Interactions = new List<MedicineInteractionInfo>() { medicineInteractionInfo },
+                    RequestId = "2121adsa23121",
+                });
+
             var command = new CreateReceptionVaccinationCommand(
                 ReceptionId: TestReceptionId,
                 VaccineId: TestVaccineId,
@@ -162,6 +213,18 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 AppointmentDate: DateTime.UtcNow.AddDays(7),
                 Note: null
             );
+
+            _factory.InventoryServiceMock
+                .CheckMedicineStockResponseAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+                .Returns(new CheckMedicineStockResponse()
+                {
+                    CurrentStock = 1000,
+                    Difference = 1000,
+                    IsEnough = true,
+                    IsSuccess = true,
+                    MedicineId = 1,
+                    NumberOfMedicineWanted = 10
+                });
 
             // Act
             var response = await _client.PostAsJsonAsync("/reception-vaccinations", command);

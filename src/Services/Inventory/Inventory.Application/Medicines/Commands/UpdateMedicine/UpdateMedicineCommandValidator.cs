@@ -21,7 +21,6 @@ namespace Inventory.Application.Medicines.Commands.UpdateMedicine
                 RuleFor(x => x.RouteOfAdministration),
                 RuleFor(x => x.NationalMedicineCode),
                 RuleFor(x => x.RegistrationNumber),
-                RuleFor(x => x.MedicineTypeId),
                 RuleFor(x => x.VaccineTypeId),
                 RuleFor(x => x.Description),
                 ruleForIsRequiredTestingBeforeUse: RuleFor(x => x.IsRequiredTestingBeforeUse),

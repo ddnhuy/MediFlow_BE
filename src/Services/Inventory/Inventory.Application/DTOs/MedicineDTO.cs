@@ -20,6 +20,7 @@ namespace Inventory.Application.DTOs
         public string? RegistrationNumber { get; set; } 
         public int MedicineTypeId { get; set; }
         public int VaccineTypeId { get; set; }
+        public string? VaccineTypeName { get; set; }
         public bool IsSuspended { get; set; }
         public bool IsCancelled { get; set; }
         public DateTime CreatedAt { get; set; }

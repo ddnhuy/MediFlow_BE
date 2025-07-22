@@ -35,6 +35,21 @@ namespace HospitalService.Infrastructure.SeedDatas
                 {
                     Id = 2,
                     GroupName = SeedConstants.ServiceGroups.SpecialVaccination
+                }),
+                SetBaseProperties(new ServiceGroup
+                {
+                    Id = 3,
+                    GroupName = SeedConstants.ServiceGroups.ExamFee
+                }),
+                SetBaseProperties(new ServiceGroup
+                {
+                    Id = 4,
+                    GroupName = SeedConstants.ServiceGroups.InjectionFee
+                }),
+                SetBaseProperties(new ServiceGroup
+                {
+                    Id = 5,
+                    GroupName = SeedConstants.ServiceGroups.LaboratoryTest
                 })
             };
         }

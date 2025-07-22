@@ -34,7 +34,6 @@ namespace Inventory.FunctionalTests.Tests
                 Description: "For pain relief",
                 Note: "Updated in test",
                 RegistrationNumber: "REG12345",
-                MedicineTypeId: 1,
                 VaccineTypeId: 1,
                 IsSuspended: false,
                 IsCancelled: false
@@ -67,7 +66,6 @@ namespace Inventory.FunctionalTests.Tests
                 Description: "For pain relief",
                 Note: "Updated in test",
                 RegistrationNumber: "REG12345",
-                MedicineTypeId: 1,
                 VaccineTypeId: 1,
                 IsSuspended: false,
                 IsCancelled: false
@@ -101,7 +99,6 @@ namespace Inventory.FunctionalTests.Tests
                 Description: "For pain relief",
                 Note: "Updated in test",
                 RegistrationNumber: "REG12345",
-                MedicineTypeId: 1,
                 VaccineTypeId: 1,
                 IsSuspended: false,
                 IsCancelled: false

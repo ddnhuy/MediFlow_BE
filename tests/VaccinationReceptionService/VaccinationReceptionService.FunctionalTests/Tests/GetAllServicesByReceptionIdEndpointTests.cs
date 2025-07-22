@@ -47,24 +47,10 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 dbContext.Receptions.Add(reception);
             }
 
-            var requestForm = dbContext.RequestForms.FirstOrDefault(rf => rf.ReceptionId == TestReceptionId);
-            if (requestForm == null)
-            {
-                requestForm = new RequestForm
+                var serviceRequest = new ServiceRequestDetail
                 {
                     ReceptionId = TestReceptionId,
                     RequestNumber = "REQ001",
-                    CreatedAt = now,
-                    CreatedBy = 1,
-                    LastUpdatedAt = now,
-                    LastUpdatedBy = 1
-                };
-                dbContext.RequestForms.Add(requestForm);
-                dbContext.SaveChanges();
-
-                var serviceRequest = new ServiceRequestDetail
-                {
-                    RequestFormId = requestForm.Id,
                     ServiceId = TestServiceId,
                     Quantity = 1,
                     UnitPrice = 150000,
@@ -76,8 +62,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     InvoiceDate = now
                 };
 
-                dbContext.ServiceRequestDetails.Add(serviceRequest);
-            }
+                dbContext.ServiceRequestDetails.Add(serviceRequest);         
 
             dbContext.SaveChanges();
         }
