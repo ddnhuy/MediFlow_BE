@@ -10,6 +10,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicines
             var pageSize = query.PaginationRequest.PageSize;
 
             var baseQuery = dbContext.Medicines
+                .Include(m => m.VaccineType)
                 .Where(x => !x.IsSuspended && !x.IsCancelled);
 
             if (!string.IsNullOrWhiteSpace(query.SearchKeyword))
@@ -56,6 +57,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicines
                 RegistrationNumber = medicine.RegistrationNumber,
                 MedicineTypeId = medicine.MedicineTypeId ?? 0,
                 VaccineTypeId = medicine.VaccineTypeId ?? 0,
+                VaccineTypeName = medicine.VaccineType?.VaccineTypeName,
                 IsSuspended = medicine.IsSuspended,
                 IsCancelled = medicine.IsCancelled,
                 CreatedAt = medicine.CreatedAt,

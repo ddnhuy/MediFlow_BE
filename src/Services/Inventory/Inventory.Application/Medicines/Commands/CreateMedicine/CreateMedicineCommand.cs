@@ -17,7 +17,6 @@ namespace Inventory.Application.Medicines.Commands.CreateMedicine
        string Description,
        string Note,
        string RegistrationNumber,
-       int MedicineTypeId,
        int VaccineTypeId) : ICommand<CreateMedicineResult>;
 
     public record CreateMedicineResult(int Id);
