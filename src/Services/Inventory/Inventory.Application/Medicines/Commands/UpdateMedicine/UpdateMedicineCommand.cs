@@ -18,7 +18,6 @@ namespace Inventory.Application.Medicines.Commands.UpdateMedicine
         string Description,
         string Note,
         string RegistrationNumber,
-        int MedicineTypeId,
         int VaccineTypeId,
         bool IsSuspended,
         bool IsCancelled) : ICommand<UpdateMedicineResult>;

@@ -34,7 +34,6 @@ namespace Inventory.FunctionalTests.Tests
                 Description: "Test description",
                 Note: "Test note",
                 RegistrationNumber: "TEST123",
-                MedicineTypeId: 0,
                 VaccineTypeId: 0
             );
 
@@ -65,7 +64,6 @@ namespace Inventory.FunctionalTests.Tests
                 Description: "Description",
                 Note: "Note",
                 RegistrationNumber: "REG100",
-                MedicineTypeId: 1,
                 VaccineTypeId: 1
             );
 
@@ -93,7 +91,6 @@ namespace Inventory.FunctionalTests.Tests
                 Description: "Description",
                 Note: "Note",
                 RegistrationNumber: "REG101",
-                MedicineTypeId: 1,
                 VaccineTypeId: 1
             );
 
@@ -121,7 +118,6 @@ namespace Inventory.FunctionalTests.Tests
                 Description: "Description",
                 Note: "Note",
                 RegistrationNumber: "REG200",
-                MedicineTypeId: 1,
                 VaccineTypeId: 1
             );
             var response1 = await _client.PostAsJsonAsync("/medicines", command);
@@ -143,7 +139,6 @@ namespace Inventory.FunctionalTests.Tests
                 Description: "Description2",
                 Note: "Note2",
                 RegistrationNumber: "REG201",
-                MedicineTypeId: 2,
                 VaccineTypeId: 2
             );
             var response2 = await _client.PostAsJsonAsync("/medicines", duplicateCommand);

@@ -32,7 +32,6 @@
             medicine.Description = request.Description;
             medicine.Note = request.Note;
             medicine.RegistrationNumber = request.RegistrationNumber;
-            medicine.MedicineTypeId = request.MedicineTypeId;
             medicine.VaccineTypeId = request.VaccineTypeId;
             medicine.IsSuspended = request.IsSuspended;
             medicine.IsCancelled = request.IsCancelled;

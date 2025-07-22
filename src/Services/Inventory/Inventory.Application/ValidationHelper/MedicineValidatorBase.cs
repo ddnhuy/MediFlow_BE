@@ -15,7 +15,6 @@ namespace Inventory.Application.ValidationHelper
                                               IRuleBuilder<T, RouteOfAdministration> ruleForRouteOfAdministration,
                                               IRuleBuilder<T, string> ruleForNationalMedicineCode,
                                               IRuleBuilder<T, string> ruleForRegistrationNumber,
-                                              IRuleBuilder<T, int> ruleForMedicineTypeId,
                                               IRuleBuilder<T, int> ruleForVaccineTypeId,
                                               IRuleBuilder<T, string> ruleForDescription,
                                               IRuleBuilder<T, string> ruleForNote,
@@ -63,9 +62,6 @@ namespace Inventory.Application.ValidationHelper
             ruleForRegistrationNumber
                 .NotEmpty().WithMessage(ExceptionKey.REQUIRED_REGISTRATION_NUMBER.ToString())
                 .MaximumLength(50).WithMessage(ExceptionKey.INVALID_REGISTRATION_NUMBER_MAX_LENGTH.ToString());
-
-            ruleForMedicineTypeId
-                .GreaterThan(0).WithMessage(ExceptionKey.REQUIRED_VALID_MEDICINE_TYPE.ToString());
 
             ruleForVaccineTypeId
                 .GreaterThan(0).WithMessage(ExceptionKey.REQUIRED_VALID_VACCINE_TYPE.ToString());
