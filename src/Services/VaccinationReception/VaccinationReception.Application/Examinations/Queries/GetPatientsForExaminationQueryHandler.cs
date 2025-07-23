@@ -78,8 +78,10 @@ namespace VaccinationReception.Application.Examinations.Queries
                 // Get patient information from CustomerInfo service
                 var patients = await _patientGrpcClient.ListPatientsByIdsAndSearchAsync(
                     patientIds,
-                    request.PatientName,
+                    null,
                     cancellationToken);
+
+                patients = patients.Where(p => p.Name.Contains(request.PatientName!)).ToList();
 
                 // Create a dictionary for quick patient lookup
                 var patientDictionary = patients.ToDictionary(p => p.Id, p => p);

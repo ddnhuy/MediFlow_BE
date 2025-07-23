@@ -19,6 +19,8 @@ service ApplicationUserProtoService {
   rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordResponse);
 
   rpc Login (LoginRequest) returns (LoginResponse);
+
+  rpc ListUsersByRoleName (ListUsersByRoleNameRequest) returns (ListUsersByRoleWithoutPaginationResponse); 
 }
 
 // ---------- Requests & Responses ----------
@@ -70,6 +72,10 @@ message DeleteApplicationUserRequest {
   int32 id = 1;
 }
 
+message ListUsersByRoleNameRequest {
+  string roleName = 1;
+}
+
 message DeleteApplicationUserResponse {
   bool isSuccess = 1;
 }
@@ -103,6 +109,10 @@ message LoginResponse {
   bool isSuccess = 1;
   string message = 2;
   ApplicationUserDetailModel user = 3;
+}
+
+message ListUsersByRoleWithoutPaginationResponse{
+	repeated ApplicationUserSummaryModel data = 1;
 }
 
 // ---------- Data Models ----------

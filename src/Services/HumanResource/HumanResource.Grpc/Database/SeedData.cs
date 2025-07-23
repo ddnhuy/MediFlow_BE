@@ -520,7 +520,16 @@
             ["vaccination-reception"] = new()
             {
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
-                (Roles.RECEPTIONIST, DepartmentTypes.VACCINE_RECEPTION)
+                (Roles.RECEPTIONIST, DepartmentTypes.VACCINE_RECEPTION),
+                (Roles.LABORATORY_STAFF, DepartmentTypes.VACCINE_RECEPTION),
+                (Roles.DOCTOR, DepartmentTypes.CLINIC),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE),
+                (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE_RECEPTION),
+                (Roles.NURSE, DepartmentTypes.CLINIC),
+                (Roles.NURSE, DepartmentTypes.VACCINE),
+                (Roles.NURSE, DepartmentTypes.LAB),
+                (Roles.NURSE, DepartmentTypes.VACCINE_RECEPTION),
             },
             ["file-storage"] = new()
             {
