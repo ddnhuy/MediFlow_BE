@@ -399,5 +399,13 @@ namespace HumanResource.Grpc.Services
                 User = userModel
             };
         }
+
+        public override async Task<ListUsersByRoleWithoutPaginationResponse> ListUsersByRoleName(ListUsersByRoleNameRequest request, ServerCallContext context)
+        {
+            var usersInRole = await userManager.GetUsersInRoleAsync(request.RoleName);
+            var response = new ListUsersByRoleWithoutPaginationResponse();
+            response.Data.AddRange(usersInRole.Select(user => user.Adapt<ApplicationUserSummaryModel>()));
+            return response;
+        }
     }
 }
