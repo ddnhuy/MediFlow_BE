@@ -4,6 +4,7 @@ using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VaccinationReception.Application.Data;
+using VaccinationReception.Domain.Models;
 
 namespace VaccinationReception.Application.Vaccinations.Commands.UpdateVaccinationTodayConfirmed
 {
@@ -31,17 +32,20 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdateVaccinati
 
             // Get all doses for this reception
             var vaccinations = await _context.Vaccinations
+                .Include(v => v.ReceptionVaccination)
                 .Where(v => rvIds.Contains(v.ReceptionVaccinationId))
                 .ToListAsync(cancellationToken);
 
-            // Check if any dose is not confirmed
-            if (vaccinations.Any(v => !v.IsConfirmed))
-                throw new BadRequestException(ExceptionKey.ANY_VACCINATION_NOT_CONFIRMED);
-
-            // Check if any dose is missing post-vaccination observation confirmation
-            foreach (var rvId in rvIds)
+            foreach (var rv in reception.ReceptionVaccinations)
             {
-                var related = vaccinations.Where(v => v.ReceptionVaccinationId == rvId).ToList();
+                var related = vaccinations.Where(v => v.ReceptionVaccinationId == rv.Id).ToList();
+
+                if (related.Count < rv.Quantity)
+                    throw new BadRequestException(ExceptionKey.ANY_VACCINATION_NOT_CONFIRMED);
+
+                if (related.Any(v => !v.IsConfirmed))
+                    throw new BadRequestException(ExceptionKey.ANY_VACCINATION_NOT_CONFIRMED);
+
                 if (related.Any(v => !v.ObservationConfirmed))
                     throw new BadRequestException(ExceptionKey.ANY_POST_VACCINATION_NOT_CONFIRMED);
             }
