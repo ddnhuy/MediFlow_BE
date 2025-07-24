@@ -21,20 +21,20 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineInteractionById
             .Select(x => new MedicineInteractionDTO
             {
                 Id = x.Id,
-                MedicineId1 = x.MedicineId1,
                 MedicineName1 = x.Medicine1.MedicineName,
-                MedicineId2 = x.MedicineId2,
+                MedicineId1 = x.MedicineId1,
                 MedicineName2 = x.Medicine2.MedicineName,
-                HarmfulEffects = x.HarmfulEffects,
+                MedicineId2 = x.MedicineId2,
                 Mechanism = x.Mechanism,
-                PreventiveActions = x.PreventiveActions,
                 ReferenceInfo = x.ReferenceInfo,
-                Notes = x.Notes,
+                HarmfulEffects = x.HarmfulEffects,
                 IsSuspended = x.IsSuspended,
-                IsCancelled = x.IsCancelled,
+                Notes = x.Notes,
+                PreventiveActions = x.PreventiveActions,
                 CreatedAt = x.CreatedAt,
-                CreatedBy = x.CreatedBy,
+                IsCancelled = x.IsCancelled,
                 LastUpdatedAt = x.LastUpdatedAt,
+                CreatedBy = x.CreatedBy,
                 LastUpdatedBy = x.LastUpdatedBy
             })
             .FirstOrDefaultAsync(cancellationToken);
