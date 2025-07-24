@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VaccinationReception.Application.Examinations.Queries
 {
-    public record GetPatientsForExaminationQuery(string? PatientName = null, bool? IsDiagnose = null) : IQuery<GetPatientsForExaminationResponse>;
+    public record GetPatientsForExaminationQuery(string? PatientName = null) : IQuery<GetPatientsForExaminationResponse>;
 
     public record GetPatientsForExaminationResponse(List<PatientExaminationInfo> PatientExaminationInfos);
 
