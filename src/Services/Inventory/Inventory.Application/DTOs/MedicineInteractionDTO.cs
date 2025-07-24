@@ -4,7 +4,9 @@
     {
         public int Id { get; set; }
         public int MedicineId1 { get; set; }
+        public string MedicineName1 { get; set; } = string.Empty;
         public int MedicineId2 { get; set; }
+        public string MedicineName2 { get; set; } = string.Empty;   
         public string? HarmfulEffects { get; set; }
         public string? Mechanism { get; set; }
         public string? PreventiveActions { get; set; }
