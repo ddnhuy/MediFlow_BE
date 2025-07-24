@@ -54,6 +54,11 @@ namespace VaccinationReception.Application.Examinations.Queries
                     .Select(e => e.ReturnTime)
                     .FirstOrDefaultAsync(cancellationToken);
 
+                if (!lastExamDate.HasValue)
+                {
+                    continue;
+                }
+
                 examinationHistories.Add(new ExaminationHistoryDTO
                 {
                     PatientId = id.Value,

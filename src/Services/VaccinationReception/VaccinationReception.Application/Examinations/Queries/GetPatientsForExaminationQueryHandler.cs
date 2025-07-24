@@ -29,19 +29,8 @@ namespace VaccinationReception.Application.Examinations.Queries
             try
             {
                 var query = _context.Examinations
+                    .Where(e => string.IsNullOrEmpty(e.Diagnose) && !e.ReturnTime.HasValue && string.IsNullOrEmpty(e.Conclusion)) // Not take examinations with diagnose, return time or conclusion
                     .Where(e => !e.IsCancelled && !e.IsSuspended);
-
-                if (request.IsDiagnose.HasValue)
-                {
-                    if (request.IsDiagnose.Value == true)
-                    {
-                        query = query.Where(e => !string.IsNullOrEmpty(e.Diagnose));
-                    }
-                    else
-                    {
-                        query = query.Where(e => string.IsNullOrEmpty(e.Diagnose));
-                    }
-                }
 
                 // Get all examinations with their reception and patient information
                 var examinationsWithPatients = await query
