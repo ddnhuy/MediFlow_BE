@@ -11,6 +11,7 @@ namespace VaccinationReception.Domain.Models
     public class ReceptionVaccination : BaseEntity
     {
         public int ReceptionId { get; set; }
+        public int? SecondaryReceptionId { get; set; }
         public int VaccineId { get; set; }
         public int Quantity { get; set; }
         public bool IsReadyToUse { get; set; }
@@ -29,5 +30,6 @@ namespace VaccinationReception.Domain.Models
 
         // Navigation
         public Reception Reception { get; set; } = null!;
+        public Reception? SecondaryReception { get; set; }
     }
 }

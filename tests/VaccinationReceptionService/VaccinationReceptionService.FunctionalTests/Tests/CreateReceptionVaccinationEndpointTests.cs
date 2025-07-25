@@ -59,7 +59,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 {
                     Id = TestReceptionId,
                     ServiceTypeId = TestServiceTypeId,
-                    PatientId = 1, // Thêm PatientId
+                    PatientId = 1,
                     ReceptionDate = DateTime.UtcNow,
                     CreatedAt = DateTime.UtcNow,
                     CreatedBy = 1,

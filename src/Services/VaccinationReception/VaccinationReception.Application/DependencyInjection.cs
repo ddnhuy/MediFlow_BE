@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Quartz;
 using System.Reflection;
+using VaccinationReception.Application.Jobs;
 using VaccinationReception.Application.Services.PatientServices;
 
 namespace VaccinationReception.Application
@@ -56,6 +58,27 @@ namespace VaccinationReception.Application
             services.TryAddScoped<IPatientGrpcClient, PatientGrpcClient>();
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            services.AddQuartz(q =>
+            {
+                var jobConfig = configuration.GetSection("QuartzJobs:CleanupUnpaidItemsJob");
+
+                var jobKey = new JobKey(jobConfig.GetValue<string>("JobKey") ?? "CleanupUnpaidItemsJob");
+
+                q.AddJob<CleanupUnpaidItemsJob>(opts => opts.WithIdentity(jobKey));
+
+                q.AddTrigger(opts => opts
+                    .ForJob(jobKey)
+                    .WithIdentity(jobConfig.GetValue<string>("Trigger") ?? "CleanupUnpaidItemsJob-trigger")
+                    .WithCronSchedule(
+                        jobConfig.GetValue<string>("Cron") ?? "0 30 23 * * ?",
+                        x => x.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"))));
+            });
+
+            services.AddQuartzHostedService(options =>
+            {
+                options.WaitForJobsToComplete = true;
+            });
 
             return services;
         }

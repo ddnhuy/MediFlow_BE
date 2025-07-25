@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.Data;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
@@ -30,12 +31,12 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 var receptionVaccination = await _context.ReceptionVaccinations
                     .FirstOrDefaultAsync(rv =>
                         rv.Id == request.Id &&
-                        rv.ReceptionId == request.ReceptionId &&
+                        rv.ReceptionId == request.ReceptionId && 
                         !rv.IsCancelled, cancellationToken);
 
-                if (receptionVaccination == null)
+                if (receptionVaccination == null || receptionVaccination.PaymentStatus == PaymentStatusForItem.Paid)
                 {
-                    _logger.LogWarning("ReceptionVaccination with Id: {Id} not found in ReceptionId: {ReceptionId}", request.Id, request.ReceptionId);
+                    _logger.LogWarning("ReceptionVaccination with Id: {Id} not found in ReceptionId: {ReceptionId} or Reception Paid", request.Id, request.ReceptionId);
                     return new UpdateReceptionVaccinationResult(false);
                 }
 

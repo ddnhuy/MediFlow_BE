@@ -95,6 +95,25 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task CreatePatientReception_WithExistingPatientId_UpdatesPatient()
         {
+            _factory.HospitalServiceMock
+                .GetServicesByServiceCodeAsync(Arg.Any<List<string>>(), Arg.Any<CancellationToken>())
+                .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>
+                {
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 1,
+                        ServiceCode = "ExamFee",
+                        ServiceName = "dasdsa",
+                        UnitPrice = 100000
+                    },
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 2,
+                        ServiceCode = "IM",
+                        ServiceName = "dasdsa",
+                        UnitPrice = 100000
+                    }
+                });
             // Arrange
             var existingPatientId = 1;
             var command = CreateValidCommand() with { patientId = existingPatientId };
@@ -144,6 +163,25 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task CreatePatientReception_WithExistingPatientIdButPatientNotFound_CreatesNewPatient()
         {
+            _factory.HospitalServiceMock
+                .GetServicesByServiceCodeAsync(Arg.Any<List<string>>(), Arg.Any<CancellationToken>())
+                .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>
+                {
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 1,
+                        ServiceCode = "ExamFee",
+                        ServiceName = "dasdsa",
+                        UnitPrice = 100000
+                    },
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 2,
+                        ServiceCode = "IM",
+                        ServiceName = "dasdsa",
+                        UnitPrice = 100000
+                    }
+                });
             // Arrange
             var nonExistentPatientId = 999;
             var command = CreateValidCommand() with { patientId = nonExistentPatientId };
@@ -192,6 +230,25 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task CreatePatientReception_WithPreviousReceptionButNoUnpaidVaccinations_DoesNotMoveVaccinations()
         {
+            _factory.HospitalServiceMock
+                .GetServicesByServiceCodeAsync(Arg.Any<List<string>>(), Arg.Any<CancellationToken>())
+                .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>
+                {
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 1,
+                        ServiceCode = "ExamFee",
+                        ServiceName = "dasdsa",
+                        UnitPrice = 100000
+                    },
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 2,
+                        ServiceCode = "IM",
+                        ServiceName = "dasdsa",
+                        UnitPrice = 100000
+                    }
+                });
             // Arrange
             var command = CreateValidCommand();
 
