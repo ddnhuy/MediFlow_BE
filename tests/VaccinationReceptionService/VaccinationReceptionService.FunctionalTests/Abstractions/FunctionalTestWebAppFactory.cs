@@ -1,6 +1,7 @@
 ﻿using HumanResource.Grpc;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
@@ -28,6 +29,8 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseEnvironment("Test");
+
             builder.ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
@@ -81,6 +84,7 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
                     cfg.UsingInMemory((context, cfg) => cfg.ConfigureEndpoints(context));
                 });
 
+                services.RemoveAll<IHostedService>();
             });
         }
 
