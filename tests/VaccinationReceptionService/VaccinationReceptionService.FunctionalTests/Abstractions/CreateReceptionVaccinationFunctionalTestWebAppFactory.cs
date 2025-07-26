@@ -59,8 +59,25 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
 
         public new async Task DisposeAsync()
         {
-            await _dbContainer.StopAsync();
-            await _rabbitMqContainer.StopAsync();
+            try
+            {
+                using var dbCts = new CancellationTokenSource(TimeSpan.FromSeconds(50));
+                await _dbContainer.StopAsync(dbCts.Token);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Dispose] Failed to stop PostgreSQL container: {ex.Message}");
+            }
+
+            try
+            {
+                using var rabbitCts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+                await _rabbitMqContainer.StopAsync(rabbitCts.Token);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Dispose] Failed to stop RabbitMQ container: {ex.Message}");
+            }
         }
     }
 }

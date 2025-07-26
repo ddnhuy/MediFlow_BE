@@ -59,26 +59,29 @@ namespace VaccinationReception.Application
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
-            services.AddQuartz(q =>
+            if (!Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")?.Equals("Test", StringComparison.OrdinalIgnoreCase) ?? true)
             {
-                var jobConfig = configuration.GetSection("QuartzJobs:CleanupUnpaidItemsJob");
+                services.AddQuartz(q =>
+                {
+                    var jobConfig = configuration.GetSection("QuartzJobs:CleanupUnpaidItemsJob");
 
-                var jobKey = new JobKey(jobConfig.GetValue<string>("JobKey") ?? "CleanupUnpaidItemsJob");
+                    var jobKey = new JobKey(jobConfig.GetValue<string>("JobKey") ?? "CleanupUnpaidItemsJob");
 
-                q.AddJob<CleanupUnpaidItemsJob>(opts => opts.WithIdentity(jobKey));
+                    q.AddJob<CleanupUnpaidItemsJob>(opts => opts.WithIdentity(jobKey));
 
-                q.AddTrigger(opts => opts
-                    .ForJob(jobKey)
-                    .WithIdentity(jobConfig.GetValue<string>("Trigger") ?? "CleanupUnpaidItemsJob-trigger")
-                    .WithCronSchedule(
-                        jobConfig.GetValue<string>("Cron") ?? "0 30 23 * * ?",
-                        x => x.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"))));
-            });
+                    q.AddTrigger(opts => opts
+                        .ForJob(jobKey)
+                        .WithIdentity(jobConfig.GetValue<string>("Trigger") ?? "CleanupUnpaidItemsJob-trigger")
+                        .WithCronSchedule(
+                            jobConfig.GetValue<string>("Cron") ?? "0 30 23 * * ?",
+                            x => x.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"))));
+                });
 
-            services.AddQuartzHostedService(options =>
-            {
-                options.WaitForJobsToComplete = true;
-            });
+                services.AddQuartzHostedService(options =>
+                {
+                    options.WaitForJobsToComplete = true;
+                });
+            }
 
             return services;
         }

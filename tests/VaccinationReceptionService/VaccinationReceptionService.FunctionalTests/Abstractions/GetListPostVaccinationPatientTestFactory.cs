@@ -100,7 +100,7 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
         {
             try
             {
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(50));
                 await _dbContainer.StopAsync(cts.Token);
             }
             catch (TimeoutException ex)

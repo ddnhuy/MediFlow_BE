@@ -2,6 +2,7 @@
 using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 
@@ -92,13 +93,14 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
         {
             try
             {
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(50));
                 await _dbContainer.StopAsync(cts.Token);
             }
             catch (TimeoutException ex)
             {
                 Console.WriteLine($"Timeout stopping container: {ex.Message}");
             }
+            Log.CloseAndFlush();
         }
     }
 }
