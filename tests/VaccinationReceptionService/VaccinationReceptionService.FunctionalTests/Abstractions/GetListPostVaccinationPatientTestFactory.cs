@@ -6,6 +6,9 @@ using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 using VaccinationReception.Application.Abstractions.CurrentUser;
 using VaccinationReception.Application.Services.PatientServices;
+using Microsoft.Extensions.Hosting;
+using Quartz;
+using Serilog;
 
 namespace VaccinationReceptionService.FunctionalTests.Abstractions
 {
@@ -81,6 +84,11 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
                 services.RemoveAll<IHospitalService>();
                 services.AddSingleton(HospitalServiceMock);
 
+                services.RemoveAll<ISchedulerFactory>();
+                services.RemoveAll<IScheduler>();
+                services.RemoveAll<IHostedService>();
+                services.RemoveAll<VaccinationReception.Application.Jobs.CleanupUnpaidItemsJob>();
+
                 // Disable actual MassTransit RabbitMQ connection
                 services.AddMassTransitTestHarness(cfg =>
                 {
@@ -107,6 +115,7 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
             {
                 Console.WriteLine($"Timeout stopping container: {ex.Message}");
             }
+            Log.CloseAndFlush();
         }
     }
 }

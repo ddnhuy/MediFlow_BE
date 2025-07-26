@@ -3,6 +3,7 @@ using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Quartz;
 using Serilog;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
@@ -84,7 +85,10 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
                     cfg.UsingInMemory((context, cfg) => cfg.ConfigureEndpoints(context));
                 });
 
+                services.RemoveAll<ISchedulerFactory>();
+                services.RemoveAll<IScheduler>();
                 services.RemoveAll<IHostedService>();
+                services.RemoveAll<VaccinationReception.Application.Jobs.CleanupUnpaidItemsJob>();
             });
         }
 

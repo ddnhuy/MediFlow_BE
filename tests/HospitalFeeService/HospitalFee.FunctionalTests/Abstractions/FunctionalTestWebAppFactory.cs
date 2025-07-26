@@ -14,6 +14,8 @@ using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Serilog;
+using Microsoft.Extensions.Hosting;
+using Quartz;
 
 namespace HospitalFee.FunctionalTests.Abstractions
 {
@@ -80,7 +82,11 @@ namespace HospitalFee.FunctionalTests.Abstractions
                 services.RemoveAll<IHospitalService>();
                 services.AddSingleton(HospitalServiceMock);
 
-
+                services.RemoveAll<ISchedulerFactory>();
+                services.RemoveAll<IScheduler>();
+             
+                services.RemoveAll<IHostedService>();
+                services.RemoveAll<VaccinationReception.Application.Jobs.CleanupUnpaidItemsJob>();
                 // Get DbContext instance
                 var serviceProvider = services.BuildServiceProvider();
                 DbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();

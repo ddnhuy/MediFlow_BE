@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Quartz;
+using Serilog;
 using Testcontainers.RabbitMq;
 
 namespace VaccinationReceptionService.FunctionalTests.Abstractions
@@ -45,6 +48,11 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
                     options.UseNpgsql(_dbContainer.GetConnectionString());
                 });
 
+                services.RemoveAll<ISchedulerFactory>();
+                services.RemoveAll<IScheduler>();
+                services.RemoveAll<IHostedService>();
+                services.RemoveAll<VaccinationReception.Application.Jobs.CleanupUnpaidItemsJob>();
+                
                 // Mock gRPC client
                 _grpcClientMock = Substitute.For<PatientProtoServiceClient>();
                 services.AddSingleton(_grpcClientMock);
@@ -78,6 +86,7 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
             {
                 Console.WriteLine($"[Dispose] Failed to stop RabbitMQ container: {ex.Message}");
             }
+            Log.CloseAndFlush();
         }
     }
 }
