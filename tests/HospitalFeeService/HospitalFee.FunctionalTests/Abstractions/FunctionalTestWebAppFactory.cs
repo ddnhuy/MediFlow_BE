@@ -13,6 +13,7 @@ using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Serilog;
 
 namespace HospitalFee.FunctionalTests.Abstractions
 {
@@ -92,9 +93,18 @@ namespace HospitalFee.FunctionalTests.Abstractions
             await _dbContainer.StartAsync();
         }
 
-        public new Task DisposeAsync()
+        public new async Task DisposeAsync()
         {
-            return _dbContainer.StopAsync();
+            try
+            {
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(50));
+                await _dbContainer.StopAsync(cts.Token);
+            }
+            catch (TimeoutException ex)
+            {
+                Console.WriteLine($"Timeout stopping container: {ex.Message}");
+            }
+            Log.CloseAndFlush();
         }
     }
 }
