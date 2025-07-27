@@ -31,12 +31,13 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 var receptionVaccination = await _context.ReceptionVaccinations
                     .FirstOrDefaultAsync(rv =>
                         rv.Id == request.Id &&
-                        rv.ReceptionId == request.ReceptionId && 
-                        !rv.IsCancelled, cancellationToken);
+                        rv.ReceptionId == request.ReceptionId &&
+                        rv.PaymentStatus == PaymentStatusForItem.NotPaid
+                        && !rv.IsCancelled, cancellationToken);
 
-                if (receptionVaccination == null || receptionVaccination.PaymentStatus == PaymentStatusForItem.Paid)
+                if (receptionVaccination == null)
                 {
-                    _logger.LogWarning("ReceptionVaccination with Id: {Id} not found in ReceptionId: {ReceptionId} or Reception Paid", request.Id, request.ReceptionId);
+                    _logger.LogWarning("ReceptionVaccination with Id: {Id} not found in ReceptionId: {ReceptionId}", request.Id, request.ReceptionId);
                     return new UpdateReceptionVaccinationResult(false);
                 }
 
@@ -45,6 +46,20 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 receptionVaccination.ScheduledDate = request.ScheduledDate;
                 receptionVaccination.AppointmentDate = request.AppointmentDate;
                 receptionVaccination.Note = request.Note;
+
+                if (!string.IsNullOrEmpty(receptionVaccination.RequestNumber))
+                {
+                    var relatedServiceRequestDetail = await _context.ServiceRequestDetails
+                        .FirstOrDefaultAsync(s =>
+                            s.RequestNumber == receptionVaccination.RequestNumber &&
+                            s.PaymentStatus == PaymentStatusForItem.NotPaid &&
+                            s.ReceptionId == request.ReceptionId, cancellationToken);
+
+                    if (relatedServiceRequestDetail != null)
+                    {
+                        relatedServiceRequestDetail.Quantity = request.Quantity;
+                    }
+                }
 
                 await _context.SaveChangesAsync(cancellationToken);
 

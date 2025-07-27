@@ -1,7 +1,9 @@
 ﻿using BuildingBlocks.Strings;
 using VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints;
 using VaccinationReception.Application.DTOs.VaccinationReceptionDTOs;
+using VaccinationReception.Application.Helpers;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
+using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 
 namespace VaccinationReceptionService.FunctionalTests.Tests
@@ -298,6 +300,232 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 .ToListAsync();
             vaccinations.Should().BeEmpty();
         }
+
+        [Fact]
+        public async Task CreatePatientReception_WithExamFeeService_CreatesServiceRequestDetail()
+        {
+            // Arrange
+            var command = CreateValidCommand();
+
+            // Mock hospital service to return exam fee service
+            _factory.HospitalServiceMock
+                .GetServicesByServiceCodeAsync(Arg.Any<List<string>>(), Arg.Any<CancellationToken>())
+                .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>
+                {
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 100,
+                        ServiceCode = "EXAMFEE",
+                        ServiceName = "Exam Fee Service",
+                        UnitPrice = 50000
+                    }
+                });
+
+            // Mock gRPC response for new patient
+            var newPatient = new PatientDetailModel
+            {
+                Id = 1,
+                Name = "Test Patient",
+                Code = "PAT001"
+            };
+
+            var createResponse = new AsyncUnaryCall<PatientDetailModel>(
+                Task.FromResult(newPatient),
+                Task.FromResult(new Metadata()),
+                () => Status.DefaultSuccess,
+                () => new Metadata(),
+                () => { });
+
+            _grpcClientMock
+                .CreatePatientAsync(Arg.Any<CreatePatientRequest>(), Arg.Any<Metadata>())
+                .Returns(createResponse);
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/patient-reception", command);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+            var result = await response.Content.ReadFromJsonAsync<PatientReceptionResponse>();
+            result.Should().NotBeNull();
+
+            // Verify ServiceRequestDetail was created
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var serviceDetail = await dbContext.ServiceRequestDetails
+                .FirstOrDefaultAsync(d => d.ReceptionId == result!.receptionId && d.ServiceId == 100);
+
+            serviceDetail.Should().NotBeNull();
+            serviceDetail!.Quantity.Should().Be(1);
+            serviceDetail.UnitPrice.Should().Be(50000);
+            serviceDetail.RequestNumber.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public async Task CreatePatientReception_WithExistingServiceRequestDetail_DoesNotCreateDuplicate()
+        {
+            // Arrange
+            var command = CreateValidCommand();
+
+            // Mock hospital service to return exam fee service
+            _factory.HospitalServiceMock
+                .GetServicesByServiceCodeAsync(Arg.Any<List<string>>(), Arg.Any<CancellationToken>())
+                .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>
+                {
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 100,
+                        ServiceCode = "EXAMFEE",
+                        ServiceName = "Exam Fee Service",
+                        UnitPrice = 50000
+                    }
+                });
+
+            // Pre-create a reception and service detail
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            var preReception = new Reception
+            {
+                PatientId = 1,
+                ReceptionDate = DateTime.UtcNow,
+                ServiceTypeId = TestServiceTypeId
+            };
+            await dbContext.Receptions.AddAsync(preReception);
+            await dbContext.SaveChangesAsync();
+
+            var existingDetail = new ServiceRequestDetail
+            {
+                RequestNumber = "REQ001",
+                ReceptionId = preReception.Id,
+                ServiceId = 100,
+                Quantity = 1,
+                UnitPrice = 50000
+            };
+            await dbContext.ServiceRequestDetails.AddAsync(existingDetail);
+            await dbContext.SaveChangesAsync();
+
+            // Mock gRPC response for new patient
+            var newPatient = new PatientDetailModel
+            {
+                Id = 1,
+                Name = "Test Patient",
+                Code = "PAT001"
+            };
+
+            var createResponse = new AsyncUnaryCall<PatientDetailModel>(
+                Task.FromResult(newPatient),
+                Task.FromResult(new Metadata()),
+                () => Status.DefaultSuccess,
+                () => new Metadata(),
+                () => { });
+
+            _grpcClientMock
+                .CreatePatientAsync(Arg.Any<CreatePatientRequest>(), Arg.Any<Metadata>())
+                .Returns(createResponse);
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/patient-reception", command);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            // Verify no duplicate ServiceRequestDetail was created for the new reception
+            var serviceDetailsCount = await dbContext.ServiceRequestDetails
+                .CountAsync(d => d.ServiceId == 100);
+            serviceDetailsCount.Should().Be(3); // Only the pre-existing one
+        }
+
+        [Fact]
+        public async Task CreatePatientReception_WithPreviousReceptionAndPaidVaccinations_MovesVaccinations()
+        {
+            // Arrange
+            var command = CreateValidCommand();
+
+            // Mock hospital service
+            _factory.HospitalServiceMock
+                .GetServicesByServiceCodeAsync(Arg.Any<List<string>>(), Arg.Any<CancellationToken>())
+                .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>
+                {
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 1,
+                        ServiceCode = "EXAMFEE",
+                        ServiceName = "Exam Fee Service",
+                        UnitPrice = 100000
+                    }
+                });
+
+            // Setup test data
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            // Create previous reception
+            var previousReception = new Reception
+            {
+                PatientId = 1,
+                ReceptionDate = DateTime.UtcNow.AddDays(-5),
+                ServiceTypeId = TestServiceTypeId
+            };
+            await dbContext.Receptions.AddAsync(previousReception);
+            await dbContext.SaveChangesAsync();
+
+            // Create paid vaccination with future appointment date
+            var futureAppointmentDate = DateTime.UtcNow.AddDays(5);
+            var paidVaccination = new ReceptionVaccination
+            {
+                RequestNumber = UniqueStringGenerator.GenerateUniqueString(),
+                ReceptionId = previousReception.Id,
+                VaccineId = 1,
+                Quantity = 2,
+                PaymentStatus = PaymentStatusForItem.Paid,
+                AppointmentDate = futureAppointmentDate,
+                UnitPrice = 200000
+            };
+            await dbContext.ReceptionVaccinations.AddAsync(paidVaccination);
+            await dbContext.SaveChangesAsync();
+
+            var vaccination1 = new Vaccination
+            {
+                ReceptionVaccinationId = paidVaccination.Id,
+                MedicineId = 1,
+                IsConfirmed = false,
+                VaccinationDate = futureAppointmentDate
+            };
+            await dbContext.Vaccinations.AddAsync(vaccination1);
+            await dbContext.SaveChangesAsync();
+
+            var newPatient = new PatientDetailModel
+            {
+                Id = 1,
+                Name = "Test Patient",
+                Code = "PAT001"
+            };
+
+            var createResponse = new AsyncUnaryCall<PatientDetailModel>(
+                Task.FromResult(newPatient),
+                Task.FromResult(new Metadata()),
+                () => Status.DefaultSuccess,
+                () => new Metadata(),
+                () => { });
+
+            _grpcClientMock
+                .CreatePatientAsync(Arg.Any<CreatePatientRequest>(), Arg.Any<Metadata>())
+                .Returns(createResponse);
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/patient-reception", command);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+            var result = await response.Content.ReadFromJsonAsync<PatientReceptionResponse>();
+            result.Should().NotBeNull();
+
+            // Verify vaccination was moved to new reception
+            var updatedVaccination = await dbContext.ReceptionVaccinations
+                .FirstOrDefaultAsync(rv => rv.Id == paidVaccination.Id);
+            updatedVaccination!.SecondaryReceptionId.Should().BeNull();
+        }
+
         private CreatePatientReceptionCommand CreateValidCommand()
         {
             return new CreatePatientReceptionCommand(

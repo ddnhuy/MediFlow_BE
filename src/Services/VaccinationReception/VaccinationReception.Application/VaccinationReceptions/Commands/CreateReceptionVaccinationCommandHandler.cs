@@ -126,21 +126,13 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 
                 var serviceMedicine = serviceRequest.FirstOrDefault(m => m.ServiceCode == medicine.RouteOfAdministration);
 
+                var requestNumber = UniqueStringGenerator.GenerateUniqueString();
+
                 if (serviceMedicine != null)
                 {
-                    var existingDetail = await _context.ServiceRequestDetails
-                        .FirstOrDefaultAsync(d => d.ServiceId == serviceMedicine.Id && d.ReceptionId == request.ReceptionId, cancellationToken);
-
-                    if (existingDetail != null)
-                    {
-                        existingDetail.Quantity += request.Quantity;
-                        _context.ServiceRequestDetails.Update(existingDetail);
-                    }
-                    else
-                    {
                         var detail = new ServiceRequestDetail
                         {
-                            RequestNumber = UniqueStringGenerator.GenerateUniqueString(),
+                            RequestNumber = requestNumber,
                             ReceptionId = reception.Id,
                             ServiceId = serviceMedicine.Id,
                             Quantity = request.Quantity,
@@ -148,13 +140,12 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                         };
 
                         await _context.ServiceRequestDetails.AddAsync(detail, cancellationToken);
-                    }
                 }
 
                 var receptionVaccination = request.Adapt<ReceptionVaccination>();
 
                 receptionVaccination.PaymentStatus = PaymentStatusForItem.NotPaid;
-                receptionVaccination.RequestNumber = UniqueStringGenerator.GenerateUniqueString();
+                receptionVaccination.RequestNumber = requestNumber;
                 receptionVaccination.UnitPrice = medicine?.UnitPrice ?? 0;
                 receptionVaccination.DoctorId = int.Parse(_httpContextAccessor.HttpContext!.User!
                  .FindFirst(ClaimTypes.NameIdentifier)!.Value);
