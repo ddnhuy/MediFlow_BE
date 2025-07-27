@@ -10,7 +10,7 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
 {
     public class CreateVaccinationCommandHandler : ICommandHandler<CreateVaccinationCommand, CreateVaccinationResponse>
     {
-        private const string POSITIVE_RESULT = "Âm tính";
+        private const string POSITIVE_RESULT = "positive";
         private readonly IApplicationDbContext _dbContext;
         private readonly IInventoryService _inventoryService;
 
@@ -41,10 +41,10 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
 
             if (medicineInformation!.IsRequiredTestingBeforeUse == true)
             { 
-                if (string.IsNullOrEmpty(receptionVaccination.TestResultEntry) && receptionVaccination.IsPreExaminationTesting == false)
+                if (string.IsNullOrEmpty(receptionVaccination.TestResultEntry) || receptionVaccination.IsPreExaminationTesting == false)
                 {
                     throw new BadRequestException(ExceptionKey.VACCINE_REQUIRED_PRE_EXAMINATION_TESTING_BEFORE_VACCINATION);
-                } else if (receptionVaccination.IsPreExaminationTesting == false && receptionVaccination.TestResultEntry == POSITIVE_RESULT)
+                } else if (receptionVaccination.TestResultEntry == POSITIVE_RESULT)
                 {
                     throw new BadRequestException(ExceptionKey.CANNOT_TAKE_VACCINATION_IF_RESULT_IS_POSITIVE);
                 }

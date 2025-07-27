@@ -36,6 +36,15 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 throw new BadRequestException(ExceptionKey.VACCINE_NOT_REQUIRED_PRE_EXAMINATION_TESTING);
             }
 
+            var existingVaccinations = await _dbContext.Vaccinations
+                .Where(v => v.ReceptionVaccinationId == request.ReceptionVaccinationId && v.IsConfirmed)
+                .ToListAsync(cancellationToken);
+
+            if (existingVaccinations.Any())
+            {
+                throw new BadRequestException(ExceptionKey.CANNOT_ADD_TAKEN_VACCINE_DOSE_TO_TESTING);
+            }
+
             receptionVaccination.IsPreExaminationTesting = true;
             receptionVaccination.VaccinationTestDate = DateTime.UtcNow;
 
