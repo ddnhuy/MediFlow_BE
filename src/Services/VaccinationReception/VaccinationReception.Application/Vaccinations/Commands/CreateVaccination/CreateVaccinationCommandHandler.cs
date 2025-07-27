@@ -10,6 +10,7 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
 {
     public class CreateVaccinationCommandHandler : ICommandHandler<CreateVaccinationCommand, CreateVaccinationResponse>
     {
+        private const string POSITIVE_RESULT = "positive";
         private readonly IApplicationDbContext _dbContext;
         private readonly IInventoryService _inventoryService;
 
@@ -20,7 +21,7 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
         }
 
         public async Task<CreateVaccinationResponse> Handle(CreateVaccinationCommand request, CancellationToken cancellationToken)
-        {            
+        {
             // Get all existing doses for this ReceptionVaccination
             var existingDoses = await _dbContext.Vaccinations
                 .Where(v => v.ReceptionVaccinationId == request.ReceptionVaccinationId)
@@ -38,10 +39,15 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
 
             var medicineInformation = medicineInformationList.FirstOrDefault(m => m.MedicineId == request.MedicineId);
 
-            if (medicineInformation!.IsRequiredTestingBeforeUse == true 
-                && (receptionVaccination!.IsPreExaminationTesting == false || string.IsNullOrEmpty(receptionVaccination.TestResultEntry)))
+            if (medicineInformation!.IsRequiredTestingBeforeUse == true)
             { 
-                throw new BadRequestException(ExceptionKey.VACCINE_REQUIRED_PRE_EXAMINATION_TESTING_BEFORE_VACCINATION);
+                if (string.IsNullOrEmpty(receptionVaccination.TestResultEntry) || receptionVaccination.IsPreExaminationTesting == false)
+                {
+                    throw new BadRequestException(ExceptionKey.VACCINE_REQUIRED_PRE_EXAMINATION_TESTING_BEFORE_VACCINATION);
+                } else if (receptionVaccination.TestResultEntry == POSITIVE_RESULT)
+                {
+                    throw new BadRequestException(ExceptionKey.CANNOT_TAKE_VACCINATION_IF_RESULT_IS_POSITIVE);
+                }
             }
 
             // Check if the number of doses already equals or exceeds the allowed quantity

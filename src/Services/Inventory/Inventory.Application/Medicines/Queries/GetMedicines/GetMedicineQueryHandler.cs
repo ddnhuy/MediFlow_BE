@@ -34,10 +34,31 @@ namespace Inventory.Application.Medicines.Queries.GetMedicines
             var medicinePrices = await dbContext.MedicinePrices
                 .Where(mp => medicineIds.Contains(mp.MedicineId) && !mp.IsSuspended && !mp.IsCancelled)
                 .GroupBy(mp => mp.MedicineId)
-                .Select(g => new { MedicineId = g.Key, UnitPrice = g.OrderByDescending(p => p.CreatedAt).First().UnitPrice })
+                .Select(g => new { MedicineId = g.Key, UnitPrice = g.OrderByDescending(p => p.LastUpdatedAt).First().UnitPrice })
                 .ToListAsync(cancellationToken: cancellationToken);
 
             var priceLookup = medicinePrices.ToDictionary(p => p.MedicineId, p => p.UnitPrice);
+
+            // Calculate current stock for each medicine
+            var currentStocks = await dbContext.Medicines
+                .Where(m => medicineIds.Contains(m.Id))
+                .Select(m => new
+                {
+                    MedicineId = m.Id,
+                    CurrentStock = dbContext.InventoryDetails
+                        .Where(id => !id.IsSuspended
+                            && !id.IsCancelled
+                            && dbContext.MedicineBatches
+                                .Any(mb => mb.Id == id.MedicineBatchId
+                                    && mb.MedicineId == m.Id
+                                    && !mb.IsSuspended
+                                    && !mb.IsCancelled
+                                    && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)))
+                        .Sum(id => id.Quantity)
+                })
+                .ToListAsync(cancellationToken: cancellationToken);
+
+            var stockLookup = currentStocks.ToDictionary(s => s.MedicineId, s => s.CurrentStock);
 
             var medicineDTOs = medicines.Select(medicine => new MedicineDTO
             {
@@ -64,8 +85,10 @@ namespace Inventory.Application.Medicines.Queries.GetMedicines
                 CreatedBy = medicine.CreatedBy,
                 LastUpdatedAt = medicine.LastUpdatedAt,
                 LastUpdatedBy = medicine.LastUpdatedBy,
-                UnitPrice = priceLookup.ContainsKey(medicine.Id) ? priceLookup[medicine.Id] : null
-            }).ToList();
+                UnitPrice = priceLookup.ContainsKey(medicine.Id) ? priceLookup[medicine.Id] : null,
+                IsRequiredTestingBeforeUse = medicine.IsRequiredTestingBeforeUse ?? false,
+                CurrentStock = stockLookup.ContainsKey(medicine.Id) ? stockLookup[medicine.Id] : 0
+            }).OrderByDescending(x => x.CurrentStock).ToList();
 
             return new GetMedicinesResult(new PaginatedResult<MedicineDTO>(pageIndex, pageSize, totalCounts, medicineDTOs));
         }

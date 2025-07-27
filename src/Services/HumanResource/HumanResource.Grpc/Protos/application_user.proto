@@ -21,6 +21,8 @@ service ApplicationUserProtoService {
   rpc Login (LoginRequest) returns (LoginResponse);
 
   rpc ListUsersByRoleName (ListUsersByRoleNameRequest) returns (ListUsersByRoleWithoutPaginationResponse); 
+
+  rpc ConfirmPassword (ConfirmPasswordRequest) returns (ConfirmPasswordResponse);
 }
 
 // ---------- Requests & Responses ----------
@@ -35,6 +37,16 @@ message ListApplicationUsersResponse {
   int32 pageSize = 2;
   int32 count = 3;
   repeated ApplicationUserSummaryModel data = 4;
+}
+
+message ConfirmPasswordRequest {
+  int32 userId = 1;
+  string password = 2;
+}
+
+message ConfirmPasswordResponse {
+  bool isSuccess = 1;
+  string message = 2;
 }
 
 message GetApplicationUserRequest {

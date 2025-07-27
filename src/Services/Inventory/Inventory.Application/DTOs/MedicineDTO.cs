@@ -28,5 +28,7 @@ namespace Inventory.Application.DTOs
         public DateTime LastUpdatedAt { get; set; }
         public int LastUpdatedBy { get; set; }
         public decimal? UnitPrice { get; set; }
+        public bool? IsRequiredTestingBeforeUse { get; set; } = false;
+        public decimal CurrentStock { get; set; } = 0;
     }
 }

@@ -28,6 +28,17 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+            var existingVaccinations = dbContext.Vaccinations.Where(v => v.ReceptionVaccinationId == TestReceptionVaccinationId);
+            dbContext.Vaccinations.RemoveRange(existingVaccinations);
+
+            var existingReceptionVaccinations = dbContext.ReceptionVaccinations.Where(rv => rv.Id == TestReceptionVaccinationId);
+            dbContext.ReceptionVaccinations.RemoveRange(existingReceptionVaccinations);
+
+            var existingReceptions = dbContext.Receptions.Where(r => r.Id == TestReceptionId);
+            dbContext.Receptions.RemoveRange(existingReceptions);
+
+            dbContext.SaveChanges();
+
             // Create Reception if not exists
             var reception = dbContext.Receptions.FirstOrDefault(r => r.Id == TestReceptionId);
             if (reception == null)
@@ -137,6 +148,52 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         {
             // Arrange
             SetupInventoryServiceMock(false); // Vaccine does not require pre-examination testing
+
+            // Act
+            var response = await _client.PutAsync($"/pre-examination/{TestReceptionVaccinationId}", null);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var result = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+            result.Should().NotBeNull();
+            result!.Detail.Should().NotBeNullOrEmpty();
+        }
+
+        [Fact]
+        public async Task AddVaccineToPreExaminationTesting_WithVaccineAlreadyTaken_ReturnsBadRequest()
+        {
+            // Arrange
+            SetupInventoryServiceMock(true); // Vaccine requires pre-examination testing
+
+            // Create a confirmed vaccination record to simulate that the vaccine has been taken
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            var existingVaccination = dbContext.Vaccinations
+                .FirstOrDefault(v => v.ReceptionVaccinationId == TestReceptionVaccinationId);
+
+            if (existingVaccination == null)
+            {
+                existingVaccination = new Vaccination
+                {
+                    PatientId = 1,
+                    ReceptionVaccinationId = TestReceptionVaccinationId,
+                    MedicineBatchId = TestVaccineId,
+                    BatchNumber = "BATCH-001",
+                    MedicineId = TestVaccineId,
+                    MedicineName = "Test Vaccine",
+                    VaccinationDate = DateTime.UtcNow.AddDays(-1), // Vaccination was done yesterday
+                    DoctorId = 1,
+                    IsConfirmed = true, // This is the key field - vaccine is confirmed as taken
+                    DoseNumber = 1,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = 1,
+                    LastUpdatedAt = DateTime.UtcNow,
+                    LastUpdatedBy = 1
+                };
+                dbContext.Vaccinations.Add(existingVaccination);
+                await dbContext.SaveChangesAsync();
+            }
 
             // Act
             var response = await _client.PutAsync($"/pre-examination/{TestReceptionVaccinationId}", null);
