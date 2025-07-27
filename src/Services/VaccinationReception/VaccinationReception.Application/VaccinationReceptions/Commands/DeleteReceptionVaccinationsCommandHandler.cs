@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.Data;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
@@ -30,6 +31,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 var receptionVaccinations = await _context.ReceptionVaccinations
                     .Where(rv => request.ReceptionVaccinationIds.Contains(rv.Id)
                                  && rv.ReceptionId == request.ReceptionId
+                                 && rv.PaymentStatus == PaymentStatusForItem.NotPaid
                                  && !rv.IsCancelled)
                     .ToListAsync(cancellationToken);
 
@@ -44,6 +46,27 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 foreach (var vaccination in receptionVaccinations)
                 {
                     vaccination.IsCancelled = true;
+                }
+
+                var requestNumbers = receptionVaccinations
+                   .Where(rv => !string.IsNullOrEmpty(rv.RequestNumber))
+                   .Select(rv => rv.RequestNumber)
+                   .Distinct()
+                   .ToList();
+
+                if (requestNumbers.Any())
+                {
+                    var relatedServiceDetails = await _context.ServiceRequestDetails
+                        .Where(s => requestNumbers.Contains(s.RequestNumber)
+                                    && s.ReceptionId == request.ReceptionId
+                                    && s.PaymentStatus == PaymentStatusForItem.NotPaid
+                                    && !s.IsCancelled)
+                        .ToListAsync(cancellationToken);
+
+                    foreach (var detail in relatedServiceDetails)
+                    {
+                        detail.IsCancelled = true;
+                    }
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);

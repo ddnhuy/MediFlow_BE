@@ -65,6 +65,10 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasComment("Mã tiếp nhận");
 
+            builder.Property(x => x.SecondaryReceptionId)
+                .IsRequired(false)
+                .HasComment("Mã tiếp nhận phụ (nếu tiêm ở lần khác)");
+
             builder.Property(x => x.VaccineId)
                 .IsRequired()
                 .HasComment("Mã vắc xin");
@@ -94,11 +98,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasDefaultValue(PaymentStatusForItem.NotPaid)
                 .HasComment("Trạng thái thanh toán");
 
-            //builder.Property(x => x.IsConfirmed)
-            //    .IsRequired()
-            //    .HasComment("Đã xác nhận")
-            //    .HasColumnType("boolean");
-
             builder.Property(x => x.Note)
                 .HasMaxLength(255)
                 .HasComment("Ghi chú");
@@ -115,6 +114,11 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .WithMany(r => r.ReceptionVaccinations)
                 .HasForeignKey(x => x.ReceptionId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x => x.SecondaryReception)
+                .WithMany(r => r.IncomingTransferredVaccinations)
+                .HasForeignKey(x => x.SecondaryReceptionId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             // Indexes
             builder.HasIndex(x => x.ReceptionId)
