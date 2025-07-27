@@ -20,10 +20,20 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineById
             // Get the latest price for this medicine
             var latestPrice = await dbContext.MedicinePrices
                 .Where(mp => mp.MedicineId == request.Id && !mp.IsSuspended && !mp.IsCancelled)
-                .OrderByDescending(mp => mp.CreatedAt)
+                .OrderByDescending(mp => mp.LastUpdatedAt)
                 .FirstOrDefaultAsync(cancellationToken);
 
-            // Convert to DTO and include unit price
+            var currentStock = await dbContext.InventoryDetails
+                .Where(id => !id.IsSuspended
+                    && !id.IsCancelled
+                    && dbContext.MedicineBatches
+                        .Any(mb => mb.Id == id.MedicineBatchId
+                            && mb.MedicineId == request.Id
+                            && !mb.IsSuspended
+                            && !mb.IsCancelled
+                            && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)))
+                .SumAsync(id => id.Quantity, cancellationToken);
+
             var medicineDTO = new MedicineDTO
             {
                 MedicineCode = medicine.MedicineCode,
@@ -48,8 +58,10 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineById
                 IsCancelled = medicine.IsCancelled,
                 LastUpdatedAt = medicine.LastUpdatedAt,
                 CreatedBy = medicine.CreatedBy,
+                IsRequiredTestingBeforeUse = medicine.IsRequiredTestingBeforeUse,
                 UnitPrice = latestPrice?.UnitPrice,
                 LastUpdatedBy = medicine.LastUpdatedBy,
+                CurrentStock = currentStock
             };
 
             return new GetMedicineByIdResult(medicineDTO);

@@ -407,5 +407,38 @@ namespace HumanResource.Grpc.Services
             response.Data.AddRange(usersInRole.Select(user => user.Adapt<ApplicationUserSummaryModel>()));
             return response;
         }
+
+        public override async Task<ConfirmPasswordResponse> ConfirmPassword(ConfirmPasswordRequest request, ServerCallContext context)
+        {
+            logger.LogInformation("Confirming password for user: {Id}", request.UserId);
+
+            var user = await userManager.FindByIdAsync(request.UserId.ToString());
+            if (user == null)
+            {
+                logger.LogWarning("User not found for password confirmation: {Id}", request.UserId);
+                return new ConfirmPasswordResponse
+                {
+                    IsSuccess = false,
+                    Message = ExceptionKey.NOT_FOUND_USER_WITH_ID.ToString()
+                };
+            }
+
+            var isValid = await userManager.CheckPasswordAsync(user, request.Password);
+
+            if (isValid)
+            {
+                logger.LogInformation("Password confirmed successfully for user: {Id}", request.UserId);
+            }
+            else
+            {
+                logger.LogWarning("Password confirmation failed for user: {Id}", request.UserId);
+            }
+
+            return new ConfirmPasswordResponse
+            {
+                IsSuccess = isValid,
+                Message = isValid ? "Password is correct." : "Password is incorrect."
+            };
+        }
     }
 }
