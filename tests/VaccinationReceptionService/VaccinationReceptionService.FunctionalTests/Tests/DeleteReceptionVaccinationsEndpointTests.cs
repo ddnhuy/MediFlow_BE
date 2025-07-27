@@ -119,31 +119,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task DeleteReceptionVaccinations_WithValidData_ReturnsOk()
         {
-            var serviceIds = new List<int> { TestVaccineId };
-            var request = new HttpRequestMessage(HttpMethod.Post, $"/reception-vaccinations/{TestReceptionId}")
-            {
-                Content = new StringContent(
-                    JsonSerializer.Serialize(serviceIds),
-                    Encoding.UTF8,
-                    "application/json")
-            };
-
-            var response = await _client.SendAsync(request);
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response Status: {response.StatusCode}");
-            Console.WriteLine($"Response Content: {responseContent}");
-
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-            var result = await response.Content.ReadFromJsonAsync<DeleteReceptionVaccinationsResponse>();
-            result.Should().NotBeNull();
-            result!.IsSuccess.Should().BeTrue();
-            result.DeletedCount.Should().Be(1);
-        }
-
-        [Fact]
-        public async Task DeleteReceptionVaccinations_WithValidDataAndServiceDetails_CancelsRelatedServices()
-        {
             // This test specifically verifies that related ServiceRequestDetails are also cancelled
             var serviceIds = new List<int> { TestVaccineId };
             var request = new HttpRequestMessage(HttpMethod.Post, $"/reception-vaccinations/{TestReceptionId}")
