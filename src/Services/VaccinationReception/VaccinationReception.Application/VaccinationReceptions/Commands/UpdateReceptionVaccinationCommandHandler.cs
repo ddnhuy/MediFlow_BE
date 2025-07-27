@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.Data;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Application.VaccinationReceptions.Commands
 {
@@ -31,7 +32,8 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     .FirstOrDefaultAsync(rv =>
                         rv.Id == request.Id &&
                         rv.ReceptionId == request.ReceptionId &&
-                        !rv.IsCancelled, cancellationToken);
+                        rv.PaymentStatus == PaymentStatusForItem.NotPaid
+                        && !rv.IsCancelled, cancellationToken);
 
                 if (receptionVaccination == null)
                 {
@@ -44,6 +46,20 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 receptionVaccination.ScheduledDate = request.ScheduledDate;
                 receptionVaccination.AppointmentDate = request.AppointmentDate;
                 receptionVaccination.Note = request.Note;
+
+                if (!string.IsNullOrEmpty(receptionVaccination.RequestNumber))
+                {
+                    var relatedServiceRequestDetail = await _context.ServiceRequestDetails
+                        .FirstOrDefaultAsync(s =>
+                            s.RequestNumber == receptionVaccination.RequestNumber &&
+                            s.PaymentStatus == PaymentStatusForItem.NotPaid &&
+                            s.ReceptionId == request.ReceptionId, cancellationToken);
+
+                    if (relatedServiceRequestDetail != null)
+                    {
+                        relatedServiceRequestDetail.Quantity = request.Quantity;
+                    }
+                }
 
                 await _context.SaveChangesAsync(cancellationToken);
 

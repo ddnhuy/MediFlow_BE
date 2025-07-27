@@ -13,6 +13,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         private readonly FunctionalTestWebAppFactory _factory;
         private const int TestReceptionId = 1;
         private const int TestVaccineId = 1;
+        private const string TestRequestNumber = "REQ-001";
         private static readonly DateTime TestDateTime = DateTime.UtcNow;
 
         public DeleteReceptionVaccinationsEndpointTests(FunctionalTestWebAppFactory factory) : base(factory)
@@ -29,6 +30,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             using var scope = _factory.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
+            // Seed Reception
             var reception = dbContext.Receptions.FirstOrDefault(r => r.Id == TestReceptionId);
             if (reception == null)
             {
@@ -46,6 +48,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 dbContext.Receptions.Add(reception);
             }
 
+            // Seed ReceptionVaccination with RequestNumber
             var receptionVaccination = dbContext.ReceptionVaccinations
                 .FirstOrDefault(rv => rv.ReceptionId == TestReceptionId && rv.VaccineId == TestVaccineId);
             if (receptionVaccination == null)
@@ -60,8 +63,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     InvoiceDate = TestDateTime,
                     AppointmentDate = TestDateTime,
                     PaymentStatus = PaymentStatusForItem.NotPaid,
-                    RequestNumber = "REQ-001",
-                    //IsConfirmed = false,
+                    RequestNumber = TestRequestNumber, // This will trigger the ServiceRequestDetails logic
                     CreatedAt = TestDateTime,
                     CreatedBy = 1,
                     LastUpdatedAt = TestDateTime,
@@ -69,6 +71,27 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                     IsCancelled = false
                 };
                 dbContext.ReceptionVaccinations.Add(receptionVaccination);
+            }
+
+            // Seed ServiceRequestDetails to test the related service details cancellation
+            var serviceRequestDetail = dbContext.ServiceRequestDetails
+                .FirstOrDefault(srd => srd.RequestNumber == TestRequestNumber && srd.ReceptionId == TestReceptionId);
+            if (serviceRequestDetail == null)
+            {
+                serviceRequestDetail = new ServiceRequestDetail
+                {
+                    RequestNumber = TestRequestNumber,
+                    ReceptionId = TestReceptionId,
+                    ServiceId = 1, // Assuming there's a ServiceId
+                    Quantity = 1,
+                    PaymentStatus = PaymentStatusForItem.NotPaid,
+                    IsCancelled = false,
+                    CreatedAt = TestDateTime,
+                    CreatedBy = 1,
+                    LastUpdatedAt = TestDateTime,
+                    LastUpdatedBy = 1
+                };
+                dbContext.ServiceRequestDetails.Add(serviceRequestDetail);
             }
 
             dbContext.SaveChanges();
@@ -96,6 +119,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task DeleteReceptionVaccinations_WithValidData_ReturnsOk()
         {
+            // This test specifically verifies that related ServiceRequestDetails are also cancelled
             var serviceIds = new List<int> { TestVaccineId };
             var request = new HttpRequestMessage(HttpMethod.Post, $"/reception-vaccinations/{TestReceptionId}")
             {
@@ -106,10 +130,6 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             };
 
             var response = await _client.SendAsync(request);
-            var responseContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response Status: {response.StatusCode}");
-            Console.WriteLine($"Response Content: {responseContent}");
-
             response.StatusCode.Should().Be(HttpStatusCode.OK);
 
             var result = await response.Content.ReadFromJsonAsync<DeleteReceptionVaccinationsResponse>();

@@ -1,7 +1,10 @@
 ﻿using HumanResource.Grpc;
 using MassTransit;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Quartz;
+using Serilog;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 
@@ -27,6 +30,8 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseEnvironment("Test");
+
             builder.ConfigureLogging(logging =>
             {
                 logging.ClearProviders();
@@ -80,6 +85,10 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
                     cfg.UsingInMemory((context, cfg) => cfg.ConfigureEndpoints(context));
                 });
 
+                services.RemoveAll<ISchedulerFactory>();
+                services.RemoveAll<IScheduler>();
+                services.RemoveAll<IHostedService>();
+                services.RemoveAll<VaccinationReception.Application.Jobs.CleanupUnpaidItemsJob>();
             });
         }
 
@@ -92,13 +101,14 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
         {
             try
             {
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(50));
                 await _dbContainer.StopAsync(cts.Token);
             }
             catch (TimeoutException ex)
             {
                 Console.WriteLine($"Timeout stopping container: {ex.Message}");
             }
+            Log.CloseAndFlush();
         }
     }
 }

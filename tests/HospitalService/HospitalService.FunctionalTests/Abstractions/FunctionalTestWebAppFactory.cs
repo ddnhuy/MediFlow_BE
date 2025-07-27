@@ -75,6 +75,7 @@ namespace HospitalService.FunctionalTests.Abstractions
         public new async Task DisposeAsync()
         {
             await _dbContainer.DisposeAsync();
+
         }
     }
 }

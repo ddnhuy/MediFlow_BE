@@ -73,14 +73,18 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 {
                     var interactionResponse = await _inventoryService.GetMedicineInteractionsResponseAsync(request.VaccineId);
 
-                    var hasInteraction = existingVaccines.Any(existingVaccineId =>
+                    var hasInteraction = existingVaccines
+                        .Where(id => id != request.VaccineId)
+                        .Any(existingVaccineId =>
                         interactionResponse.Interactions.Any(interaction =>
                             interaction.MedicineId1 == existingVaccineId ||
                             interaction.MedicineId2 == existingVaccineId));
 
                     if (hasInteraction)
                     {
-                        var conflictingVaccines = existingVaccines.Where(existingVaccineId =>
+                        var conflictingVaccines = existingVaccines
+                            .Where(id => id != request.VaccineId)
+                            .Where(existingVaccineId =>
                             interactionResponse.Interactions.Any(interaction =>
                                 interaction.MedicineId1 == existingVaccineId ||
                                 interaction.MedicineId2 == existingVaccineId)).ToList();
@@ -116,48 +120,19 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 var medicine = medicineList.FirstOrDefault(m => m.MedicineId == request.VaccineId);
 
                 var serviceRequest = await _hospitalService.GetServicesByServiceCodeAsync(
-                    new List<string> { medicine.RouteOfAdministration, ServiceCodeConsts.EXAM_FEE_SERVICE_CODE },
+                    new List<string> { medicine.RouteOfAdministration},
                     cancellationToken
                 );
 
-                var serviceExamFee = serviceRequest.FirstOrDefault(m => m.ServiceCode == ServiceCodeConsts.EXAM_FEE_SERVICE_CODE);
                 var serviceMedicine = serviceRequest.FirstOrDefault(m => m.ServiceCode == medicine.RouteOfAdministration);
 
-                if (serviceExamFee != null)
-                {
-                    var exists = await _context.ServiceRequestDetails
-                        .AnyAsync(d => d.ServiceId == serviceExamFee.Id && d.ReceptionId == request.ReceptionId, cancellationToken);
-
-                    if (!exists)
-                    {
-                        var detail = new ServiceRequestDetail
-                        {
-                            RequestNumber = UniqueStringGenerator.GenerateUniqueString(),
-                            ReceptionId = reception.Id,
-                            ServiceId = serviceExamFee.Id,
-                            Quantity = 1,
-                            UnitPrice = serviceExamFee.UnitPrice
-                        };
-
-                        await _context.ServiceRequestDetails.AddAsync(detail, cancellationToken);
-                    }
-                }
+                var requestNumber = UniqueStringGenerator.GenerateUniqueString();
 
                 if (serviceMedicine != null)
                 {
-                    var existingDetail = await _context.ServiceRequestDetails
-                        .FirstOrDefaultAsync(d => d.ServiceId == serviceMedicine.Id && d.ReceptionId == request.ReceptionId, cancellationToken);
-
-                    if (existingDetail != null)
-                    {
-                        existingDetail.Quantity += request.Quantity;
-                        _context.ServiceRequestDetails.Update(existingDetail);
-                    }
-                    else
-                    {
                         var detail = new ServiceRequestDetail
                         {
-                            RequestNumber = UniqueStringGenerator.GenerateUniqueString(),
+                            RequestNumber = requestNumber,
                             ReceptionId = reception.Id,
                             ServiceId = serviceMedicine.Id,
                             Quantity = request.Quantity,
@@ -165,13 +140,12 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                         };
 
                         await _context.ServiceRequestDetails.AddAsync(detail, cancellationToken);
-                    }
                 }
 
                 var receptionVaccination = request.Adapt<ReceptionVaccination>();
 
-                receptionVaccination.PaymentStatus = Domain.Enums.PaymentStatusForItem.NotPaid;
-                receptionVaccination.RequestNumber = UniqueStringGenerator.GenerateUniqueString();
+                receptionVaccination.PaymentStatus = PaymentStatusForItem.NotPaid;
+                receptionVaccination.RequestNumber = requestNumber;
                 receptionVaccination.UnitPrice = medicine?.UnitPrice ?? 0;
                 receptionVaccination.DoctorId = int.Parse(_httpContextAccessor.HttpContext!.User!
                  .FindFirst(ClaimTypes.NameIdentifier)!.Value);
