@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HospitalService.Domain
+namespace BuildingBlocks.Strings.Enums
 {
     public enum ServiceType
     {

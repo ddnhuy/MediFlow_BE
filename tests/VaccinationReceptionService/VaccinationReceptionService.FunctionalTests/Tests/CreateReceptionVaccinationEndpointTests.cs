@@ -39,7 +39,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var serviceType = dbContext.ServiceTypes.FirstOrDefault(st => st.Id == TestServiceTypeId);
             if (serviceType == null)
             {
-                serviceType = new ServiceType
+                serviceType = new VaccinationReception.Domain.Models.ServiceType
                 {
                     Id = TestServiceTypeId,
                     Name = "Test Service Type",

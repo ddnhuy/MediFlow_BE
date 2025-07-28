@@ -1,4 +1,5 @@
-﻿using HospitalService.Domain;
+﻿using BuildingBlocks.Strings.Enums;
+using HospitalService.Domain;
 using HospitalService.Domain.Models;
 using HospitalService.Infrastructure.Consts;
 using System;

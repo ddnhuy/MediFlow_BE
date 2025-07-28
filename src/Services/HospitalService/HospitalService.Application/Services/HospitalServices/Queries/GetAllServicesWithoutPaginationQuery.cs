@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Strings.Consts.HospitalServices;
+using BuildingBlocks.Strings.Enums;
 using HospitalService.Application.DTOs;
 using HospitalService.Domain;
 using HospitalService.Domain.Models;
