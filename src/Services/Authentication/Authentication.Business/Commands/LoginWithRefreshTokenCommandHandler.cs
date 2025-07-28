@@ -1,10 +1,12 @@
 ﻿using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using FluentValidation;
+using Grpc.Core;
 
 namespace Authentication.Business.Commands
 {
     public record LoginWithRefreshTokenResult(string AccessToken, string RefreshToken);
-    public record LoginWithRefreshTokenCommand(string RefreshToken) : ICommand<LoginWithRefreshTokenResult>;
+    public record LoginWithRefreshTokenCommand(string RefreshToken, string Roles) : ICommand<LoginWithRefreshTokenResult>;
 
     internal class LoginWithRefreshTokenCommandValidator : AbstractValidator<LoginWithRefreshTokenCommand>
     {
@@ -29,7 +31,15 @@ namespace Authentication.Business.Commands
                 throw new BadRequestException(ExceptionKey.INVALID_REFRESH_TOKEN);
             }
 
-            var user = await applicationUserProto.GetApplicationUserAsync(new GetApplicationUserRequest { Id = userId }, cancellationToken: cancellationToken);
+            var metadata = new Metadata
+            {
+                { "x-roles", command.Roles }
+            };
+
+            var user = await applicationUserProto.GetApplicationUserAsync(
+                new GetApplicationUserRequest { Id = userId },
+                metadata,
+                cancellationToken: cancellationToken);
 
             var accessToken = tokenProvider.GenerateAccessToken(user, string.Join(",", user.Departments.Select(d => d.NameInEnglish)));
 
