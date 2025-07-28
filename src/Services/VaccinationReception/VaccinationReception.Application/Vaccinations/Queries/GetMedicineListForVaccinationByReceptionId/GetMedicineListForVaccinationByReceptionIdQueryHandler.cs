@@ -78,6 +78,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
                         MedicineBatchId: dose?.MedicineBatchId ?? 0,
                         MedicineBatchNumber: dose?.BatchNumber ?? "",
                         IsConfirmed: dose?.IsConfirmed ?? false,
+                        IsRequiredTesting: medicineLookup[rv.VaccineId].IsRequiredTestingBeforeUse ?? false,
                         TestResultEntry: rv.TestResultEntry,
                         doctorName: rv.DoctorId.HasValue ? await GetDoctorName(rv.DoctorId.Value) : ""
                     ));
@@ -106,6 +107,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
                         dose?.MedicineBatchId ?? 0,
                         dose?.BatchNumber ?? "",
                         dose?.IsConfirmed ?? false,
+                        IsRequiredTesting: medicineLookup[rv.VaccineId].IsRequiredTestingBeforeUse ?? false,
                         rv.TestResultEntry,
                         doctorName: rv.DoctorId.HasValue ? await GetDoctorName(rv.DoctorId.Value) : ""
                     ));
