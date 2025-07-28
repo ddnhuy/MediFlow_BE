@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int MedicineId { get; set; }
+        public string MedicineName { get; set; } = string.Empty;
         public decimal UnitPrice { get; set; }
         public string? Currency { get; set; }
         public double VatRate { get; set; }
