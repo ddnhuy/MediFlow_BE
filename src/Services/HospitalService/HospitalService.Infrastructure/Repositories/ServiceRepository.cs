@@ -35,7 +35,6 @@ namespace HospitalService.Infrastructure.Repositories
         {
             return await _context.Services
                 .Include(s => s.ServiceGroupServices)
-                    .ThenInclude(sgs => sgs.ServiceGroup)
                 .Include(s => s.DiseaseGroupServices)
                 .Include(s => s.ServiceTestParameters)
                 .ToListAsync(cancellationToken);
@@ -83,7 +82,6 @@ namespace HospitalService.Infrastructure.Repositories
                 .Where(s => s.ServiceName.ToLower().Contains(searchTerm.ToLower()) ||
                            s.ServiceCode.ToLower().Contains(searchTerm.ToLower()))
                 .Include(s => s.ServiceGroupServices)
-                    .ThenInclude(sgs => sgs.ServiceGroup)
                 .Include(s => s.DiseaseGroupServices)
                 .Include(s => s.ServiceTestParameters)
                 .ToListAsync(cancellationToken);

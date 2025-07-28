@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Strings.Consts.HospitalServices;
 using HospitalService.Application.DTOs;
+using HospitalService.Domain;
 using HospitalService.Domain.Models;
 using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
@@ -49,8 +50,7 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
                 }
 
                 var filteredServices = services
-                 .Where(s => !s.ServiceGroupServices
-                 .Any(sgs => sgs.ServiceGroup.GroupName == ServiceGroupConsts.EXAM_FEE_SERVICE_GROUP || sgs.ServiceGroup.GroupName == ServiceGroupConsts.INJECTION_FEE_SERVICE_GROUP));
+                    .Where(s => s.ServiceType != ServiceType.Exam && s.ServiceType != ServiceType.Injection);
 
                 var items = filteredServices.Select(s => new ServiceDTO(
                     s.Id,
