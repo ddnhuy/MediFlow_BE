@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Strings.Consts.HospitalServices;
 using HospitalService.Application.DTOs;
 using HospitalService.Domain.Models;
 using HospitalService.Domain.Repositories;
@@ -47,7 +48,11 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
                     services = await _serviceRepository.GetBySearchTermAsync(request.SearchTerm, cancellationToken);
                 }
 
-                var items = services.Select(s => new ServiceDTO(
+                var filteredServices = services
+                 .Where(s => !s.ServiceGroupServices
+                 .Any(sgs => sgs.ServiceGroup.GroupName == ServiceGroupConsts.EXAM_FEE_SERVICE_GROUP || sgs.ServiceGroup.GroupName == ServiceGroupConsts.INJECTION_FEE_SERVICE_GROUP));
+
+                var items = filteredServices.Select(s => new ServiceDTO(
                     s.Id,
                     s.ServiceCode,
                     s.ServiceName,
