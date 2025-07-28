@@ -82,4 +82,4 @@ services:
 volumes:
   postgres_db:
   redis_data:
-
+  seq_data:
