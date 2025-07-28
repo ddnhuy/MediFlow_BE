@@ -17,6 +17,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
         int MedicineBatchId,
         string MedicineBatchNumber,
         bool IsConfirmed,
+        bool IsRequiredTesting,
         string? TestResultEntry,
         string? doctorName
     );
