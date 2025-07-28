@@ -1,22 +1,33 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BuildingBlocks.Strings;
+using Grpc.Core;
+using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 
 namespace AuthenticationService.FunctionalTests.Tests
 {
     public class LoginWithRefreshTokenTests : BaseFunctionalTest
     {
         private readonly FunctionalTestWebAppFactory _factory;
+        private string _testToken;
 
         public LoginWithRefreshTokenTests(FunctionalTestWebAppFactory factory) : base(factory)
         {
             _factory = factory;
+            _testToken = TokenHelper.GenerateTestToken();
+        }
+
+        private void SetAuthHeader()
+        {
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", _testToken);
         }
 
         [Fact]
         public async Task RefreshToken_WithValidToken_ReturnsNewTokens()
         {
             // Arrange
+            SetAuthHeader();
             var refreshToken = "valid_refresh_token";
-            var request = new LoginWithRefreshTokenRequest(refreshToken);
 
             // First verify token exists in database
             using (var scope = _factory.Services.CreateScope())
@@ -36,18 +47,21 @@ namespace AuthenticationService.FunctionalTests.Tests
             {
                 Id = 1,
                 UserName = "testuser",
-                Departments = { new DepartmentSummaryModel { Name = "IT" } }
+                Departments = { new DepartmentSummaryModel { Name = "IT", NameInEnglish = "IT" } },
+                Roles = Roles.ADMIN,
             };
 
             _grpcClientMock?
-                .GetApplicationUserAsync(Arg.Any<GetApplicationUserRequest>())
+                .GetApplicationUserAsync(
+                    Arg.Any<GetApplicationUserRequest>(),
+                    Arg.Any<Metadata>())
                 .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
 
             // Act
-            var response = await _client.PostAsJsonAsync(
-                "/login/refresh-token",
-                request
-            );
+            var request = new HttpRequestMessage(HttpMethod.Post, "/login/refresh-token");
+            request.Headers.Add("Cookie", $"refresh_token={refreshToken}");
+
+            var response = await _client.SendAsync(request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -61,13 +75,14 @@ namespace AuthenticationService.FunctionalTests.Tests
         public async Task RefreshToken_WithInvalidToken_ReturnsBadRequest()
         {
             // Arrange
-            var request = new LoginWithRefreshTokenRequest("invalid_token");
+            SetAuthHeader();
+            var refreshToken = "invalid_token";
+
+            var request = new HttpRequestMessage(HttpMethod.Post, "/login/refresh-token");
+            request.Headers.Add("Cookie", $"refresh_token={refreshToken}");
 
             // Act
-            var response = await _client.PostAsJsonAsync(
-                "/login/refresh-token",
-                request
-            );
+            var response = await _client.SendAsync(request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -77,7 +92,11 @@ namespace AuthenticationService.FunctionalTests.Tests
         public async Task RefreshToken_WithExpiredToken_ReturnsBadRequest()
         {
             // Arrange
-            var request = new LoginWithRefreshTokenRequest("expired_token");
+            SetAuthHeader();
+            var refreshToken = "expired_token";
+            var request = new HttpRequestMessage(HttpMethod.Post, "/login/refresh-token");
+            request.Headers.Add("Cookie", $"refresh_token={refreshToken}");
+
             var grpcResponse = new LoginResponse { IsSuccess = false, Message = "Token expired" };
 
             _grpcClientMock?
@@ -85,10 +104,7 @@ namespace AuthenticationService.FunctionalTests.Tests
                 .Returns(callInfo => GrpcClientTestHelpers.CreateAsyncUnaryCall(grpcResponse));
 
             // Act
-            var response = await _client.PostAsJsonAsync(
-                "/login/refresh-token",
-                request
-            );
+            var response = await _client.SendAsync(request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
@@ -98,8 +114,10 @@ namespace AuthenticationService.FunctionalTests.Tests
         public async Task RefreshToken_WithValidTokenButFailed_ReturnsBadRequest()
         {
             // Arrange
+            SetAuthHeader();
             var refreshToken = "valid_refresh_token_1";
-            var request = new LoginWithRefreshTokenRequest(refreshToken);
+            var request = new HttpRequestMessage(HttpMethod.Post, "/login/refresh-token");
+            request.Headers.Add("Cookie", $"refresh_token={refreshToken}");
 
             // First verify token exists in database
             using (var scope = _factory.Services.CreateScope())
@@ -116,10 +134,7 @@ namespace AuthenticationService.FunctionalTests.Tests
             }
 
             // Act
-            var response = await _client.PostAsJsonAsync(
-                "/login/refresh-token",
-                request
-            );
+            var response = await _client.SendAsync(request);
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

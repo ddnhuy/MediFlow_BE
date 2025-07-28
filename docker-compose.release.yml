@@ -41,10 +41,12 @@ services:
     restart: always
     environment:
       - ACCEPT_EULA=Y
-      - SEQ_FIRSTRUN_ADMINPASSWORD=Mediflow@123
+      - SEQ_FIRSTRUN_NOAUTHENTICATION=true
     ports:
       - "5342:80"     # Web UI
       - "5341:5341"   # Ingestion port
+    volumes:
+      - seq_data:/data
 
   yarpapigateway:
     image: ${DOCKER_REGISTRY-}yarpapigateway
@@ -262,3 +264,4 @@ services:
 volumes:
   postgres_db:
   redis_data:
+  seq_data:

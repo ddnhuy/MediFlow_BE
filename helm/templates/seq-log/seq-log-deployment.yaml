@@ -25,10 +25,17 @@ spec:
           env:
             - name: ACCEPT_EULA
               value: "Y"
-            - name: SEQ_FIRSTRUN_ADMINPASSWORD
-              value: "Mediflow@123"
+            - name: SEQ_FIRSTRUN_NOAUTHENTICATION
+              value: true
           ports:
             - name: web
               containerPort: 80
             - name: ingestion
               containerPort: 5341
+          volumeMounts:
+            - name: seq-data
+              mountPath: /data
+      volumes:
+        - name: seq-data
+          persistentVolumeClaim:
+            claimName: seq-data-pvc
