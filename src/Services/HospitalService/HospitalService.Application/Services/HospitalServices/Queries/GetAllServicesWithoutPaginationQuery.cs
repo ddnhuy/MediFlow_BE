@@ -1,5 +1,8 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Strings.Consts.HospitalServices;
+using BuildingBlocks.Strings.Enums;
 using HospitalService.Application.DTOs;
+using HospitalService.Domain;
 using HospitalService.Domain.Models;
 using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
@@ -47,7 +50,10 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
                     services = await _serviceRepository.GetBySearchTermAsync(request.SearchTerm, cancellationToken);
                 }
 
-                var items = services.Select(s => new ServiceDTO(
+                var filteredServices = services
+                    .Where(s => s.ServiceType != ServiceType.Exam && s.ServiceType != ServiceType.Injection);
+
+                var items = filteredServices.Select(s => new ServiceDTO(
                     s.Id,
                     s.ServiceCode,
                     s.ServiceName,

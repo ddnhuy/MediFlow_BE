@@ -73,6 +73,10 @@ namespace HospitalService.Infrastructure.Data.Configurations
                 .IsRequired()
                 .HasComment("Mã phòng ban");
 
+            builder.Property(x => x.ServiceType)
+                .HasComment("Loại dịch vụ")
+                .HasColumnType("integer");
+
             // Relationships
             builder.HasMany(x => x.ServiceGroupServices)
                 .WithOne(x => x.Service)
