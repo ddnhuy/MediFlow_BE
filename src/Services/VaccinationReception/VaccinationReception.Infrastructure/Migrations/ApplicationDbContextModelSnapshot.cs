@@ -466,6 +466,10 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasComment("Ngày dự kiến tiêm");
 
+                    b.Property<int?>("SecondaryReceptionId")
+                        .HasColumnType("integer")
+                        .HasComment("Mã tiếp nhận phụ (nếu tiêm ở lần khác)");
+
                     b.Property<string>("TestResultEntry")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
@@ -487,6 +491,8 @@ namespace VaccinationReception.Infrastructure.Migrations
 
                     b.HasIndex("ReceptionId")
                         .HasDatabaseName("IX_ReceptionVaccinations_ReceptionId");
+
+                    b.HasIndex("SecondaryReceptionId");
 
                     b.HasIndex("VaccineId")
                         .HasDatabaseName("IX_ReceptionVaccinations_VaccineId");
@@ -978,7 +984,14 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("VaccinationReception.Domain.Models.Reception", "SecondaryReception")
+                        .WithMany("IncomingTransferredVaccinations")
+                        .HasForeignKey("SecondaryReceptionId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Reception");
+
+                    b.Navigation("SecondaryReception");
                 });
 
             modelBuilder.Entity("VaccinationReception.Domain.Models.ScreeningEvaluationReport", b =>
@@ -1026,6 +1039,8 @@ namespace VaccinationReception.Infrastructure.Migrations
 
             modelBuilder.Entity("VaccinationReception.Domain.Models.Reception", b =>
                 {
+                    b.Navigation("IncomingTransferredVaccinations");
+
                     b.Navigation("Payments");
 
                     b.Navigation("ReceptionVaccinations");

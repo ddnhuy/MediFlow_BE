@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Quartz;
+using Serilog;
 using Testcontainers.RabbitMq;
 
 namespace VaccinationReceptionService.FunctionalTests.Abstractions
@@ -45,6 +48,11 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
                     options.UseNpgsql(_dbContainer.GetConnectionString());
                 });
 
+                services.RemoveAll<ISchedulerFactory>();
+                services.RemoveAll<IScheduler>();
+                services.RemoveAll<IHostedService>();
+                services.RemoveAll<VaccinationReception.Application.Jobs.CleanupUnpaidItemsJob>();
+                
                 // Mock gRPC client
                 _grpcClientMock = Substitute.For<PatientProtoServiceClient>();
                 services.AddSingleton(_grpcClientMock);
@@ -59,8 +67,26 @@ namespace VaccinationReceptionService.FunctionalTests.Abstractions
 
         public new async Task DisposeAsync()
         {
-            await _dbContainer.StopAsync();
-            await _rabbitMqContainer.StopAsync();
+            try
+            {
+                using var dbCts = new CancellationTokenSource(TimeSpan.FromSeconds(50));
+                await _dbContainer.StopAsync(dbCts.Token);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Dispose] Failed to stop PostgreSQL container: {ex.Message}");
+            }
+
+            try
+            {
+                using var rabbitCts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+                await _rabbitMqContainer.StopAsync(rabbitCts.Token);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Dispose] Failed to stop RabbitMQ container: {ex.Message}");
+            }
+            Log.CloseAndFlush();
         }
     }
 }

@@ -33,7 +33,9 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
             try
             {
                 var receptionVaccinations = await _context.ReceptionVaccinations
-                    .Where(rv => rv.ReceptionId == request.ReceptionId && !rv.IsCancelled)
+                    .Where(rv =>
+                        (rv.ReceptionId == request.ReceptionId || rv.SecondaryReceptionId == request.ReceptionId)
+                        && !rv.IsCancelled)
                     .OrderBy(rv => rv.AppointmentDate)
                     .ToListAsync(cancellationToken);
 

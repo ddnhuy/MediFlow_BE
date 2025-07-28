@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application.Medicines.Commands.UpdateMedicine
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace Inventory.Application.Medicines.Commands.UpdateMedicine
 {
     public class UpdateMedicineCommandHandler : ICommandHandler<UpdateMedicineCommand, UpdateMedicineResult>
     {
@@ -16,6 +18,12 @@
             if (medicine == null)
             {
                 throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
+            }
+
+            // Check if the medicine code already exists for another medicine
+            if (await _dbContext.Medicines.AnyAsync(m => m.MedicineCode!.Trim().ToLower() == request.MedicineCode.Trim().ToLower(), cancellationToken))
+            {
+                throw new BadRequestException(ExceptionKey.DUPLICATE_MEDICINE_CODE);
             }
 
             medicine.MedicineCode = request.MedicineCode;

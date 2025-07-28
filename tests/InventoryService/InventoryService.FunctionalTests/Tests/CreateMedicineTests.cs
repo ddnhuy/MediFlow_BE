@@ -59,7 +59,7 @@ namespace Inventory.FunctionalTests.Tests
                 Concentration: "500mg",
                 Indications: "Pain relief",
                 MedicineClassification: "Analgesic",
-                RouteOfAdministration: RouteOfAdministration.PO,
+                RouteOfAdministration: RouteOfAdministration.IM,
                 NationalMedicineCode: "NMC100",
                 Description: "Description",
                 Note: "Note",

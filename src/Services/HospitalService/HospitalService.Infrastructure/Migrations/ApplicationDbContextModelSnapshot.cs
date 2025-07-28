@@ -259,6 +259,10 @@ namespace HospitalService.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasComment("Tên dịch vụ");
 
+                    b.Property<int?>("ServiceType")
+                        .HasColumnType("integer")
+                        .HasComment("Loại dịch vụ");
+
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)")
@@ -322,6 +326,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedBy = 1,
                             ServiceCode = "EXAMFEE",
                             ServiceName = "Công khám",
+                            ServiceType = 0,
                             UnitPrice = 50000m
                         },
                         new
@@ -336,6 +341,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedBy = 1,
                             ServiceCode = "IM",
                             ServiceName = "Công tiêm bắp (IM)",
+                            ServiceType = 1,
                             UnitPrice = 30000m
                         },
                         new
@@ -350,6 +356,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedBy = 1,
                             ServiceCode = "SC",
                             ServiceName = "Công tiêm dưới da (SC)",
+                            ServiceType = 1,
                             UnitPrice = 25000m
                         },
                         new
@@ -364,6 +371,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedBy = 1,
                             ServiceCode = "ID",
                             ServiceName = "Công tiêm trong da (ID)",
+                            ServiceType = 1,
                             UnitPrice = 35000m
                         },
                         new

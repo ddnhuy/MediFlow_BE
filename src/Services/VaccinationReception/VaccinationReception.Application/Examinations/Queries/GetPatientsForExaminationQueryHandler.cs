@@ -29,19 +29,8 @@ namespace VaccinationReception.Application.Examinations.Queries
             try
             {
                 var query = _context.Examinations
+                    .Where(e => string.IsNullOrEmpty(e.Diagnose) && !e.ReturnTime.HasValue && string.IsNullOrEmpty(e.Conclusion)) // Not take examinations with diagnose, return time or conclusion
                     .Where(e => !e.IsCancelled && !e.IsSuspended);
-
-                if (request.IsDiagnose.HasValue)
-                {
-                    if (request.IsDiagnose.Value == true)
-                    {
-                        query = query.Where(e => !string.IsNullOrEmpty(e.Diagnose));
-                    }
-                    else
-                    {
-                        query = query.Where(e => string.IsNullOrEmpty(e.Diagnose));
-                    }
-                }
 
                 // Get all examinations with their reception and patient information
                 var examinationsWithPatients = await query
@@ -78,8 +67,10 @@ namespace VaccinationReception.Application.Examinations.Queries
                 // Get patient information from CustomerInfo service
                 var patients = await _patientGrpcClient.ListPatientsByIdsAndSearchAsync(
                     patientIds,
-                    request.PatientName,
+                    null,
                     cancellationToken);
+
+                patients = patients.Where(p => p.Name.Contains(request.PatientName!)).ToList();
 
                 // Create a dictionary for quick patient lookup
                 var patientDictionary = patients.ToDictionary(p => p.Id, p => p);

@@ -73,9 +73,94 @@ namespace Inventory.FunctionalTests.Tests
             // Arrange
             var medicineId = 6; // Assuming this ID exists but has no prices
             // Act
-            var response = await _client.GetAsync($"/medicine-prices/{medicineId}");
+            var response = await _client.GetAsync($"/medicine-prices/medicines/{medicineId}");
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task GetMedicinePrices_WithMedicineWithoutPrice_ReturnsMedicineWithNullPrice()
+        {
+            // Arrange
+            // First, ensure we have a medicine without any prices
+            // We'll use medicine ID 6 which should not have any prices based on seed data
+            var medicineId = 6; // Assuming this medicine exists but has no prices
+
+            // Act
+            var response = await _client.GetAsync("/medicine-prices?pageIndex=1&pageSize=10");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetMedicinePricesResponse>();
+            result.Should().NotBeNull();
+            result!.MedicinePrices.Should().NotBeNull();
+            result.MedicinePrices.Data.Should().NotBeEmpty();
+
+            // Find the medicine without price in the results
+            var medicineWithoutPrice = result.MedicinePrices.Data.FirstOrDefault(mp => mp.MedicineId == medicineId);
+
+            // Verify the medicine exists in the results
+            medicineWithoutPrice.Should().NotBeNull();
+            medicineWithoutPrice!.MedicineId.Should().Be(medicineId);
+            medicineWithoutPrice.MedicineName.Should().NotBeNullOrEmpty();
+
+            // Verify all price-related fields are null
+            medicineWithoutPrice.UnitPrice.Should().BeNull();
+            medicineWithoutPrice.Currency.Should().BeNull();
+            medicineWithoutPrice.VatRate.Should().BeNull();
+            medicineWithoutPrice.VatAmount.Should().BeNull();
+            medicineWithoutPrice.OriginalPriceAfterVat.Should().BeNull();
+            medicineWithoutPrice.OriginalPriceBeforeVat.Should().BeNull();
+
+            // Verify non-price fields are populated
+            medicineWithoutPrice.Id.Should().Be(0); // Should be 0 for medicines without prices
+            medicineWithoutPrice.IsSuspended.Should().BeFalse();
+            medicineWithoutPrice.IsCancelled.Should().BeFalse();
+            medicineWithoutPrice.CreatedAt.Should().NotBe(default(DateTime));
+            medicineWithoutPrice.CreatedBy.Should().BeGreaterThan(0);
+            medicineWithoutPrice.LastUpdatedAt.Should().NotBe(default(DateTime));
+            medicineWithoutPrice.LastUpdatedBy.Should().BeGreaterThan(0);
+        }
+
+        [Fact]
+        public async Task GetMedicinePrices_WithMedicineWithMultiplePrices_ReturnsAllPrices()
+        {
+            // Arrange
+            // First, create multiple prices for the same medicine
+            var medicineId = 1; // Use an existing medicine
+
+            // Create first price
+            var createCommand1 = new CreateMedicinePriceCommand(
+                MedicineId: medicineId,
+                UnitPrice: 100.0m,
+                Currency: "USD",
+                VatRate: 10.0,
+                VatAmount: 10.0m,
+                OriginalPriceAfterVat: 110.0m,
+                OriginalPriceBeforeVat: 100.0m
+            );
+            await _client.PostAsJsonAsync("/medicine-prices", createCommand1);
+
+            // Create second price
+            var createCommand2 = new CreateMedicinePriceCommand(
+                MedicineId: medicineId,
+                UnitPrice: 150.0m,
+                Currency: "USD",
+                VatRate: 10.0,
+                VatAmount: 15.0m,
+                OriginalPriceAfterVat: 165.0m,
+                OriginalPriceBeforeVat: 150.0m
+            );
+            await _client.PostAsJsonAsync("/medicine-prices", createCommand2);
+
+            // Act
+            var response = await _client.GetAsync("/medicine-prices?pageIndex=1&pageSize=20");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetMedicinePricesResponse>();
+            result.Should().NotBeNull();
+            result!.MedicinePrices.Should().NotBeNull();
         }
 
         #endregion
@@ -388,7 +473,7 @@ namespace Inventory.FunctionalTests.Tests
             await _client.PostAsJsonAsync("/medicine-prices", createCommand);
 
             // Act 
-            var response = await _client.GetAsync($"/medicine-prices/{medicineId}");
+            var response = await _client.GetAsync($"/medicine-prices/medicines/{medicineId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -405,7 +490,7 @@ namespace Inventory.FunctionalTests.Tests
             var medicineId = 1;
 
             // Act
-            var response = await _client.GetAsync($"/medicine-prices/{medicineId}");
+            var response = await _client.GetAsync($"/medicine-prices/medicines/{medicineId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
@@ -418,12 +503,57 @@ namespace Inventory.FunctionalTests.Tests
             var medicineId = -1; // Invalid ID
 
             // Act
-            var response = await _client.GetAsync($"/medicine-prices/{medicineId}");
+            var response = await _client.GetAsync($"/medicine-prices/medicines/{medicineId}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
+        #endregion
+
+        #region GetMedicinePriceById
+        [Fact]
+        public async Task GetMedicinePriceById_WithValidId_ReturnsOk()
+        {
+            // Arrange
+            // First, create a medicine price to get
+            var createCommand = new CreateMedicinePriceCommand(
+                MedicineId: 5,
+                UnitPrice: 10.5m,
+                Currency: "USD",
+                VatRate: 10.0,
+                VatAmount: 1.05m,
+                OriginalPriceAfterVat: 11.55m,
+                OriginalPriceBeforeVat: 10.5m
+            );
+
+            var createResponse = await _client.PostAsJsonAsync("/medicine-prices", createCommand);
+            createResponse.EnsureSuccessStatusCode();
+            var createResult = await createResponse.Content.ReadFromJsonAsync<CreateMedicinePriceResponse>();
+            var id = createResult!.Id;
+
+            // Act
+            var response = await _client.GetAsync($"/medicine-prices/{id}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetMedicinePriceByIdResponse>();
+            result.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task GetMedicinePriceById_WhenUnauthorized_ReturnsUnauthorized()
+        {
+            // Arrange
+            _client.DefaultRequestHeaders.Authorization = null;
+            var id = 1;
+
+            // Act
+            var response = await _client.GetAsync($"/medicine-prices/{id}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        }
         #endregion
     }
 }

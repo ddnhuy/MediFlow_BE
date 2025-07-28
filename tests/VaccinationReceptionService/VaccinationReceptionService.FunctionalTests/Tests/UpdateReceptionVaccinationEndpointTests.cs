@@ -134,6 +134,81 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
+        [Fact]
+        public async Task UpdateReceptionVaccination_WithRequestNumberAndRelatedServiceRequestDetail_UpdatesBothEntities()
+        {
+            // Arrange
+            var requestNumber = "REQ-002";
+            var testReceptionVaccinationId = 2;
+
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            var receptionVaccination = new ReceptionVaccination
+            {
+                Id = testReceptionVaccinationId,
+                ReceptionId = TestReceptionId,
+                VaccineId = TestVaccineId,
+                Quantity = 1,
+                IsReadyToUse = false,
+                ScheduledDate = DateTime.UtcNow,
+                InvoiceDate = DateTime.UtcNow,
+                AppointmentDate = DateTime.UtcNow,
+                PaymentStatus = PaymentStatusForItem.NotPaid,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = 1,
+                RequestNumber = requestNumber, // Set RequestNumber
+                LastUpdatedAt = DateTime.UtcNow,
+                LastUpdatedBy = 1
+            };
+            dbContext.ReceptionVaccinations.Add(receptionVaccination);
+
+            var serviceRequestDetail = new ServiceRequestDetail
+            {
+                Id = 1,
+                RequestNumber = requestNumber,
+                ReceptionId = TestReceptionId,
+                Quantity = 1,
+                PaymentStatus = PaymentStatusForItem.NotPaid,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = 1,
+                LastUpdatedAt = DateTime.UtcNow,
+                LastUpdatedBy = 1
+            };
+            dbContext.ServiceRequestDetails.Add(serviceRequestDetail);
+
+            await dbContext.SaveChangesAsync();
+
+            var request = new UpdateReceptionVaccinationRequest(
+                Id: testReceptionVaccinationId,
+                Quantity: 5,
+                IsReadyToUse: true,
+                ScheduledDate: DateTime.UtcNow.AddDays(1),
+                AppointmentDate: DateTime.UtcNow.AddDays(2),
+                Note: "Test note with request number"
+            );
+
+            // Act
+            var response = await _client.PutAsJsonAsync($"/receptions/{TestReceptionId}/reception-vaccinations", request);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+            // Verify ReceptionVaccination was updated
+            var updatedReceptionVaccination = await dbContext.ReceptionVaccinations
+                .FirstOrDefaultAsync(rv => rv.Id == testReceptionVaccinationId);
+
+            updatedReceptionVaccination.Should().NotBeNull();
+            updatedReceptionVaccination!.Quantity.Should().Be(1);
+
+            // Verify ServiceRequestDetail was also updated
+            var updatedServiceRequestDetail = await dbContext.ServiceRequestDetails
+                .FirstOrDefaultAsync(s => s.RequestNumber == requestNumber);
+
+            updatedServiceRequestDetail.Should().NotBeNull();
+            updatedServiceRequestDetail!.Quantity.Should().Be(1);
+        }
+
         private UpdateReceptionVaccinationRequest CreateValidRequest()
         {
             return new UpdateReceptionVaccinationRequest(

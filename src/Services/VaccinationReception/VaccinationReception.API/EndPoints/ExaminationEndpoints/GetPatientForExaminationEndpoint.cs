@@ -7,9 +7,9 @@ namespace VaccinationReception.API.EndPoints.ExaminationEndpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-           app.MapGet("/examination/patients", async (ISender sender, string? patientName, bool? isDiagnose, CancellationToken cancellationToken) =>
+           app.MapGet("/examination/patients", async (ISender sender, string? patientName, CancellationToken cancellationToken) =>
            {
-                var query = new GetPatientsForExaminationQuery(patientName, isDiagnose);
+                var query = new GetPatientsForExaminationQuery(patientName);
                 var response = await sender.Send(query, cancellationToken);
                 return Results.Ok(response);
            })

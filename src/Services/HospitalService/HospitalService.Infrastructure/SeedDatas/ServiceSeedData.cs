@@ -1,4 +1,6 @@
-﻿using HospitalService.Domain.Models;
+﻿using BuildingBlocks.Strings.Enums;
+using HospitalService.Domain;
+using HospitalService.Domain.Models;
 using HospitalService.Infrastructure.Consts;
 using System;
 using System.Collections.Generic;
@@ -46,6 +48,7 @@ namespace HospitalService.Infrastructure.SeedDatas
                     Id = 3,
                     ServiceCode = SeedConstants.Services.ExamFeeCode,
                     ServiceName = SeedConstants.Services.ExamFee,
+                    ServiceType = ServiceType.Exam,
                     UnitPrice = SeedConstants.Services.ExamFeePrice,
                     DepartmentId = SeedConstants.Services.VaccinationDepartmentId
                 }),
@@ -54,6 +57,7 @@ namespace HospitalService.Infrastructure.SeedDatas
                     Id = 4,
                     ServiceCode = SeedConstants.Services.InjectIMCode,
                     ServiceName = SeedConstants.Services.InjectIMName,
+                    ServiceType = ServiceType.Injection,
                     UnitPrice = SeedConstants.Services.InjectIMPrice,
                     DepartmentId = SeedConstants.Services.VaccinationDepartmentId
                 }),
@@ -62,6 +66,7 @@ namespace HospitalService.Infrastructure.SeedDatas
                     Id = 5,
                     ServiceCode = SeedConstants.Services.InjectSCCode,
                     ServiceName = SeedConstants.Services.InjectSCName,
+                    ServiceType = ServiceType.Injection,
                     UnitPrice = SeedConstants.Services.InjectSCPrice,
                     DepartmentId = SeedConstants.Services.VaccinationDepartmentId
                 }),
@@ -70,6 +75,7 @@ namespace HospitalService.Infrastructure.SeedDatas
                     Id = 6,
                     ServiceCode = SeedConstants.Services.InjectIDCode,
                     ServiceName = SeedConstants.Services.InjectIDName,
+                    ServiceType = ServiceType.Injection,
                     UnitPrice = SeedConstants.Services.InjectIDPrice,
                     DepartmentId = SeedConstants.Services.VaccinationDepartmentId
                 }),

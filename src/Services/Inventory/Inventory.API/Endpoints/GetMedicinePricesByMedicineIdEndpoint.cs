@@ -1,12 +1,12 @@
 ﻿namespace Inventory.API.Endpoints
 {
-    public record GetMedicinePricesByMedicineIdResponse(MedicinePriceDTO MedicinePrices);
+    public record GetMedicinePricesByMedicineIdResponse(List<MedicinePriceDTO> MedicinePrices);
 
     public class GetMedicinePricesByMedicineIdEndpoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/medicine-prices/{medicineId}", async (int medicineId, ISender sender) =>
+            app.MapGet("/medicine-prices/medicines/{medicineId}", async (int medicineId, ISender sender) =>
             {
                 if (medicineId <= 0)
                 {

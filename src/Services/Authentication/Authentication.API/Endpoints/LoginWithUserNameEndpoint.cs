@@ -17,7 +17,7 @@ namespace Authentication.API.Endpoints
 
                 HttpCookiesHelper.AppendAuthCookies(context.Response, result.AccessToken, result.RefreshToken);
 
-                return Results.Ok(new LoginWithUserNameResponse(true, "Đăng nhập thành công."));
+                return Results.Ok(new LoginWithUserNameResponse(true, "LOGIN_SUCCESSFUL"));
             })
             .WithName("LoginWithUserName")
             .Produces<LoginWithUserNameResponse>(StatusCodes.Status200OK)
