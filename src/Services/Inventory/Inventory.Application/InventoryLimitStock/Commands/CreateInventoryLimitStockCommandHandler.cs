@@ -41,7 +41,7 @@
             await dbContext.InventoryLimitStocks.AddAsync(inventoryLimitStock, cancellationToken);
             var result = await dbContext.SaveChangesAsync(cancellationToken);        
 
-            return new CreateInventoryLimitStockResult(true, result);
+            return new CreateInventoryLimitStockResult(true, inventoryLimitStock.Id);
 
         }
     }

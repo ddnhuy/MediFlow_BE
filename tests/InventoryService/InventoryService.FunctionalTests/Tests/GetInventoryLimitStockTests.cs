@@ -78,5 +78,53 @@ namespace Inventory.FunctionalTests.Tests
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
+
+        [Theory]
+        [InlineData("aspirin", "Medicine name search")]
+        [InlineData("ASP001", "Medicine code search")]
+        [InlineData("ibuprofen", "Partial medicine name search")]
+        [InlineData("IBU", "Partial medicine code search")]
+        [InlineData("", "Empty search keyword")]
+        [InlineData("   ", "Whitespace search keyword")]
+        [InlineData("nonexistentmedicine", "Non-existent medicine search")]
+        public async Task GetInventoryLimitStock_WithSearchKeyword_ReturnsFilteredResults(string searchKeyword, string testDescription)
+        {
+            // Arrange
+            var request = new PaginationRequest { PageIndex = 1, PageSize = 10 };
+            var searchParam = string.IsNullOrWhiteSpace(searchKeyword) ? "" : $"&searchKeyword={Uri.EscapeDataString(searchKeyword)}";
+
+            // Act
+            var response = await _client.GetAsync($"/inventory-limit-stocks?pageIndex={request.PageIndex}&pageSize={request.PageSize}{searchParam}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK, testDescription);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<GetInventoryLimitStockResponse>();
+                result.Should().NotBeNull(testDescription);
+                result!.InventoryLimitStocks.Should().NotBeNull(testDescription);
+
+                // If search keyword is provided and not empty/whitespace, verify filtering
+                if (!string.IsNullOrWhiteSpace(searchKeyword))
+                {
+                    var searchTerm = searchKeyword.Trim().ToLower();
+                    var hasMatchingResults = result.InventoryLimitStocks.Data.Any(item =>
+                        (item.MedicineName?.ToLower().Contains(searchTerm) == true) ||
+                        (item.MedicineCode?.ToLower().Contains(searchTerm) == true));
+
+                    // For non-existent searches, we might get empty results, which is valid
+                    // For existing searches, we should have matching results
+                    if (searchTerm != "nonexistentmedicine")
+                    {
+                        // If there are results, at least one should match the search criteria
+                        if (result.InventoryLimitStocks.Data.Any())
+                        {
+                            hasMatchingResults.Should().BeTrue($"Search results should contain items matching '{searchTerm}'");
+                        }
+                    }
+                }
+            }
+        }
     }
 }
