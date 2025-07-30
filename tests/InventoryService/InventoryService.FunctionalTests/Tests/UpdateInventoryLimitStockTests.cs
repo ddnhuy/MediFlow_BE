@@ -30,7 +30,9 @@ namespace Inventory.FunctionalTests.Tests
             var updateCommand = new UpdateInventoryLimitStockCommand(
                 Id: inventoryLimitStockId,
                 MedicineId: 2,
-                MinimalStockThreshold: 20
+                MinimalStockThreshold: 20,
+                IsSuspended: false,
+                IsCancelled: false
             );
 
             // Act
@@ -51,7 +53,9 @@ namespace Inventory.FunctionalTests.Tests
             var updateCommand = new UpdateInventoryLimitStockCommand(
                 Id: 1,
                 MedicineId: 1,
-                MinimalStockThreshold: 20
+                MinimalStockThreshold: 20,
+                IsSuspended: false,
+                IsCancelled: false
             );
 
             // Act
@@ -68,7 +72,9 @@ namespace Inventory.FunctionalTests.Tests
             var updateCommand = new UpdateInventoryLimitStockCommand(
                 Id: 1,
                 MedicineId: 1,
-                MinimalStockThreshold: -10
+                MinimalStockThreshold: -10,
+                IsSuspended: false,
+                IsCancelled: false
             );
 
             // Act
@@ -87,7 +93,9 @@ namespace Inventory.FunctionalTests.Tests
             var updateCommand = new UpdateInventoryLimitStockCommand(
                 Id: 2,
                 MedicineId: 1,
-                MinimalStockThreshold: 15
+                MinimalStockThreshold: 15,
+                IsSuspended: false,
+                IsCancelled: false
             );
 
             // Act
@@ -104,7 +112,9 @@ namespace Inventory.FunctionalTests.Tests
             var updateCommand = new UpdateInventoryLimitStockCommand(
                 Id: 99999,
                 MedicineId: 1,
-                MinimalStockThreshold: 15
+                MinimalStockThreshold: 15,
+                IsSuspended: false,
+                IsCancelled: false
             );
 
             // Act

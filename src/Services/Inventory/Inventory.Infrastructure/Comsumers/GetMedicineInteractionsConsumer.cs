@@ -26,7 +26,7 @@ namespace Inventory.Infrastructure.Comsumers
             {
                 // Check if the medicine exists
                 var medicine = await _context.Medicines
-                    .FirstOrDefaultAsync(m => m.Id == request.MedicineId && !m.IsCancelled,
+                    .FirstOrDefaultAsync(m => m.Id == request.MedicineId && !m.IsSuspended && !m.IsCancelled,
                         context.CancellationToken);
 
                 if (medicine == null)
@@ -50,7 +50,7 @@ namespace Inventory.Infrastructure.Comsumers
                     .Include(mi => mi.Medicine1)
                     .Include(mi => mi.Medicine2)
                     .Where(mi => (mi.MedicineId1 == request.MedicineId || mi.MedicineId2 == request.MedicineId)
-                                && !mi.IsCancelled)
+                                &&!mi.IsSuspended && !mi.IsCancelled)
                     .ToListAsync(context.CancellationToken);
 
                 var interactionInfos = interactions.Select(mi => new MedicineInteractionInfo

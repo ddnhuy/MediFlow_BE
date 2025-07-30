@@ -28,11 +28,11 @@ namespace Inventory.Infrastructure.Comsumers
                 var medicine = await _context.Medicines
                     .Include(m => m.MedicineType)
                     .Include(m => m.VaccineType)
-                    .FirstOrDefaultAsync(m => m.Id == request.MedicineId && !m.IsCancelled,
+                    .FirstOrDefaultAsync(m => m.Id == request.MedicineId && !m.IsSuspended && !m.IsCancelled,
                         context.CancellationToken);
 
                 var medicinePrice = await _context.MedicinePrices
-                    .Where(mp => mp.MedicineId == request.MedicineId && !mp.IsCancelled)
+                    .Where(mp => mp.MedicineId == request.MedicineId && !mp.IsSuspended && !mp.IsCancelled)
                     .OrderByDescending(mp => mp.CreatedAt)
                     .FirstOrDefaultAsync(context.CancellationToken);
 

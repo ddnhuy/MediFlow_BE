@@ -8,7 +8,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineById
         {
             var medicine = await dbContext.Medicines
                 .Include(m => m.VaccineType)
-                .Where(x => !x.IsSuspended && !x.IsCancelled)
+                .Where(x => !x.IsCancelled)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == request.Id, cancellationToken);
 

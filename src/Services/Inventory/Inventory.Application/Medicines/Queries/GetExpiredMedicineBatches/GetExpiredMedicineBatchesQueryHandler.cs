@@ -52,8 +52,6 @@
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
-
-
             return new GetExpiredMedicineBatchesResult(
                 new PaginatedResult<ExpiredMedicineBatchDto>(pageIndex, pageSize, totalCount, expiredBatches));
         }

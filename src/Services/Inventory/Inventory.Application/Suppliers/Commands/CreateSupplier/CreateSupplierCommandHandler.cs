@@ -5,7 +5,7 @@
         public async Task<CreateSupplierResult> Handle(CreateSupplierCommand request, CancellationToken cancellationToken)
         {
             bool duplicateCodeExists = await dbContext.Suppliers
-                .AnyAsync(x => x.SupplierCode == request.SupplierCode, cancellationToken);
+                .AnyAsync(x => x.SupplierCode == request.SupplierCode && !x.IsCancelled, cancellationToken);
 
             if (duplicateCodeExists)
             {

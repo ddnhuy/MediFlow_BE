@@ -287,7 +287,9 @@ namespace Inventory.FunctionalTests.Tests
                 VatRate: 10.0,
                 VatAmount: 1.25m,
                 OriginalPriceAfterVat: 13.75m,
-                OriginalPriceBeforeVat: 12.5m
+                OriginalPriceBeforeVat: 12.5m,
+                IsSuspended: false,
+                IsCancelled: false
             );
 
             // Act
@@ -314,7 +316,9 @@ namespace Inventory.FunctionalTests.Tests
                 VatRate: 10.0,
                 VatAmount: 1.25m,
                 OriginalPriceAfterVat: 13.75m,
-                OriginalPriceBeforeVat: 12.5m
+                OriginalPriceBeforeVat: 12.5m,
+                IsSuspended: false,
+                IsCancelled: false
             );
 
             // Act
@@ -337,7 +341,9 @@ namespace Inventory.FunctionalTests.Tests
                 VatRate: 10.0,
                 VatAmount: 1.25m,
                 OriginalPriceAfterVat: 13.75m,
-                OriginalPriceBeforeVat: 12.5m
+                OriginalPriceBeforeVat: 12.5m,
+                IsSuspended: false,
+                IsCancelled: false
             );
 
             // Act
@@ -361,7 +367,9 @@ namespace Inventory.FunctionalTests.Tests
                 VatRate: 10.0,
                 VatAmount: 1.25m,
                 OriginalPriceAfterVat: 13.75m,
-                OriginalPriceBeforeVat: 12.5m
+                OriginalPriceBeforeVat: 12.5m,
+                IsSuspended: false,
+                IsCancelled: false
             );
             // Act
             var response = await _client.PutAsJsonAsync($"/medicine-prices/{id}", command);
@@ -383,7 +391,9 @@ namespace Inventory.FunctionalTests.Tests
                 VatRate: 10.0,
                 VatAmount: 1.25m,
                 OriginalPriceAfterVat: 13.75m,
-                OriginalPriceBeforeVat: 12.5m
+                OriginalPriceBeforeVat: 12.5m,
+                IsSuspended: false,
+                IsCancelled: false
             );
             // Act
             var response = await _client.PutAsJsonAsync($"/medicine-prices/{id}", command);

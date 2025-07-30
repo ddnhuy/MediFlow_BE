@@ -17,7 +17,7 @@
 
             // Find existing medicine price by ID
             var medicinePrice = await dbContext.MedicinePrices
-                .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsSuspended && !p.IsCancelled, cancellationToken);
+                .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled, cancellationToken);
 
             if (medicinePrice == null)
             {
@@ -32,6 +32,8 @@
             medicinePrice.VatAmount = request.VatAmount;
             medicinePrice.OriginalPriceAfterVat = request.OriginalPriceAfterVat;
             medicinePrice.OriginalPriceBeforeVat = request.OriginalPriceBeforeVat;
+            medicinePrice.IsSuspended = request.IsSuspended;
+            medicinePrice.IsCancelled = request.IsCancelled;
 
             await dbContext.SaveChangesAsync(cancellationToken);
 

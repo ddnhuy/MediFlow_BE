@@ -14,6 +14,8 @@ namespace Inventory.Application.DomainEventsHandler.InventoryUpdated
 
             // Check if inventory detail exists
             var inventoryDetail = await dbContext.InventoryDetails
+                .Include(id => id.MedicineBatch)
+                 .Where(id => id.MedicineBatch!.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow))
                 .FirstOrDefaultAsync(id => id.MedicineBatchId == notification.MedicineBatchId && id.WarehouseId == notification.WarehouseId, cancellationToken);
 
             if (inventoryDetail == null)

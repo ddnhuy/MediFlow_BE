@@ -14,7 +14,7 @@ namespace Inventory.Application.InventoryLimitStock
         {
             var ils = await dbContext.InventoryLimitStocks   
                 .Include(x => x.Medicine)
-                .Where(x => x.Id == request.Id && !x.IsSuspended && !x.IsCancelled)
+                .Where(x => x.Id == request.Id && !x.IsCancelled)
                 .Select(ils => new InventoryLimitStockDTO
                 {
                     Id = ils.Id,

@@ -31,7 +31,10 @@ namespace Inventory.Infrastructure.Comsumers
                 // Sum all available stock for the medicine
                 var currentStock = await _context.InventoryDetails
                     .Include(id => id.MedicineBatch)
-                    .Where(id => id.MedicineBatch!.MedicineId == request.MedicineId)
+                    .Where(id => id.MedicineBatch!.MedicineId == request.MedicineId 
+                    && id.MedicineBatch!.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)
+                    && !id.MedicineBatch!.IsSuspended 
+                    && !id.MedicineBatch!.IsCancelled)
                     .SumAsync(id => id.Quantity, context.CancellationToken);
 
                 var isEnough = currentStock >= request.NumberOfMedicineWanted;

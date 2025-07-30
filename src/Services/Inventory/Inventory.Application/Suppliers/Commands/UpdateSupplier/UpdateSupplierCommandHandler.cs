@@ -12,7 +12,7 @@
             }
 
             bool duplicateCodeExists = await dbContext.Suppliers
-                .AnyAsync(x => x.SupplierCode == request.SupplierCode && x.Id != request.Id, cancellationToken);
+                .AnyAsync(x => x.SupplierCode == request.SupplierCode && x.Id != request.Id && x.IsCancelled!, cancellationToken);
 
             if (duplicateCodeExists)
             {

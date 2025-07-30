@@ -6,7 +6,7 @@
         public async Task<GetMedicineInteractionsByMedicineIdResult> Handle(GetMedicineInteractionsByMedicineIdQuery request, CancellationToken cancellationToken)
         {
             var medicineExists = await dbContext.Medicines
-                .AnyAsync(m => m.Id == request.MedicineId, cancellationToken);
+                .AnyAsync(m => m.Id == request.MedicineId && !m.IsCancelled && !m.IsSuspended, cancellationToken);
 
             if (!medicineExists)
                 throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
