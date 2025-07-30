@@ -7,11 +7,17 @@
         {
             // Check if medicine exists
             var medicine = await dbContext.Medicines
+                .Include(m => m.MedicinePrice)
                 .FirstOrDefaultAsync(m => m.Id == request.MedicineId && !m.IsSuspended && !m.IsCancelled, cancellationToken);
 
             if (medicine == null)
             {
-                throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
+                throw new BadRequestException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
+            }
+
+            if (medicine.MedicinePrice != null)
+            {
+                throw new BadRequestException(ExceptionKey.MEDICINE_ALREADY_HAVE_PRICE);
             }
 
             // Create new medicine price

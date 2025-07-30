@@ -84,7 +84,7 @@ namespace Inventory.FunctionalTests.Tests
             // Arrange
             // First, ensure we have a medicine without any prices
             // We'll use medicine ID 6 which should not have any prices based on seed data
-            var medicineId = 6; // Assuming this medicine exists but has no prices
+            var medicineId = 10; // Assuming this medicine exists but has no prices
 
             // Act
             var response = await _client.GetAsync("/medicine-prices?pageIndex=1&pageSize=10");
@@ -172,7 +172,7 @@ namespace Inventory.FunctionalTests.Tests
         {
             // Arrange
             var command = new CreateMedicinePriceCommand(
-                MedicineId: 1,
+                MedicineId: 7,
                 UnitPrice: 10.5m,
                 Currency: "USD",
                 VatRate: 10.0,
@@ -237,7 +237,7 @@ namespace Inventory.FunctionalTests.Tests
         }
 
         [Fact]
-        public async Task CreateMedicinePrice_WithNonExistentMedicineId_ReturnsNotFound()
+        public async Task CreateMedicinePrice_WithNonExistentMedicineId_ReturnsBadRequest()
         {
             // Arrange
             var command = new CreateMedicinePriceCommand(
@@ -252,7 +252,45 @@ namespace Inventory.FunctionalTests.Tests
             // Act
             var response = await _client.PostAsJsonAsync("/medicine-prices", command);
             // Assert
-            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Fact]
+        public async Task CreateMedicinePrice_WithExistingPrice_ReturnsBadRequest()
+        {
+            // Arrange
+            // First, create a medicine price
+            var createCommand1 = new CreateMedicinePriceCommand(
+                MedicineId: 6,
+                UnitPrice: 10.5m,
+                Currency: "USD",
+                VatRate: 10.0,
+                VatAmount: 1.05m,
+                OriginalPriceAfterVat: 11.55m,
+                OriginalPriceBeforeVat: 10.5m
+            );
+
+            var createResponse = await _client.PostAsJsonAsync("/medicine-prices", createCommand1);
+            createResponse.EnsureSuccessStatusCode();
+
+            // Try to create another price for the same medicine
+            var createCommand2 = new CreateMedicinePriceCommand(
+                MedicineId: 6, // Same medicine ID
+                UnitPrice: 15.0m,
+                Currency: "USD",
+                VatRate: 10.0,
+                VatAmount: 1.5m,
+                OriginalPriceAfterVat: 16.5m,
+                OriginalPriceBeforeVat: 15.0m
+            );
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/medicine-prices", createCommand2);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+            problem.Should().NotBeNull();
         }
 
         #endregion
@@ -265,7 +303,7 @@ namespace Inventory.FunctionalTests.Tests
             // Arrange
             // First, create a medicine price to update
             var createCommand = new CreateMedicinePriceCommand(
-                MedicineId: 1,
+                MedicineId: 12,
                 UnitPrice: 10.5m,
                 Currency: "USD",
                 VatRate: 10.0,
@@ -281,7 +319,7 @@ namespace Inventory.FunctionalTests.Tests
 
             var updateCommand = new UpdateMedicinePriceCommand(
                 Id: id,
-                MedicineId: 1,
+                MedicineId: 12,
                 UnitPrice: 12.5m,
                 Currency: "USD",
                 VatRate: 10.0,
@@ -377,6 +415,49 @@ namespace Inventory.FunctionalTests.Tests
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
+        [Fact]
+        public async Task UpdateMedicinePrice_WithChangedMedicineId_ReturnsBadRequest()
+        {
+            // Arrange
+            // First, create a medicine price for medicine ID 1
+            var createCommand = new CreateMedicinePriceCommand(
+                MedicineId: 11,
+                UnitPrice: 10.5m,
+                Currency: "USD",
+                VatRate: 10.0,
+                VatAmount: 1.05m,
+                OriginalPriceAfterVat: 11.55m,
+                OriginalPriceBeforeVat: 10.5m
+            );
+
+            var createResponse = await _client.PostAsJsonAsync("/medicine-prices", createCommand);
+            createResponse.EnsureSuccessStatusCode();
+            var createResult = await createResponse.Content.ReadFromJsonAsync<CreateMedicinePriceResponse>();
+            var id = createResult!.Id;
+
+            // Try to update the price but change the medicine ID to 2
+            var updateCommand = new UpdateMedicinePriceCommand(
+                Id: id,
+                MedicineId: 1, // Changed from 1 to 2
+                UnitPrice: 12.5m,
+                Currency: "USD",
+                VatRate: 10.0,
+                VatAmount: 1.25m,
+                OriginalPriceAfterVat: 13.75m,
+                OriginalPriceBeforeVat: 12.5m,
+                IsSuspended: false,
+                IsCancelled: false
+            );
+
+            // Act
+            var response = await _client.PutAsJsonAsync($"/medicine-prices/{id}", updateCommand);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+            problem.Should().NotBeNull();
+        }
+
         // Case where no medicine price exist
         [Fact]
         public async Task UpdateMedicinePrice_WithNonExistentMedicinePriceId_ReturnsNotFound()
@@ -469,7 +550,7 @@ namespace Inventory.FunctionalTests.Tests
         {
             // Arrange
             // First, create a medicine price for our medicine ID
-            var medicineId = 1;
+            var medicineId = 6;
             var createCommand = new CreateMedicinePriceCommand(
                 MedicineId: medicineId,
                 UnitPrice: 10.5m,
@@ -528,7 +609,7 @@ namespace Inventory.FunctionalTests.Tests
             // Arrange
             // First, create a medicine price to get
             var createCommand = new CreateMedicinePriceCommand(
-                MedicineId: 5,
+                MedicineId: 8,
                 UnitPrice: 10.5m,
                 Currency: "USD",
                 VatRate: 10.0,

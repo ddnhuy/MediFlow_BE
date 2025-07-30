@@ -6,7 +6,6 @@
         public async Task<UpdateMedicinePriceResult> Handle(
             UpdateMedicinePriceCommand request, CancellationToken cancellationToken)
         {
-            // Check if medicine exists
             var medicine = await dbContext.Medicines
                 .FirstOrDefaultAsync(m => m.Id == request.MedicineId && !m.IsSuspended && !m.IsCancelled, cancellationToken);
 
@@ -15,13 +14,18 @@
                 throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
             }
 
-            // Find existing medicine price by ID
+            // Check if medicine price exists
             var medicinePrice = await dbContext.MedicinePrices
                 .FirstOrDefaultAsync(p => p.Id == request.Id && !p.IsCancelled, cancellationToken);
 
             if (medicinePrice == null)
             {
                 throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_PRICE);
+            }
+
+            if (medicinePrice.MedicineId != request.MedicineId)
+            {
+                throw new BadRequestException(ExceptionKey.MEDICINE_ALREADY_HAVE_PRICE);
             }
 
             // Update medicine price properties
