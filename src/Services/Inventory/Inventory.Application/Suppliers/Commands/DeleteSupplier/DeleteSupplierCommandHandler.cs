@@ -4,7 +4,7 @@
     {
         public async Task<DeleteSupplierResult> Handle(DeleteSupplierCommand request, CancellationToken cancellationToken)
         {
-            var supplier = await dbContext.Suppliers.FirstOrDefaultAsync(x => x.Id == request.Id);
+            var supplier = await dbContext.Suppliers.FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsCancelled);
 
             if (supplier == null)
             {

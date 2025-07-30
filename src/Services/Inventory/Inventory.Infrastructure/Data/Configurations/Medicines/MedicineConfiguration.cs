@@ -15,6 +15,12 @@
                     .WithMany()
                     .HasForeignKey(x => x.VaccineTypeId)
                     .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasOne(x => x.MedicinePrice)
+                .WithOne(mp => mp.Medicine)
+                .HasForeignKey<MedicinePrice>(mp => mp.MedicineId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

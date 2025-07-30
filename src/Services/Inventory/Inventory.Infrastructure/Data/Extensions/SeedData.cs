@@ -722,23 +722,6 @@ namespace Inventory.Infrastructure.Data.Extensions
                     CreatedBy = 1,
                     LastUpdatedAt = now,
                     LastUpdatedBy = 1
-                },
-                // Historical price for COVID-19 Vaccine
-                new MedicinePrice
-                {
-                    MedicineId = 1,
-                    UnitPrice = 575000m,
-                    Currency = "VND",
-                    VatRate = 0.05,
-                    VatAmount = 28750m,
-                    OriginalPriceBeforeVat = 575000m,
-                    OriginalPriceAfterVat = 603750m,
-                    IsSuspended = false,
-                    IsCancelled = false,
-                    CreatedAt = now.AddMonths(-3),
-                    CreatedBy = 1,
-                    LastUpdatedAt = now.AddMonths(-3),
-                    LastUpdatedBy = 1
                 }
             };
         }

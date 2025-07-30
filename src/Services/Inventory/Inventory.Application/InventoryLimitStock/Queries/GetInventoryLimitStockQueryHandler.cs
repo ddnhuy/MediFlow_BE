@@ -21,7 +21,7 @@ namespace Inventory.Application.InventoryLimitStock
             var baseQuery = dbContext.Medicines
                 .Where(m => !m.IsSuspended && !m.IsCancelled)
                 .Where(m => dbContext.InventoryLimitStocks
-                    .Any(ils => ils.MedicineId == m.Id && !ils.IsSuspended && !ils.IsCancelled));
+                    .Any(ils => ils.MedicineId == m.Id && !ils.IsCancelled));
 
             // Apply search filter if searchKeyword is provided
             if (!string.IsNullOrWhiteSpace(request.searchKeyword))
@@ -42,7 +42,7 @@ namespace Inventory.Application.InventoryLimitStock
                 .Select(m => new InventoryLimitStockDTO
                 {
                     Id = dbContext.InventoryLimitStocks
-                        .Where(ils => ils.MedicineId == m.Id && !ils.IsSuspended && !ils.IsCancelled)
+                        .Where(ils => ils.MedicineId == m.Id && !ils.IsCancelled)
                         .Select(ils => ils.Id)
                         .FirstOrDefault(),
                     MedicineId = m.Id,
@@ -60,8 +60,16 @@ namespace Inventory.Application.InventoryLimitStock
                                     && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)))
                         .Sum(id => id.Quantity),
                     MinimalStockThreshold = dbContext.InventoryLimitStocks
-                        .Where(ils => ils.MedicineId == m.Id && !ils.IsSuspended && !ils.IsCancelled)
+                        .Where(ils => ils.MedicineId == m.Id && !ils.IsCancelled)
                         .Select(ils => ils.MinimalStockThreshold)
+                        .FirstOrDefault(),
+                    IsSuspended = dbContext.InventoryLimitStocks
+                        .Where(ils => ils.MedicineId == m.Id && !ils.IsCancelled)
+                        .Select(ils => ils.IsSuspended)
+                        .FirstOrDefault(),
+                    IsCancelled = dbContext.InventoryLimitStocks
+                        .Where(ils => ils.MedicineId == m.Id && !ils.IsCancelled)
+                        .Select(ils => ils.IsCancelled)
                         .FirstOrDefault(),
                 })
                 .OrderBy(m => m.MedicineId)

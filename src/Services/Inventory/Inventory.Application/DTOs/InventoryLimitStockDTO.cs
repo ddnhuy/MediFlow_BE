@@ -25,5 +25,8 @@ namespace Inventory.Application.DTOs
             InventoryLimitStockStatus.Normal => NORMAL_STATUS,
             _ => NORMAL_STATUS
         };
+
+        public bool IsSuspended { get; set; }
+        public bool IsCancelled { get; set; }
     }
 }

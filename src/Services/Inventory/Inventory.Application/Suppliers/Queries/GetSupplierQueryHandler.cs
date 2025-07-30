@@ -8,10 +8,10 @@
             var pageSize = request.Request.PageSize;
             
             var totalCounts = await dbContext.Suppliers
-                .Where(x => !x.IsSuspended && !x.IsCancelled)
+                .Where(x => !x.IsCancelled)
                 .LongCountAsync(cancellationToken);
 
-            var suppliers = await dbContext.Suppliers.Where(x => !x.IsSuspended && !x.IsCancelled)
+            var suppliers = await dbContext.Suppliers.Where(x => !x.IsCancelled)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .AsNoTracking()

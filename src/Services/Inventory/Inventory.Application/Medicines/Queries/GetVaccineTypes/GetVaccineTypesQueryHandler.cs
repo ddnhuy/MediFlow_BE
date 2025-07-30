@@ -19,7 +19,7 @@ namespace Inventory.Application.VaccineTypes.Queries
             var vaccineTypes = await _dbContext.VaccineTypes
                 .AsNoTracking()
                 .OrderBy(x => x.VaccineTypeName)
-                .Where(x => !x.IsSuspended && !x.IsCancelled)
+                .Where(x => !x.IsCancelled)
                 .ToListAsync(cancellationToken);
 
             var dtos = vaccineTypes.Select(v => new VaccineTypeDTO

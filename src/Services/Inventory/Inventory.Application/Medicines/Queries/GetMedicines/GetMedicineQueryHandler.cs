@@ -11,7 +11,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicines
 
             var baseQuery = dbContext.Medicines
                 .Include(m => m.VaccineType)
-                .Where(x => !x.IsSuspended && !x.IsCancelled);
+                .Where(x => !x.IsCancelled);
 
             if (!string.IsNullOrWhiteSpace(query.SearchKeyword))
             {
