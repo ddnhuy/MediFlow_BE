@@ -21,7 +21,9 @@ namespace Inventory.Application.Medicines.Commands.UpdateMedicine
             }
 
             // Check if the medicine code already exists for another medicine
-            if (await _dbContext.Medicines.AnyAsync(m => m.MedicineCode!.Trim().ToLower() == request.MedicineCode.Trim().ToLower() && !m.IsCancelled, cancellationToken))
+            if (await _dbContext.Medicines.AnyAsync(m => m.MedicineCode!.Trim().ToLower() == request.MedicineCode.Trim().ToLower()
+                && m.Id != request.Id 
+                && !m.IsCancelled, cancellationToken))
             {
                 throw new BadRequestException(ExceptionKey.DUPLICATE_MEDICINE_CODE);
             }
