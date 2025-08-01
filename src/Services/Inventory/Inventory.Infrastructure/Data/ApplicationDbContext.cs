@@ -25,6 +25,8 @@ namespace Inventory.Infrastructure.Data
         public DbSet<InventoryDetail> InventoryDetails => Set<InventoryDetail>();
         public DbSet<InventoryHistory> InventoryHistories => Set<InventoryHistory>();
         public DbSet<InventoryLimitStock> InventoryLimitStocks => Set<InventoryLimitStock>();
+        public DbSet<MedicineBatchReturn> MedicineBatchReturns => Set<MedicineBatchReturn>();
+        public DbSet<MedicineBatchReturnDetail> MedicineBatchReturnDetails => Set<MedicineBatchReturnDetail>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

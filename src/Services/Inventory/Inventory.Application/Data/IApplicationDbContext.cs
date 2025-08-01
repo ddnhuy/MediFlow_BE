@@ -18,6 +18,8 @@
         DbSet<InventoryDetail> InventoryDetails { get; }
         DbSet<InventoryHistory> InventoryHistories { get; }
         DbSet<Inventory.Domain.Models.InventoryLimitStock> InventoryLimitStocks { get; }
+        DbSet<MedicineBatchReturn> MedicineBatchReturns { get; }
+        DbSet<MedicineBatchReturnDetail> MedicineBatchReturnDetails { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         DatabaseFacade Database { get; }
     }

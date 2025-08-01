@@ -1,4 +1,6 @@
-﻿namespace Inventory.Domain.Models
+﻿using BuildingBlocks.Strings.Enums;
+
+namespace Inventory.Domain.Models
 {
     public class MedicineBatch : Entity
     {
@@ -13,6 +15,7 @@
         public Supplier? Supplier { get; set; }
         public int? ManufacturerId { get; set; }
         public Manufacturer? Manufacturer { get; set; }
+        public MedicineBatchStatus Status { get; set; } = MedicineBatchStatus.IsActive;
         // TODO: Other properties about Visa and import permit
     }
 }

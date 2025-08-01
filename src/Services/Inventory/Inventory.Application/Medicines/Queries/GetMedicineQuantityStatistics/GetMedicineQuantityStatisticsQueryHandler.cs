@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application.Medicines.Queries.GetMedicineQuantityStatistics
+﻿using BuildingBlocks.Strings.Enums;
+
+namespace Inventory.Application.Medicines.Queries.GetMedicineQuantityStatistics
 {
     public class GetMedicineQuantityStatisticsQueryHandler(IApplicationDbContext dbContext) : IQueryHandler<GetMedicineQuantityStatisticsQuery, GetMedicineQuantityStatisticsResult>
     {
@@ -31,6 +33,7 @@
                             && dbContext.MedicineBatches
                                 .Any(mb => mb.Id == id.MedicineBatchId
                                     && mb.MedicineId == m.Id
+                                    && mb.Status == MedicineBatchStatus.IsActive
                                     && !mb.IsSuspended
                                     && !mb.IsCancelled
                                     && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)))

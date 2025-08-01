@@ -6,11 +6,11 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/medicines/expired-batches", async ([AsParameters] PaginationRequest paginationRequest, ISender sender) =>
+            app.MapGet("/medicines/expired-batches", async ([AsParameters] PaginationRequest paginationRequest, string? searchTerm, ISender sender) =>
             {
                 PaginationHelper.VerifyPaginationRequest(paginationRequest.PageIndex, paginationRequest.PageSize);
 
-                var query = new GetExpiredMedicineBatchesQuery(paginationRequest);
+                var query = new GetExpiredMedicineBatchesQuery(paginationRequest, searchTerm);
                 var result = await sender.Send(query);
 
                 return Results.Ok(new GetExpiredMedicineBatchesResponse(result.ExpiredBatches));

@@ -1,5 +1,7 @@
-﻿using Inventory.Infrastructure.Data;
+﻿using BuildingBlocks.Messaging.Contracts.Email;
+using Inventory.Infrastructure.Data;
 using InventoryService.FunctionalTests.Helpers;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -8,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using NSubstitute;
 using System.Text;
 using Testcontainers.PostgreSql;
 using Xunit;
@@ -45,6 +48,12 @@ namespace InventoryService.FunctionalTests.Abstractions
                 {
                     options.UseNpgsql(_dbContainer.GetConnectionString());
                 });
+
+                // Mock IPublishEndpoint to skip email sending
+                services.RemoveAll<IPublishEndpoint>();
+                var mockPublishEndpoint = Substitute.For<IPublishEndpoint>();
+                mockPublishEndpoint.Publish(Arg.Any<SendEmailMessage>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
+                services.AddSingleton(mockPublishEndpoint);
 
             });
         }

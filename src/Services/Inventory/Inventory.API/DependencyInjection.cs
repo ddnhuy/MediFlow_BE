@@ -1,4 +1,6 @@
-﻿namespace Inventory.API
+﻿using Inventory.Application.Configs;
+
+namespace Inventory.API
 {
     public static class DependencyInjection
     {
@@ -19,6 +21,7 @@
                     ClockSkew = TimeSpan.Zero
                 };
             });
+            services.Configure<ApprovalUrlConfig>(configuration.GetSection("ApprovalUrls"));
             services.AddAuthorization();
             return services;
         }
