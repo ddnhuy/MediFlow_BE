@@ -1,0 +1,130 @@
+﻿@using RazorLight.Text
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-top: 5px solid #98d2c0;
+        }
+
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+            .header h1 {
+                color: #98d2c0;
+                font-size: 24px;
+                margin: 0;
+            }
+
+        .content {
+            color: #333333;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+            .content strong {
+                color: #98d2c0;
+            }
+
+        .batch-details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .batch-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+
+            .batch-item:last-child {
+                border-bottom: none;
+            }
+
+        .action-buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0 10px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .btn-approve {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-reject {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #777777;
+            font-size: 14px;
+        }
+
+            .footer span {
+                color: #98d2c0;
+                font-weight: bold;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Yêu cầu phê duyệt hoàn trả dược phẩm</h1>
+        </div>
+        <div class="content">
+            <p>Xin chào <strong>@Model["ReceiverName"]</strong>,</p>
+            <p>Bạn có một yêu cầu phê duyệt hoàn trả dược phẩm cần xử lý:</p>
+
+            <p>
+                <strong>Mã phiếu hoàn trả:</strong> @Model["ReturnCode"]<br />
+                <strong>Lý do hoàn trả:</strong> @Model["Reason"]<br />
+                <strong>Ngày tạo:</strong> @Model["CreatedDate"]
+            </p>
+
+            <div class="batch-details">
+                <h3>Chi tiết các lô dược phẩm:</h3>
+                @(new RawString(@Model["BatchDetails"]))
+            </div>
+
+            <p>Vui lòng xem xét và đưa ra quyết định phê duyệt hoặc từ chối yêu cầu này.</p>
+
+            <div class="action-buttons">
+                <a href="@Model["ApprovalUrl"]" class="btn btn-approve">Phê duyệt</a>
+                <a href="@Model["RejectionUrl"]" class="btn btn-reject">Từ chối</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Trân trọng,<br /><span>Đội ngũ MediFlow</span></p>
+        </div>
+    </div>
+</body>
+</html>

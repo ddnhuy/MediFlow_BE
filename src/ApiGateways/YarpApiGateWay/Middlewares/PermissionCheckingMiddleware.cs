@@ -38,8 +38,21 @@ namespace YarpApiGateWay.Middlewares
             var segments = path.Trim('/').Split('/');
             var resourceType = segments.Length > 0 ? segments[0] : "unknown";
 
-
             if (_allowedAnonymousResourceType.Contains(resourceType))
+            {
+                await _next(context);
+                return;
+            }
+
+
+            // Allow specific inventory endpoints for email approval
+            if (path.Contains("/medicine-batch-returns/") && path.Contains("/approve"))
+            {
+                await _next(context);
+                return;
+            }
+
+            if (path.Contains("/medicine-batch-returns/") && path.Contains("/reject"))
             {
                 await _next(context);
                 return;

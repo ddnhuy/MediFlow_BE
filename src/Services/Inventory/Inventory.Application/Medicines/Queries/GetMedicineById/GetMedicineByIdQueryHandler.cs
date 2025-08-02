@@ -1,4 +1,5 @@
-﻿using Inventory.Application.Helpers;
+﻿using BuildingBlocks.Strings.Enums;
+using Inventory.Application.Helpers;
 
 namespace Inventory.Application.Medicines.Queries.GetMedicineById
 {
@@ -31,6 +32,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineById
                             && mb.MedicineId == request.Id
                             && !mb.IsSuspended
                             && !mb.IsCancelled
+                            && mb.Status == MedicineBatchStatus.IsActive
                             && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)))
                 .SumAsync(id => id.Quantity, cancellationToken);
 

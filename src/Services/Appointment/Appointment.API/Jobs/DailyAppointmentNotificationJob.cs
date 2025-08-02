@@ -10,14 +10,12 @@ namespace Appointment.API.Jobs
         private readonly ILogger<DailyAppointmentNotificationJob> _logger;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IPublishEndpoint _publishEndpoint;
-        private readonly ICurrentUserHelper _currentUserHelper;
 
         public DailyAppointmentNotificationJob(ILogger<DailyAppointmentNotificationJob> logger, IAppointmentRepository appointmentRepository, IPublishEndpoint publishEndpoint, ICurrentUserHelper currentUserHelper)
         {
             _logger = logger;
             _appointmentRepository = appointmentRepository;
             _publishEndpoint = publishEndpoint;
-            _currentUserHelper = currentUserHelper;
         }
 
         public async Task Execute(IJobExecutionContext context)
@@ -26,7 +24,6 @@ namespace Appointment.API.Jobs
                 TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")));
 
             var today = DateTime.UtcNow.Date;
-            var currentUserId = _currentUserHelper.GetUserId();
 
             var (appointments, totalCount) = await _appointmentRepository.GetUpcomingAppointmentsAsync(fromDate: today, pageIndex: 1, pageSize: int.MaxValue); 
 

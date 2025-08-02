@@ -13,6 +13,7 @@ namespace BuildingBlocks.Messaging.Extensions
                 EmailSubjectCode.AppointmentReminder => "Nhắc nhở cuộc hẹn tiêm chủng sắp tới",
                 EmailSubjectCode.AppointmentCancelled => "Cuộc hẹn của bạn đã bị hủy",
                 EmailSubjectCode.ProfileUpdated => "Hồ sơ của bạn đã được cập nhật",
+                EmailSubjectCode.MedicineBatchReturnApproval => "Yêu cầu phê duyệt hoàn trả dược phẩm",
                 _ => "Thông báo từ MediFlow"
             };
         }
