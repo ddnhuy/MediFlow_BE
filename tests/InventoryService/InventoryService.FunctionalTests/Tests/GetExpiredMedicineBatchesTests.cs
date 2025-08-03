@@ -22,6 +22,39 @@ namespace Inventory.FunctionalTests.Tests
             var result = await response.Content.ReadFromJsonAsync<GetExpiredMedicineBatchesResponse>();
             result.Should().NotBeNull();
             result!.ExpiredBatches.Should().NotBeNull();
+
+            // Validate pagination structure
+            result.ExpiredBatches.PageIndex.Should().Be(1);
+            result.ExpiredBatches.PageSize.Should().Be(10);
+            result.ExpiredBatches.TotalItems.Should().BeGreaterThanOrEqualTo(0);
+            result.ExpiredBatches.TotalPages.Should().BeGreaterThanOrEqualTo(0);
+            result.ExpiredBatches.HasPreviousPage.Should().BeFalse(); // First page
+            result.ExpiredBatches.HasNextPage.Should().Be(result.ExpiredBatches.TotalPages > 1);
+
+            // Validate data structure if any expired batches exist
+            if (result.ExpiredBatches.Data.Any())
+            {
+                var firstBatch = result.ExpiredBatches.Data.First();
+
+                // Validate required properties
+                firstBatch.MedicineId.Should().BeGreaterThan(0);
+                firstBatch.MedicineBatchId.Should().BeGreaterThan(0);
+                firstBatch.BatchNumber.Should().NotBeNullOrEmpty();
+                firstBatch.MedicineName.Should().NotBeNullOrEmpty();
+                firstBatch.Unit.Should().NotBeNullOrEmpty();
+                firstBatch.SupplierId.Should().BeGreaterThan(0);
+
+                // Validate business logic
+                firstBatch.ExpiryDate.Should().BeBefore(DateOnly.FromDateTime(DateTime.UtcNow));
+                firstBatch.CurrentQuantity.Should().BeGreaterThanOrEqualTo(0);
+
+                // Validate optional properties (should not be null but can be empty)
+                firstBatch.MedicineCode.Should().NotBeNull();
+                firstBatch.SupplierName.Should().NotBeNull();
+                firstBatch.ContactPerson.Should().NotBeNull();
+                firstBatch.PhoneNumber.Should().NotBeNull();
+                firstBatch.Email.Should().NotBeNull();
+            }
         }
 
         [Fact]

@@ -22,7 +22,12 @@ namespace Inventory.API.Endpoints
         int MedicineBatchId,
         string BatchNumber,
         DateOnly ExpirationDate,
-        decimal Quantity
+        decimal Quantity,
+        int SupplierId,
+        string SupplierName,
+        string ContactPerson,
+        string PhoneNumber,
+        string Email
     );
 
     public class GetMedicineBatchReturnByIdEndpoint : ICarterModule
@@ -49,7 +54,12 @@ namespace Inventory.API.Endpoints
                         MedicineBatchId: d.MedicineBatchId,
                         BatchNumber: d.BatchNumber,
                         ExpirationDate: d.ExpirationDate,
-                        Quantity: d.Quantity
+                        Quantity: d.Quantity,
+                        SupplierId: d.SupplierId,
+                        SupplierName: d.SupplierName,
+                        ContactPerson: d.ContactPerson,
+                        PhoneNumber: d.PhoneNumber,
+                        Email: d.Email
                     )).ToList()
                 );
 

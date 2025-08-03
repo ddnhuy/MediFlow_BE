@@ -49,6 +49,44 @@ namespace Inventory.FunctionalTests.Tests
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
+
+        [Fact]
+        public async Task GetSuppliers_WithSearchByName_ReturnsMatchingSuppliers()
+        {
+            // Arrange
+            var searchTerm = "MedPharm"; // Should match "MedPharm Supply Co."
+            var request = new PaginationRequest { PageIndex = 1, PageSize = 10 };
+
+            // Act
+            var response = await _client.GetAsync($"/suppliers?pageIndex={request.PageIndex}&pageSize={request.PageSize}&searchTerm={searchTerm}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetSuppliersResponse>();
+            result.Should().NotBeNull();
+            result!.Suppliers.Data.Should().NotBeEmpty();
+            result.Suppliers.Data.Should().ContainSingle();
+            result.Suppliers.Data.First().SupplierName.Should().Contain("MedPharm");
+        }
+
+        [Fact]
+        public async Task GetSuppliers_WithSearchByCode_ReturnsMatchingSuppliers()
+        {
+            // Arrange
+            var searchTerm = "SUP002"; // Should match "Healthcare Distributors Inc."
+            var request = new PaginationRequest { PageIndex = 1, PageSize = 10 };
+
+            // Act
+            var response = await _client.GetAsync($"/suppliers?pageIndex={request.PageIndex}&pageSize={request.PageSize}&searchTerm={searchTerm}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetSuppliersResponse>();
+            result.Should().NotBeNull();
+            result!.Suppliers.Data.Should().NotBeEmpty();
+            result.Suppliers.Data.Should().ContainSingle();
+            result.Suppliers.Data.First().SupplierCode.Should().Be("SUP002");
+        }
     }
 
     public class GetSuppliersResponse

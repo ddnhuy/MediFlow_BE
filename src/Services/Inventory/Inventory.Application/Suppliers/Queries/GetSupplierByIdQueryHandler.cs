@@ -11,7 +11,7 @@
 
             if (supplier == null)
             {
-                throw new NotFoundException(ExceptionKey.NOT_FOUND_SUPPLIER_WITH_ID);
+                throw new BadRequestException(ExceptionKey.NOT_FOUND_SUPPLIER_WITH_ID);
             }
 
             var contracts = await dbContext.SupplierContracts
