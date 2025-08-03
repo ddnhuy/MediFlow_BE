@@ -2,7 +2,6 @@
 {
     public record UpdateSupplierCommand(
         int Id,
-        string SupplierCode,
         string SupplierName,
         string Phone,
         string Fax, 
@@ -12,8 +11,15 @@
         string ContactPerson,
         string Director,
         bool IsSuspended,
-        bool IsCancelled
+        bool IsCancelled,
+        DateOnly ExpiredDate,
+        List<UpdateSupplierContractRequest> Contracts
     ) : ICommand<UpdateSupplierResult>;
+
+    public record UpdateSupplierContractRequest(
+        Guid Id,
+        string FileName
+    );
 
     public record UpdateSupplierResult(bool IsSuccess);
 }

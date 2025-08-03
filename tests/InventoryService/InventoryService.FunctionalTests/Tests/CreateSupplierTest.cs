@@ -17,7 +17,6 @@ namespace Inventory.FunctionalTests.Tests
         {
             // Arrange
             var command = new CreateSupplierCommand(
-                SupplierCode: "", // Empty supplier code
                 SupplierName: "Test Supplier",
                 Address: "123 Test Street",
                 Phone: "0981995925",
@@ -25,7 +24,9 @@ namespace Inventory.FunctionalTests.Tests
                 Email: "contact@testsupplier.com",
                 TaxCode: "TAX12345",
                 Director: "John Director",
-                ContactPerson: "Jane Contact"
+                ContactPerson: "Jane Contact",
+                ExpiredDate: DateOnly.FromDateTime(DateTime.UtcNow.AddYears(1)),
+                Contracts: null
             );
 
             // Act
@@ -42,7 +43,6 @@ namespace Inventory.FunctionalTests.Tests
         {
             // Arrange
             var command = new CreateSupplierCommand(
-                SupplierCode: "SUP005",
                 SupplierName: "", // Empty supplier name
                 Address: "123 Test Street",
                 Phone: "0981995925",
@@ -50,7 +50,13 @@ namespace Inventory.FunctionalTests.Tests
                 Email: "contact@testsupplier.com",
                 TaxCode: "TAX12345",
                 Director: "John Director",
-                ContactPerson: "Jane Contact"
+                ContactPerson: "Jane Contact",
+                ExpiredDate: DateOnly.FromDateTime(DateTime.UtcNow.AddYears(1)),
+                Contracts: new List<CreateSupplierContractRequest>()
+                {
+                    new CreateSupplierContractRequest(Guid.NewGuid(), "contract1.pdf"),
+                    new CreateSupplierContractRequest(Guid.NewGuid(), "contract2.pdf")
+                }
             );
 
             // Act
@@ -65,8 +71,7 @@ namespace Inventory.FunctionalTests.Tests
         [Fact]
         public async Task Create_WithValidData_ReturnsCreated()
         {
-            var command = new CreateSupplierCommand(
-                SupplierCode: "SUP100",
+            var command = new CreateSupplierCommand(      
                 SupplierName: "Valid Supplier",
                 Address: "123 Valid St",
                 Phone: "1234567890",
@@ -74,7 +79,13 @@ namespace Inventory.FunctionalTests.Tests
                 Email: "valid@supplier.com",
                 TaxCode: "TAX100",
                 Director: "Director Name",
-                ContactPerson: "Contact Name"
+                ContactPerson: "Contact Name",
+                ExpiredDate: DateOnly.FromDateTime(DateTime.UtcNow.AddYears(1)),
+                Contracts: new List<CreateSupplierContractRequest>()
+                {
+                    new CreateSupplierContractRequest(Guid.NewGuid(), "contract1.pdf"),
+                    new CreateSupplierContractRequest(Guid.NewGuid(), "contract2.pdf")
+                }
             );
 
             var response = await _client.PostAsJsonAsync("/suppliers", command);
@@ -87,7 +98,6 @@ namespace Inventory.FunctionalTests.Tests
         {
             _client.DefaultRequestHeaders.Authorization = null;
             var command = new CreateSupplierCommand(
-                SupplierCode: "SUP101",
                 SupplierName: "Unauthorized Supplier",
                 Address: "123 Unauthorized St",
                 Phone: "1234567890",
@@ -95,51 +105,14 @@ namespace Inventory.FunctionalTests.Tests
                 Email: "unauth@supplier.com",
                 TaxCode: "TAX101",
                 Director: "Director Name",
-                ContactPerson: "Contact Name"
+                ContactPerson: "Contact Name",
+                ExpiredDate: DateOnly.FromDateTime(DateTime.UtcNow.AddYears(1)),
+                Contracts: null
             );
 
             var response = await _client.PostAsJsonAsync("/suppliers", command);
 
             response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-        }
-
-        // Case duplicate supplier code     
-        [Fact]
-        public async Task Create_WithDuplicateSupplierCode_ReturnsBadRequest()
-        {
-            // Arrange:
-            var initialCommand = new CreateSupplierCommand(
-                SupplierCode: "DUP001",
-                SupplierName: "Initial Supplier",
-                Address: "123 Main St",
-                Phone: "0123456789",
-                Fax: "0123456790",
-                Email: "initial@supplier.com",
-                TaxCode: "TAX001",
-                Director: "Initial Director",
-                ContactPerson: "Initial Contact"
-            );
-
-            var response1 = await _client.PostAsJsonAsync("/suppliers", initialCommand);
-            response1.StatusCode.Should().Be(HttpStatusCode.Created);
-
-            // Act: 
-            var duplicateCommand = new CreateSupplierCommand(
-                SupplierCode: "DUP001", // same code
-                SupplierName: "Duplicate Supplier",
-                Address: "456 Another St",
-                Phone: "0987654321",
-                Fax: "0987654322",
-                Email: "duplicate@supplier.com",
-                TaxCode: "TAX002",
-                Director: "Duplicate Director",
-                ContactPerson: "Duplicate Contact"
-            );
-
-            var response2 = await _client.PostAsJsonAsync("/suppliers", duplicateCommand);
-
-            // Assert
-            response2.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
     }
 }

@@ -9,6 +9,7 @@
         DbSet<VaccineType> VaccineTypes { get; }
         DbSet<MedicineInteraction> MedicineInteractions { get; }
         DbSet<Supplier> Suppliers { get; }
+        DbSet<SupplierContract> SupplierContracts { get; }
         DbSet<SupplierImportDocument> SupplierImportDocuments { get; }
         DbSet<SupplierImportDocumentDetail> SupplierImportDocumentDetails { get; }
         DbSet<Country> Countries { get; }
