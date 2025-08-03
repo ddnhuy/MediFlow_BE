@@ -11,7 +11,6 @@
         public string? TaxCode { get; set; } = string.Empty;
         public string? Director { get; set; } = string.Empty;
         public string? ContactPerson { get; set; } = string.Empty;
-        public string? NormalizedName { get; set; } = string.Empty;
+        public DateOnly ExpiredDate { get; set; }
     }
-
 }

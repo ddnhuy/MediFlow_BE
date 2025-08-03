@@ -1,7 +1,6 @@
 ﻿namespace Inventory.Application.Suppliers.Commands.CreateSupplier
 {
     public record CreateSupplierCommand(
-        string SupplierCode,
         string SupplierName,
         string Address,
         string Phone,
@@ -9,7 +8,15 @@
         string Email,
         string TaxCode,
         string Director,
-        string ContactPerson
-    ): ICommand<CreateSupplierResult>;
+        string ContactPerson,
+        DateOnly ExpiredDate,
+        List<CreateSupplierContractRequest> Contracts
+    ) : ICommand<CreateSupplierResult>;
+
+    public record CreateSupplierContractRequest(
+        Guid Id,
+        string FileName
+    );
+
     public record CreateSupplierResult(int Id);
 }

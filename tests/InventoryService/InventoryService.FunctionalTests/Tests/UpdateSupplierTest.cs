@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Inventory.Application.Suppliers.Commands.CreateSupplier;
 using Inventory.Application.Suppliers.Commands.UpdateSupplier;
 using InventoryService.FunctionalTests.Abstractions;
 using System.Net;
@@ -16,8 +17,7 @@ namespace Inventory.FunctionalTests.Tests
         {
             // Arrange
             var command = new UpdateSupplierCommand(
-                Id: 1, // Using seeded supplier ID
-                SupplierCode: "SUP001",
+                Id: 1, 
                 SupplierName: "MedPharm Supply Co. Updated",
                 Phone: "0981995925",
                 Fax: "555-123-9998",
@@ -26,6 +26,12 @@ namespace Inventory.FunctionalTests.Tests
                 Address: "123 Medical Plaza, Suite 200",
                 ContactPerson: "Michael Lewis Jr.",
                 Director: "Sarah Johnson-Smith",
+                ExpiredDate: DateOnly.FromDateTime(DateTime.UtcNow.AddYears(1)),
+                Contracts: new List<UpdateSupplierContractRequest>()
+                {
+                    new UpdateSupplierContractRequest(Guid.NewGuid(), "contract1.pdf"),
+                    new UpdateSupplierContractRequest(Guid.NewGuid(), "contract2.pdf")
+                },
                 IsSuspended: false,
                 IsCancelled: false
             );
@@ -46,7 +52,7 @@ namespace Inventory.FunctionalTests.Tests
             _client.DefaultRequestHeaders.Authorization = null;
             var command = new UpdateSupplierCommand(
                 Id: 1,
-                SupplierCode: "SUP001",
+                //SupplierCode: "SUP001",
                 SupplierName: "MedPharm Supply Co. Updated",
                 Phone: "0981995925",
                 Fax: "555-123-9998",
@@ -55,6 +61,12 @@ namespace Inventory.FunctionalTests.Tests
                 Address: "123 Medical Plaza, Suite 200",
                 ContactPerson: "Michael Lewis Jr.",
                 Director: "Sarah Johnson-Smith",
+                ExpiredDate: DateOnly.FromDateTime(DateTime.UtcNow.AddYears(1)),
+                Contracts: new List<UpdateSupplierContractRequest>()
+                {
+                    new UpdateSupplierContractRequest(Guid.NewGuid(), "contract1.pdf"),
+                    new UpdateSupplierContractRequest(Guid.NewGuid(), "contract2.pdf")
+                },
                 IsSuspended: false,
                 IsCancelled: false
             );
@@ -70,7 +82,6 @@ namespace Inventory.FunctionalTests.Tests
             // Arrange
             var command = new UpdateSupplierCommand(
                 Id: 2, // ID in command
-                SupplierCode: "SUP002",
                 SupplierName: "Healthcare Distributors Inc. Updated",
                 Phone: "0981995925",
                 Fax: "555-987-1112",
@@ -79,6 +90,12 @@ namespace Inventory.FunctionalTests.Tests
                 Address: "456 Hospital Drive, Suite 300",
                 ContactPerson: "Emma Wilson-Lee",
                 Director: "Robert Chen Jr.",
+                ExpiredDate: DateOnly.FromDateTime(DateTime.UtcNow.AddYears(1)),
+                Contracts: new List<UpdateSupplierContractRequest>()
+                {
+                    new UpdateSupplierContractRequest(Guid.NewGuid(), "contract1.pdf"),
+                    new UpdateSupplierContractRequest(Guid.NewGuid(), "contract2.pdf")
+                },
                 IsSuspended: false,
                 IsCancelled: false
             );
@@ -96,7 +113,7 @@ namespace Inventory.FunctionalTests.Tests
             // Arrange
             var command = new UpdateSupplierCommand(
                 Id: 999, // Non-existent ID
-                SupplierCode: "SUP999",
+                //SupplierCode: "SUP999",
                 SupplierName: "Non-Existent Supplier",
                 Phone: "0981995925",
                 Fax: "555-999-9998",
@@ -105,6 +122,12 @@ namespace Inventory.FunctionalTests.Tests
                 Address: "999 Nowhere Street",
                 ContactPerson: "No One",
                 Director: "Not Available",
+                ExpiredDate: DateOnly.FromDateTime(DateTime.UtcNow.AddYears(1)),
+                Contracts: new List<UpdateSupplierContractRequest>()
+                {
+                    new UpdateSupplierContractRequest(Guid.NewGuid(), "contract1.pdf"),
+                    new UpdateSupplierContractRequest(Guid.NewGuid(), "contract2.pdf")
+                },
                 IsSuspended: false,
                 IsCancelled: false
             );
@@ -122,7 +145,6 @@ namespace Inventory.FunctionalTests.Tests
             // Arrange
             var command = new UpdateSupplierCommand(
                 Id: 1,
-                SupplierCode: "", // Empty required field
                 SupplierName: "", // Empty required field
                 Phone: "0981995925",
                 Fax: "555-123-9998",
@@ -131,6 +153,8 @@ namespace Inventory.FunctionalTests.Tests
                 Address: "123 Medical Plaza, Suite 200",
                 ContactPerson: "Michael Lewis Jr.",
                 Director: "Sarah Johnson-Smith",
+                ExpiredDate: DateOnly.FromDateTime(DateTime.UtcNow.AddYears(1)),
+                Contracts: new List<UpdateSupplierContractRequest>(),
                 IsSuspended: false,
                 IsCancelled: false
             );

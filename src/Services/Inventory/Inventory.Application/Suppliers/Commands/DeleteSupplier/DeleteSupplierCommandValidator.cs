@@ -6,7 +6,7 @@
         {
             RuleFor(x => x.Id)
                 .GreaterThan(0)
-                .WithMessage("Vui lòng nhập Id");
+                .WithMessage(ExceptionKey.INVALID_DATA.ToString());
         }
     }
 }

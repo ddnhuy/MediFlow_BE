@@ -20,6 +20,18 @@
                 return new DeleteSupplierResult(false);
             }
 
+            var supplierContracts = await dbContext.SupplierContracts
+                .Where(x => x.SupplierId == request.Id && !x.IsCancelled)
+                .ToListAsync(cancellationToken);
+
+            foreach (var contract in supplierContracts)
+            {
+                // If soft-deleted (marked as IsCancelled = true), it still exists in the database with the same PK,
+                // so when try to re-add a contract with the same ID, it will cause a primary key constraint violation.
+                dbContext.SupplierContracts.Remove(contract);
+                await dbContext.SaveChangesAsync(cancellationToken);
+            }
+
             return new DeleteSupplierResult(true);
         }
     }
