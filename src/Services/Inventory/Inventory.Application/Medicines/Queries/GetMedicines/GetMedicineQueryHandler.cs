@@ -1,4 +1,5 @@
-﻿using Inventory.Application.Helpers;
+﻿using BuildingBlocks.Strings.Enums;
+using Inventory.Application.Helpers;
 
 namespace Inventory.Application.Medicines.Queries.GetMedicines
 {
@@ -11,7 +12,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicines
 
             var baseQuery = dbContext.Medicines
                 .Include(m => m.VaccineType)
-                .Where(x => !x.IsSuspended && !x.IsCancelled);
+                .Where(x => !x.IsCancelled);
 
             if (!string.IsNullOrWhiteSpace(query.SearchKeyword))
             {
@@ -51,6 +52,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicines
                             && dbContext.MedicineBatches
                                 .Any(mb => mb.Id == id.MedicineBatchId
                                     && mb.MedicineId == m.Id
+                                    && mb.Status == MedicineBatchStatus.IsActive
                                     && !mb.IsSuspended
                                     && !mb.IsCancelled
                                     && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)))

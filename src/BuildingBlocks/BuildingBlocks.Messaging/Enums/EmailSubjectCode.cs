@@ -57,7 +57,20 @@
             /// - FullName
             /// - UpdateTime
             /// - UpdatedFields (e.g., list string join with ", ")
-            ProfileUpdated
+            ProfileUpdated,
+
+            /// <summary>
+            /// Medicine batch return approval request
+            /// </summary>
+            /// Template: MedicineBatchReturnApproval.cshtml
+            /// Required TemplateData:
+            /// - ReceiverName
+            /// - ReturnCode
+            /// - Reason
+            /// - BatchDetails (JSON string)
+            /// - ApprovalUrl
+            /// - RejectionUrl
+            MedicineBatchReturnApproval
         }
     }
 }

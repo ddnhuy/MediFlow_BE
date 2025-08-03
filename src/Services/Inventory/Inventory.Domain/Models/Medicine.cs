@@ -24,5 +24,7 @@ namespace Inventory.Domain.Models
 
         public int? VaccineTypeId { get; set; }
         public VaccineType? VaccineType { get; set; } = default!;
+
+        public MedicinePrice? MedicinePrice { get; set; }
     }
 }

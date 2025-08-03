@@ -377,6 +377,9 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<int>("MedicineId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
                     b.Property<int>("SupplierId")
                         .HasColumnType("integer");
 
@@ -389,6 +392,118 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasIndex("SupplierId");
 
                     b.ToTable("MedicineBatches");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.MedicineBatchReturn", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApprovalToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ReceiverEmail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ReceiverName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ReceiverPhone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RejectedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReturnCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MedicineBatchReturns");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.MedicineBatchReturnDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("BatchNumber")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("ExpirationDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MedicineBatchId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MedicineBatchReturnId")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MedicineBatchId");
+
+                    b.HasIndex("MedicineBatchReturnId");
+
+                    b.ToTable("MedicineBatchReturnDetails");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Models.MedicineInteraction", b =>
@@ -501,7 +616,8 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MedicineId");
+                    b.HasIndex("MedicineId")
+                        .IsUnique();
 
                     b.ToTable("MedicinePrices");
                 });
@@ -569,6 +685,9 @@ namespace Inventory.Infrastructure.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
+                    b.Property<DateOnly>("ExpiredDate")
+                        .HasColumnType("date");
+
                     b.Property<string>("Fax")
                         .HasColumnType("text");
 
@@ -583,9 +702,6 @@ namespace Inventory.Infrastructure.Migrations
 
                     b.Property<int>("LastUpdatedBy")
                         .HasColumnType("integer");
-
-                    b.Property<string>("NormalizedName")
-                        .HasColumnType("text");
 
                     b.Property<string>("Phone")
                         .HasColumnType("text");
@@ -602,6 +718,48 @@ namespace Inventory.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Suppliers");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.SupplierContract", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("FileName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("IsCancelled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsSuspended")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SupplierId");
+
+                    b.ToTable("SupplierContracts");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Models.SupplierImportDocument", b =>
@@ -965,6 +1123,25 @@ namespace Inventory.Infrastructure.Migrations
                     b.Navigation("Supplier");
                 });
 
+            modelBuilder.Entity("Inventory.Domain.Models.MedicineBatchReturnDetail", b =>
+                {
+                    b.HasOne("Inventory.Domain.Models.MedicineBatch", "MedicineBatch")
+                        .WithMany()
+                        .HasForeignKey("MedicineBatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Inventory.Domain.Models.MedicineBatchReturn", "MedicineBatchReturn")
+                        .WithMany()
+                        .HasForeignKey("MedicineBatchReturnId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicineBatch");
+
+                    b.Navigation("MedicineBatchReturn");
+                });
+
             modelBuilder.Entity("Inventory.Domain.Models.MedicineInteraction", b =>
                 {
                     b.HasOne("Inventory.Domain.Models.Medicine", "Medicine1")
@@ -987,12 +1164,22 @@ namespace Inventory.Infrastructure.Migrations
             modelBuilder.Entity("Inventory.Domain.Models.MedicinePrice", b =>
                 {
                     b.HasOne("Inventory.Domain.Models.Medicine", "Medicine")
+                        .WithOne("MedicinePrice")
+                        .HasForeignKey("Inventory.Domain.Models.MedicinePrice", "MedicineId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Medicine");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.SupplierContract", b =>
+                {
+                    b.HasOne("Inventory.Domain.Models.Supplier", "Supplier")
                         .WithMany()
-                        .HasForeignKey("MedicineId")
+                        .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Medicine");
+                    b.Navigation("Supplier");
                 });
 
             modelBuilder.Entity("Inventory.Domain.Models.SupplierImportDocument", b =>
@@ -1042,6 +1229,11 @@ namespace Inventory.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("WarehouseType");
+                });
+
+            modelBuilder.Entity("Inventory.Domain.Models.Medicine", b =>
+                {
+                    b.Navigation("MedicinePrice");
                 });
 #pragma warning restore 612, 618
         }

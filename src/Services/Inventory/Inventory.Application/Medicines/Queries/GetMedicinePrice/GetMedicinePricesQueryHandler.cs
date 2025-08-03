@@ -20,7 +20,7 @@
 
             // Get all prices for these medicines
             var medicinePrices = await dbContext.MedicinePrices
-                .Where(mp => medicineIds.Contains(mp.MedicineId) && !mp.IsSuspended && !mp.IsCancelled)
+                .Where(mp => medicineIds.Contains(mp.MedicineId) && !mp.IsCancelled)
                 .Include(mp => mp.Medicine)
                 .OrderBy(mp => mp.MedicineId)
                 .OrderByDescending(mp => mp.LastUpdatedAt)

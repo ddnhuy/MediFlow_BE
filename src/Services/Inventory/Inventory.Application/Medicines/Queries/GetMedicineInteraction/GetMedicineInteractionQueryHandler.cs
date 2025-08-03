@@ -7,12 +7,12 @@
             var pageIndex = query.PaginationRequest.PageIndex;
             var pageSize = query.PaginationRequest.PageSize;
 
-            var totalCount = await dbContext.MedicineInteractions.Where(x => !x.IsSuspended).LongCountAsync(cancellationToken: cancellationToken);
+            var totalCount = await dbContext.MedicineInteractions.Where(x => !x.IsCancelled).LongCountAsync(cancellationToken: cancellationToken);
 
             var interactions = await dbContext.MedicineInteractions
             .Include(x => x.Medicine1)
             .Include(x => x.Medicine2)
-            .Where(x => !x.IsSuspended)
+            .Where(x => !x.IsCancelled)
             .Skip((pageIndex - 1) * pageSize)
             .Take(pageSize)
             .Select(x => new MedicineInteractionDTO

@@ -27,11 +27,6 @@
             builder.Property(mp => mp.OriginalPriceBeforeVat)
                 .HasPrecision(18, 2)
                 .IsRequired();
-
-            builder.HasOne(mp => mp.Medicine)
-                .WithMany()
-                .HasForeignKey(mp => mp.MedicineId)
-                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

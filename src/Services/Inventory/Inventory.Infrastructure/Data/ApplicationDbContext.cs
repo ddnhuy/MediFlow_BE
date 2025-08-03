@@ -16,6 +16,7 @@ namespace Inventory.Infrastructure.Data
         public DbSet<VaccineType> VaccineTypes => Set<VaccineType>();
         public DbSet<MedicineInteraction> MedicineInteractions => Set<MedicineInteraction>();
         public DbSet<Supplier> Suppliers => Set<Supplier>();
+        public DbSet<SupplierContract> SupplierContracts => Set<SupplierContract>();
         public DbSet<SupplierImportDocument> SupplierImportDocuments => Set<SupplierImportDocument>();
         public DbSet<SupplierImportDocumentDetail> SupplierImportDocumentDetails => Set<SupplierImportDocumentDetail>();
         public DbSet<Country> Countries => Set<Country>();
@@ -25,6 +26,8 @@ namespace Inventory.Infrastructure.Data
         public DbSet<InventoryDetail> InventoryDetails => Set<InventoryDetail>();
         public DbSet<InventoryHistory> InventoryHistories => Set<InventoryHistory>();
         public DbSet<InventoryLimitStock> InventoryLimitStocks => Set<InventoryLimitStock>();
+        public DbSet<MedicineBatchReturn> MedicineBatchReturns => Set<MedicineBatchReturn>();
+        public DbSet<MedicineBatchReturnDetail> MedicineBatchReturnDetails => Set<MedicineBatchReturnDetail>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -34,6 +34,8 @@ namespace Inventory.Infrastructure.Comsumers
                             where mb.MedicineId == request.MedicineId
                                   && mb.ExpiryDate > today
                                   && id.Quantity > 0
+                                  && mb.Status == BuildingBlocks.Strings.Enums.MedicineBatchStatus.IsActive
+                                  && !mb.IsSuspended && !mb.IsCancelled
                             orderby mb.ExpiryDate
                             select new
                             {

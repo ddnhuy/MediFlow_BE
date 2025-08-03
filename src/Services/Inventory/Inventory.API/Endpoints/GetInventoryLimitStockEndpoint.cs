@@ -8,11 +8,11 @@ namespace Inventory.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("inventory-limit-stocks", async (ISender sender, [AsParameters] PaginationRequest paginationRequest) =>
+            app.MapGet("inventory-limit-stocks", async (ISender sender, [AsParameters] PaginationRequest paginationRequest, string? searchKeyword) =>
             {
                 PaginationHelper.VerifyPaginationRequest(paginationRequest.PageIndex, paginationRequest.PageSize);
 
-                var result = await sender.Send(new GetInventoryLimitStockQuery(paginationRequest));
+                var result = await sender.Send(new GetInventoryLimitStockQuery(paginationRequest, searchKeyword));
 
                 var response = result.Adapt<GetInventoryLimitStockResponse>();
 

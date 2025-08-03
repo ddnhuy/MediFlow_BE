@@ -110,6 +110,14 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 .GetMedicineInformationAsync(Arg.Any<IEnumerable<int>>(), Arg.Any<CancellationToken>())
                 .Returns(medicineInfoList);
 
+            _factory.InventoryServiceMock!
+                .SubtractMedicineBatchStockResponseAsync(Arg.Any<int>(), Arg.Any<int>(), Arg.Any<CancellationToken>())
+                .Returns(new BuildingBlocks.Messaging.Contracts.Inventory.MedicineStock.SubtractMedicineBatchStockResponse
+                {
+                    IsSuccess = true,
+                    ErrorMessage = null
+                });
+
             // Act
             var response = await _client.PostAsJsonAsync("/vaccination", command);
 

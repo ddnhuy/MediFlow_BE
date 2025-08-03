@@ -6,12 +6,20 @@
         {
             var pageIndex = request.Request.PageIndex;
             var pageSize = request.Request.PageSize;
-            
-            var totalCounts = await dbContext.Suppliers
-                .Where(x => !x.IsSuspended && !x.IsCancelled)
-                .LongCountAsync(cancellationToken);
 
-            var suppliers = await dbContext.Suppliers.Where(x => !x.IsSuspended && !x.IsCancelled)
+            var baseQuery = dbContext.Suppliers.Where(x => !x.IsCancelled);
+
+            if (!string.IsNullOrWhiteSpace(request.searchTerm))
+            {
+                var searchKeyword = request.searchTerm.ToLower();
+                baseQuery = baseQuery.Where(s =>
+                    (s.SupplierName != null && s.SupplierName.ToLower().Contains(searchKeyword)) ||
+                    (s.SupplierCode != null && s.SupplierCode.ToLower().Contains(searchKeyword)));
+            }
+
+            var totalCounts = await baseQuery.LongCountAsync(cancellationToken);
+
+            var suppliers = await baseQuery
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .AsNoTracking()

@@ -17,7 +17,7 @@
             }
 
             var medicinePrices = await dbContext.MedicinePrices
-                .Where(p => p.MedicineId == query.MedicineId && !p.IsSuspended && !p.IsCancelled)
+                .Where(p => p.MedicineId == query.MedicineId && !p.IsCancelled)
                 .Include(p => p.Medicine)
                 .ToListAsync(cancellationToken);
 

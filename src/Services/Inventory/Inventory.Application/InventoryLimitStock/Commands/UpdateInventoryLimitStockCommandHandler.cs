@@ -2,7 +2,7 @@
 
 namespace Inventory.Application.InventoryLimitStock.Commands
 {
-    public record UpdateInventoryLimitStockCommand(int Id, int MedicineId, decimal MinimalStockThreshold) : ICommand<UpdateInventoryLimitStockResult>;
+    public record UpdateInventoryLimitStockCommand(int Id, int MedicineId, decimal MinimalStockThreshold, bool IsSuspended, bool IsCancelled) : ICommand<UpdateInventoryLimitStockResult>;
 
     public record UpdateInventoryLimitStockResult(bool IsSuccess);
 
@@ -22,7 +22,7 @@ namespace Inventory.Application.InventoryLimitStock.Commands
             // Validate the existence of the inventory limit stock
             var inventoryLimitStock = await dbContext.InventoryLimitStocks
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+                .FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsCancelled, cancellationToken);
             if (inventoryLimitStock == null)
             {
                 throw new BadRequestException(ExceptionKey.NOT_FOUND_INVENTORY_LIMIT_STOCK_WITH_ID);
@@ -30,7 +30,7 @@ namespace Inventory.Application.InventoryLimitStock.Commands
 
             // Validate the existence of the medicine
             var medicine = await dbContext.Medicines
-                .FirstOrDefaultAsync(x => x.Id == request.MedicineId, cancellationToken);
+                .FirstOrDefaultAsync(x => x.Id == request.MedicineId && !x.IsSuspended && !x.IsCancelled, cancellationToken);
             if (medicine == null)
             {
                 throw new BadRequestException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
@@ -39,7 +39,7 @@ namespace Inventory.Application.InventoryLimitStock.Commands
             // Check if the medicine is already associated with another inventory limit stock
             var existingInventoryLimitStock = await dbContext.InventoryLimitStocks
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.MedicineId == request.MedicineId && x.Id != request.Id, cancellationToken);
+                .FirstOrDefaultAsync(x => x.MedicineId == request.MedicineId && x.Id != request.Id && !x.IsCancelled, cancellationToken);
             if (existingInventoryLimitStock != null)
             {
                 throw new BadRequestException(ExceptionKey.INVENTORY_LIMIT_STOCK_ALREADY_EXISTS_FOR_MEDICINE);
@@ -48,6 +48,8 @@ namespace Inventory.Application.InventoryLimitStock.Commands
             // Update the inventory limit stock
             inventoryLimitStock.MedicineId = request.MedicineId;
             inventoryLimitStock.MinimalStockThreshold = request.MinimalStockThreshold;
+            inventoryLimitStock.IsSuspended = request.IsSuspended;
+            inventoryLimitStock.IsCancelled = request.IsCancelled;
 
             dbContext.InventoryLimitStocks.Update(inventoryLimitStock);
             await dbContext.SaveChangesAsync(cancellationToken);

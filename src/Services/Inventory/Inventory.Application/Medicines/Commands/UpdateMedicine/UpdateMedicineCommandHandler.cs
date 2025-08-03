@@ -13,7 +13,7 @@ namespace Inventory.Application.Medicines.Commands.UpdateMedicine
 
         public async Task<UpdateMedicineResult> Handle(UpdateMedicineCommand request, CancellationToken cancellationToken)
         {
-            var medicine = await _dbContext.Medicines.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            var medicine = await _dbContext.Medicines.FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsCancelled, cancellationToken);
 
             if (medicine == null)
             {
@@ -21,7 +21,9 @@ namespace Inventory.Application.Medicines.Commands.UpdateMedicine
             }
 
             // Check if the medicine code already exists for another medicine
-            if (await _dbContext.Medicines.AnyAsync(m => m.MedicineCode!.Trim().ToLower() == request.MedicineCode.Trim().ToLower(), cancellationToken))
+            if (await _dbContext.Medicines.AnyAsync(m => m.MedicineCode!.Trim().ToLower() == request.MedicineCode.Trim().ToLower()
+                && m.Id != request.Id 
+                && !m.IsCancelled, cancellationToken))
             {
                 throw new BadRequestException(ExceptionKey.DUPLICATE_MEDICINE_CODE);
             }

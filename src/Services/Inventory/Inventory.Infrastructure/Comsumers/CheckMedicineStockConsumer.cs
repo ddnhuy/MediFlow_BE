@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Messaging.Contracts.Inventory.MedicineStockStatus;
+using BuildingBlocks.Strings.Enums;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using System;
@@ -31,7 +32,11 @@ namespace Inventory.Infrastructure.Comsumers
                 // Sum all available stock for the medicine
                 var currentStock = await _context.InventoryDetails
                     .Include(id => id.MedicineBatch)
-                    .Where(id => id.MedicineBatch!.MedicineId == request.MedicineId)
+                    .Where(id => id.MedicineBatch!.MedicineId == request.MedicineId 
+                    && id.MedicineBatch!.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)
+                    && id.MedicineBatch!.Status == MedicineBatchStatus.IsActive
+                    && !id.MedicineBatch!.IsSuspended 
+                    && !id.MedicineBatch!.IsCancelled)
                     .SumAsync(id => id.Quantity, context.CancellationToken);
 
                 var isEnough = currentStock >= request.NumberOfMedicineWanted;

@@ -18,7 +18,7 @@
         public async Task<CreateInventoryLimitStockResult> Handle(CreateInventoryLimitStockCommand request, CancellationToken cancellationToken)
         {
 
-            var medicine = await dbContext.Medicines.FirstOrDefaultAsync(x => x.Id == request.MedicineId, cancellationToken);
+            var medicine = await dbContext.Medicines.FirstOrDefaultAsync(x => x.Id == request.MedicineId && !x.IsSuspended && !x.IsCancelled, cancellationToken);
 
             if (medicine == null)
             {
@@ -26,7 +26,7 @@
             }
 
             var existingInventoryLimitStock = await dbContext.InventoryLimitStocks
-                .FirstOrDefaultAsync(x => x.MedicineId == request.MedicineId, cancellationToken);
+                .FirstOrDefaultAsync(x => x.MedicineId == request.MedicineId && !x.IsCancelled, cancellationToken);
             if (existingInventoryLimitStock != null)
             {
                 throw new BadRequestException(ExceptionKey.INVENTORY_LIMIT_STOCK_ALREADY_EXISTS_FOR_MEDICINE);
@@ -41,7 +41,7 @@
             await dbContext.InventoryLimitStocks.AddAsync(inventoryLimitStock, cancellationToken);
             var result = await dbContext.SaveChangesAsync(cancellationToken);        
 
-            return new CreateInventoryLimitStockResult(true, result);
+            return new CreateInventoryLimitStockResult(true, inventoryLimitStock.Id);
 
         }
     }

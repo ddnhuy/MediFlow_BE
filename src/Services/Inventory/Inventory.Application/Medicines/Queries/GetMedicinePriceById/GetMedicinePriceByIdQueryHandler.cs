@@ -6,7 +6,7 @@
         public async Task<GetMedicinePriceByIdResult> Handle(GetMedicinePriceByIdQuery query, CancellationToken cancellationToken)
         {
             var medicinePrice = await dbContext.MedicinePrices
-                .Where(p => p.Id == query.Id && !p.IsSuspended && !p.IsCancelled)
+                .Where(p => p.Id == query.Id && !p.IsCancelled)
                 .Include(p => p.Medicine)
                 .FirstOrDefaultAsync(cancellationToken);
 

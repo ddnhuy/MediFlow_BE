@@ -17,7 +17,7 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineInteractionById
             var interaction = await _dbContext.MedicineInteractions
             .Include(x => x.Medicine1)
             .Include(x => x.Medicine2)
-            .Where(x => x.Id == request.Id && !x.IsSuspended)
+            .Where(x => x.Id == request.Id && !x.IsCancelled)
             .Select(x => new MedicineInteractionDTO
             {
                 Id = x.Id,

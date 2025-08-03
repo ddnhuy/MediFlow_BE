@@ -8,7 +8,7 @@
         public async Task<DeleteInventoryLimitStockResult> Handle(DeleteInventoryLimitStockCommand request, CancellationToken cancellationToken)
         {
             var entity = await dbContext.InventoryLimitStocks
-                .FirstOrDefaultAsync(x => x.Id == request.Id && !x.IsSuspended && !x.IsCancelled, cancellationToken);
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (entity == null)
                 throw new NotFoundException(ExceptionKey.NOT_FOUND_INVENTORY_LIMIT_STOCK_WITH_ID);

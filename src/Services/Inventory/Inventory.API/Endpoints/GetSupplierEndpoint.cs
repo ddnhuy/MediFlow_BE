@@ -5,10 +5,10 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/suppliers", async([AsParameters] PaginationRequest request, ISender sender) =>
+            app.MapGet("/suppliers", async(ISender sender, [AsParameters] PaginationRequest request, string? searchTerm = null) =>
             {
                 PaginationHelper.VerifyPaginationRequest(request.PageIndex, request.PageSize);
-                var result = await sender.Send(new GetSupplierQuery(request));
+                var result = await sender.Send(new GetSupplierQuery(request, searchTerm));
                 var response = result.Adapt<GetSupplierResponse>();
                 return Results.Ok(response);
             })

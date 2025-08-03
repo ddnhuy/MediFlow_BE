@@ -12,8 +12,8 @@
             }
 
             // Verify both medicines exist
-            var medicine1Exists = await dbContext.Medicines.AnyAsync(m => m.Id == request.MedicineId1 && !m.IsSuspended, cancellationToken);
-            var medicine2Exists = await dbContext.Medicines.AnyAsync(m => m.Id == request.MedicineId2 && !m.IsSuspended, cancellationToken);
+            var medicine1Exists = await dbContext.Medicines.AnyAsync(m => m.Id == request.MedicineId1 && !m.IsCancelled && !m.IsSuspended, cancellationToken);
+            var medicine2Exists = await dbContext.Medicines.AnyAsync(m => m.Id == request.MedicineId2 && !m.IsCancelled && !m.IsSuspended, cancellationToken);
 
             if (!medicine1Exists)
                 throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
@@ -23,6 +23,7 @@
 
             // Check if a different interaction with the same medicines exists
             var existingInteraction = await dbContext.MedicineInteractions
+                .Where(mi => !mi.IsCancelled)
                 .AnyAsync(mi =>
                     mi.Id != request.Id &&
                     (mi.MedicineId1 == request.MedicineId1 && mi.MedicineId2 == request.MedicineId2 ||

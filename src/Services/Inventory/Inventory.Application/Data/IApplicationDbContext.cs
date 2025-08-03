@@ -9,6 +9,7 @@
         DbSet<VaccineType> VaccineTypes { get; }
         DbSet<MedicineInteraction> MedicineInteractions { get; }
         DbSet<Supplier> Suppliers { get; }
+        DbSet<SupplierContract> SupplierContracts { get; }
         DbSet<SupplierImportDocument> SupplierImportDocuments { get; }
         DbSet<SupplierImportDocumentDetail> SupplierImportDocumentDetails { get; }
         DbSet<Country> Countries { get; }
@@ -18,6 +19,8 @@
         DbSet<InventoryDetail> InventoryDetails { get; }
         DbSet<InventoryHistory> InventoryHistories { get; }
         DbSet<Inventory.Domain.Models.InventoryLimitStock> InventoryLimitStocks { get; }
+        DbSet<MedicineBatchReturn> MedicineBatchReturns { get; }
+        DbSet<MedicineBatchReturnDetail> MedicineBatchReturnDetails { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         DatabaseFacade Database { get; }
     }

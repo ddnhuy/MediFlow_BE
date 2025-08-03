@@ -5,8 +5,8 @@
         public async Task<CreateMedicineInteractionResult> Handle(CreateMedicineInteractionCommand request, CancellationToken cancellationToken)
         {
             // Verify both medicines exist
-            var medicine1Exists = await dbContext.Medicines.AnyAsync(m => m.Id == request.MedicineId1, cancellationToken);
-            var medicine2Exists = await dbContext.Medicines.AnyAsync(m => m.Id == request.MedicineId2, cancellationToken);
+            var medicine1Exists = await dbContext.Medicines.AnyAsync(m => m.Id == request.MedicineId1 && !m.IsSuspended && !m.IsCancelled, cancellationToken);
+            var medicine2Exists = await dbContext.Medicines.AnyAsync(m => m.Id == request.MedicineId2 && !m.IsSuspended && !m.IsCancelled, cancellationToken);
 
             if (!medicine1Exists)
                 throw new NotFoundException(ExceptionKey.NOT_FOUND_MEDICINE_WITH_ID);
@@ -16,6 +16,7 @@
 
             // Check if interaction already exists
             var existingInteraction = await dbContext.MedicineInteractions
+                .Where(m => !m.IsCancelled)
                 .AnyAsync(mi =>
                     mi.MedicineId1 == request.MedicineId1 && mi.MedicineId2 == request.MedicineId2 ||
                     mi.MedicineId1 == request.MedicineId2 && mi.MedicineId2 == request.MedicineId1,

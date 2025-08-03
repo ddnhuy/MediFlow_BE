@@ -76,6 +76,8 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
             _dbContext.Vaccinations.Add(vaccination);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
+            await _inventoryService.SubtractMedicineBatchStockResponseAsync(request.MedicineBatchId, 1, cancellationToken);
+
             return new CreateVaccinationResponse(vaccination.Id);
         }
     }

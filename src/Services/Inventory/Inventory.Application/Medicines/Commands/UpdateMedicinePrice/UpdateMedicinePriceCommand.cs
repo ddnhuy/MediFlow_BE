@@ -8,7 +8,9 @@
         double VatRate,
         decimal VatAmount,
         decimal OriginalPriceAfterVat,
-        decimal OriginalPriceBeforeVat
+        decimal OriginalPriceBeforeVat,
+        bool IsSuspended,
+        bool IsCancelled
     ) : ICommand<UpdateMedicinePriceResult>;
 
     public record UpdateMedicinePriceResult(bool IsSuccess);

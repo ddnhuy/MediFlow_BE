@@ -62,7 +62,6 @@ namespace Inventory.Infrastructure.Data.Extensions
                     TaxCode = "MP12345678",
                     Director = "John Smith",
                     ContactPerson = "Sarah Johnson",
-                    NormalizedName = "MEDIPHARMA SUPPLIES",
                     IsSuspended = false,
                     IsCancelled = false,
                     CreatedAt = DateTime.UtcNow,
@@ -81,7 +80,6 @@ namespace Inventory.Infrastructure.Data.Extensions
                     TaxCode = "VW87654321",
                     Director = "Emma Davis",
                     ContactPerson = "Michael Brown",
-                    NormalizedName = "VACCINEWORLD",
                     IsSuspended = false,
                     IsCancelled = false,
                     CreatedAt = DateTime.UtcNow,
@@ -100,7 +98,6 @@ namespace Inventory.Infrastructure.Data.Extensions
                     TaxCode = "GM24680135",
                     Director = "Robert Wilson",
                     ContactPerson = "Jennifer Lee",
-                    NormalizedName = "GLOBAL MEDICAL SUPPLIES",
                     IsSuspended = false,
                     IsCancelled = false,
                     CreatedAt = DateTime.UtcNow,
@@ -119,7 +116,6 @@ namespace Inventory.Infrastructure.Data.Extensions
                     TaxCode = "PT13579246",
                     Director = "David Chen",
                     ContactPerson = "Amanda Rodriguez",
-                    NormalizedName = "PHARMATECH INNOVATIONS",
                     IsSuspended = false,
                     IsCancelled = false,
                     CreatedAt = DateTime.UtcNow,
@@ -138,7 +134,6 @@ namespace Inventory.Infrastructure.Data.Extensions
                     TaxCode = "ME97531086",
                     Director = "Elizabeth Taylor",
                     ContactPerson = "Thomas Martin",
-                    NormalizedName = "MEDIEQUIP SOLUTIONS",
                     IsSuspended = false,
                     IsCancelled = false,
                     CreatedAt = DateTime.UtcNow,
@@ -721,23 +716,6 @@ namespace Inventory.Infrastructure.Data.Extensions
                     CreatedAt = now,
                     CreatedBy = 1,
                     LastUpdatedAt = now,
-                    LastUpdatedBy = 1
-                },
-                // Historical price for COVID-19 Vaccine
-                new MedicinePrice
-                {
-                    MedicineId = 1,
-                    UnitPrice = 575000m,
-                    Currency = "VND",
-                    VatRate = 0.05,
-                    VatAmount = 28750m,
-                    OriginalPriceBeforeVat = 575000m,
-                    OriginalPriceAfterVat = 603750m,
-                    IsSuspended = false,
-                    IsCancelled = false,
-                    CreatedAt = now.AddMonths(-3),
-                    CreatedBy = 1,
-                    LastUpdatedAt = now.AddMonths(-3),
                     LastUpdatedBy = 1
                 }
             };

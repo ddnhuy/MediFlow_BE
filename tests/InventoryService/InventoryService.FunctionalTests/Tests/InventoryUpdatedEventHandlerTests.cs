@@ -101,8 +101,26 @@ namespace Inventory.FunctionalTests.Tests
                 CostPrice = 5.0m
             };
 
+            var medicineBatch = new MedicineBatch
+            {
+                Id = 1,
+                MedicineId = 1,
+                BatchNumber = "BATCH001",
+                ImportDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-1)),
+                ExpiryDate = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(6)),
+                ImportPrice = 5.0m,
+                CostPrice = 5.0m,
+                SupplierId = 1
+                // Add other required properties if needed
+            };
+
+            existingDetail.MedicineBatch = medicineBatch;
+
             var inventoryDetails = new List<InventoryDetail> { existingDetail };
             var inventoryHistories = new List<InventoryHistory>();
+            var medicineBatches = new List<MedicineBatch> { medicineBatch };
+            _mockDbContext.Setup(x => x.MedicineBatches)
+                .ReturnsDbSet(medicineBatches);
 
             _mockDbContext.Setup(x => x.InventoryDetails)
                 .ReturnsDbSet(inventoryDetails);
