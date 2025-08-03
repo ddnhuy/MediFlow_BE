@@ -10,5 +10,10 @@
         public string BatchNumber { get; set; } = default!;
         public DateOnly ExpiryDate { get; set; }
         public decimal CurrentQuantity { get; set; }
+        public int SupplierId { get; set; }
+        public string? SupplierName { get; set; } = string.Empty;
+        public string? ContactPerson { get; set; } = string.Empty;
+        public string? PhoneNumber { get; set; } = string.Empty;
+        public string? Email { get; set; } = string.Empty;
     }
 }

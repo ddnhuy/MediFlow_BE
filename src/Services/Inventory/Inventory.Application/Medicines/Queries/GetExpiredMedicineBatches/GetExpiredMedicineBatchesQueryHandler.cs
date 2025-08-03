@@ -42,6 +42,16 @@ namespace Inventory.Application.Medicines.Queries.GetExpiredMedicineBatches
                     Batch = batch,
                     Medicine = med
                 })
+            .Join(
+                dbContext.Suppliers,
+                batchMed => batchMed.Batch.SupplierId,
+                supplier => supplier.Id,
+                (batchMed, supplier) => new
+                {
+                    batchMed.Batch,
+                    batchMed.Medicine,
+                    Supplier = supplier
+                })
             // Left join with InventoryDetails to get the total quantity for each batch
             .GroupJoin(
                 dbContext.InventoryDetails.Where(id => !id.IsSuspended && !id.IsCancelled),
@@ -51,6 +61,7 @@ namespace Inventory.Application.Medicines.Queries.GetExpiredMedicineBatches
                 {
                     batchMed.Batch,
                     batchMed.Medicine,
+                    batchMed.Supplier,
                     TotalQuantity = inventoryDetails.Sum(id => id.Quantity)
                 })
             .Select(result => new ExpiredMedicineBatchDto
@@ -62,7 +73,12 @@ namespace Inventory.Application.Medicines.Queries.GetExpiredMedicineBatches
                 BatchNumber = result.Batch.BatchNumber,
                 ExpiryDate = result.Batch.ExpiryDate,
                 Unit = result.Medicine.Unit ?? string.Empty,
-                CurrentQuantity = result.TotalQuantity
+                CurrentQuantity = result.TotalQuantity,
+                SupplierId = result.Supplier.Id,
+                SupplierName = result.Supplier.SupplierName ?? string.Empty,
+                ContactPerson = result.Supplier.ContactPerson ?? string.Empty,
+                Email = result.Supplier.Email ?? string.Empty,
+                PhoneNumber = result.Supplier.Phone ?? string.Empty
             })
             .OrderBy(b => b.ExpiryDate)
             .Skip((pageIndex - 1) * pageSize)
