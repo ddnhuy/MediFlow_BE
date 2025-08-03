@@ -26,6 +26,7 @@ namespace Inventory.Application.Medicines.Commands.ReturnMedicineBatch
             // Validate that all batches exist and are expired
             var batchIds = request.Details.Select(d => d.MedicineBatchId).ToList();
             var batches = await dbContext.MedicineBatches
+                .Include(mb => mb.Supplier)
                 .Where(x => !x.IsCancelled)
                 .Where(mb => batchIds.Contains(mb.Id))
                 .ToListAsync(cancellationToken);
@@ -69,6 +70,12 @@ namespace Inventory.Application.Medicines.Commands.ReturnMedicineBatch
                 {
                     throw new BadRequestException(ExceptionKey.BATCH_ALREADY_IN_RETURN_REQUEST);
                 }
+            }
+
+            var supplierIds = batches.Select(b => b.SupplierId).Distinct().ToList();
+            if (supplierIds.Count > 1)
+            {
+                throw new BadRequestException(ExceptionKey.CANNOT_RETURN_BATCHES_FROM_DIFFERENT_SUPPLIERS);
             }
 
 

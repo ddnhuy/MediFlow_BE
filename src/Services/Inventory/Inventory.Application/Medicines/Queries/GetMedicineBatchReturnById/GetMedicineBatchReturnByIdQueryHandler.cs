@@ -19,6 +19,8 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineBatchReturnById
 
             // Get the details for this return
             var details = await dbContext.MedicineBatchReturnDetails
+                .Include(x => x.MedicineBatch)
+                .ThenInclude(x => x.Supplier)
                 .Where(d => d.MedicineBatchReturnId == request.Id)
                 .AsNoTracking()
                 .Select(detail => new MedicineBatchReturnDetailItemDto(
@@ -26,7 +28,12 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineBatchReturnById
                     detail.MedicineBatchId,
                     detail.BatchNumber ?? string.Empty,
                     detail.ExpirationDate,
-                    detail.Quantity
+                    detail.Quantity,
+                    detail.MedicineBatch!.Supplier!.Id,
+                    detail.MedicineBatch.Supplier.SupplierName ?? string.Empty,
+                    detail.MedicineBatch.Supplier.ContactPerson ?? string.Empty,
+                    detail.MedicineBatch.Supplier.Phone ?? string.Empty,
+                    detail.MedicineBatch.Supplier.Email ?? string.Empty
                 ))
                 .ToListAsync(cancellationToken);
 

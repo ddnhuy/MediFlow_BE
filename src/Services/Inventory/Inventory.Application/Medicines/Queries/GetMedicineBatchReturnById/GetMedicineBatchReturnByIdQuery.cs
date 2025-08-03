@@ -25,6 +25,11 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineBatchReturnById
         int MedicineBatchId,
         string BatchNumber,
         DateOnly ExpirationDate,
-        decimal Quantity
+        decimal Quantity,
+        int SupplierId,
+        string SupplierName,
+        string ContactPerson,
+        string PhoneNumber,
+        string Email
     );
 }
