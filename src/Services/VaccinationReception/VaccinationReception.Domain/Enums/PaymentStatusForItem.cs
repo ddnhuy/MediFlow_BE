@@ -11,6 +11,7 @@ namespace VaccinationReception.Domain.Enums
         NotPaid = 0,
         Paid = 1,
         Refunded = 2,
-        AdjustedOut = 3
+        AdjustedOut = 3,
+        Cancelled = 4
     }
 }

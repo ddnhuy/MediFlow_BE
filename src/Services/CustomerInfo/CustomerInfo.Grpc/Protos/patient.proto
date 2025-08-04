@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 option csharp_namespace = "CustomerInfo.Grpc.Protos";
 
@@ -13,6 +14,7 @@ service PatientProtoService {
   rpc UpdatePatient (UpdatePatientRequest) returns (PatientDetailModel);
   rpc DeletePatient (DeletePatientRequest) returns (DeletePatientResponse);
   rpc ListPatientsWithIdsAndSearch (FilteredPatientsRequest) returns (FilteredPatientsResponse);
+  rpc GetAllPatient (google.protobuf.Empty) returns (GetAllPatientResponse);
 }
 
 message ListPatientsRequest {
@@ -29,6 +31,10 @@ message ListPatientsResponse {
   int32 pageSize = 2;
   int64 totalItem = 3;
   repeated PatientSummaryModel data = 4;
+}
+
+message GetAllPatientResponse {
+  repeated PatientSummaryModel data = 1;
 }
 
 message GetPatientRequest {
@@ -103,6 +109,7 @@ message PatientSummaryModel {
   string ward = 11;
   bool isPregnant = 12;
   bool isForeigner = 13;
+  string email = 14;
 }
 
 message PatientDetailModel {

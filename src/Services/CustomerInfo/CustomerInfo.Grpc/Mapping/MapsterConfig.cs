@@ -12,6 +12,7 @@ namespace CustomerInfo.Grpc.Mapping
             // CreatePatientRequest -> Patient
             config.NewConfig<CreatePatientRequest, Patient>()
                 .Map(dest => dest.Code, src => src.Code)
+                .Map(dest => dest.Email, src => src.Email ?? "")
                 .Map(dest => dest.Name, src => src.Name)
                 .Map(dest => dest.Gender, src => src.Gender)
                 .Map(dest => dest.DOB, src => src.Dob != null ? src.Dob.ToDateTime() : (DateTime?)null)
@@ -53,6 +54,7 @@ namespace CustomerInfo.Grpc.Mapping
                 .Map(dest => dest.Id, src => src.Id)
                 .Map(dest => dest.Code, src => src.Code)
                 .Map(dest => dest.Name, src => src.Name)
+                .Map(dest => dest.Email, src => src.Email ?? "")
                 .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)
                 .Map(dest => dest.Gender, src => src.Gender)
                 .Map(dest => dest.Dob, src => Timestamp.FromDateTime(DateTime.SpecifyKind(src.DOB, DateTimeKind.Local).ToUniversalTime()))
@@ -68,6 +70,7 @@ namespace CustomerInfo.Grpc.Mapping
             config.NewConfig<UpdatePatientRequest, Patient>()
                 .Map(dest => dest.Id, src => src.Id)
                 .Map(dest => dest.Code, src => src.Code)
+                .Map(dest => dest.Email, src => src.Email ?? "")
                 .Map(dest => dest.Name, src => src.Name)
                 .Map(dest => dest.Gender, src => src.Gender)
                 .Map(dest => dest.PhoneNumber, src => src.PhoneNumber)

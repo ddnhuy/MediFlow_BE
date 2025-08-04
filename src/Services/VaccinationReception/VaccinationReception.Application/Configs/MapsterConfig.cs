@@ -7,8 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.DTOs.PatientDTOs;
+using VaccinationReception.Application.DTOs.ReceptionVaccinationContractDTOs;
 using VaccinationReception.Application.Patients.Commands.CreatePatient;
 using VaccinationReception.Application.Patients.Commands.UpdatePatient;
+using VaccinationReception.Domain.Enums;
+using VaccinationReception.Domain.Models;
 
 namespace VaccinationReception.Application.Configs
 {
@@ -84,6 +87,20 @@ namespace VaccinationReception.Application.Configs
             .Map(dest => dest.IsForeigner, src => src.IsForeigner)
             .Map(dest => dest.IsSuspended, src => src.IsSuspended)
             .Map(dest => dest.IsCancelled, src => src.IsCancelled);
+
+            config.NewConfig<ContractDTO, Contract>()
+            .Map(dest => dest.ContractCode, src => src.ContractCode)
+            .Map(dest => dest.ContractNumber, src => src.ContractNumber)
+            .Map(dest => dest.ContractName, src => src.ContractName)
+            .Map(dest => dest.CompanyName, src => src.CompanyName)
+            .Map(dest => dest.UnitName, src => src.UnitName)
+            .Map(dest => dest.ExpectedDate, src => src.ExpectedDate)
+            .Map(dest => dest.ContractDate, src => src.ContractDate)
+            .Map(dest => dest.Description, src => src.Description)
+            .Map(dest => dest.FileContractId, src => src.FileContractId)
+            .Map(dest => dest.FileVaccinationEnrollmentId, src => src.FileVaccinationEnrollmentId)
+            .Map(dest => dest.FileVaccinationEnrollmentName, src => src.FileVaccinationEnrollmentName)
+            .Map(dest => dest.FileContractName, src => src.FileContractName);
         }
     }
 }

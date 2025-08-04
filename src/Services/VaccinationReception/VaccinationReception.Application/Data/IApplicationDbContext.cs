@@ -16,6 +16,10 @@ namespace VaccinationReception.Application.Data
         DbSet<PaymentDetail> PaymentDetails { get; }
         DbSet<Examination> Examinations { get; }
         DbSet<ExaminationTestResult> ExaminationTestResults { get; }
+        DbSet<Contract> Contracts { get; }
+        DbSet<ContractPatientVaccination> ContractPatientVaccinations { get; }
+        DbSet<ContractServiceDetail> ContractServiceDetails { get; }
+        DbSet<PaymentContract> PaymentContracts { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
         DatabaseFacade Database { get; }
