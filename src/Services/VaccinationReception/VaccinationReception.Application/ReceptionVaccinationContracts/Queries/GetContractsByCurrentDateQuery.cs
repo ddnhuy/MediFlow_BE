@@ -22,7 +22,7 @@ namespace VaccinationReception.Application.ReceptionVaccinationContracts.Queries
 
         public async Task<List<ContractResponse>> Handle(GetContractsByCurrentDateQuery request, CancellationToken cancellationToken)
         {
-            var currentDate = DateTime.Today;
+            var currentDate = DateTime.UtcNow.Date;
 
             var contracts = await _context.Contracts
                 .Where(c => !c.IsCancelled && !c.IsSuspended)
