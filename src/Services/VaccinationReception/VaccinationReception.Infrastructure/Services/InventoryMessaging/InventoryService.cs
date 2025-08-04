@@ -17,6 +17,7 @@ namespace VaccinationReception.Infrastructure.Services.InventoryMessaging
         private readonly IRequestClient<GetMedicineInteractionsRequest> _medicineInteractionsRequestClient;
         private readonly IRequestClient<CheckMedicineStockRequest> _checkMedicineStockRequestClient;
         private readonly IRequestClient<SubtractMedicineBatchStockRequest> _subtractMedicineBatchStockRequestClient;
+        private readonly IRequestClient<GetMedicineByCodeRequest> _getMedicineByCodeRequestClient;
         private readonly ILogger<InventoryService> _logger;
 
         public InventoryService(
@@ -25,7 +26,8 @@ namespace VaccinationReception.Infrastructure.Services.InventoryMessaging
             IRequestClient<GetNearestExpiryMedicineBatchRequest> nearestExpiryMedicineBatchRequestClient,
             IRequestClient<GetMedicineInteractionsRequest> medicineInteractionsRequestClient,
             IRequestClient<CheckMedicineStockRequest> checkMedicineStockRequestClient,
-            IRequestClient<SubtractMedicineBatchStockRequest> subtractMedicineBatchStockRequestClient)
+            IRequestClient<SubtractMedicineBatchStockRequest> subtractMedicineBatchStockRequestClient,
+            IRequestClient<GetMedicineByCodeRequest> getMedicineByCodeRequestClient)
         {
             _medicineInformationRequestClient = medicineInformationRequestClient;
             _logger = logger;
@@ -33,6 +35,7 @@ namespace VaccinationReception.Infrastructure.Services.InventoryMessaging
             _medicineInteractionsRequestClient = medicineInteractionsRequestClient;
             _checkMedicineStockRequestClient = checkMedicineStockRequestClient;
             _subtractMedicineBatchStockRequestClient = subtractMedicineBatchStockRequestClient;
+            _getMedicineByCodeRequestClient = getMedicineByCodeRequestClient;
         }
 
         public async Task<CheckMedicineStockResponse> CheckMedicineStockResponseAsync(int medicineId, int numberOfMedicineWanted, CancellationToken cancellationToken = default)
@@ -207,6 +210,28 @@ namespace VaccinationReception.Infrastructure.Services.InventoryMessaging
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error requesting to subtract stock for MedicineBatchId: {MedicineBatchId}, Quantity: {Quantity}", medicineBatchId, quantity);
+                throw;
+            }
+        }
+
+        public async Task<List<GetMedicineInformationResponse>> GetMedicinesByCodeAsync(List<string> medicineCodes, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var request = new GetMedicineByCodeRequest
+                {
+                     RequestId = Guid.NewGuid().ToString(),
+                     MedicineCodes = medicineCodes
+                };
+
+                var response = await _getMedicineByCodeRequestClient
+                    .GetResponse<GetMedicinesInformationResponse>(request, cancellationToken);
+
+                return response.Message.Medicines;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error requesting medicine information for multiple medicines");
                 throw;
             }
         }

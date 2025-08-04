@@ -9,7 +9,7 @@ namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
         );
     public record PaymentDetailResponse(
         int Id,
-        int PaymentId,
+        int? PaymentId,
         int? ReceptionVaccinationId,
         int? ServiceRequestDetailId,
         decimal Amount,

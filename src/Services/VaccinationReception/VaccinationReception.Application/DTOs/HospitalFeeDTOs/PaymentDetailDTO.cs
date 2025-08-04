@@ -8,7 +8,7 @@ namespace VaccinationReception.Application.DTOs.HospitalFeeDTOs
 {
     public record PaymentDetailDTO(
         int Id,
-        int PaymentId,
+        int? PaymentId,
         int? ReceptionVaccinationId,
         int? ServiceRequestDetailId,
         decimal Amount,

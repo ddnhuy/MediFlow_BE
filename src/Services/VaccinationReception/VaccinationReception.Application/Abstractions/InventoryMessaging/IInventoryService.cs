@@ -12,5 +12,6 @@ namespace VaccinationReception.Application.Abstraction.InventoryMessaging
         Task<GetMedicineInteractionsResponse> GetMedicineInteractionsResponseAsync(int medicineId, CancellationToken cancellationToken = default);
         Task<CheckMedicineStockResponse> CheckMedicineStockResponseAsync(int medicineId, int numberOfMedicineWanted, CancellationToken cancellationToken = default);
         Task<SubtractMedicineBatchStockResponse> SubtractMedicineBatchStockResponseAsync(int medicineBatchId, int quantity, CancellationToken cancellationToken = default);
+        Task<List<GetMedicineInformationResponse>> GetMedicinesByCodeAsync(List<string> medicineCode, CancellationToken cancellationToken = default);
     }
 }

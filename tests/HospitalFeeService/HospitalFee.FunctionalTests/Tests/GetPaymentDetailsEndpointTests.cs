@@ -45,7 +45,7 @@ namespace HospitalFee.FunctionalTests.Tests
 
             var serviceType = new ServiceType
             {
-                Id = 3,
+                Id = 4,
                 Name = "General Checkup",
                 CreatedAt = DateTime.UtcNow,
                 LastUpdatedAt = DateTime.UtcNow
@@ -59,7 +59,6 @@ namespace HospitalFee.FunctionalTests.Tests
                 CreatedAt = DateTime.UtcNow,
                 LastUpdatedAt = DateTime.UtcNow
             };
-
 
             var payment = new Payment
             {
