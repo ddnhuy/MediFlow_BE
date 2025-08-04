@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using OfficeOpenXml;
 using Quartz;
 using System.Reflection;
 using VaccinationReception.Application.Jobs;
+using VaccinationReception.Application.Services.ExcelServices;
 using VaccinationReception.Application.Services.PatientServices;
 
 namespace VaccinationReception.Application
@@ -19,6 +21,10 @@ namespace VaccinationReception.Application
     {
         public static IServiceCollection AddApplicationService(this IServiceCollection services, IConfiguration configuration)
         {
+            ExcelPackage.License.SetNonCommercialPersonal("Personal Use");
+
+            services.AddSingleton<ExcelDataReaderService>();
+
             services.AddGrpcClient<PatientProtoService.PatientProtoServiceClient>(options =>
             {
                 options.Address = new Uri(configuration["GrpcSettings:CustomerInfoUrl"]!);
@@ -59,6 +65,8 @@ namespace VaccinationReception.Application
 
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            services.TryAddScoped<IExcelDataReaderService, ExcelDataReaderService>();
+
             if (!Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")?.Equals("Test", StringComparison.OrdinalIgnoreCase) ?? true)
             {
                 services.AddQuartz(q =>
@@ -82,7 +90,6 @@ namespace VaccinationReception.Application
                     options.WaitForJobsToComplete = true;
                 });
             }
-
             return services;
         }
     }

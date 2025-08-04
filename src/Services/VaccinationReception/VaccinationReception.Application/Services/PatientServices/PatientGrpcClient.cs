@@ -192,5 +192,23 @@ namespace VaccinationReception.Application.Services.PatientServices
                 throw;
             }
         }
+        public async Task<List<PatientSummaryDTO>> GetAllPatientAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                _logger.LogInformation("Sending request to get all patients");
+
+                var response = await _client.GetAllPatientAsync(new Google.Protobuf.WellKnownTypes.Empty(), _metadata, cancellationToken: cancellationToken);
+
+                _logger.LogInformation("Received {Count} patients", response.Data.Count);
+
+                return response.Data.Adapt<List<PatientSummaryDTO>>();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while getting all patients");
+                throw;
+            }
+        }
     }
 }
