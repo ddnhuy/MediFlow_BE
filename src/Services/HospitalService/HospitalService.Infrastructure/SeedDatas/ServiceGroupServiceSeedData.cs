@@ -40,40 +40,28 @@ namespace HospitalService.Infrastructure.SeedDatas
                 SetBaseProperties(new ServiceGroupService
                 {
                     Id = 3,
-                    ServiceGroupId = 3,
+                    ServiceGroupId = 2,
                     ServiceId = 3
                 }),
                 SetBaseProperties(new ServiceGroupService
                 {
                     Id = 4,
-                    ServiceGroupId = 4,
+                    ServiceGroupId = 2,
                     ServiceId = 4
-                }),
-                SetBaseProperties(new ServiceGroupService
-                {
-                    Id = 5,
-                    ServiceGroupId = 4,
-                    ServiceId = 5
-                }),
-                SetBaseProperties(new ServiceGroupService
-                {
-                    Id = 6,
-                    ServiceGroupId = 4,
-                    ServiceId = 6
                 }),
                 // Blood Test Service belongs to Laboratory Test group
                 SetBaseProperties(new ServiceGroupService
                 {
-                    Id = 7,
-                    ServiceGroupId = 5,
-                    ServiceId = 7
+                    Id = 5,
+                    ServiceGroupId = 3,
+                    ServiceId = 5
                 }),
                 // Hepatitis B Test Service belongs to Laboratory Test group
                 SetBaseProperties(new ServiceGroupService
                 {
-                    Id = 8,
-                    ServiceGroupId = 5,
-                    ServiceId = 8
+                    Id = 6,
+                    ServiceGroupId = 3,
+                    ServiceId = 6
                 })
             };
         }

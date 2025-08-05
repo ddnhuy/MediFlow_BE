@@ -106,6 +106,18 @@ namespace HospitalService.Infrastructure.Migrations
                             IsSuspended = false,
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            Description = "Nhóm bệnh dùng để phân loại các dịch vụ khám sức khỏe nhằm đánh giá tình trạng người bệnh trước khi thực hiện tiêm chủng.",
+                            GroupName = "Khám sàng lọc trước tiêm",
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1
                         });
                 });
 
@@ -172,32 +184,6 @@ namespace HospitalService.Infrastructure.Migrations
                     b.ToTable("DiseaseGroupServices", "public", t =>
                         {
                             t.HasComment("Bảng liên kết nhóm bệnh và dịch vụ");
-                        });
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            DiseaseGroupId = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
-                            ServiceId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            DiseaseGroupId = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
-                            ServiceId = 2
                         });
                 });
 
@@ -296,34 +282,6 @@ namespace HospitalService.Infrastructure.Migrations
                             IsSuspended = false,
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
-                            ServiceCode = "VAC001",
-                            ServiceName = "Tiêm vắc xin 5 trong 1",
-                            UnitPrice = 500000m
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            DepartmentId = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
-                            ServiceCode = "VAC002",
-                            ServiceName = "Tiêm vắc xin 6 trong 1",
-                            UnitPrice = 600000m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            DepartmentId = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
                             ServiceCode = "EXAMFEE",
                             ServiceName = "Công khám",
                             ServiceType = 0,
@@ -331,7 +289,7 @@ namespace HospitalService.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 2,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 1,
                             DepartmentId = 1,
@@ -346,7 +304,7 @@ namespace HospitalService.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 3,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 1,
                             DepartmentId = 1,
@@ -361,7 +319,7 @@ namespace HospitalService.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 6,
+                            Id = 4,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 1,
                             DepartmentId = 1,
@@ -376,7 +334,7 @@ namespace HospitalService.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 7,
+                            Id = 5,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 1,
                             DepartmentId = 2,
@@ -387,11 +345,12 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedBy = 1,
                             ServiceCode = "BLOOD001",
                             ServiceName = "Xét nghiệm công thức máu",
+                            ServiceType = 2,
                             UnitPrice = 150000m
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 6,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 1,
                             DepartmentId = 2,
@@ -402,6 +361,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedBy = 1,
                             ServiceCode = "HEPB001",
                             ServiceName = "Xét nghiệm kháng thể viêm gan B",
+                            ServiceType = 2,
                             UnitPrice = 250000m
                         });
                 });
@@ -467,7 +427,7 @@ namespace HospitalService.Infrastructure.Migrations
                             Id = 1,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 1,
-                            GroupName = "Nhóm dịch vụ tiêm chủng cơ bản",
+                            GroupName = "Công khám",
                             IsCancelled = false,
                             IsSuspended = false,
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -478,28 +438,6 @@ namespace HospitalService.Infrastructure.Migrations
                             Id = 2,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 1,
-                            GroupName = "Nhóm dịch vụ tiêm chủng đặc biệt",
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            GroupName = "Công khám",
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
                             GroupName = "Công tiêm",
                             IsCancelled = false,
                             IsSuspended = false,
@@ -508,7 +446,7 @@ namespace HospitalService.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 3,
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = 1,
                             GroupName = "Nhóm dịch vụ xét nghiệm",
@@ -618,7 +556,7 @@ namespace HospitalService.Infrastructure.Migrations
                             IsSuspended = false,
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
-                            ServiceGroupId = 3,
+                            ServiceGroupId = 2,
                             ServiceId = 3
                         },
                         new
@@ -630,7 +568,7 @@ namespace HospitalService.Infrastructure.Migrations
                             IsSuspended = false,
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
-                            ServiceGroupId = 4,
+                            ServiceGroupId = 2,
                             ServiceId = 4
                         },
                         new
@@ -642,7 +580,7 @@ namespace HospitalService.Infrastructure.Migrations
                             IsSuspended = false,
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
-                            ServiceGroupId = 4,
+                            ServiceGroupId = 3,
                             ServiceId = 5
                         },
                         new
@@ -654,32 +592,8 @@ namespace HospitalService.Infrastructure.Migrations
                             IsSuspended = false,
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
-                            ServiceGroupId = 4,
+                            ServiceGroupId = 3,
                             ServiceId = 6
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
-                            ServiceGroupId = 5,
-                            ServiceId = 7
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedBy = 1,
-                            IsCancelled = false,
-                            IsSuspended = false,
-                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            LastUpdatedBy = 1,
-                            ServiceGroupId = 5,
-                            ServiceId = 8
                         });
                 });
 
@@ -748,7 +662,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "WBC (White Blood Cell)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "4.0 - 11.0",
                             Unit = "G/L"
@@ -764,7 +678,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "LYM (Lymphocyte)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "20.0 - 40.0",
                             Unit = "%"
@@ -780,7 +694,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "NEU (Neutrophil)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "50.0 - 70.0",
                             Unit = "%"
@@ -796,7 +710,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "MON (Monocyte)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "2.0 - 8.0",
                             Unit = "%"
@@ -812,7 +726,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "EOS (Eosinophils)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "1.0 - 4.0",
                             Unit = "%"
@@ -828,7 +742,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "BASO (Basophils)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "0.0 - 1.0",
                             Unit = "%"
@@ -844,7 +758,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "RBC (Red Blood Cell)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "4.0 - 5.5",
                             Unit = "T/L"
@@ -860,7 +774,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "HGB (Hemoglobin)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "130 - 175",
                             Unit = "g/L"
@@ -876,7 +790,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "HCT (Hematocrit)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "40.0 - 50.0",
                             Unit = "%"
@@ -892,7 +806,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "MCV (Mean Corpuscular Volume)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "80.0 - 100.0",
                             Unit = "fL"
@@ -908,7 +822,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "MCH (Mean Corpuscular Hemoglobin)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "27.0 - 32.0",
                             Unit = "pg"
@@ -924,7 +838,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "MCHC (Mean Corpuscular Hemoglobin Concentration)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "320 - 360",
                             Unit = "g/L"
@@ -940,7 +854,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "RDW (Red Cell Distribution Width)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "11.5 - 14.5",
                             Unit = "%"
@@ -956,7 +870,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "PLT (Platelet Count)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "150 - 450",
                             Unit = "G/L"
@@ -972,7 +886,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "PCT (Plateletcrit)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "0.1 - 0.3",
                             Unit = "%"
@@ -988,7 +902,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "PDW (Platelet Distribution Width)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "10.0 - 17.0",
                             Unit = "%"
@@ -1004,7 +918,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "MPV (Mean Platelet Volume)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "7.0 - 11.0",
                             Unit = "fL"
@@ -1020,7 +934,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "P-LCR (Plateletcrit Larger Cell Ratio)",
-                            ServiceId = 7,
+                            ServiceId = 5,
                             SpecimenType = "Máu toàn phần",
                             StandardValue = "15.0 - 35.0",
                             Unit = "%"
@@ -1036,7 +950,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "HBsAb (Anti-HBs)",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "> 10",
                             Unit = "mIU/mL"
@@ -1052,7 +966,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "HBsAg",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "< 0.05",
                             Unit = "IU/mL"
@@ -1068,7 +982,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "HBeAg",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "< 1.0",
                             Unit = "S/CO"
@@ -1084,7 +998,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "Anti-HBe",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "> 1.0",
                             Unit = "S/CO"
@@ -1100,7 +1014,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "Anti-HBc IgM",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "< 1.0",
                             Unit = "S/CO"
@@ -1116,7 +1030,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "Anti-HBc IgG",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "> 1.0",
                             Unit = "S/CO"
@@ -1132,7 +1046,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "HBV-DNA",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "< 20",
                             Unit = "IU/mL"
@@ -1148,7 +1062,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "AST (SGOT)",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "7 - 40",
                             Unit = "U/L"
@@ -1164,7 +1078,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "ALT (SGPT)",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "7 - 40",
                             Unit = "U/L"
@@ -1180,7 +1094,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "GGT",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "7 - 32",
                             Unit = "U/L"
@@ -1196,7 +1110,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "Bilirubin toàn phần",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "0.3 - 1.2",
                             Unit = "mg/dL"
@@ -1212,7 +1126,7 @@ namespace HospitalService.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             ParameterName = "Albumin",
-                            ServiceId = 8,
+                            ServiceId = 6,
                             SpecimenType = "Huyết thanh",
                             StandardValue = "3.5 - 5.0",
                             Unit = "g/dL"

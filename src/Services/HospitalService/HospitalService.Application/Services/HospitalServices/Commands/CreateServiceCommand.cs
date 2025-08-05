@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Strings.Enums;
 using HospitalService.Domain.Abstractions;
 using HospitalService.Domain.Models;
 using HospitalService.Domain.Repositories;
@@ -16,10 +17,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         string ServiceName,
         decimal UnitPrice,
         int DepartmentId,
-        string Unit,
-        string StandardValue,
-        int Quantity,
-        string EquipmentUsed
+        ServiceType ServiceType
     ) : ICommand<CreateServiceResult>;
     public record CreateServiceResult(int ServiceId);
 
@@ -51,10 +49,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
                     ServiceName = request.ServiceName,
                     UnitPrice = request.UnitPrice,
                     DepartmentId = request.DepartmentId,
-                    //StandardValue = request.StandardValue,
-                    //EquipmentUsed = request.EquipmentUsed,
-                    //Unit = request.Unit,
-                    //Quantity = request.Quantity
+                    ServiceType = request.ServiceType
                 };
 
                 await _serviceRepository.AddAsync(service, cancellationToken);

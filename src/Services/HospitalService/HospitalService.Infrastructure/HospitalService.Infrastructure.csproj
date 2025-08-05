@@ -26,4 +26,8 @@
 	<ProjectReference Include="..\HospitalService.Application\HospitalService.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

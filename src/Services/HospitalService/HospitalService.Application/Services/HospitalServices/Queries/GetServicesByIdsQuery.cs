@@ -43,6 +43,7 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
                     s.Id,
                     s.ServiceCode,
                     s.ServiceName,
+                    s.ServiceType,
                     s.UnitPrice,
                     s.DepartmentId,
                     s.ExaminationService,

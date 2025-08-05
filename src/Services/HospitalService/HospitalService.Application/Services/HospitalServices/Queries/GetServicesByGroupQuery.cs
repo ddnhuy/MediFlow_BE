@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Strings.Enums;
 using HospitalService.Domain.Repositories;
 using Mapster;
 using MapsterMapper;
@@ -17,6 +18,7 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
         int Id,
         string ServiceCode,
         string ServiceName,
+        ServiceType ServiceType,
         decimal UnitPrice,
         int DepartmentId
     );
