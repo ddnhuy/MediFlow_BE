@@ -41,10 +41,7 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
                     s.ServiceName,
                     s.UnitPrice,
                     s.DepartmentId,
-                    //s.Unit,
-                    //s.StandardValue,
-                    //s.Quantity,
-                    //s.EquipmentUsed,
+                    s.ServiceType,
                     s.CreatedAt,
                     s.LastUpdatedAt,
                     s.ServiceGroupServices

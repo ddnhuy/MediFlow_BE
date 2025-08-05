@@ -30,22 +30,6 @@ namespace HospitalService.Infrastructure.SeedDatas
                 SetBaseProperties(new Service
                 {
                     Id = 1,
-                    ServiceCode = SeedConstants.Services.Vac5in1Code,
-                    ServiceName = SeedConstants.Services.Vac5in1,
-                    UnitPrice = SeedConstants.Services.Vac5in1Price,
-                    DepartmentId = SeedConstants.Services.VaccinationDepartmentId
-                }),
-                SetBaseProperties(new Service
-                {
-                    Id = 2,
-                    ServiceCode = SeedConstants.Services.Vac6in1Code,
-                    ServiceName = SeedConstants.Services.Vac6in1,
-                    UnitPrice = SeedConstants.Services.Vac6in1Price,
-                    DepartmentId = SeedConstants.Services.VaccinationDepartmentId
-                }),
-                SetBaseProperties(new Service
-                {
-                    Id = 3,
                     ServiceCode = SeedConstants.Services.ExamFeeCode,
                     ServiceName = SeedConstants.Services.ExamFee,
                     ServiceType = ServiceType.Exam,
@@ -54,7 +38,7 @@ namespace HospitalService.Infrastructure.SeedDatas
                 }),
                 SetBaseProperties(new Service
                 {
-                    Id = 4,
+                    Id = 2,
                     ServiceCode = SeedConstants.Services.InjectIMCode,
                     ServiceName = SeedConstants.Services.InjectIMName,
                     ServiceType = ServiceType.Injection,
@@ -63,7 +47,7 @@ namespace HospitalService.Infrastructure.SeedDatas
                 }),
                 SetBaseProperties(new Service
                 {
-                    Id = 5,
+                    Id = 3,
                     ServiceCode = SeedConstants.Services.InjectSCCode,
                     ServiceName = SeedConstants.Services.InjectSCName,
                     ServiceType = ServiceType.Injection,
@@ -72,7 +56,7 @@ namespace HospitalService.Infrastructure.SeedDatas
                 }),
                 SetBaseProperties(new Service
                 {
-                    Id = 6,
+                    Id = 4,
                     ServiceCode = SeedConstants.Services.InjectIDCode,
                     ServiceName = SeedConstants.Services.InjectIDName,
                     ServiceType = ServiceType.Injection,
@@ -82,9 +66,10 @@ namespace HospitalService.Infrastructure.SeedDatas
                 // Blood Test Service
                 SetBaseProperties(new Service
                 {
-                    Id = 7,
+                    Id = 5,
                     ServiceCode = SeedConstants.Services.BloodTestCode,
                     ServiceName = SeedConstants.Services.BloodTest,
+                    ServiceType = ServiceType.Test,
                     ExaminationService = BuildingBlocks.Strings.Enums.ExaminationService.Blood,
                     UnitPrice = SeedConstants.Services.BloodTestPrice,
                     DepartmentId = SeedConstants.Services.LaboratoryDepartmentId
@@ -92,9 +77,10 @@ namespace HospitalService.Infrastructure.SeedDatas
                 // Hepatitis B Test Service
                 SetBaseProperties(new Service
                 {
-                    Id = 8,
+                    Id = 6,
                     ServiceCode = SeedConstants.Services.HepatitisBTestCode,
                     ServiceName = SeedConstants.Services.HepatitisBTest,
+                    ServiceType = ServiceType.Test,
                     ExaminationService = BuildingBlocks.Strings.Enums.ExaminationService.Anti_HBs,
                     UnitPrice = SeedConstants.Services.HepatitisBTestPrice,
                     DepartmentId = SeedConstants.Services.LaboratoryDepartmentId

@@ -15,7 +15,8 @@ using System.Threading.Tasks;
 namespace HospitalService.Application.Services.HospitalServices.Queries
 {
     public record GetAllServicesWithoutPaginationQuery(
-            string? SearchTerm
+            string? SearchTerm,
+            ServiceType? ServiceType
         ) : IQuery<GetAllServicesWithoutPaginationResult>;
 
     public record GetAllServicesWithoutPaginationResult(List<ServiceDTO> Services);
@@ -50,13 +51,19 @@ namespace HospitalService.Application.Services.HospitalServices.Queries
                     services = await _serviceRepository.GetBySearchTermAsync(request.SearchTerm, cancellationToken);
                 }
 
-                var filteredServices = services
-                    .Where(s => s.ServiceType != ServiceType.Exam && s.ServiceType != ServiceType.Injection);
+                var filteredServices = services;
+
+                if (request.ServiceType != null)
+                {
+                    filteredServices = filteredServices
+                        .Where(s => s.ServiceType == request.ServiceType);
+                }
 
                 var items = filteredServices.Select(s => new ServiceDTO(
                     s.Id,
                     s.ServiceCode,
                     s.ServiceName,
+                    s.ServiceType,
                     s.UnitPrice,
                     s.DepartmentId,
                     s.ExaminationService,

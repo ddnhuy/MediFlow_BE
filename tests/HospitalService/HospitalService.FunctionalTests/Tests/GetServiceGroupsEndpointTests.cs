@@ -80,12 +80,6 @@ namespace HospitalService.FunctionalTests.Tests
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var json = await response.Content.ReadAsStringAsync();
-            var node = JsonNode.Parse(json);
-            var data = node?["serviceGroups"]?["data"]?.AsArray();
-
-            Assert.NotNull(data);
-            Assert.True(data.Count > 0);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using BuildingBlocks.CQRS;
 using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
+using BuildingBlocks.Strings.Enums;
 using HospitalService.Domain.Abstractions;
 using HospitalService.Domain.Repositories;
 using Microsoft.Extensions.Logging;
@@ -13,10 +14,9 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
         string ServiceName,
         decimal UnitPrice,
         int DepartmentId,
-        string StandardValue,
-        string EquipmentUsed,
-        int Quantity,
-        string Unit) : ICommand<UpdateServiceResult>;
+        ServiceType ServiceType
+
+    ) : ICommand<UpdateServiceResult>;
 
     public record UpdateServiceResult(int ServiceId);
 
@@ -53,10 +53,7 @@ namespace HospitalService.Application.Services.HospitalServices.Commands
                 service.ServiceName = request.ServiceName;
                 service.UnitPrice = request.UnitPrice;
                 service.DepartmentId = request.DepartmentId;
-                //service.StandardValue = request.StandardValue;
-                //service.EquipmentUsed = request.EquipmentUsed;
-                //service.Unit = request.Unit;
-                //service.Quantity = request.Quantity;
+                service.ServiceType = request.ServiceType;
 
                 await _serviceRepository.UpdateAsync(service, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);

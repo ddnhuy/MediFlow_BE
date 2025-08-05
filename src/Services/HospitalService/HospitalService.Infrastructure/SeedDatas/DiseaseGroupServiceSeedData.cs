@@ -25,18 +25,7 @@ namespace HospitalService.Infrastructure.SeedDatas
         {
             return new List<DiseaseGroupService>
             {
-                SetBaseProperties(new DiseaseGroupService
-                {
-                    Id = 1,
-                    DiseaseGroupId = 1,
-                    ServiceId = 1
-                }),
-                SetBaseProperties(new DiseaseGroupService
-                {
-                    Id = 2,
-                    DiseaseGroupId = 1,
-                    ServiceId = 2
-                })
+
             };
         }
     }
