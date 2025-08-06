@@ -49,6 +49,7 @@ namespace Appointment.API.Appointments.Queries
                     IsSuspended = a.IsSuspended,
                     IsCancelled = a.IsCancelled
                 })
+                .OrderByDescending(a => a.AppointmentDate)
             );
 
             return new GetUpcomingAppointmentsResult(result);
