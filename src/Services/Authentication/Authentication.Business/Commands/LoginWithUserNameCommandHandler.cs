@@ -36,7 +36,7 @@ namespace Authentication.Business.Commands
             var accessToken = tokenProvider.GenerateAccessToken(loginResponse.User, string.Join(",", loginResponse.User.Departments.Select(d => d.NameInEnglish)));
             var refreshToken = tokenProvider.GenerateRefreshToken();
 
-            await refreshTokenRepository.AddAsync(refreshToken, loginResponse.User.Id);
+            await refreshTokenRepository.AddAsync(refreshToken, loginResponse.User.Id, loginResponse.User.Roles);
 
             return new LoginWithUserNameResult(accessToken, refreshToken);
         }

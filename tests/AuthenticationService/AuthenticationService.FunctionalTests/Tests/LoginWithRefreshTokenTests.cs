@@ -38,6 +38,7 @@ namespace AuthenticationService.FunctionalTests.Tests
                     Id = Guid.NewGuid(),
                     Token = refreshToken,
                     UserId = 1,
+                    Roles = Roles.ADMIN,
                     ExpiresOnUtc = DateTime.UtcNow.AddDays(1)
                 });
                 await dbContext.SaveChangesAsync();
@@ -128,6 +129,7 @@ namespace AuthenticationService.FunctionalTests.Tests
                     Id = Guid.NewGuid(),
                     Token = refreshToken,
                     UserId = -1,
+                    Roles = Roles.ADMIN,
                     ExpiresOnUtc = DateTime.UtcNow.AddDays(1)
                 });
                 await dbContext.SaveChangesAsync();
