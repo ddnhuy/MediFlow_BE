@@ -34,7 +34,7 @@ namespace Appointment.API.Appointments.Queries
             var result = new PaginatedResult<AppointmentSummaryDto>(
                 query.PageIndex,
                 query.PageSize,
-                appointments.Count(),
+                totalCount,
                 appointments.Select(a => new AppointmentSummaryDto
                 {
                     Id = a.Id,
