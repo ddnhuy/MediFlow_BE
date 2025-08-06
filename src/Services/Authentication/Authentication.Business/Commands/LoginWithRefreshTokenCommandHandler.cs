@@ -1,12 +1,10 @@
 ﻿using BuildingBlocks.Exceptions;
-using BuildingBlocks.Strings;
-using FluentValidation;
 using Grpc.Core;
 
 namespace Authentication.Business.Commands
 {
     public record LoginWithRefreshTokenResult(string AccessToken, string RefreshToken);
-    public record LoginWithRefreshTokenCommand(string RefreshToken, string Roles) : ICommand<LoginWithRefreshTokenResult>;
+    public record LoginWithRefreshTokenCommand(string RefreshToken) : ICommand<LoginWithRefreshTokenResult>;
 
     internal class LoginWithRefreshTokenCommandValidator : AbstractValidator<LoginWithRefreshTokenCommand>
     {
@@ -24,20 +22,20 @@ namespace Authentication.Business.Commands
     {
         public async Task<LoginWithRefreshTokenResult> Handle(LoginWithRefreshTokenCommand command, CancellationToken cancellationToken)
         {
-            int userId = await refreshTokenRepository.FindAsync(command.RefreshToken);
+            var userInfo = await refreshTokenRepository.FindAsync(command.RefreshToken);
 
-            if (userId == -1)
+            if (userInfo.UserId == -1)
             {
                 throw new BadRequestException(ExceptionKey.INVALID_REFRESH_TOKEN);
             }
 
             var metadata = new Metadata
             {
-                { "x-roles", command.Roles }
+                { "x-roles", userInfo.Roles }
             };
 
             var user = await applicationUserProto.GetApplicationUserAsync(
-                new GetApplicationUserRequest { Id = userId },
+                new GetApplicationUserRequest { Id = userInfo.UserId },
                 metadata,
                 cancellationToken: cancellationToken);
 

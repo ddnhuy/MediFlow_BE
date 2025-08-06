@@ -12,9 +12,8 @@ namespace Authentication.API.Endpoints
             app.MapPost("/login/refresh-token", async (ISender sender, HttpContext context) =>
             {
                 var refreshToken = context.Request.Cookies["refresh_token"]!;
-                var roles = context.User.Claims.First(x => x.Type == ClaimTypes.Role).Value;
 
-                var command = new LoginWithRefreshTokenCommand(refreshToken, roles);
+                var command = new LoginWithRefreshTokenCommand(refreshToken);
 
                 var result = await sender.Send(command);
 
