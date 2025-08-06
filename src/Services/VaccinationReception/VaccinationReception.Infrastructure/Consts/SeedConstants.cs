@@ -21,8 +21,10 @@ namespace VaccinationReception.Infrastructure.Consts
         {
             public const string BasicCode = "VAC001";
             public const string SpecialCode = "VAC002";
+            public const string ContractCode = "VAC003";
             public const string BasicName = "Tiêm chủng dịch vụ";
             public const string SpecialName = "Tiêm chủng đặc biệt";
+            public const string ContractName = "Tiêm chủng hợp đồng";
         }
     }
 }

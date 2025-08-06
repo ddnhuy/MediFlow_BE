@@ -12,6 +12,7 @@ namespace HospitalService.Application.DTOs
         int Id,
         string ServiceCode,
         string ServiceName,
+        ServiceType? ServiceType,
         decimal UnitPrice,
         int DepartmentId,
         ExaminationService? ExaminationService,

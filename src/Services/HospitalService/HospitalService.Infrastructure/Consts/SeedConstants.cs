@@ -32,17 +32,12 @@ namespace HospitalService.Infrastructure.Consts
             public const string NonInfectious = "Nhóm bệnh không truyền nhiễm";
             public const string InfectiousDesc = "Các bệnh có khả năng lây truyền từ người sang người";
             public const string NonInfectiousDesc = "Các bệnh không có khả năng lây truyền";
+            public const string PreInjectionScreeningName = "Khám sàng lọc trước tiêm";
+            public const string PreInjectionScreeningDesc = "Nhóm bệnh dùng để phân loại các dịch vụ khám sức khỏe nhằm đánh giá tình trạng người bệnh trước khi thực hiện tiêm chủng.";
         }
 
         public static class Services
         {
-            public const string Vac5in1 = "Tiêm vắc xin 5 trong 1";
-            public const string Vac6in1 = "Tiêm vắc xin 6 trong 1";
-            public const string Vac5in1Code = "VAC001";
-            public const string Vac6in1Code = "VAC002";
-            public const decimal Vac5in1Price = 500000;
-            public const decimal Vac6in1Price = 600000;
-
             public const string ExamFeeCode = "EXAMFEE";
             public const string ExamFee = "Công khám";
             public const decimal ExamFeePrice = 50000;

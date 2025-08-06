@@ -22,6 +22,278 @@ namespace VaccinationReception.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("VaccinationReception.Domain.Models.Contract", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:IdentityIncrement", 1)
+                        .HasAnnotation("Npgsql:IdentityStartValue", 1);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("ActualAmount")
+                        .HasColumnType("numeric(18,2)")
+                        .HasComment("Giá trị thực tế");
+
+                    b.Property<decimal?>("AdvanceAmount")
+                        .HasColumnType("numeric(18,2)")
+                        .HasComment("Giá trị tạm ứng");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasComment("Tên công ty ký kết");
+
+                    b.Property<string>("ContractCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasComment("Mã hợp đồng");
+
+                    b.Property<DateTime>("ContractDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasComment("Ngày ký hợp đồng");
+
+                    b.Property<string>("ContractName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasComment("Tên hợp đồng");
+
+                    b.Property<int>("ContractNumber")
+                        .HasColumnType("integer")
+                        .HasComment("Số hợp đồng");
+
+                    b.Property<decimal>("ContractValue")
+                        .HasColumnType("numeric(18,2)")
+                        .HasComment("Giá trị hợp đồng");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasComment("Diễn giải nội dung");
+
+                    b.Property<DateTime?>("ExpectedDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasComment("Ngày dự kiến tiêm theo kế hoạch");
+
+                    b.Property<int>("ExpectedPatientCount")
+                        .HasColumnType("integer")
+                        .HasComment("Số lượng bệnh nhân dự kiến");
+
+                    b.Property<int>("ExpectedVaccineCount")
+                        .HasColumnType("integer")
+                        .HasComment("Số lượng vaccine dự kiến");
+
+                    b.Property<Guid?>("FileContractId")
+                        .HasColumnType("uuid")
+                        .HasComment("File hợp đồng id");
+
+                    b.Property<string>("FileContractName")
+                        .HasColumnType("text")
+                        .HasComment("File hợp đồng");
+
+                    b.Property<Guid?>("FileVaccinationEnrollmentId")
+                        .HasColumnType("uuid")
+                        .HasComment("File excel đăng ký vacicnation id");
+
+                    b.Property<string>("FileVaccinationEnrollmentName")
+                        .HasColumnType("text")
+                        .HasComment("File excel đăng ký vacicnation");
+
+                    b.Property<bool>("IsCancelled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsSuspended")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasComment("Trạng thái hợp đồng");
+
+                    b.Property<string>("UnitName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasComment("Tên đơn vị trực thuộc công ty");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Contracts", "public", t =>
+                        {
+                            t.HasComment("Hợp đồng");
+                        });
+                });
+
+            modelBuilder.Entity("VaccinationReception.Domain.Models.ContractPatientVaccination", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:IdentityIncrement", 1)
+                        .HasAnnotation("Npgsql:IdentityStartValue", 1);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ContractId")
+                        .HasColumnType("integer")
+                        .HasComment("Mã hợp đồng");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DoseNumber")
+                        .HasColumnType("integer")
+                        .HasComment("Liều số mấy");
+
+                    b.Property<bool>("IsCancelled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsSuspended")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("integer")
+                        .HasComment("Mã bệnh nhân");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ReceptionVaccinationId")
+                        .HasColumnType("integer")
+                        .HasComment("Mã tiêm chủng thực tế");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasComment("Trạng thái của mũi tiêm kế hoạch");
+
+                    b.Property<int>("VaccineId")
+                        .HasColumnType("integer")
+                        .HasComment("Mã vắc xin");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContractId");
+
+                    b.HasIndex("ReceptionVaccinationId")
+                        .IsUnique();
+
+                    b.ToTable("ContractPatientVaccinations", "public", t =>
+                        {
+                            t.HasComment("Kế hoạch tiêm chủng của bệnh nhân theo hợp đồng");
+                        });
+                });
+
+            modelBuilder.Entity("VaccinationReception.Domain.Models.ContractServiceDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:IdentityIncrement", 1)
+                        .HasAnnotation("Npgsql:IdentityStartValue", 1);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ActualQuantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ActualTotalAmount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ContractId")
+                        .HasColumnType("integer")
+                        .HasComment("Mã hợp đồng");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsCancelled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsSuspended")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasComment("Số lượng thực tế");
+
+                    b.Property<int?>("ServiceId")
+                        .HasColumnType("integer")
+                        .HasComment("Mã dịch vụ");
+
+                    b.Property<decimal?>("TotalAmount")
+                        .IsRequired()
+                        .HasColumnType("numeric(18,2)")
+                        .HasComment("Tổng tiền thực tế cho mục này");
+
+                    b.Property<decimal?>("UnitPrice")
+                        .IsRequired()
+                        .HasColumnType("numeric(18,2)")
+                        .HasComment("Đơn giá của dịch vụ/vắc-xin này theo hợp đồng");
+
+                    b.Property<int?>("VaccineId")
+                        .HasColumnType("integer")
+                        .HasComment("Mã vắc-xin");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContractId");
+
+                    b.ToTable("ContractServiceDetails", "public", t =>
+                        {
+                            t.HasComment("Chi tiết dịch vụ/vắc-xin trong hợp đồng");
+                        });
+                });
+
             modelBuilder.Entity("VaccinationReception.Domain.Models.Examination", b =>
                 {
                     b.Property<int>("Id")
@@ -242,6 +514,100 @@ namespace VaccinationReception.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("VaccinationReception.Domain.Models.PaymentContract", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:IdentityIncrement", 1)
+                        .HasAnnotation("Npgsql:IdentityStartValue", 1);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ATMCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasComment("Mã giao dịch thẻ ATM");
+
+                    b.Property<int>("ContractId")
+                        .HasColumnType("integer")
+                        .HasComment("Hop Dong Id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CreatedByUserId")
+                        .HasColumnType("integer")
+                        .HasComment("Người lập hóa đơn");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasComment("Số hóa đơn");
+
+                    b.Property<int>("InvoiceType")
+                        .HasColumnType("integer")
+                        .HasComment("Loại hóa đơn");
+
+                    b.Property<bool>("IsCancelled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsSuspended")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("LastUpdatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OrganizationName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasComment("Tên đơn vị thanh toán");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("integer")
+                        .HasComment("Hình thức thanh toán");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("integer")
+                        .HasComment("Trạng thái thanh toán");
+
+                    b.Property<string>("TaxCode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasComment("Mã số thuế đơn vị");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("numeric(18,2)")
+                        .HasComment("Giá trị hợp đồng");
+
+                    b.Property<string>("VATInvoiceNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasComment("Số HĐ GTGT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContractId");
+
+                    b.ToTable("PaymentContracts", "public", t =>
+                        {
+                            t.HasComment("Hợp đồng thanh toán");
+                        });
+                });
+
             modelBuilder.Entity("VaccinationReception.Domain.Models.PaymentDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -316,6 +682,10 @@ namespace VaccinationReception.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("ContractId")
+                        .HasColumnType("integer")
+                        .HasComment("Mã hợp đồng");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasComment("Ngày tạo bản ghi");
@@ -360,6 +730,8 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasComment("Loại dịch vụ");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ContractId");
 
                     b.HasIndex("PatientId")
                         .HasDatabaseName("IX_Receptions_PatientId");
@@ -808,6 +1180,18 @@ namespace VaccinationReception.Infrastructure.Migrations
                             LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             LastUpdatedBy = 1,
                             Name = "Tiêm chủng đặc biệt"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "VAC003",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = 1,
+                            IsCancelled = false,
+                            IsSuspended = false,
+                            LastUpdatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdatedBy = 1,
+                            Name = "Tiêm chủng hợp đồng"
                         });
                 });
 
@@ -904,6 +1288,35 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.ToTable("Vaccinations");
                 });
 
+            modelBuilder.Entity("VaccinationReception.Domain.Models.ContractPatientVaccination", b =>
+                {
+                    b.HasOne("VaccinationReception.Domain.Models.Contract", "Contract")
+                        .WithMany("PlannedPatientVaccinations")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("VaccinationReception.Domain.Models.ReceptionVaccination", "ReceptionVaccination")
+                        .WithOne()
+                        .HasForeignKey("VaccinationReception.Domain.Models.ContractPatientVaccination", "ReceptionVaccinationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Contract");
+
+                    b.Navigation("ReceptionVaccination");
+                });
+
+            modelBuilder.Entity("VaccinationReception.Domain.Models.ContractServiceDetail", b =>
+                {
+                    b.HasOne("VaccinationReception.Domain.Models.Contract", "Contract")
+                        .WithMany("ServiceDetails")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
+                });
+
             modelBuilder.Entity("VaccinationReception.Domain.Models.Examination", b =>
                 {
                     b.HasOne("VaccinationReception.Domain.Models.Reception", "Reception")
@@ -940,6 +1353,17 @@ namespace VaccinationReception.Infrastructure.Migrations
                     b.Navigation("Reception");
                 });
 
+            modelBuilder.Entity("VaccinationReception.Domain.Models.PaymentContract", b =>
+                {
+                    b.HasOne("VaccinationReception.Domain.Models.Contract", "Contract")
+                        .WithMany("PaymentContracts")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Contract");
+                });
+
             modelBuilder.Entity("VaccinationReception.Domain.Models.PaymentDetail", b =>
                 {
                     b.HasOne("VaccinationReception.Domain.Models.Payment", "Payment")
@@ -967,11 +1391,18 @@ namespace VaccinationReception.Infrastructure.Migrations
 
             modelBuilder.Entity("VaccinationReception.Domain.Models.Reception", b =>
                 {
+                    b.HasOne("VaccinationReception.Domain.Models.Contract", "Contract")
+                        .WithMany("Receptions")
+                        .HasForeignKey("ContractId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("VaccinationReception.Domain.Models.ServiceType", "ServiceType")
                         .WithMany("Receptions")
                         .HasForeignKey("ServiceTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Contract");
 
                     b.Navigation("ServiceType");
                 });
@@ -1025,6 +1456,17 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("ReceptionVaccination");
+                });
+
+            modelBuilder.Entity("VaccinationReception.Domain.Models.Contract", b =>
+                {
+                    b.Navigation("PaymentContracts");
+
+                    b.Navigation("PlannedPatientVaccinations");
+
+                    b.Navigation("Receptions");
+
+                    b.Navigation("ServiceDetails");
                 });
 
             modelBuilder.Entity("VaccinationReception.Domain.Models.Examination", b =>

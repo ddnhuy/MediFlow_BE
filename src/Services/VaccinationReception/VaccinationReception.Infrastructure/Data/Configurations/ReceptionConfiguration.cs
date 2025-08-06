@@ -94,6 +94,13 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .WithOne(x => x.Reception)
                 .HasForeignKey(x => x.ReceptionId)
                 .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(x => x.ContractId)
+                .HasComment("Mã hợp đồng");
+
+            builder.HasOne(x => x.Contract)
+                .WithMany(x => x.Receptions)
+                .HasForeignKey(x => x.ContractId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // Indexes
             builder.HasIndex(x => x.PatientId)

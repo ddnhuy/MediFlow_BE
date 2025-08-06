@@ -36,6 +36,12 @@ namespace HospitalService.Infrastructure.SeedDatas
                     Id = 2,
                     GroupName = SeedConstants.DiseaseGroups.NonInfectious,
                     Description = SeedConstants.DiseaseGroups.NonInfectiousDesc
+                }),
+                SetBaseProperties(new DiseaseGroup
+                {
+                    Id = 3,
+                    GroupName = SeedConstants.DiseaseGroups.PreInjectionScreeningName,
+                    Description = SeedConstants.DiseaseGroups.PreInjectionScreeningDesc
                 })
             };
         }

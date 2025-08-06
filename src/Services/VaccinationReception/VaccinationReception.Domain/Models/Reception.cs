@@ -11,6 +11,10 @@ namespace VaccinationReception.Domain.Models
     {
         public int PatientId { get; set; }
         public DateTime ReceptionDate { get; set; }
+
+        public int? ContractId { get; set; }
+        public Contract? Contract { get; set; }
+
         public int ServiceTypeId { get; set; }
         public ServiceType ServiceType { get; set; } = null!;
 

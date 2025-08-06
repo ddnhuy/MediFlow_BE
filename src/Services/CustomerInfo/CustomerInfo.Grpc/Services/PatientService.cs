@@ -127,7 +127,6 @@ namespace CustomerInfo.Grpc.Services
             }
         }
 
-
         public override async Task<PatientDetailModel> CreatePatient(CreatePatientRequest request, ServerCallContext context)
         {
             _logger.LogInformation(PatientLogMessages.CreatingPatient, request.Code);
@@ -266,6 +265,27 @@ namespace CustomerInfo.Grpc.Services
             _logger.LogInformation("Returning {Count} filtered patients.", mapped.Count);
 
             return new FilteredPatientsResponse
+            {
+                Data = { mapped }
+            };
+        }
+
+        public override async Task<GetAllPatientResponse> GetAllPatient(Empty request, ServerCallContext context)
+        {
+            _logger.LogInformation("Getting all patients");
+
+            ExtractUserIdFromMetadata(context);
+
+            var patients = await _context.Patients
+                .Where(p => !p.IsCancelled)
+                .OrderByDescending(p => p.Id)
+                .ToListAsync(context.CancellationToken);
+
+            var mapped = patients.Adapt<List<PatientSummaryModel>>();
+
+            _logger.LogInformation("Returning {Count} patients", mapped.Count);
+
+            return new GetAllPatientResponse
             {
                 Data = { mapped }
             };

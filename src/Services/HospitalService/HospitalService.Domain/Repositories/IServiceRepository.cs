@@ -1,4 +1,5 @@
-﻿using HospitalService.Domain.Models;
+﻿using BuildingBlocks.Pagination;
+using HospitalService.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

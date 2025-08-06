@@ -1,4 +1,5 @@
-﻿using Carter;
+﻿using BuildingBlocks.Strings.Enums;
+using Carter;
 using HospitalService.Application.DTOs;
 using HospitalService.Application.Services.HospitalServices.Queries;
 using Mapster;
@@ -12,9 +13,9 @@ namespace HospitalService.API.Endpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/services/all", async (string? searchTerm, ISender sender) =>
+            app.MapGet("/services/all", async (string? searchTerm, ServiceType? serviceType, ISender sender) =>
             {
-                var query = new GetAllServicesWithoutPaginationQuery(searchTerm);
+                var query = new GetAllServicesWithoutPaginationQuery(searchTerm, serviceType);
                 var result = await sender.Send(query);
 
                 var response = new GetAllServicesWithoutPaginationResponse(result.Services);

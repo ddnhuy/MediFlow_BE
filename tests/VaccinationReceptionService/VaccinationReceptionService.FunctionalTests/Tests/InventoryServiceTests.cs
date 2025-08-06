@@ -17,13 +17,14 @@ public class InventoryServiceTests
     private readonly IRequestClient<GetMedicineInteractionsRequest> _medicineInteractionsClient = Substitute.For<IRequestClient<GetMedicineInteractionsRequest>>();
     private readonly IRequestClient<CheckMedicineStockRequest> _checkStockClient = Substitute.For<IRequestClient<CheckMedicineStockRequest>>();
     private readonly IRequestClient<SubtractMedicineBatchStockRequest> _subtractBatchStockClient = Substitute.For<IRequestClient<SubtractMedicineBatchStockRequest>>();
+    private readonly IRequestClient<GetMedicineByCodeRequest> _getMedicineByCodeRequestClient = Substitute.For<IRequestClient<GetMedicineByCodeRequest>>();
 
     private readonly ILogger<InventoryService> _logger = Substitute.For<ILogger<InventoryService>>();
     private readonly InventoryService _service;
 
     public InventoryServiceTests()
     {
-        _service = new InventoryService(_medicineInfoClient, _logger, _nearestBatchClient, _medicineInteractionsClient, _checkStockClient, _subtractBatchStockClient);
+        _service = new InventoryService(_medicineInfoClient, _logger, _nearestBatchClient, _medicineInteractionsClient, _checkStockClient, _subtractBatchStockClient, _getMedicineByCodeRequestClient);
     }
 
     [Fact]

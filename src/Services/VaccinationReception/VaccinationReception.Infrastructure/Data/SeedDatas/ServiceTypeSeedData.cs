@@ -36,6 +36,12 @@ namespace VaccinationReception.Infrastructure.Data.SeedDatas
                     Id = 2,
                     Code = SeedConstants.ServiceTypes.SpecialCode,
                     Name = SeedConstants.ServiceTypes.SpecialName
+                }),
+                SetBaseProperties(new ServiceType
+                {
+                    Id = 3,
+                    Code = SeedConstants.ServiceTypes.ContractCode,
+                    Name = SeedConstants.ServiceTypes.ContractName
                 })
             };
         }

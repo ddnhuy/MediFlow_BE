@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BuildingBlocks.Strings.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace HospitalService.Application.DTOs
         string ServiceName,
         decimal UnitPrice,
         int DepartmentId,
+        ServiceType? ServiceType,
         DateTime CreatedAt,
         DateTime LastUpdatedAt,
         List<ServiceGroupSummaryDTO> ServiceGroups,
