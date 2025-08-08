@@ -29,10 +29,11 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             try
             {
                 var receptionVaccinations = await _context.ReceptionVaccinations
-                    .Where(rv => request.ReceptionVaccinationIds.Contains(rv.Id)
-                                 && rv.ReceptionId == request.ReceptionId
-                                 && rv.PaymentStatus == PaymentStatusForItem.NotPaid
-                                 && !rv.IsCancelled)
+                    .Where(rv =>
+                        request.ReceptionVaccinationIds.Contains(rv.Id) &&
+                        (rv.ReceptionId == request.ReceptionId || rv.SecondaryReceptionId == request.ReceptionId) &&
+                        rv.PaymentStatus == PaymentStatusForItem.NotPaid &&
+                        !rv.IsCancelled)
                     .ToListAsync(cancellationToken);
 
                 if (!receptionVaccinations.Any())

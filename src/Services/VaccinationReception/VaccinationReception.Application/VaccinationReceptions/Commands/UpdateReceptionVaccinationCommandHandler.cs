@@ -31,9 +31,9 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 var receptionVaccination = await _context.ReceptionVaccinations
                     .FirstOrDefaultAsync(rv =>
                         rv.Id == request.Id &&
-                        rv.ReceptionId == request.ReceptionId &&
-                        rv.PaymentStatus == PaymentStatusForItem.NotPaid
-                        && !rv.IsCancelled, cancellationToken);
+                        (rv.ReceptionId == request.ReceptionId || rv.SecondaryReceptionId == request.ReceptionId) &&
+                        rv.PaymentStatus == PaymentStatusForItem.NotPaid &&
+                        !rv.IsCancelled, cancellationToken);
 
                 if (receptionVaccination == null)
                 {
