@@ -24,7 +24,7 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
         {
             // Get all existing doses for this ReceptionVaccination
             var existingDoses = await _dbContext.Vaccinations
-                .Where(v => v.ReceptionVaccinationId == request.ReceptionVaccinationId)
+                .Where(v => v.PatientId == request.PatientId && v.MedicineId == request.MedicineId)
                 .ToListAsync(cancellationToken);
 
             var receptionVaccination = await _dbContext.ReceptionVaccinations
@@ -51,7 +51,9 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
             }
 
             // Check if the number of doses already equals or exceeds the allowed quantity
-            if (existingDoses.Count >= receptionVaccination!.Quantity)
+            var existingDosesForThisReception = existingDoses.Where(v => v.ReceptionVaccinationId == request.ReceptionVaccinationId).ToList();
+
+            if (existingDosesForThisReception.Count >= receptionVaccination!.Quantity)
             {
                 throw new BadRequestException(ExceptionKey.ENOUGH_VACCINATION_DOSE_FOR_VACCINATION_RECEPTION);
             }

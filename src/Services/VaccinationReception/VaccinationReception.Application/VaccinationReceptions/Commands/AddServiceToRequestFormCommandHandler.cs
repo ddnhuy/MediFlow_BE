@@ -204,6 +204,17 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             {
                 if (service.ExaminationService != null)
                 {
+                    var existingExamination = await _context.Examinations
+                        .FirstOrDefaultAsync(e =>
+                            e.ServiceId == serviceRequestDetail.ServiceId &&
+                            e.ReceptionId == serviceRequestDetail.ReceptionId,
+                        cancellationToken);
+
+                    if (existingExamination != null)
+                    {
+                        continue;
+                    }
+
                     var examination = new CreateExaminationCommand(
                         ReceptionId: serviceRequestDetail.ReceptionId,
                         ServiceId: serviceRequestDetail.ServiceId,
