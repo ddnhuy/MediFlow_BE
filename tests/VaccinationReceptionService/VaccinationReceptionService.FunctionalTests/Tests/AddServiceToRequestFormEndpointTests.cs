@@ -314,5 +314,90 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
+
+        [Fact]
+        public async Task AddServiceToRequestForm_WithExistingExamination_ShouldNotCreateDuplicateExamination()
+        {
+            // Arrange
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            // Create an existing examination for the same ServiceID and ReceptionID
+            var existingExamination = new Examination
+            {
+                ServiceId = TestServiceId,
+                ReceptionId = TestReceptionId,
+                RequestNumber = "EXISTING-REQ-001",
+                PatientId = 1,
+                Diagnose = "",
+                ReceptionTime = DateTime.UtcNow,
+                ExecutionTime = null,
+                ReturnTime = null,
+                PerformTechnicianId = null,
+                PerformTechnicianName = "",
+                SampleType = null,
+                SampleQuality = null,
+                Conclusion = "",
+                Note = "",
+                DoctorId = null,
+                DoctorName = "",
+                IsCancelled = false,
+                IsSuspended = false,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = 1,
+                LastUpdatedAt = DateTime.UtcNow,
+                LastUpdatedBy = 1
+            };
+            dbContext.Examinations.Add(existingExamination);
+            await dbContext.SaveChangesAsync();
+
+            var command = new AddServiceToRequestFormCommand(
+                ReceptionId: TestReceptionId,
+                Services: new List<ServiceRequestItemDTO>
+                {
+                    new ServiceRequestItemDTO
+                    {
+                        ServiceId = TestServiceId,
+                        Quantity = 1
+                    }
+                },
+                GroupType: null,
+                GroupId: null
+                );
+
+            // Mock HospitalService to return a service with ExaminationService
+            var hospitalServiceMock = _factory.Services.GetRequiredService<IHospitalService>();
+            hospitalServiceMock
+                .GetServicesByIdsAsync(Arg.Any<List<int>>(), Arg.Any<CancellationToken>())
+                .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>
+                {
+                new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                {
+                    Id = TestServiceId,
+                    UnitPrice = 100000,
+                    ExaminationService = BuildingBlocks.Strings.Enums.ExaminationService.Blood // Set examination service
+                }
+                });
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/request-forms/add-service", command);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+
+            // Verify that no new examination was created (should still have only 1 examination)
+            var examinationsCount = await dbContext.Examinations
+                .Where(e => e.ServiceId == TestServiceId && e.ReceptionId == TestReceptionId)
+                .CountAsync();
+
+            examinationsCount.Should().Be(1); // Should still be 1, not 2
+
+            // Verify the existing examination is still there
+            var existingExaminationAfterRequest = await dbContext.Examinations
+                .FirstOrDefaultAsync(e => e.ServiceId == TestServiceId && e.ReceptionId == TestReceptionId);
+
+            existingExaminationAfterRequest.Should().NotBeNull();
+            existingExaminationAfterRequest!.RequestNumber.Should().Be("EXISTING-REQ-001"); // Should be the original one
+        }
     }
 }
