@@ -80,7 +80,8 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
                         IsConfirmed: dose?.IsConfirmed ?? false,
                         IsRequiredTesting: medicineLookup[rv.VaccineId].IsRequiredTestingBeforeUse ?? false,
                         TestResultEntry: rv.TestResultEntry,
-                        doctorName: rv.DoctorId.HasValue ? await GetDoctorName(rv.DoctorId.Value) : ""
+                        doctorName: rv.DoctorId.HasValue ? await GetDoctorName(rv.DoctorId.Value) : "",
+                        rv.VaccinationTestDate ?? null
                     ));
                 }
             }
@@ -109,7 +110,8 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
                         dose?.IsConfirmed ?? false,
                         IsRequiredTesting: medicineLookup[rv.VaccineId].IsRequiredTestingBeforeUse ?? false,
                         rv.TestResultEntry,
-                        doctorName: rv.DoctorId.HasValue ? await GetDoctorName(rv.DoctorId.Value) : ""
+                        doctorName: rv.DoctorId.HasValue ? await GetDoctorName(rv.DoctorId.Value) : "",
+                        rv.VaccinationTestDate ?? null
                     ));
                 }
             }
