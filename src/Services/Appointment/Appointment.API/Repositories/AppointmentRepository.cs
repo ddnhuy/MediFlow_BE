@@ -99,7 +99,7 @@ namespace Appointment.API.Repositories
                 }
             }
 
-            query = query.Where(a => !a.IsSuspended && !a.IsCancelled);
+            query = query.Where(a => !a.IsSuspended && !a.IsCancelled).OrderByDescending(x => x.AppointmentDate);
 
             var totalCount = await query.CountAsync();
 

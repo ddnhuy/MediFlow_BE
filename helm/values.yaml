@@ -65,7 +65,7 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: lets-encrypt
   hosts:
-    - host: api.ddnhuy.tech
+    - host: api.mediflow.health.vn
       paths:
         - path: /.well-known/acme-challenge/
           pathType: Prefix
@@ -81,7 +81,7 @@ ingress:
               name: gateway
               port:
                 number: 80
-    - host: logs.ddnhuy.tech
+    - host: logs.mediflow.health.vn
       paths:
         - path: /.well-known/acme-challenge/
           pathType: Prefix
@@ -99,11 +99,11 @@ ingress:
                 number: 80
   tls:
     - hosts:
-        - api.ddnhuy.tech
-      secretName: mediflow-ingress-tls
+        - api.mediflow.health.vn
+      secretName: mediflow-prod-ingress-tls
     - hosts:
-        - logs.ddnhuy.tech
-      secretName: logs-ingress-tls
+        - logs.mediflow.health.vn
+      secretName: logs-prod-ingress-tls
 
 resources:
   requests:
