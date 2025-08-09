@@ -77,6 +77,12 @@ namespace YarpApiGateWay.Middlewares
                 return;
             }
 
+            if ((role.Contains("Receptionist") || role.Contains("Doctor") || role.Contains("Nurse")) && path.Contains("inventory") && context.Request.Method == "GET")
+            {
+                await _next(context);
+                return;
+            }
+
             var permission = await _permissionService.GetPermissionsAsync(role, department, resourceType);
 
             if (!permission.ToLower().Contains(action.ToLower()))
