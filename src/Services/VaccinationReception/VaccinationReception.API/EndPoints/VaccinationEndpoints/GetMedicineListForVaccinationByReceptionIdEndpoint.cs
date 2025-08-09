@@ -17,7 +17,8 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
         bool IsConfirmed,
         bool IsRequiredTesting,
         string? TestResultEntry,
-        string? DoctorName
+        string? DoctorName,
+        DateTime? StartTestingTime = null
     );
 
     public class GetMedicineListForVaccinationByReceptionIdEndpoint : ICarterModule
@@ -41,7 +42,8 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
                         m.IsConfirmed,
                         m.IsRequiredTesting,
                         m.TestResultEntry,
-                        m.doctorName
+                        m.doctorName,
+                        m.StartTestingTime
                     )).ToList(),
                     result.CustomerWarehouseVaccines.Select(m => new MedicineInfoResponse(
                         m.ReceptionVaccinationId,
@@ -53,7 +55,8 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
                         m.IsConfirmed,
                         m.IsRequiredTesting,
                         m.TestResultEntry,
-                        m.doctorName
+                        m.doctorName,
+                        m.StartTestingTime
                     )).ToList()
                 );
 
