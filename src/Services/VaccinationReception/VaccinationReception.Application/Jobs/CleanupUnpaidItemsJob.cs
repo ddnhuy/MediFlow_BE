@@ -28,10 +28,11 @@ namespace VaccinationReception.Application.Jobs
             try
             {
                 var cutoffTime = DateTime.UtcNow.AddHours(-5);
+                var cutoffLatestActivityTime = DateTime.UtcNow.AddHours(-2);
                 _logger.LogInformation("Cutoff time: {CutoffTime}", cutoffTime);
 
                 var oldReceptions = await _context.Receptions
-                    .Where(r => r.ReceptionDate <= cutoffTime)
+                    .Where(r => r.ReceptionDate <= cutoffTime && r.LastUpdatedAt <= cutoffLatestActivityTime)
                     .Select(r => r.Id)
                     .ToListAsync();
 

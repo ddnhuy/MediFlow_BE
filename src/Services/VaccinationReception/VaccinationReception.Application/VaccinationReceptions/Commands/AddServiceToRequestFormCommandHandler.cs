@@ -41,6 +41,9 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 if (reception == null)
                     throw new BadRequestException(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID);
 
+                reception.LastUpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync(cancellationToken);
+
                 var processedServiceReferences = new List<ServiceIdAndRequestNumberDTO>();
 
                 if (request.Services != null && request.Services.Any())

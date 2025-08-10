@@ -46,6 +46,10 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                     throw new NotFoundException(ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
                 }
 
+                reception.LastUpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync(cancellationToken);
+
                 if (reception.PatientId != request.PatientId)
                 {
                     throw new BadRequestException(ExceptionKey.RECEPTION_DOES_NOT_BELONG_TO_PATIENT);
