@@ -105,6 +105,25 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 ReceptionId: TestReceptionId
             );
 
+            _factory.HospitalServiceMock
+             .GetServicesByServiceCodeAsync(Arg.Any<List<string>>(), Arg.Any<CancellationToken>())
+             .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>
+             {
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 1,
+                        ServiceCode = "EXAMFEE",
+                        ServiceName = "dasdsa",
+                        UnitPrice = 100000
+                    },
+                    new BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO
+                    {
+                        Id = 2,
+                        ServiceCode = "IM",
+                        ServiceName = "dasdsa",
+                        UnitPrice = 100000
+                    }
+             });
             // Act
             var response = await _client.PostAsJsonAsync("/screening-evaluations", command);
 

@@ -28,6 +28,17 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
         {
             try
             {
+
+                var reception = await _context.Receptions
+                    .FirstOrDefaultAsync(rv => rv.Id == request.ReceptionId && !rv.IsCancelled, cancellationToken);
+
+                if (reception != null)
+                {
+                    reception.LastUpdatedAt = DateTime.UtcNow;
+
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
+
                 var receptionVaccinations = await _context.ReceptionVaccinations
                     .Where(rv =>
                         request.ReceptionVaccinationIds.Contains(rv.Id) &&

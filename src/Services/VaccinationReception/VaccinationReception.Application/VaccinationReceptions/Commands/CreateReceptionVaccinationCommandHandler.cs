@@ -61,6 +61,11 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     _logger.LogWarning("Không tìm thấy Reception với Id: {ReceptionId}", request.ReceptionId);
                     throw new NotFoundException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
                 }
+
+                reception.LastUpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync(cancellationToken);
+
                 var checkInteraction = await  _inventoryService.GetMedicineInteractionsResponseAsync(request.VaccineId);
 
                 var existingVaccines = await _context.ReceptionVaccinations

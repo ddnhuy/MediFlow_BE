@@ -30,6 +30,10 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 if (reception == null)
                     throw new NotFoundException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
 
+                reception.LastUpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync(cancellationToken);
+
                 var serviceRequestDetails = await _context.ServiceRequestDetails
                     .Where(srd => srd.ReceptionId == reception.Id && request.ServiceIds.Contains(srd.ServiceId))
                     .ToListAsync(cancellationToken);
