@@ -23,11 +23,16 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             bool HasHeartValveDisorder,
             bool HasNeurologicalAbnormalities,
             bool IsUnderweightBelow2000g,
+            bool HasPoorFeeding,
+            bool IsPretermBelow34Weeks,
             bool HasOtherContraindications,
             bool IsEligibleForVaccination,
             bool IsContraindicatedForVaccination,
             bool IsVaccinationDeferred,
             bool IsReferredToHospital,
+            bool HasAbnormalCry,
+            bool HasPaleSkinOrLips,
+            bool HasImmunodeficiencyOrSuspectedHiv,
             int ReceptionId
         ) : ICommand<UpdateScreeningEvaluationReportResult>;
 

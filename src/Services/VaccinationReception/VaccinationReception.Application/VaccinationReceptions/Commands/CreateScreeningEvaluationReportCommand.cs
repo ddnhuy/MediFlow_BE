@@ -28,6 +28,12 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
         bool IsUnderweightBelow2000g,
         bool HasOtherContraindications,
 
+        bool HasAbnormalCry,
+        bool HasPaleSkinOrLips,
+        bool HasPoorFeeding,
+        bool IsPretermBelow34Weeks,
+        bool HasImmunodeficiencyOrSuspectedHiv,
+
         bool IsEligibleForVaccination,
         bool IsContraindicatedForVaccination,
         bool IsVaccinationDeferred,
