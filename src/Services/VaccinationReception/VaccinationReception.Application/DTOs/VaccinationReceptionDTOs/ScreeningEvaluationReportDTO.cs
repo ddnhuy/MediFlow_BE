@@ -9,47 +9,41 @@ namespace VaccinationReception.Application.DTOs.VaccinationReceptionDTOs
     public class ScreeningEvaluationReportDTO
     {
         public int Id { get; set; }
-
-        // Parent information
-        public string? ParentFullName { get; set; }
-        public string? ParentPhoneNumber { get; set; }
-
-        // Additional screening information
-        public double WeightKg { get; set; }                          // Weight, e.g., 50 (kg)
-        public double BodyTemperatureC { get; set; }                  // Body temperature, e.g., 100 (°C)
-        public int BloodPressureSystolic { get; set; }                // Systolic blood pressure, e.g., 120 (mmHg)
-        public int BloodPressureDiastolic { get; set; }               // Diastolic blood pressure, e.g., 80 (mmHg)
-
-        // Boolean screening items
-        public bool HasSevereFeverAfterPreviousVaccination { get; set; }      // Item 1
-        public bool HasAcuteOrChronicDisease { get; set; }                    // Item 2
-        public bool IsOnOrRecentlyEndedCorticosteroids { get; set; }          // Item 3
-        public bool HasAbnormalTemperatureOrVitals { get; set; }              // Item 4
-        public bool HasAbnormalHeartSound { get; set; }                       // Item 5
-        public bool HasHeartValveDisorder { get; set; }                       // Item 6
-        public bool HasNeurologicalAbnormalities { get; set; }                // Item 7
-        public bool IsUnderweightBelow2000g { get; set; }                     // Item 8
-        public bool HasOtherContraindications { get; set; }                   // Item 9
-
-        public bool HasAbnormalCry { get; set; }
-        public bool HasPaleSkinOrLips { get; set; }
-        public bool HasPoorFeeding { get; set; }
-        public bool IsPretermBelow34Weeks { get; set; }
-        public bool HasImmunodeficiencyOrSuspectedHiv { get; set; }
-
-        // Screening results
-        public bool IsEligibleForVaccination { get; set; }
-        public bool IsContraindicatedForVaccination { get; set; }
-        public bool IsVaccinationDeferred { get; set; }
-        public bool IsReferredToHospital { get; set; }
-
-        // Link to Reception
         public int ReceptionId { get; set; }
 
-        // Audit fields
-        public DateTime CreatedAt { get; set; }
+        public string? ParentPhoneNumber { get; set; }
+        public string? ParentFullName { get; set; }
+
+
+        public double WeightKg { get; set; }
+        public double BodyTemperatureC { get; set; }
+        public int BloodPressureSystolic { get; set; }
+        public int BloodPressureDiastolic { get; set; }
+
+        public bool IsOnOrRecentlyEndedCorticosteroids { get; set; }
+        public bool HasAbnormalTemperatureOrVitals { get; set; }
+        public bool HasSevereFeverAfterPreviousVaccination { get; set; }
+        public bool HasHeartValveDisorder { get; set; }
+        public bool HasAcuteOrChronicDisease { get; set; }
+        public bool HasAbnormalHeartSound { get; set; }
+        public bool HasImmunodeficiencyOrSuspectedHiv { get; set; }
+        public bool HasNeurologicalAbnormalities { get; set; }
+        public bool HasOtherContraindications { get; set; }
+
+        public bool HasPaleSkinOrLips { get; set; }
+        public bool IsPretermBelow34Weeks { get; set; }
+        public bool HasAbnormalCry { get; set; }
+        public bool IsUnderweightBelow2000g { get; set; }
+        public bool HasPoorFeeding { get; set; }
+
+        public bool IsContraindicatedForVaccination { get; set; }
+        public bool IsEligibleForVaccination { get; set; }
+        public bool IsReferredToHospital { get; set; }
+        public bool IsVaccinationDeferred { get; set; }
+
         public int CreatedBy { get; set; }
-        public DateTime LastUpdatedAt { get; set; }
         public int LastUpdatedBy { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime LastUpdatedAt { get; set; }
     }
 }

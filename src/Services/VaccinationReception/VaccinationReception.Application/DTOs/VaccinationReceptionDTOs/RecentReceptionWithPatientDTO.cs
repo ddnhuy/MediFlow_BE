@@ -10,6 +10,7 @@ namespace VaccinationReception.Application.DTOs.VaccinationReceptionDTOs
     public class RecentReceptionWithPatientDTO
     {
         public int ReceptionId { get; set; }
+        public int ServiceTypeId { get; set; }
         public DateTime ReceptionDate { get; set; }
         public DateTime LastUpdatedAt { get; set; }
         public PatientSummaryDTO Patient { get; set; } = null!;
