@@ -25,6 +25,12 @@ namespace VaccinationReception.Application.DTOs.VaccinationReceptionDTOs
         public bool HasOtherContraindications { get; set; }
         public bool HasAbnormalHeartSound { get; set; }
 
+        public bool HasAbnormalCry { get; set; }
+        public bool HasPaleSkinOrLips { get; set; }
+        public bool HasPoorFeeding { get; set; }
+        public bool IsPretermBelow34Weeks { get; set; }
+        public bool HasImmunodeficiencyOrSuspectedHiv { get; set; }
+
         // Screening results
         public bool IsReferredToHospital { get; set; }
         public bool IsVaccinationDeferred { get; set; }

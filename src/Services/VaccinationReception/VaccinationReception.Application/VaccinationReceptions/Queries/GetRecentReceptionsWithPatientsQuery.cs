@@ -88,6 +88,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                         result.Add(new RecentReceptionWithPatientDTO
                         {
                             ReceptionId = reception.Id,
+                            ServiceTypeId = reception.ServiceTypeId,
                             ReceptionDate = reception.ReceptionDate,
                             LastUpdatedAt = reception.LastUpdatedAt,
                             Patient = patient
