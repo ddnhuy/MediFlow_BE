@@ -31,11 +31,17 @@ namespace VaccinationReception.Application.Examinations.Handlers
             {
                 // Update Examination
                 var examination = await _context.Examinations
+                    .Include(e => e.Reception)
                     .FirstOrDefaultAsync(e => e.Id == dto.ExaminationId, cancellationToken);
 
                 if (examination == null)
                 {
                     throw new BadRequestException(ExceptionKey.NOT_FOUND_EXAMINATION_WITH_ID);
+                }
+
+                if (examination.Reception == null)
+                {
+                    throw new BadRequestException(ExceptionKey.NOT_FOUND_RECEPTION);
                 }
 
                 examination.PatientId = dto.PatientId;
@@ -49,6 +55,7 @@ namespace VaccinationReception.Application.Examinations.Handlers
                 examination.DoctorName = await GetUserName(dto.DoctorId);
                 examination.Conclusion = dto.Conclusion;
                 examination.Note = dto.Note;
+                examination.Reception.LastUpdatedAt = DateTime.UtcNow;
 
                 // Upsert ExaminationTestResults
                 foreach (var resultItem in dto.ExaminationResults)

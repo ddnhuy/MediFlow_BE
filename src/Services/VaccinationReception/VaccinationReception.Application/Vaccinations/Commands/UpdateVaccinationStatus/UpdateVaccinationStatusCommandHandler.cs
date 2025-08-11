@@ -25,6 +25,20 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdateVaccinati
             }
 
             vaccination.IsConfirmed = request.Status;
+
+            // Find the Reception and update its last updated time
+            var reception = await _dbContext.Receptions
+                .FirstOrDefaultAsync(r => r.Id == vaccination.ReceptionVaccinationId, cancellationToken);
+
+            if (reception == null)
+            {
+                throw new BadRequestException(BuildingBlocks.Strings.ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
+            }
+            else
+            {
+                reception.LastUpdatedAt = DateTime.UtcNow;
+            }
+
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new UpdateVaccinationStatusCommandResult(true);

@@ -5,11 +5,11 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/medicine-quantity-statistics", async ([AsParameters] PaginationRequest request, ISender sender) =>
+            app.MapGet("/medicine-quantity-statistics", async ([AsParameters] PaginationRequest request, ISender sender, string? searchTerm = null) =>
             {
                 PaginationHelper.VerifyPaginationRequest(request.PageIndex, request.PageSize);
 
-                var query = new GetMedicineQuantityStatisticsQuery(request);
+                var query = new GetMedicineQuantityStatisticsQuery(request, searchTerm);
                 var result = await sender.Send(query);
 
                 var respone = result.Adapt<GetMedicineQuantityStatisticsResponse>();

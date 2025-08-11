@@ -40,6 +40,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetListPostVacci
             var matchingPatientIds = patients.Select(p => p.Id).ToHashSet();
             postVaccinationPatient = postVaccinationPatient
                 .Where(v => matchingPatientIds.Contains(v.PatientId))
+                .OrderByDescending(v => v.ReceptionVaccination!.CreatedAt)
                 .GroupBy(v => v.PatientId)
                 .Select(g => g.First())
                 .ToList();

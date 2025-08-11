@@ -10,6 +10,7 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdatePostVacci
         public async Task<UpdatePostVaccinationResult> Handle(UpdatePostVaccinationCommand request, CancellationToken cancellationToken)
         {
             var vaccination = await dbContext.Vaccinations
+                .Include(x => x.ReceptionVaccination)
                 .FirstOrDefaultAsync(v => v.Id == request.Id, cancellationToken);
 
             if (vaccination == null)
@@ -27,6 +28,18 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdatePostVacci
             vaccination.HasInjectionSiteReaction = request.HasInjectionSiteReaction;
             vaccination.HasOtherReaction = request.HasOtherReaction;
             vaccination.OtherReactionDescription = request.OtherReactionDescription;
+
+            // Find the Reception and update its last updated time
+            var reception = await dbContext.Receptions
+                .FirstOrDefaultAsync(r => r.Id == vaccination.ReceptionVaccination!.ReceptionId, cancellationToken);
+            if (reception == null)
+            {
+                throw new BadRequestException(BuildingBlocks.Strings.ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
+            }
+            else
+            {
+                reception.LastUpdatedAt = DateTime.UtcNow;
+            }
 
             await dbContext.SaveChangesAsync(cancellationToken);
 

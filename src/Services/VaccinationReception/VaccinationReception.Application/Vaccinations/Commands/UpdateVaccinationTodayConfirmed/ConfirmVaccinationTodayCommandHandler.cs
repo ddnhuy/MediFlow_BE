@@ -51,6 +51,7 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdateVaccinati
             }
 
             reception.IsVaccinationTodayConfirmed = true;
+            reception.LastUpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync(cancellationToken);
 
             return new ConfirmVaccinationTodayResult(true);
