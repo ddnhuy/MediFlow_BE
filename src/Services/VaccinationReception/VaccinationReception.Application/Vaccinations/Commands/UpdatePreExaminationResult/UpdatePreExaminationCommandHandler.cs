@@ -14,7 +14,10 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdatePreExamin
         }
         public async Task<UpdatePreExaminationResult> Handle(UpdatePreExaminationCommand request, CancellationToken cancellationToken)
         {
-            var receptionVacination = await _context.ReceptionVaccinations.FirstOrDefaultAsync(x => x.Id == request.ReceptionVaccinationId, cancellationToken);
+            var receptionVacination = await _context.ReceptionVaccinations
+                .Include(rv => rv.Reception)
+                .Include(rv => rv.SecondaryReception)
+                .FirstOrDefaultAsync(x => x.Id == request.ReceptionVaccinationId, cancellationToken);
 
             if (receptionVacination == null)
             {
@@ -26,14 +29,14 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdatePreExamin
             receptionVacination.VaccinationTestDate = DateTime.UtcNow;
 
             // Update the Reception's last updated time
-            var reception = await _context.Receptions.FirstOrDefaultAsync(r => r.Id == receptionVacination.ReceptionId, cancellationToken);
-            if (reception == null)
+            var currentReception = receptionVacination.SecondaryReception ?? receptionVacination.Reception;
+            if (currentReception == null)
             {
                 throw new BadRequestException(BuildingBlocks.Strings.ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
             }
             else
             {
-                reception.LastUpdatedAt = DateTime.UtcNow;
+                currentReception.LastUpdatedAt = DateTime.UtcNow;
             }
 
             await _context.SaveChangesAsync(cancellationToken);

@@ -29,6 +29,8 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
                 .ToListAsync(cancellationToken);
 
             var receptionVaccination = await _dbContext.ReceptionVaccinations
+                .Include(rv => rv.Reception)
+                .Include(rv => rv.SecondaryReception)
                 .FirstOrDefaultAsync(rv => rv.Id == request.ReceptionVaccinationId, cancellationToken);
 
             if (receptionVaccination == null)
@@ -77,16 +79,15 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
                 DoseNumber = nextDoseNumber
             };
 
-            var reception = await _dbContext.Receptions
-                .FirstOrDefaultAsync(r => r.Id == receptionVaccination!.ReceptionId, cancellationToken);
+            var currentReception = receptionVaccination.SecondaryReception ?? receptionVaccination.Reception;
 
-            if (reception == null)
+            if (currentReception == null)
             {
                 throw new BadRequestException(ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
             }
             else
             {
-                reception.LastUpdatedAt = DateTime.UtcNow;
+                currentReception.LastUpdatedAt = DateTime.UtcNow;
             }
 
             _dbContext.Vaccinations.Add(vaccination);

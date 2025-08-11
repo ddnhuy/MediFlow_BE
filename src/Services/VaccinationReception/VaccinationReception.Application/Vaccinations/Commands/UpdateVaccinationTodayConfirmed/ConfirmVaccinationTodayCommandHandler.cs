@@ -23,20 +23,39 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdateVaccinati
         {
             var reception = await _context.Receptions
                 .Include(r => r.ReceptionVaccinations)
+                .Include(r => r.IncomingTransferredVaccinations)
                 .FirstOrDefaultAsync(r => r.Id == request.ReceptionId, cancellationToken);
 
             if (reception == null)
                 throw new BadRequestException(ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
 
-            var rvIds = reception.ReceptionVaccinations.Select(rv => rv.Id).ToList();
+            // Filter ReceptionVaccinations to only those with ScheduleDate as today
+            var today = DateTime.UtcNow.Date;
+            var todayReceptionVaccinations = reception.ReceptionVaccinations
+                .Where(rv => rv.ScheduledDate.HasValue && rv.ScheduledDate.Value.Date == today)
+                .ToList();
 
-            // Get all doses for this reception
+            var todayIncomingTransferredVaccinations = reception.IncomingTransferredVaccinations
+                .Where(rv => rv.ScheduledDate.HasValue && rv.ScheduledDate.Value.Date == today)
+                .ToList();
+
+            // Combine both collections
+            var allTodayVaccinations = todayReceptionVaccinations
+                .Concat(todayIncomingTransferredVaccinations)
+                .ToList();
+
+            if (!allTodayVaccinations.Any())
+                throw new BadRequestException(ExceptionKey.NO_VACCINATION_TODAY_CONFIRMED);
+
+            var rvIds = allTodayVaccinations.Select(rv => rv.Id).ToList();
+
+            // Get all doses for reception vaccinations scheduled today
             var vaccinations = await _context.Vaccinations
                 .Include(v => v.ReceptionVaccination)
                 .Where(v => rvIds.Contains(v.ReceptionVaccinationId))
                 .ToListAsync(cancellationToken);
 
-            foreach (var rv in reception.ReceptionVaccinations)
+            foreach (var rv in allTodayVaccinations)
             {
                 var related = vaccinations.Where(v => v.ReceptionVaccinationId == rv.Id).ToList();
 

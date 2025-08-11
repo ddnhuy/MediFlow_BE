@@ -31,9 +31,9 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
         public async Task<GetMedicineListForPreExaminationResult> Handle(GetMedicineListForPreExaminationQuery request, CancellationToken cancellationToken)
         {
             var receptionVaccinationsData = await _dbContext.ReceptionVaccinations
-                .Where(rv => rv.ReceptionId == request.ReceptionId
-                             && rv.IsPreExaminationTesting
-                             && rv.DoctorId.HasValue)
+                .Where(rv => (rv.ReceptionId == request.ReceptionId || rv.SecondaryReceptionId == request.ReceptionId)
+                     && rv.IsPreExaminationTesting
+                     && rv.DoctorId.HasValue)
                 .Select(rv => new
                 {
                     Id = rv.Id,

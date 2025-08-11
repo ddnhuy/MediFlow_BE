@@ -18,9 +18,13 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetListPostVacci
 
             var vaccinations = await _dbContext.Vaccinations
                 .Include(v => v.ReceptionVaccination)
-                .Where(v => v.ReceptionVaccination!.ReceptionId == request.ReceptionId && !v.ObservationConfirmed).ToListAsync(cancellationToken);
+                .Where(v => (v.ReceptionVaccination!.ReceptionId == request.ReceptionId ||
+                             v.ReceptionVaccination!.SecondaryReceptionId == request.ReceptionId)
+                            && !v.ObservationConfirmed)
+                .ToListAsync(cancellationToken);
 
-             var result = vaccinations.Select(v => new GetListPostVaccinationMedicinesResult(
+
+            var result = vaccinations.Select(v => new GetListPostVaccinationMedicinesResult(
                     v.Id,
                     v.MedicineName ?? string.Empty,
                     v.ReceptionVaccination!.Quantity,

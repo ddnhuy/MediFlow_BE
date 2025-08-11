@@ -20,7 +20,10 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 
         public async Task<AddVaccineToPreExaminationTestingResult> Handle(AddVaccineToPreExaminationTestingCommand request, CancellationToken cancellationToken)
         {
-            var receptionVaccination = await _dbContext.ReceptionVaccinations.FirstOrDefaultAsync( x => x.Id == request.ReceptionVaccinationId, cancellationToken);
+            var receptionVaccination = await _dbContext.ReceptionVaccinations
+                .Include(rv => rv.Reception)
+                .Include(rv => rv.SecondaryReception)
+                .FirstOrDefaultAsync(x => x.Id == request.ReceptionVaccinationId, cancellationToken);
 
             if (receptionVaccination == null)
             {
@@ -47,6 +50,12 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 
             receptionVaccination.IsPreExaminationTesting = true;
             receptionVaccination.VaccinationTestDate = DateTime.UtcNow;
+
+            var currentReception = receptionVaccination.SecondaryReception ?? receptionVaccination.Reception;
+            if (currentReception != null)
+            {
+                currentReception.LastUpdatedAt = DateTime.UtcNow;
+            }
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
