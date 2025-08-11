@@ -12,7 +12,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
             {
                 if (id != command.Id)
                 {
-                    throw new BadRequestException(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID);
+                    throw new BadRequestException(ExceptionKey.INVALID_ID_MISMATCH);
                 }
 
                 var result = await sender.Send(command);

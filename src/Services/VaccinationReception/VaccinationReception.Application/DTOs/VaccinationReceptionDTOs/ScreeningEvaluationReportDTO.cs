@@ -1,13 +1,18 @@
 ﻿using System;
-using VaccinationReception.Domain.Abstractions;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace VaccinationReception.Domain.Models
+namespace VaccinationReception.Application.DTOs.VaccinationReceptionDTOs
 {
-    public class ScreeningEvaluationReport : BaseEntity
+    public class ScreeningEvaluationReportDTO
     {
+        public int Id { get; set; }
+
         // Parent information
-        public string? ParentFullName { get; set; } = string.Empty;
-        public string? ParentPhoneNumber { get; set; } = string.Empty;
+        public string? ParentFullName { get; set; }
+        public string? ParentPhoneNumber { get; set; }
 
         // Additional screening information
         public double WeightKg { get; set; }                          // Weight, e.g., 50 (kg)
@@ -40,6 +45,11 @@ namespace VaccinationReception.Domain.Models
 
         // Link to Reception
         public int ReceptionId { get; set; }
-        public Reception? Reception { get; set; }
+
+        // Audit fields
+        public DateTime CreatedAt { get; set; }
+        public int CreatedBy { get; set; }
+        public DateTime LastUpdatedAt { get; set; }
+        public int LastUpdatedBy { get; set; }
     }
 }

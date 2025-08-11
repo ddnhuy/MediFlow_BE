@@ -77,6 +77,12 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
             builder.Property(x => x.IsUnderweightBelow2000g).HasComment("Thiếu cân < 2000g");
             builder.Property(x => x.HasOtherContraindications).HasComment("Chống chỉ định khác");
 
+            builder.Property(x => x.HasAbnormalCry).HasComment("Khóc bất thường");
+            builder.Property(x => x.HasPaleSkinOrLips).HasComment("Da hoặc môi nhợt nhạt");
+            builder.Property(x => x.HasPoorFeeding).HasComment("Bú kém");
+            builder.Property(x => x.IsPretermBelow34Weeks).HasComment("Sinh non < 34 tuần");
+            builder.Property(x => x.HasImmunodeficiencyOrSuspectedHiv).HasComment("Suy giảm miễn dịch hoặc nghi ngờ HIV");
+
             builder.Property(x => x.IsEligibleForVaccination).HasComment("Đủ điều kiện tiêm");
             builder.Property(x => x.IsContraindicatedForVaccination).HasComment("Chống chỉ định");
             builder.Property(x => x.IsVaccinationDeferred).HasComment("Tạm hoãn");
@@ -95,7 +101,6 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                    .HasComment("Trạng thái hủy")
                    .HasColumnType("boolean");
 
-            // Relation: 1-1 với Reception
             builder.HasOne(x => x.Reception)
                    .WithOne(x => x.ScreeningEvaluationReport)
                    .HasForeignKey<ScreeningEvaluationReport>(x => x.ReceptionId)

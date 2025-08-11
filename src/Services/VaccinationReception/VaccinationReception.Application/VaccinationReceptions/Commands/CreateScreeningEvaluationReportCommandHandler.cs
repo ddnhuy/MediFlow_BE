@@ -4,6 +4,7 @@ using BuildingBlocks.Strings;
 using BuildingBlocks.Strings.Consts.HospitalServices;
 using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -46,11 +47,20 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 var reception = await _context.Receptions
                     .FirstOrDefaultAsync(rv => rv.Id == request.ReceptionId && !rv.IsCancelled, cancellationToken);
 
-                if (reception != null)
+                if (reception == null)
                 {
-                    reception.LastUpdatedAt = DateTime.UtcNow;
+                    throw new BadRequestException(ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
+                }
 
-                    await _context.SaveChangesAsync(cancellationToken);
+                reception.LastUpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync(cancellationToken);
+
+                var existingReport = await _context.ScreeningEvaluationReports
+                    .FirstOrDefaultAsync(report => report.ReceptionId == request.ReceptionId, cancellationToken);
+
+                if (existingReport != null)
+                {
+                    throw new BadRequestException(ExceptionKey.GENERATED_RESULTS_DO_NOT_REPRODUCE);
                 }
 
                 var serviceRequest = await _hospitalService.GetServicesByServiceCodeAsync(
