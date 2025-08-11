@@ -47,6 +47,9 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationDe
 
             var vaccination = await _dbContext.Vaccinations
                 .Include(v => v.ReceptionVaccination)
+                .ThenInclude(rv => rv.Reception)
+                .Include(v => v.ReceptionVaccination)
+                .ThenInclude(rv => rv.SecondaryReception)
                 .FirstOrDefaultAsync(v => v.Id == request.Id, cancellationToken);
 
             if (vaccination == null)
@@ -64,8 +67,11 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationDe
             var doctor = await _applicationUserProto.GetApplicationUserAsync(new GetApplicationUserRequest { Id = vaccination.DoctorId }, metadata);
             var doctorName = doctor.Name ?? string.Empty;
 
+            var currentReceptionId = vaccination.ReceptionVaccination.SecondaryReceptionId ?? vaccination.ReceptionVaccination.ReceptionId;
+
             return new VaccinationDetailDTO(
                 Id: vaccination.Id,
+                ReceptionId: currentReceptionId,
                 VaccinationDate: vaccination.VaccinationDate ?? DateTime.MinValue,
                 VaccinationTestDate: vaccination.ReceptionVaccination?.VaccinationTestDate,
                 DoseNumber: $"Mũi thứ {vaccination.DoseNumber}",

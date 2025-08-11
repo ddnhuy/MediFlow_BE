@@ -11,32 +11,42 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineQuantityStatistics
             var pageIndex = request.PaginationRequest.PageIndex;
             var pageSize = request.PaginationRequest.PageSize;
 
-            var totalCount = await dbContext.Medicines
-                .Where(m => !m.IsSuspended && !m.IsCancelled)
-                .LongCountAsync(cancellationToken);
+            var baseQuery = dbContext.Medicines.Where(m => !m.IsSuspended && !m.IsCancelled);
 
-            var statistics = await dbContext.Medicines
+            if (!string.IsNullOrWhiteSpace(request.searchTerm))
+            {
+                var search = request.searchTerm.ToLower();
+                baseQuery = baseQuery.Where(m =>
+                    (m.MedicineCode != null && m.MedicineCode.ToLower().Contains(search)) ||
+                    (m.MedicineName != null && m.MedicineName.ToLower().Contains(search)) ||
+                    (m.Unit != null && m.Unit.ToLower().Contains(search)));
+            }
+
+            var totalCount = await baseQuery.LongCountAsync(cancellationToken);
+
+            var statistics = await baseQuery
                 .Select(m => new MedicineQuantityStatisticsDto
                 {
+                    MedicineId = m.Id,
                     MedicineCode = m.MedicineCode ?? string.Empty,
                     MedicineName = m.MedicineName ?? string.Empty,
                     Unit = m.Unit ?? string.Empty,
                     NumberOfBatches = dbContext.MedicineBatches
                         .Where(mb => mb.MedicineId == m.Id
-                        && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)
-                        && !mb.IsSuspended
-                        && !mb.IsCancelled)
+                                     && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)
+                                     && !mb.IsSuspended
+                                     && !mb.IsCancelled)
                         .Count(),
                     TotalQuantity = dbContext.InventoryDetails
                         .Where(id => !id.IsSuspended
-                            && !id.IsCancelled
-                            && dbContext.MedicineBatches
-                                .Any(mb => mb.Id == id.MedicineBatchId
-                                    && mb.MedicineId == m.Id
-                                    && mb.Status == MedicineBatchStatus.IsActive
-                                    && !mb.IsSuspended
-                                    && !mb.IsCancelled
-                                    && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)))
+                                     && !id.IsCancelled
+                                     && dbContext.MedicineBatches
+                                         .Any(mb => mb.Id == id.MedicineBatchId
+                                                    && mb.MedicineId == m.Id
+                                                    && mb.Status == MedicineBatchStatus.IsActive
+                                                    && !mb.IsSuspended
+                                                    && !mb.IsCancelled
+                                                    && mb.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow)))
                         .Sum(id => id.Quantity)
                 })
                 .OrderByDescending(s => s.TotalQuantity)
@@ -46,7 +56,8 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineQuantityStatistics
 
             var statisticDTO = statistics.Adapt<List<MedicineQuantityStatisticsDto>>();
 
-            return new GetMedicineQuantityStatisticsResult(new PaginatedResult<MedicineQuantityStatisticsDto>(pageIndex, pageSize, totalCount, statisticDTO));
+            return new GetMedicineQuantityStatisticsResult(
+                new PaginatedResult<MedicineQuantityStatisticsDto>(pageIndex, pageSize, totalCount, statisticDTO));
         }
     }
 }

@@ -1,13 +1,10 @@
 ﻿using BuildingBlocks.CQRS;
 using HumanResource.Grpc;
 using Microsoft.AspNetCore.Http;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Application.Helpers;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListForVaccinationByReceptionId
 {
@@ -35,7 +32,8 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
 
             // Get all reception vaccinations for the given reception ID
             var receptionVaccinations = _dbContext.ReceptionVaccinations
-                .Where(rv => rv.ReceptionId == request.ReceptionId && rv.IsReadyToUse == true)
+                .Where(rv => (rv.ReceptionId == request.ReceptionId || rv.SecondaryReceptionId == request.ReceptionId)
+                     && rv.IsReadyToUse == true)
                 .ToList();
 
             var receptionVaccinationIds = receptionVaccinations.Select(rv => rv.Id).ToList();
@@ -69,7 +67,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
 
                 for (int i = 1; i <= rv.Quantity; i++)
                 {
-                    var dose = doses.FirstOrDefault(d => d.DoseNumber == i);
+                    var dose = doses.OrderBy(d => d.Id).Skip(i - 1).FirstOrDefault();
                     doctorPrescribedResult.Add(new MedicineInfo(
                         ReceptionVaccinationId: rv.Id,
                         VaccinationId: dose?.Id, // Nullable in case it's not yet created

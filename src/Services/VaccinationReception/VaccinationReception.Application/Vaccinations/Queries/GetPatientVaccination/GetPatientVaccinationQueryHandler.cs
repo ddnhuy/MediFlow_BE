@@ -38,7 +38,12 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
                 var paidReceptionVaccinations = await _context.ReceptionVaccinations
                     .Include(rv => rv.Reception)
                     .ThenInclude(r => r.ScreeningEvaluationReport)
-                    .Where(rv => rv.Reception.IsVaccinationTodayConfirmed == false)
+                    .Include(rv => rv.SecondaryReception) 
+                    .ThenInclude(r => r.ScreeningEvaluationReport)
+                    .Where(rv =>
+                        (rv.SecondaryReceptionId == null && rv.Reception.IsVaccinationTodayConfirmed == false) ||
+                        (rv.SecondaryReceptionId != null && rv.SecondaryReception!.IsVaccinationTodayConfirmed == false)
+                    )
                     .Where(rv => rv.PaymentStatus == PaymentStatusForItem.Paid && !rv.IsCancelled)
                     .ToListAsync(cancellationToken);
 
@@ -73,15 +78,17 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
                 {
                     try
                     {
+                        var currentReception = receptionVaccination.SecondaryReception ?? receptionVaccination.Reception;
+
                         // Get patient information from the gRPC service
-                        var patient = await _patientGrpcClient.GetPatientAsync(receptionVaccination.Reception.PatientId, cancellationToken);
+                        var patient = await _patientGrpcClient.GetPatientAsync(currentReception.PatientId, cancellationToken);
 
                         var weightKg = receptionVaccination.Reception.ScreeningEvaluationReport?.WeightKg ?? 0.0;
 
                         var genderString = patient.Gender == 0 ? "Nữ" : "Nam";
 
                         var patientVaccinationItem = new PatientVaccinationItem(
-                            ReceptionId: receptionVaccination.Reception.Id,
+                            ReceptionId: currentReception.Id,
                             PatientId: receptionVaccination.Reception.PatientId,
                             PatientCode: patient.Code,
                             PatientVaccinationCode: "Todo: Handle later",
