@@ -1,4 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -42,13 +44,17 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     .FirstOrDefaultAsync(rv =>
                         rv.Id == request.Id &&
                         (rv.ReceptionId == request.ReceptionId || rv.SecondaryReceptionId == request.ReceptionId) &&
-                        rv.PaymentStatus == PaymentStatusForItem.NotPaid &&
                         !rv.IsCancelled, cancellationToken);
 
                 if (receptionVaccination == null)
                 {
                     _logger.LogWarning("ReceptionVaccination with Id: {Id} not found in ReceptionId: {ReceptionId}", request.Id, request.ReceptionId);
-                    return new UpdateReceptionVaccinationResult(false);
+                    throw new NotFoundException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
+                }
+
+                if (receptionVaccination.PaymentStatus == PaymentStatusForItem.Paid && receptionVaccination.Quantity != request.Quantity)
+                {
+                    throw new BadRequestException(ExceptionKey.PAID_VACCINE_QUANTITY_UPDATE_FAILED);
                 }
 
                 receptionVaccination.Quantity = request.Quantity;
