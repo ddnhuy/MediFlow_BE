@@ -49,7 +49,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                 var cutoffTime = DateTime.UtcNow.AddHours(-2);
 
                 var recentReceptions = await _context.Receptions
-                    .Where(r => r.LastUpdatedAt >= cutoffTime && !r.IsCancelled && !r.IsSuspended)
+                    .Where(r => r.LastUpdatedAt >= cutoffTime && !r.IsCancelled && !r.IsSuspended && r.IsVaccinationTodayConfirmed == false)
                     .OrderByDescending(r => r.LastUpdatedAt)
                     .ToListAsync(cancellationToken);
 
