@@ -26,11 +26,6 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
 
                     var result = await sender.Send(command);
 
-                    if (!result.IsSuccess)
-                    {
-                        throw new NotFoundException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
-                    }
-
                     var response = result.Adapt<UpdateReceptionVaccinationResponse>();
                     return Results.Ok(response);
                 })
