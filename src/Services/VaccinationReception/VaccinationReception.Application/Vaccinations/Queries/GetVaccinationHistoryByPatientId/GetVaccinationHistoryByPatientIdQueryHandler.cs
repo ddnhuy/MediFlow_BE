@@ -33,6 +33,9 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHi
 
             var vaccinationHistory = await _dbContext.Vaccinations
                 .Include(v => v.ReceptionVaccination)
+                .ThenInclude(rv => rv.Reception)
+                .Include(v => v.ReceptionVaccination)
+                .ThenInclude(rv => rv.SecondaryReception)
                 .Where(v => v.PatientId == request.PatientId)
                 .ToListAsync(cancellationToken);
 
@@ -55,8 +58,11 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHi
                 var doctor = await _applicationUserProto.GetApplicationUserAsync(new GetApplicationUserRequest { Id = v.DoctorId }, metadata);
                 var doctorName = doctor.Name ?? string.Empty;
 
+                var currentReceptionId = v.ReceptionVaccination.SecondaryReceptionId ?? v.ReceptionVaccination.ReceptionId;
+
                 return new VaccinationHistoryItem(
                     Id: v.Id,
+                    ReceptionId: currentReceptionId,
                     MedicineTypeName: medicineInfo?.VaccineTypeName ?? string.Empty,
                     MedicineName: v.MedicineName ?? string.Empty,
                     DoseNumber: $"Mũi thứ {v.DoseNumber}",

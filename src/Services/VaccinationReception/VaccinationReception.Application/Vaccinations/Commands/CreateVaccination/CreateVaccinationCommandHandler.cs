@@ -2,6 +2,7 @@
 using BuildingBlocks.Exceptions;
 using BuildingBlocks.Strings;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.Drawing.Slicer.Style;
 using VaccinationReception.Application.Abstraction.InventoryMessaging;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Domain.Models;
@@ -28,6 +29,8 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
                 .ToListAsync(cancellationToken);
 
             var receptionVaccination = await _dbContext.ReceptionVaccinations
+                .Include(rv => rv.Reception)
+                .Include(rv => rv.SecondaryReception)
                 .FirstOrDefaultAsync(rv => rv.Id == request.ReceptionVaccinationId, cancellationToken);
 
             if (receptionVaccination == null)
@@ -40,11 +43,12 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
             var medicineInformation = medicineInformationList.FirstOrDefault(m => m.MedicineId == request.MedicineId);
 
             if (medicineInformation!.IsRequiredTestingBeforeUse == true)
-            { 
+            {
                 if (string.IsNullOrEmpty(receptionVaccination.TestResultEntry) || receptionVaccination.IsPreExaminationTesting == false)
                 {
                     throw new BadRequestException(ExceptionKey.VACCINE_REQUIRED_PRE_EXAMINATION_TESTING_BEFORE_VACCINATION);
-                } else if (receptionVaccination.TestResultEntry == POSITIVE_RESULT)
+                }
+                else if (receptionVaccination.TestResultEntry == POSITIVE_RESULT)
                 {
                     throw new BadRequestException(ExceptionKey.CANNOT_TAKE_VACCINATION_IF_RESULT_IS_POSITIVE);
                 }
@@ -74,6 +78,17 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
                 IsConfirmed = true,
                 DoseNumber = nextDoseNumber
             };
+
+            var currentReception = receptionVaccination.SecondaryReception ?? receptionVaccination.Reception;
+
+            if (currentReception == null)
+            {
+                throw new BadRequestException(ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
+            }
+            else
+            {
+                currentReception.LastUpdatedAt = DateTime.UtcNow;
+            }
 
             _dbContext.Vaccinations.Add(vaccination);
             await _dbContext.SaveChangesAsync(cancellationToken);

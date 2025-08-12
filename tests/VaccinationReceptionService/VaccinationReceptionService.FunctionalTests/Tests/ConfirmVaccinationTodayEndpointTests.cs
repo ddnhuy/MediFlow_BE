@@ -44,7 +44,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 VaccineId = 1,
                 Quantity = 1,
                 RequestNumber = "REQ-001",
-                //IsConfirmed = true
+                ScheduledDate = DateTime.UtcNow.Date, // Add this line - set to today
+                AppointmentDate = DateTime.UtcNow.Date, // Also set AppointmentDate if required
+                UnitPrice = 100000 // Set required decimal field
             };
             dbContext.ReceptionVaccinations.Add(rv);
 
@@ -72,6 +74,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var updatedReception = await dbContext.Receptions
                 .AsNoTracking()
                 .FirstOrDefaultAsync(r => r.Id == TestReceptionId);
+            updatedReception.Should().NotBeNull();
+            updatedReception!.IsVaccinationTodayConfirmed.Should().BeTrue();
         }
 
         [Fact]

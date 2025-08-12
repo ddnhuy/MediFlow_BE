@@ -8,6 +8,7 @@ namespace VaccinationReception.Application.DTOs.VaccinationDTOs
 {
     public record VaccinationDetailDTO(
         int Id,
+        int ReceptionId,
         string DoseNumber,
         DateTime? VaccinationTestDate,
         DateTime VaccinationDate,

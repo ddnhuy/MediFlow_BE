@@ -1,5 +1,8 @@
 ﻿using BuildingBlocks.CQRS;
+using BuildingBlocks.Exceptions;
+using BuildingBlocks.Strings;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -27,7 +30,24 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
         {
             try
             {
-                var entity = await _context.ScreeningEvaluationReports.FindAsync(new object[] { request.Id }, cancellationToken);
+                if (request.ReceptionId <= 0)
+                {
+                    _logger.LogWarning("Invalid ReceptionId: {ReceptionId}", request.ReceptionId);
+                    throw new BadRequestException(ExceptionKey.INVALID_VACCINATION_RECEPTION_ID);
+                }
+
+                var reception = await _context.Receptions
+                    .FirstOrDefaultAsync(rv => rv.Id == request.ReceptionId && !rv.IsCancelled, cancellationToken);
+
+                if (reception == null)
+                {
+                    throw new BadRequestException(ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
+                }
+
+                reception.LastUpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync(cancellationToken);
+
+                var entity = await _context.ScreeningEvaluationReports.FindAsync(request.Id, cancellationToken);
 
                 if (entity == null)
                 {

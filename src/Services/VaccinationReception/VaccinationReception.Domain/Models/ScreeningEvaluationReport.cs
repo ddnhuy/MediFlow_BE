@@ -26,6 +26,12 @@ namespace VaccinationReception.Domain.Models
         public bool IsUnderweightBelow2000g { get; set; }                     // Item 8
         public bool HasOtherContraindications { get; set; }                   // Item 9
 
+        public bool HasAbnormalCry { get; set; }
+        public bool HasPaleSkinOrLips { get; set; }
+        public bool HasPoorFeeding { get; set; }
+        public bool IsPretermBelow34Weeks { get; set; }
+        public bool HasImmunodeficiencyOrSuspectedHiv { get; set; }
+
         // Screening results
         public bool IsEligibleForVaccination { get; set; }
         public bool IsContraindicatedForVaccination { get; set; }

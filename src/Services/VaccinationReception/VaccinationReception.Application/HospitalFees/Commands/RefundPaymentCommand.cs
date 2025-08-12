@@ -43,6 +43,18 @@ namespace VaccinationReception.Application.HospitalFees.Commands
 
             try
             {
+                var reception = await _dbContext.Receptions
+                    .FirstOrDefaultAsync(r => r.Id == request.ReceptionId, cancellationToken);
+
+                if (reception == null)
+                {
+                    throw new NotFoundException(ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
+                }
+
+                reception.LastUpdatedAt = DateTime.UtcNow;
+
+                await _dbContext.SaveChangesAsync(cancellationToken);
+
                 var originalPayment = await _dbContext.Payments
                     .FirstOrDefaultAsync(p => p.Id == request.OriginalPaymentId && p.ReceptionId == request.ReceptionId, cancellationToken);
 

@@ -24,6 +24,9 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetListPostVacci
         {
             var postVaccinationPatient = await _dbContext.Vaccinations
                 .Include(v => v.ReceptionVaccination)
+                .ThenInclude(rv => rv.Reception)
+                .Include(v => v.ReceptionVaccination)
+                .ThenInclude(rv => rv.SecondaryReception)
                 .Where(v => !v.ObservationConfirmed)
                 // Filter by PatientVaccinationCode if provided
                 //.Where(v => string.IsNullOrEmpty(request.PatientVaccinationCode)
@@ -40,6 +43,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetListPostVacci
             var matchingPatientIds = patients.Select(p => p.Id).ToHashSet();
             postVaccinationPatient = postVaccinationPatient
                 .Where(v => matchingPatientIds.Contains(v.PatientId))
+                .OrderByDescending(v => v.ReceptionVaccination!.CreatedAt)
                 .GroupBy(v => v.PatientId)
                 .Select(g => g.First())
                 .ToList();
@@ -48,9 +52,11 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetListPostVacci
             var result = postVaccinationPatient.Select(v =>
             {
                 var patient = patients.FirstOrDefault(p => p.Id == v.PatientId);
+                var currentReceptionId = v.ReceptionVaccination!.SecondaryReceptionId ?? v.ReceptionVaccination!.ReceptionId;
+
                 return new GetListPostVaccinationPatientQueryResult
                 (
-                    ReceptionId: v.ReceptionVaccination!.ReceptionId,
+                    ReceptionId: currentReceptionId,
                     PatientVaccinationCode: "",
                     PatientName: patient?.Name ?? string.Empty,
                     YearOfBirth: patient?.DOB.Year > 0 ? new DateOnly(patient.DOB.Year, patient.DOB.Month, patient.DOB.Day) : DateOnly.MinValue,

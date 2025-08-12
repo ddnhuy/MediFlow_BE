@@ -6,6 +6,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHi
 
     public record VaccinationHistoryItem(
         int Id,
+        int ReceptionId,
         string MedicineTypeName,
         string MedicineName,
         string DoseNumber,
