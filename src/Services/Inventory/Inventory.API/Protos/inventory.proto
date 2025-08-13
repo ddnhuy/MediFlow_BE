@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option csharp_namespace = "Inventory.API";
+
+package inventory;
+
+// ---------- gRPC Service ----------
+service InventoryProtoService {
+  rpc GetTrafficByVaccine (GetTrafficByVaccineRequest) returns (GetTrafficByVaccineResponse);
+}
+
+// ---------- Request & Response ----------
+message GetTrafficByVaccineRequest {
+}
+
+message GetTrafficByVaccineResponse {
+  repeated VaccineTrafficData data = 1;
+}
+
+// ---------- Data Models ----------
+message VaccineTrafficData {
+  int32 vaccineId = 1;
+  string vaccineName = 2;
+  int64 totalUsed = 3;
+}

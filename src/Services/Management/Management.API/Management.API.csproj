@@ -33,6 +33,12 @@
     <Protobuf Include="..\..\HumanResource\HumanResource.Grpc\Protos\role.proto" GrpcServices="Client">
       <Link>Protos\role.proto</Link>
     </Protobuf>
+    <Protobuf Include="..\..\Inventory\Inventory.API\Protos\inventory.proto" GrpcServices="Client">
+      <Link>Protos\inventory.proto</Link>
+    </Protobuf>
+    <Protobuf Include="..\..\VaccinationReception\VaccinationReception.API\Protos\vaccination_reception.proto" GrpcServices="Client">
+      <Link>Protos\vaccination_reception.proto</Link>
+    </Protobuf>
   </ItemGroup>
 
 </Project>
