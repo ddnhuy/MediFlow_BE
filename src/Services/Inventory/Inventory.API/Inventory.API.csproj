@@ -11,10 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="appsettings.json" />
-  </ItemGroup>
-
-  <ItemGroup>
 	<PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
 	<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageReference Include="Carter" Version="8.1.0" />
@@ -34,10 +30,6 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\inventory.proto" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Include="appsettings.json" />
   </ItemGroup>
 
 </Project>
