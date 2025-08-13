@@ -47,6 +47,12 @@ spec:
         - name: wait-for-human-resource-grpc
           image: busybox
           command: ['sh', '-c', "until nc -z human-resource-grpc {{ .Values.service.port }}; do echo waiting for human-resource-grpc; sleep 2; done"]
+        - name: wait-for-inventory-service
+          image: busybox
+          command: ['sh', '-c', "until nc -z inventory-service {{ .Values.service.port }}; do echo waiting for inventory-service; sleep 2; done"]
+        - name: wait-for-vaccination-reception-service
+          image: busybox
+          command: ['sh', '-c', "until nc -z vaccination-reception-service {{ .Values.service.port }}; do echo waiting for vaccination-reception-service; sleep 2; done"]
       volumes:
         - name: config-volume
           configMap:

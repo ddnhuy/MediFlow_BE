@@ -111,11 +111,18 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
       - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
+      - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=${CERT_KEYPATH}
     depends_on:
       - postgres_db
       - messagebroker
     ports:
       - "6063:8080"
+      - "8081"
+    volumes:
+      - /etc/letsencrypt/live/${DOMAIN}/fullchain.pem:/https/fullchain.pem:ro
+      - /etc/letsencrypt/live/${DOMAIN}/privkey.pem:/https/privkey.pem:ro
 
   customerinfo.grpc:
     image: ${DOCKER_REGISTRY-}customerinfogrpc
@@ -171,6 +178,8 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=${CERT_KEYPATH}
     depends_on:
       - humanresource.grpc
+      - inventory.api
+      - vaccinationreception.api
     ports:
       - "6066:8080"
     volumes:

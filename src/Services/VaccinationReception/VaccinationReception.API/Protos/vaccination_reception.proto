@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+option csharp_namespace = "VaccinationReception.API";
+
+package vaccination_reception;
+
+// ---------- gRPC Services ----------
+service VaccinationReceptionProtoService {
+  // Daily statistics
+  rpc GetTodayPatientCount (EmptyRequest) returns (TodayPatientCountResponse);
+  rpc GetTodayInjectionCount (EmptyRequest) returns (TodayInjectionCountResponse);
+  rpc GetTodayRevenue (EmptyRequest) returns (TodayRevenueResponse);
+  rpc GetProcessedReceptionsCount (EmptyRequest) returns (ProcessedReceptionsCountResponse);
+
+  // Statistics for years -> months
+  rpc GetTotalPatientsByYearMonth (EmptyRequest) returns (TotalPatientsByYearMonthResponse);
+  rpc GetTotalRevenueByYearMonth (EmptyRequest) returns (TotalRevenueByYearMonthResponse);
+}
+
+// ---------- Request & Response ----------
+message EmptyRequest {}
+
+message TodayPatientCountResponse {
+  int64 count = 1;
+}
+
+message TodayInjectionCountResponse {
+  int64 count = 1;
+}
+
+message TodayRevenueResponse {
+  double amount = 1;
+  string currency = 2;
+}
+
+message ProcessedReceptionsCountResponse {
+  int64 count = 1;
+}
+
+message TotalPatientsByYearMonthResponse {
+  repeated YearlyPatientData data = 1;
+}
+
+message TotalRevenueByYearMonthResponse {
+  repeated YearlyRevenueData data = 1;
+}
+
+// ---------- Data Models ----------
+message VaccineTrafficData {
+  int32 vaccineId = 1;
+  string vaccineName = 2;
+  int64 totalUsed = 3;
+}
+
+message YearlyPatientData {
+  int32 year = 1;
+  repeated MonthlyPatientData months = 2;
+}
+
+message MonthlyPatientData {
+  string month = 1;
+  int64 totalPatients = 2;
+}
+
+message YearlyRevenueData {
+  int32 year = 1;
+  repeated MonthlyRevenueData months = 2;
+}
+
+message MonthlyRevenueData {
+  string month = 1;
+  double totalRevenue = 2;
+  string currency = 3;
+}

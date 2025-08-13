@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using FluentValidation;
 using VaccinationReception.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using VaccinationReception.API.Services;
 
 namespace VaccinationReception.API
 {
@@ -39,6 +40,8 @@ namespace VaccinationReception.API
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
 
+            builder.Services.AddGrpc();
+
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
@@ -56,6 +59,8 @@ namespace VaccinationReception.API
                     throw;
                 }
             }
+
+            app.MapGrpcService<VaccinationReceptionService>();
 
             app.UseApiServices();
 
