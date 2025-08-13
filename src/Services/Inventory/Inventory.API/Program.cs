@@ -1,6 +1,7 @@
-using BuildingBlocks.Strings.Extensions;
+﻿using BuildingBlocks.Strings.Extensions;
 using HealthChecks.UI.Client;
 using Inventory.API;
+using Inventory.API.Services;
 using Inventory.Application;
 using Inventory.Infrastructure;
 using Inventory.Infrastructure.Data.Extensions;
@@ -19,9 +20,13 @@ builder.Services
     .AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
 
+builder.Services.AddGrpc();
+
 var app = builder.Build();
 
 app.UseApiServices();
+
+app.MapGrpcService<InventoryService>();
 
 app.UseHealthChecks("/health",
     new HealthCheckOptions
