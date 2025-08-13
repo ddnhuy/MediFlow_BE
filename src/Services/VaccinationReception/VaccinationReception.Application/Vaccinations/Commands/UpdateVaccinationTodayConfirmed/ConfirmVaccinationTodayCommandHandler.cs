@@ -29,33 +29,57 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdateVaccinati
             if (reception == null)
                 throw new BadRequestException(ExceptionKey.NOT_FOUND_RECEPTION_WITH_ID);
 
-            // Filter ReceptionVaccinations to only those with ScheduleDate as today
             var today = DateTime.UtcNow.Date;
-            var todayReceptionVaccinations = reception.ReceptionVaccinations
+
+            var allTodayReceptionVaccinations = reception.ReceptionVaccinations
                 .Where(rv => rv.ScheduledDate.HasValue && rv.ScheduledDate.Value.Date == today)
                 .ToList();
 
-            var todayIncomingTransferredVaccinations = reception.IncomingTransferredVaccinations
+            var allTodayIncomingTransferredVaccinations = reception.IncomingTransferredVaccinations
                 .Where(rv => rv.ScheduledDate.HasValue && rv.ScheduledDate.Value.Date == today)
                 .ToList();
 
-            // Combine both collections
-            var allTodayVaccinations = todayReceptionVaccinations
-                .Concat(todayIncomingTransferredVaccinations)
+            var allTodayVaccinationsIncludingRejected = allTodayReceptionVaccinations
+                .Concat(allTodayIncomingTransferredVaccinations)
                 .ToList();
 
-            if (!allTodayVaccinations.Any())
-                throw new BadRequestException(ExceptionKey.NO_VACCINATION_TODAY_CONFIRMED);
+            var validTodayVaccinations = allTodayVaccinationsIncludingRejected
+                .Where(rv => !rv.HasIssue) 
+                .ToList();
 
-            var rvIds = allTodayVaccinations.Select(rv => rv.Id).ToList();
+            if (!validTodayVaccinations.Any())
+            {
+                var rejectedCount = allTodayVaccinationsIncludingRejected.Where(rv => rv.HasIssue).Count();
 
-            // Get all doses for reception vaccinations scheduled today
+                if (rejectedCount > 0)
+                {
+                    // Tất cả vaccine hôm nay đều bị reject -> tự động confirm
+                    reception.IsVaccinationTodayConfirmed = true;
+                    reception.LastUpdatedAt = DateTime.UtcNow;
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    _logger.LogInformation("Reception {ReceptionId} auto-confirmed: all {Count} vaccines for today were rejected",
+                        request.ReceptionId, rejectedCount);
+
+                    return new ConfirmVaccinationTodayResult(true);
+                }
+                else
+                {
+                    // Không có vaccine nào hôm nay
+                    throw new BadRequestException(ExceptionKey.NO_VACCINATION_TODAY_CONFIRMED);
+                }
+            }
+
+            var rvIds = validTodayVaccinations.Select(rv => rv.Id).ToList();
+
+            // Get all doses for valid reception vaccinations scheduled today
             var vaccinations = await _context.Vaccinations
                 .Include(v => v.ReceptionVaccination)
                 .Where(v => rvIds.Contains(v.ReceptionVaccinationId))
                 .ToListAsync(cancellationToken);
 
-            foreach (var rv in allTodayVaccinations)
+            // Validate chỉ những vaccine không bị reject
+            foreach (var rv in validTodayVaccinations)
             {
                 var related = vaccinations.Where(v => v.ReceptionVaccinationId == rv.Id).ToList();
 

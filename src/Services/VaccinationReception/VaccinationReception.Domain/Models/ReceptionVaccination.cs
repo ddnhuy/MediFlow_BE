@@ -31,5 +31,10 @@ namespace VaccinationReception.Domain.Models
         // Navigation
         public Reception Reception { get; set; } = null!;
         public Reception? SecondaryReception { get; set; }
+
+        // Issue information
+        public bool HasIssue { get; set; }
+        public string? IssueNote { get; set; } = string.Empty;
+        public DateTime? IssueDate { get; set; } = null;
     }
 }

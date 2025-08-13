@@ -27,5 +27,8 @@ namespace VaccinationReception.Domain.Models
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();
 
         public bool IsVaccinationTodayConfirmed { get; set; }
+        public bool HasIssue { get; set; }
+        public string? IssueNote { get; set; } = string.Empty;
+        public DateTime? IssueDate { get; set; }
     }
 }
