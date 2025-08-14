@@ -42,5 +42,13 @@ data:
           "JobKey": "CleanupUnpaidItemsJob",
           "Trigger": "CleanupUnpaidItemsJob-trigger"
         }
-      }      
+      },
+      "Kestrel": {
+        "Endpoints": {
+          "Grpc": {
+            "Url": "https://+:8081",
+            "Protocols": "Http2"
+          }
+        }
+      }
     }
