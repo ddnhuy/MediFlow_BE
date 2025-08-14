@@ -30,13 +30,5 @@ data:
         "BaseUrl": "https://mediflow.health.vn",
         "ApprovalPath": "/pharmacy/expired-medicine/{0}/approval/callback?token={1}",
         "RejectionPath": "/pharmacy/expired-medicine/{0}/reject/callback?token={1}"
-      },
-      "Kestrel": {
-        "Endpoints": {
-          "Grpc": {
-            "Url": "https://+:8081",
-            "Protocols": "Http2"
-          }
-        }
       }
     }
