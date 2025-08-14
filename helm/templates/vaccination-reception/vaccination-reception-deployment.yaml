@@ -41,13 +41,13 @@ spec:
               cpu: "150m"
               memory: "260Mi"
           env:
-            - name: Kestrel__Endpoints__Http__Url
-              value: "http://+:8080"
-            - name: Kestrel__Endpoints__Https__Url
-              value: "https://+:8081"
-            - name: Kestrel__Endpoints__Https__Certificate__Path
+            - name: ASPNETCORE_HTTP_PORTS
+              value: "8080"
+            - name: ASPNETCORE_HTTPS_PORTS
+              value: "8081"
+            - name: ASPNETCORE_Kestrel__Certificates__Default__Path
               value: "/https/tls.crt"
-            - name: Kestrel__Endpoints__Https__Certificate__KeyPath
+            - name: ASPNETCORE_Kestrel__Certificates__Default__KeyPath
               value: "/https/tls.key"
           envFrom:
             - configMapRef:

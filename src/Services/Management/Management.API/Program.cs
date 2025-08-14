@@ -81,11 +81,31 @@ builder.Services
 builder.Services.AddGrpcClient<InventoryProtoService.InventoryProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcSettings:InventoryUrl"]!);
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new SocketsHttpHandler
+    {
+        SslOptions = new System.Net.Security.SslClientAuthenticationOptions
+        {
+            RemoteCertificateValidationCallback = (sender, cert, chain, errors) => true
+        }
+    };
 });
 
 builder.Services.AddGrpcClient<VaccinationReceptionProtoService.VaccinationReceptionProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcSettings:VaccinationReceptionUrl"]!);
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new SocketsHttpHandler
+    {
+        SslOptions = new System.Net.Security.SslClientAuthenticationOptions
+        {
+            RemoteCertificateValidationCallback = (sender, cert, chain, errors) => true
+        }
+    };
 });
 
 // Cross-Cutting Services
