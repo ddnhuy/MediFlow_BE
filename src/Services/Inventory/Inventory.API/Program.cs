@@ -6,8 +6,23 @@ using Inventory.Application;
 using Inventory.Infrastructure;
 using Inventory.Infrastructure.Data.Extensions;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Reflection;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Kestrel to support HTTP/2 without TLS for gRPC
+builder.WebHost.ConfigureKestrel(options =>
+{
+    // Listen on port 8080 for HTTP requests
+    options.ListenAnyIP(
+        8080,
+        listenOptions =>
+        {
+            listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+        }
+    );
+});
 
 builder.Services
     .AddApplicationService(builder.Configuration)
@@ -28,11 +43,10 @@ app.UseApiServices();
 
 app.MapGrpcService<InventoryService>();
 
-app.UseHealthChecks("/health",
-    new HealthCheckOptions
-    {
-        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-    });
+app.UseHealthChecks(
+    "/health",
+    new HealthCheckOptions { ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse }
+);
 
 await app.UseMigrationAsync();
 

@@ -4,6 +4,7 @@ using FluentValidation;
 using VaccinationReception.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using VaccinationReception.API.Services;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace VaccinationReception.API
 {
@@ -13,28 +14,43 @@ namespace VaccinationReception.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Configure Kestrel to support HTTP/2 without TLS for gRPC
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                // Listen on port 8080 for HTTP requests
+                options.ListenAnyIP(
+                    8080,
+                    listenOptions =>
+                    {
+                        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
+                    }
+                );
+            });
+
             builder.Services
-            .AddApplicationService(builder.Configuration)
-            .AddInfrastructureServices(builder.Configuration)
-            .AddApiServices(builder.Configuration);
+                .AddApplicationService(builder.Configuration)
+                .AddInfrastructureServices(builder.Configuration)
+                .AddApiServices(builder.Configuration);
 
             builder.Services.AddFluentValidationAutoValidation();
 
             var httpHandler = new HttpClientHandler
             {
-                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                ServerCertificateCustomValidationCallback =
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
             };
-
 
             builder.Services
                 .AddHealthChecks()
                 .AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
 
             TypeAdapterConfig.GlobalSettings.Scan(AppDomain.CurrentDomain.GetAssemblies());
-            TypeAdapterConfig.GlobalSettings.Default
-                .UseDestinationValue(member => member.SetterModifier == AccessModifier.None &&
-                                               member.Type.IsGenericType &&
-                                               member.Type.GetGenericTypeDefinition() == typeof(RepeatedField<>));
+            TypeAdapterConfig.GlobalSettings.Default.UseDestinationValue(
+                member =>
+                    member.SetterModifier == AccessModifier.None
+                    && member.Type.IsGenericType
+                    && member.Type.GetGenericTypeDefinition() == typeof(RepeatedField<>)
+            );
             builder.Services.AddSingleton<IRegister, MapsterConfig>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -64,11 +80,13 @@ namespace VaccinationReception.API
 
             app.UseApiServices();
 
-            app.UseHealthChecks("/health",
+            app.UseHealthChecks(
+                "/health",
                 new HealthCheckOptions
                 {
                     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                });
+                }
+            );
 
             //await app.UseMigrationAsync();
 
