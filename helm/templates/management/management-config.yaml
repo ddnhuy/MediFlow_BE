@@ -14,8 +14,8 @@ data:
       "AllowedHosts": "*",
       "GrpcSettings": {
         "HumanResourceUrl": "http://human-resource-grpc:80",
-        "InventoryUrl": "http://inventory-grpc:80",
-        "VaccinationReceptionUrl": "http://vaccination-reception-grpc:80"
+        "InventoryUrl": "https://inventory-grpc:443",
+        "VaccinationReceptionUrl": "https://vaccination-reception-grpc:443"
       },
       "Jwt": {
         "Secret": "super-duper-secret-value-that-should-be-in-user-secrets",
