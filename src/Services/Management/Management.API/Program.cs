@@ -2,11 +2,13 @@ using BuildingBlocks.Behaviors;
 using BuildingBlocks.Exceptions.Handler;
 using BuildingBlocks.Strings.Extensions;
 using HealthChecks.UI.Client;
+using Inventory.API;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 using System.Text;
+using VaccinationReception.API;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,31 @@ builder.Services.AddGrpcClient<DepartmentProtoService.DepartmentProtoServiceClie
 builder.Services.AddGrpcClient<DepartmentTypeProtoService.DepartmentTypeProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcSettings:HumanResourceUrl"]!);
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+
+    return handler;
+});
+
+builder.Services.AddGrpcClient<InventoryProtoService.InventoryProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration["GrpcSettings:InventoryUrl"]!);
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+
+    return handler;
+});
+builder.Services.AddGrpcClient<VaccinationReceptionProtoService.VaccinationReceptionProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration["GrpcSettings:VaccinationReceptionUrl"]!);
 }).ConfigurePrimaryHttpMessageHandler(() =>
 {
     var handler = new HttpClientHandler

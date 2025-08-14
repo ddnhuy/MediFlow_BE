@@ -8,6 +8,7 @@ namespace Inventory.Application.DTOs
         public int MedicineId { get; set; }
         public string? MedicineName { get; set; } = string.Empty;
         public string BatchNumber { get; set; } = default!;
+        public decimal Quantity { get; set; } = 0;
         public DateOnly ImportDate { get; set; }
         public DateOnly ExpiryDate { get; set; }
         public decimal ImportPrice { get; set; }
