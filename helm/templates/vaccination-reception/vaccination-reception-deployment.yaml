@@ -24,6 +24,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 8080
+            - containerPort: 8081
           {{- with .Values.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
@@ -39,6 +40,15 @@ spec:
             limits:
               cpu: "150m"
               memory: "260Mi"
+          env:
+            - name: Kestrel__Endpoints__Http__Url
+              value: "http://+:8080"
+            - name: Kestrel__Endpoints__Https__Url
+              value: "https://+:8081"
+            - name: Kestrel__Endpoints__Https__Certificate__Path
+              value: "/https/tls.crt"
+            - name: Kestrel__Endpoints__Https__Certificate__KeyPath
+              value: "/https/tls.key"
           envFrom:
             - configMapRef:
                 name: vaccination-reception-config
@@ -46,6 +56,9 @@ spec:
             - name: config-volume
               mountPath: /app/appsettings.json
               subPath: appsettings.json
+            - name: tls-cert
+              mountPath: /https
+              readOnly: true
       initContainers:
         - name: wait-for-customer-info-grpc
           image: busybox
@@ -60,3 +73,6 @@ spec:
             items:
               - key: appsettings.json
                 path: appsettings.json
+        - name: tls-cert
+          secret:
+            secretName: mediflow-internal-tls
