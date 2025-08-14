@@ -10,4 +10,8 @@ spec:
       port: {{ .Values.service.port }}
       name: http
       targetPort: 8080
+    - protocol: TCP
+      port: 443
+      name: grpc
+      targetPort: 8081
   type: {{ .Values.service.type }}

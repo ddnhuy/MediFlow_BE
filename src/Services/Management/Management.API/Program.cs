@@ -69,26 +69,31 @@ builder.Services.AddGrpcClient<DepartmentTypeProtoService.DepartmentTypeProtoSer
 builder.Services.AddGrpcClient<InventoryProtoService.InventoryProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcSettings:InventoryUrl"]!);
-}).ConfigurePrimaryHttpMessageHandler(() =>
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
 {
-    var handler = new HttpClientHandler
+    return new SocketsHttpHandler
     {
-        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        SslOptions = new System.Net.Security.SslClientAuthenticationOptions
+        {
+            RemoteCertificateValidationCallback = (sender, cert, chain, errors) => true
+        }
     };
-
-    return handler;
 });
+
 builder.Services.AddGrpcClient<VaccinationReceptionProtoService.VaccinationReceptionProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcSettings:VaccinationReceptionUrl"]!);
-}).ConfigurePrimaryHttpMessageHandler(() =>
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
 {
-    var handler = new HttpClientHandler
+    return new SocketsHttpHandler
     {
-        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        SslOptions = new System.Net.Security.SslClientAuthenticationOptions
+        {
+            RemoteCertificateValidationCallback = (sender, cert, chain, errors) => true
+        }
     };
-
-    return handler;
 });
 
 // Cross-Cutting Services
