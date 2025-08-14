@@ -14,19 +14,6 @@ namespace VaccinationReception.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Configure Kestrel to support HTTP/2 without TLS for gRPC
-            builder.WebHost.ConfigureKestrel(options =>
-            {
-                // Listen on port 8080 for HTTP requests
-                options.ListenAnyIP(
-                    8080,
-                    listenOptions =>
-                    {
-                        listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-                    }
-                );
-            });
-
             builder.Services
                 .AddApplicationService(builder.Configuration)
                 .AddInfrastructureServices(builder.Configuration)
