@@ -35,7 +35,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                 var receptionVaccinations = await _context.ReceptionVaccinations
                     .Where(rv =>
                         (rv.ReceptionId == request.ReceptionId || rv.SecondaryReceptionId == request.ReceptionId)
-                        && !rv.IsCancelled)
+                        && !rv.IsCancelled && !rv.HasIssue)
                     .OrderBy(rv => rv.AppointmentDate)
                     .ToListAsync(cancellationToken);
 
@@ -46,12 +46,14 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                 var receptionVaccinationDTOs = receptionVaccinations.Select(rv =>
                 {
                     var dto = rv.Adapt<ReceptionVaccinationDTO>();
+                    var isConfimed = _context.Vaccinations.Any(v => v.ReceptionVaccinationId == rv.Id && v.IsConfirmed);
+                    dto.IsConfirmed = isConfimed;
                     var medicine = medicineInfos.FirstOrDefault(m => m.MedicineId == rv.VaccineId);
                     if (medicine != null)
                     {
                         dto.VaccineName = medicine.MedicineName;
                         dto.VaccineTypeName = medicine.VaccineTypeName;
-                    }
+                    }                   
                     return dto;
                 }).ToList();
 

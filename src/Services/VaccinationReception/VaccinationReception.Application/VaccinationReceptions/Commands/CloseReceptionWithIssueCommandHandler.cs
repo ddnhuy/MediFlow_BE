@@ -41,6 +41,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             if (reception.IsVaccinationTodayConfirmed && !string.IsNullOrEmpty(reception.IssueNote))
                 throw new BadRequestException(ExceptionKey.RECEPTION_HAS_BEEN_CLOSED);
 
+            reception.HasIssue = true;
             reception.IssueNote = request.IssueNote.Trim();
             reception.IssueDate = DateTime.UtcNow;
             reception.IsVaccinationTodayConfirmed = true;
