@@ -58,6 +58,12 @@ namespace YarpApiGateWay.Middlewares
                 return;
             }
 
+            if (path.Contains("/payment-callback/payos"))
+            {
+                await _next(context);
+                return;
+            }
+
             // Check JWT
             var authenticateResult = await context.AuthenticateAsync();
             if (!authenticateResult.Succeeded || !context.User.Identity?.IsAuthenticated == true)

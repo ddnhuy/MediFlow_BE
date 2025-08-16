@@ -90,6 +90,7 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasComment("Ngày ký hợp đồng");
 
             builder.Property(x => x.ExpectedDate)
+                .IsRequired()
                 .HasComment("Ngày dự kiến tiêm theo kế hoạch");
 
             builder.Property(x => x.ContractValue)
