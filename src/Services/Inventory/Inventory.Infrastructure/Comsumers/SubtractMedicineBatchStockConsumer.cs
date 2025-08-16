@@ -59,6 +59,13 @@ namespace Inventory.Infrastructure.Comsumers
                 _context.InventoryDetails.Update(inventoryDetail);
 
                 // Add inventory history
+                var medicineId = inventoryDetail.MedicineBatch!.MedicineId;
+                var medicine = await _context.MedicinePrices
+                    .Where(mp => mp.MedicineId == medicineId)
+                    .FirstOrDefaultAsync(context.CancellationToken);
+                var medicinePrice = medicine?.UnitPrice ?? 0;
+
+                // Add inventory history
                 var inventoryHistory = new InventoryHistory
                 {
                     MedicineId = inventoryDetail.MedicineBatch!.MedicineId,
@@ -67,9 +74,10 @@ namespace Inventory.Infrastructure.Comsumers
                     TransactionDate = DateTime.UtcNow,
                     TransactionType = InventoryTransactionType.EXPORT,
                     Quantity = request.Quantity,
-                    UnitPrice = inventoryDetail.CostPrice,
+                    UnitPrice = medicinePrice,
                     Description = $"Exported {request.Quantity} medicine(s) from batch {inventoryDetail.MedicineBatch.BatchNumber}"
                 };
+
                 await _context.InventoryHistories.AddAsync(inventoryHistory);
 
                 await _context.SaveChangesAsync(context.CancellationToken);

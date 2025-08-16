@@ -38,6 +38,11 @@ namespace VaccinationReception.Application.Vaccinations.Commands.CreateVaccinati
                 throw new BadRequestException(ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
             }
 
+            if (receptionVaccination.HasIssue)
+            {
+                throw new BadRequestException(ExceptionKey.CANNOT_TAKE_ISSUE_VACCINE_IF_HAS_ISSUE);
+            }
+
             var medicineInformationList = await _inventoryService.GetMedicineInformationAsync([request.MedicineId], cancellationToken);
 
             var medicineInformation = medicineInformationList.FirstOrDefault(m => m.MedicineId == request.MedicineId);

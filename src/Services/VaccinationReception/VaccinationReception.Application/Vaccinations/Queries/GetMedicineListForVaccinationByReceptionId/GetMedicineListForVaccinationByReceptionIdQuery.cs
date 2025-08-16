@@ -20,6 +20,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
         bool IsRequiredTesting,
         string? TestResultEntry,
         string? doctorName,
-        DateTime? StartTestingTime
+        DateTime? StartTestingTime,
+        bool IsRejected = false
     );
 }
