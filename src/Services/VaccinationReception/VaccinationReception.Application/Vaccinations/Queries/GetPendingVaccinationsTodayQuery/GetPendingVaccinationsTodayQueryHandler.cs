@@ -14,6 +14,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries.GetPend
         private readonly IApplicationDbContext _context;
         private readonly IInventoryService _inventoryService;
         private readonly ILogger<GetPendingVaccinationsTodayQueryHandler> _logger;
+        private const string POSITIVE_RESULT = "positive"; 
 
         public GetPendingVaccinationsTodayQueryHandler(
             IApplicationDbContext context,
@@ -40,13 +41,14 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries.GetPend
 
                 // Lấy tất cả ReceptionVaccinations được lên lịch cho hôm nay
                 var todayReceptionVaccinations = await _context.ReceptionVaccinations
-                    .Where(rv =>
-                        (rv.ReceptionId == request.ReceptionId || rv.SecondaryReceptionId == request.ReceptionId) &&
-                        rv.ScheduledDate.HasValue &&
-                        rv.ScheduledDate.Value.Date == today &&
-                        !rv.HasIssue &&
-                        !rv.IsCancelled)
-                    .ToListAsync(cancellationToken);
+                .Where(rv =>
+                    (rv.ReceptionId == request.ReceptionId || rv.SecondaryReceptionId == request.ReceptionId) &&
+                    rv.ScheduledDate.HasValue &&
+                    rv.ScheduledDate.Value.Date == today &&
+                    rv.TestResultEntry != POSITIVE_RESULT &&
+                    !rv.HasIssue &&
+                    !rv.IsCancelled)
+                .ToListAsync(cancellationToken);
 
                 if (!todayReceptionVaccinations.Any())
                 {

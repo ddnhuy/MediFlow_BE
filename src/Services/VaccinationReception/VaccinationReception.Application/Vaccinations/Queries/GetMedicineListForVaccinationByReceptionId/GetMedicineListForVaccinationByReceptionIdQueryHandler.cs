@@ -79,7 +79,8 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
                         IsRequiredTesting: medicineLookup[rv.VaccineId].IsRequiredTestingBeforeUse ?? false,
                         TestResultEntry: rv.TestResultEntry,
                         doctorName: rv.DoctorId.HasValue ? await GetDoctorName(rv.DoctorId.Value) : "",
-                        rv.VaccinationTestDate ?? null
+                        rv.VaccinationTestDate ?? null,
+                        IsRejected: rv.HasIssue
                     ));
                 }
             }
@@ -109,7 +110,8 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
                         IsRequiredTesting: medicineLookup[rv.VaccineId].IsRequiredTestingBeforeUse ?? false,
                         rv.TestResultEntry,
                         doctorName: rv.DoctorId.HasValue ? await GetDoctorName(rv.DoctorId.Value) : "",
-                        rv.VaccinationTestDate ?? null
+                        rv.VaccinationTestDate ?? null,
+                        rv.HasIssue
                     ));
                 }
             }

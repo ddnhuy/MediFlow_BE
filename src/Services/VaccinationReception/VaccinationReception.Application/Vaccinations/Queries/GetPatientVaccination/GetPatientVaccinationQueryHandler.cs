@@ -65,7 +65,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
 
                 // Group by ReceptionId and select the first for each Reception
                 var receptionsWithPendingVaccinations = pendingReceptionVaccinations
-                    .GroupBy(rv => rv.Reception.Id)
+                    .GroupBy(rv => (rv.SecondaryReception ?? rv.Reception).Id)
                     .Select(group => group.First())
                     .OrderBy(rv => rv.Reception.ReceptionDate)
                     .ToList();
