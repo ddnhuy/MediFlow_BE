@@ -1,4 +1,6 @@
-﻿namespace Inventory.Application
+﻿using HumanResource.Grpc;
+
+namespace Inventory.Application
 {
     public static class DependencyInjection
     {
@@ -14,6 +16,18 @@
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddFeatureManagement();
+
+            services.AddGrpcClient<ApplicationUserProtoService.ApplicationUserProtoServiceClient>(options =>
+            {
+                options.Address = new Uri(configuration["GrpcSettings:HumanResourceUrl"]!);
+            }).ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var handler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                };
+                return handler;
+            });
 
             return services;
         }
