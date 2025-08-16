@@ -5,15 +5,19 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHi
     public record GetVaccinationHistoryByPatientIdQuery(int PatientId) : IQuery<GetVaccinationHistoryByPatientIdResult>;
 
     public record VaccinationHistoryItem(
-        int Id,
+        int? Id,
         int ReceptionId,
+        int ReceptionVaccinationId,
         string MedicineTypeName,
         string MedicineName,
         string DoseNumber,
         DateTime? VaccinationTestDate,
-        DateTime VaccinationDate,
+        DateTime? VaccinationDate,
         bool VaccinationConfirmation,
-        string DoctorName
+        string DoctorName,
+        bool HasIssue,
+        string? IssueNote = null,
+        DateTime? IssueDate = null
     );
 
     public record GetVaccinationHistoryByPatientIdResult(
