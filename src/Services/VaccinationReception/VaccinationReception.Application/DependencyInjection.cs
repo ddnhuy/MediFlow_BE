@@ -14,6 +14,7 @@ using System.Reflection;
 using VaccinationReception.Application.Jobs;
 using VaccinationReception.Application.Services.ExcelServices;
 using VaccinationReception.Application.Services.PatientServices;
+using VaccinationReception.Application.Services.PayOSServices;
 
 namespace VaccinationReception.Application
 {
@@ -66,6 +67,7 @@ namespace VaccinationReception.Application
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.TryAddScoped<IExcelDataReaderService, ExcelDataReaderService>();
+            services.TryAddScoped<IPayOSService, PayOSService>();
 
             if (!Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")?.Equals("Test", StringComparison.OrdinalIgnoreCase) ?? true)
             {
