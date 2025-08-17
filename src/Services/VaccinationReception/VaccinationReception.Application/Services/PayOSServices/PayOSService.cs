@@ -27,11 +27,11 @@ namespace VaccinationReception.Application.Services.PayOSServices
         public PayOSService(IConfiguration configuration, ILogger<PayOSService> logger)
         {
             _logger = logger;
-            _clientId = configuration["PayOS:ClientId"] ?? throw new InvalidOperationException("PayOS ClientId not configured");
-            _apiKey = configuration["PayOS:ApiKey"] ?? throw new InvalidOperationException("PayOS ApiKey not configured");
-            _checksumKey = configuration["PayOS:ChecksumKey"] ?? throw new InvalidOperationException("PayOS ChecksumKey not configured");
-            _cancelUrl = configuration["PayOS:CancelUrl"];
-            _returnUrl = configuration["PayOS:ReturnUrl"];
+            _clientId = configuration["PayOS:ClientId"] ?? "";
+            _apiKey = configuration["PayOS:ApiKey"] ?? "";
+            _checksumKey = configuration["PayOS:ChecksumKey"] ?? "";
+            _cancelUrl = configuration["PayOS:CancelUrl"] ?? "";
+            _returnUrl = configuration["PayOS:ReturnUrl"] ?? "";
             _payOS = new PayOS(_clientId, _apiKey, _checksumKey);
         }
 
