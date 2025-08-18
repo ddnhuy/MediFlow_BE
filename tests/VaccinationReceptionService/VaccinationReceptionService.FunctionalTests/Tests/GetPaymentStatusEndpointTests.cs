@@ -101,5 +101,15 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             var result = await response.Content.ReadFromJsonAsync<PaymentStatus>();
             result.Should().Be(PaymentStatus.Pending);
         }
+
+        [Fact]
+        public async Task GetPaymentStatus_WithValidPaymentId_ReturnsNotFound()
+        {
+            SeedData();
+
+            var response = await _client.GetAsync($"/payment-status?paymentId={TestPaymentContractId}");
+
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
     }
 }
