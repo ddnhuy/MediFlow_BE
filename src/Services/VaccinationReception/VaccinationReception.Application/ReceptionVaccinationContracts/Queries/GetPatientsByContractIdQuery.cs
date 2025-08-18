@@ -2,6 +2,7 @@
 using BuildingBlocks.Exceptions;
 using BuildingBlocks.Pagination;
 using BuildingBlocks.Strings;
+using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,13 +13,15 @@ using System.Threading.Tasks;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Application.DTOs.PatientDTOs;
 using VaccinationReception.Application.Services.PatientServices;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Application.ReceptionVaccinationContracts.Queries
 {
     public record GetPatientsByContractIdQuery (
         int ContractId,
         PaginationRequest PaginationRequest,
-        string SearchTerm
+        string SearchTerm,
+        ContractPatientVaccinationStatus? Status
     ) : IQuery<PaginatedResult<PatientSummaryDTO>>;
     public class GetPatientsByContractIdQueryHandler : IQueryHandler<GetPatientsByContractIdQuery, PaginatedResult<PatientSummaryDTO>>
     {
@@ -51,9 +54,10 @@ namespace VaccinationReception.Application.ReceptionVaccinationContracts.Queries
                 .ToListAsync(cancellationToken);
 
             var patientIds = contractPatientVaccinations
-                .Select(cpv => cpv.PatientId)
-                .Distinct()
-                .ToList();
+            .Where(cpv => request.Status == null || cpv.Status == request.Status.Value)
+            .Select(cpv => cpv.PatientId)
+            .Distinct()
+            .ToList();
 
             var allPatients = await _patientGrpcClient.ListPatientsByIdsAndSearchAsync(patientIds, null, cancellationToken);
 
