@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Application.DTOs.ReceptionVaccinationContractDTOs;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Application.ReceptionVaccinationContracts.Queries
 {
@@ -26,8 +27,7 @@ namespace VaccinationReception.Application.ReceptionVaccinationContracts.Queries
 
             var contracts = await _context.Contracts
                 .Where(c => !c.IsCancelled && !c.IsSuspended)
-                .Where(c => c.ContractDate.Date == currentDate ||
-                           (c.ExpectedDate.HasValue && c.ExpectedDate.Value.Date == currentDate))
+                .Where(c => (c.ExpectedDate.HasValue && c.ExpectedDate.Value.Date == currentDate) && c.Status == ContractStatus.Active)
                 .OrderByDescending(c => c.ContractDate)
                 .Select(c => new ContractResponse
                 {

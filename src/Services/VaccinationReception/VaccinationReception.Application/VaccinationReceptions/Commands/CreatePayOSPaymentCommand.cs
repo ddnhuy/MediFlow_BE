@@ -25,7 +25,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
             List<int> ReceptionVaccinationIds,
             List<int> ServiceRequestDetailIds) : ICommand<CreatePayOSPaymentResult>;
 
-    public record CreatePayOSPaymentResult(int PaymentId, string CheckoutUrl, string QrCode);
+    public record CreatePayOSPaymentResult(int PaymentId, string InvoiceNumber, string CheckoutUrl, string QrCode);
 
     public class CreatePayOSPaymentCommandHandler : ICommandHandler<CreatePayOSPaymentCommand, CreatePayOSPaymentResult>
     {
@@ -120,7 +120,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     newPayment.InvoiceNumber,
                     cancellationToken);
 
-                return new CreatePayOSPaymentResult(newPayment.Id, data.checkoutUrl, data.qrCode);
+                return new CreatePayOSPaymentResult(newPayment.Id, newPayment.InvoiceNumber, data.checkoutUrl, data.qrCode);
             }
             catch (Exception ex)
             {

@@ -142,6 +142,16 @@ namespace VaccinationReception.Infrastructure.Data.Configurations
                 .HasForeignKey(pc => pc.ContractId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasIndex(x => x.ContractCode)
+                .IsUnique()
+                .HasFilter("\"IsSuspended\" = false AND \"IsCancelled\" = false")
+                .HasDatabaseName("IX_Contracts_ContractCode_Active");
+
+            builder.HasIndex(x => x.ContractNumber)
+                .IsUnique()
+                .HasFilter("\"IsSuspended\" = false AND \"IsCancelled\" = false")
+                .HasDatabaseName("IX_Contracts_ContractNumber_Active");
+
             // Global Query Filter (inherited from BaseEntity logic)
             builder.HasQueryFilter(x => !x.IsCancelled);
         }

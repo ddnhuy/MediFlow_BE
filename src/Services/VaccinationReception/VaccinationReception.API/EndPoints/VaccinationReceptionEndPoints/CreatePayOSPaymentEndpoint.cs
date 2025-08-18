@@ -10,7 +10,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
            List<int> ReceptionVaccinationIds,
            List<int> ServiceRequestDetailIds);
 
-    public record CreatePayOSPaymentResponse(int PaymentId, string CheckoutUrl, string QrCode);
+    public record CreatePayOSPaymentResponse(int PaymentId, string InvoiceNumber, string CheckoutUrl, string QrCode);
 
     public class CreatePayOSPaymentEndpoint : ICarterModule
     {
@@ -29,7 +29,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
 
                 var result = await sender.Send(command);
 
-                var response = new CreatePayOSPaymentResponse(result.PaymentId, result.CheckoutUrl, result.QrCode);
+                var response = new CreatePayOSPaymentResponse(result.PaymentId, result.InvoiceNumber, result.CheckoutUrl, result.QrCode);
 
                 return Results.Ok(response);
             })
