@@ -69,10 +69,10 @@ namespace VaccinationReception.Application.Services
             // Header styling
             for (int col = 1; col <= 4; col++)
             {
+                worksheet.Cells[row, col].Style.Font.Bold = true;
+                worksheet.Cells[row, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 worksheet.Cells[row, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                 worksheet.Cells[row, col].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-                worksheet.Cells[row, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[row, col].Style.Font.Bold = true;
             }
 
             row++;
