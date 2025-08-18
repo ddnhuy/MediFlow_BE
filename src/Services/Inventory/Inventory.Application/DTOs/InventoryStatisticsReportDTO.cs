@@ -9,7 +9,7 @@
 
         public InventorySummaryDTO Summary { get; set; } = new();
         public List<VaccineStockDTO> VaccineStocks { get; set; } = new();
-        public List<BatchDetailDTO> BatchDetails { get; set; } = new();
+        public List<InventoryMedicineBatchDetailDTO> BatchDetails { get; set; } = new();
         public List<InventoryTransactionDTO> Transactions { get; set; } = new();
     }
 
@@ -38,7 +38,7 @@
         public string Status { get; set; } = string.Empty;
     }
 
-    public class BatchDetailDTO
+    public class InventoryMedicineBatchDetailDTO
     {
         public int Stt { get; set; }
         public string VaccineCode { get; set; } = string.Empty;

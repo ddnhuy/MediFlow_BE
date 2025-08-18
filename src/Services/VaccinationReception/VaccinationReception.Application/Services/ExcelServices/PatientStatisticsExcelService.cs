@@ -1,5 +1,4 @@
-﻿// src/Services/VaccinationReception/VaccinationReception.Application/Services/PatientStatisticsExcelService.cs
-using OfficeOpenXml;
+﻿using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Drawing;
 using VaccinationReception.Application.DTOs.Reports;
@@ -32,9 +31,9 @@ namespace VaccinationReception.Application.Services
             // Header
             worksheet.Cells[1, 1, 1, 6].Merge = true;
             worksheet.Cells[1, 1].Value = "BÁO CÁO THỐNG KÊ BỆNH NHÂN";
+            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             worksheet.Cells[1, 1].Style.Font.Size = 16;
             worksheet.Cells[1, 1].Style.Font.Bold = true;
-            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
             worksheet.Cells[2, 1, 2, 6].Merge = true;
             worksheet.Cells[2, 1].Value = $"Từ ngày: {reportData.FromDate:dd/MM/yyyy} - Đến ngày: {reportData.ToDate:dd/MM/yyyy}";
@@ -62,18 +61,18 @@ namespace VaccinationReception.Application.Services
 
             row++;
             // Age group summary table
-            worksheet.Cells[row, 1].Value = "Nhóm tuổi";
-            worksheet.Cells[row, 2].Value = "Độ tuổi";
-            worksheet.Cells[row, 3].Value = "Số lượng";
             worksheet.Cells[row, 4].Value = "Tỷ lệ (%)";
+            worksheet.Cells[row, 2].Value = "Độ tuổi";
+            worksheet.Cells[row, 1].Value = "Nhóm tuổi";
+            worksheet.Cells[row, 3].Value = "Số lượng";
 
             // Header styling
             for (int col = 1; col <= 4; col++)
             {
-                worksheet.Cells[row, col].Style.Font.Bold = true;
-                worksheet.Cells[row, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[row, col].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
                 worksheet.Cells[row, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[row, col].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
+                worksheet.Cells[row, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                worksheet.Cells[row, col].Style.Font.Bold = true;
             }
 
             row++;

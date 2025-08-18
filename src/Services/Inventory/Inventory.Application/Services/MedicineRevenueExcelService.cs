@@ -32,8 +32,8 @@ namespace Inventory.Application.Services
             // Header
             worksheet.Cells[1, 1, 1, 9].Merge = true;
             worksheet.Cells[1, 1].Value = "BÁO CÁO DOANH SỐ SỬ DỤNG THUỐC";
-            worksheet.Cells[1, 1].Style.Font.Size = 16;
             worksheet.Cells[1, 1].Style.Font.Bold = true;
+            worksheet.Cells[1, 1].Style.Font.Size = 16;
             worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
             worksheet.Cells[2, 1, 2, 9].Merge = true;

@@ -111,7 +111,7 @@ namespace Inventory.Application.Reports
 
             // 2. Batch Details (all individual batches)
             var batchDetails = inventoryData
-                .Select((i, index) => new Inventory.Application.DTOs.BatchDetailDTO
+                .Select((i, index) => new Inventory.Application.DTOs.InventoryMedicineBatchDetailDTO
                 {
                     Stt = index + 1,
                     VaccineCode = i.VaccineCode,

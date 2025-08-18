@@ -1,5 +1,4 @@
-﻿// src/Services/VaccinationReception/VaccinationReception.Application/Services/HospitalRevenueExcelService.cs
-using OfficeOpenXml;
+﻿using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Drawing;
 using VaccinationReception.Application.DTOs.Reports;
@@ -28,18 +27,18 @@ namespace VaccinationReception.Application.Services
 
             // Header
             worksheet.Cells[1, 1, 1, 6].Merge = true;
+            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             worksheet.Cells[1, 1].Value = "BÁO CÁO DOANH THU BỆNH VIỆN";
             worksheet.Cells[1, 1].Style.Font.Size = 16;
             worksheet.Cells[1, 1].Style.Font.Bold = true;
-            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
             worksheet.Cells[2, 1, 2, 6].Merge = true;
-            worksheet.Cells[2, 1].Value = $"Từ ngày: {reportData.FromDate:dd/MM/yyyy} - Đến ngày: {reportData.ToDate:dd/MM/yyyy}";
             worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            worksheet.Cells[2, 1].Value = $"Từ ngày: {reportData.FromDate:dd/MM/yyyy} - Đến ngày: {reportData.ToDate:dd/MM/yyyy}";
 
             worksheet.Cells[3, 1, 3, 6].Merge = true;
-            worksheet.Cells[3, 1].Value = $"Ngày xuất: {reportData.GeneratedAt:dd/MM/yyyy HH:mm:ss} - Người xuất: {reportData.GeneratedBy}";
             worksheet.Cells[3, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            worksheet.Cells[3, 1].Value = $"Ngày xuất: {reportData.GeneratedAt:dd/MM/yyyy HH:mm:ss} - Người xuất: {reportData.GeneratedBy}";
 
             // Summary statistics
             int row = 5;
@@ -50,9 +49,9 @@ namespace VaccinationReception.Application.Services
             row += 2;
 
             // Revenue summary table
-            worksheet.Cells[row, 1].Value = "Loại doanh thu";
-            worksheet.Cells[row, 2].Value = "Số lượng";
             worksheet.Cells[row, 3].Value = "Doanh thu (VNĐ)";
+            worksheet.Cells[row, 2].Value = "Số lượng";
+            worksheet.Cells[row, 1].Value = "Loại doanh thu";
 
             // Header styling
             for (int col = 1; col <= 3; col++)
@@ -80,9 +79,9 @@ namespace VaccinationReception.Application.Services
 
             // Test fee revenue
             worksheet.Cells[row, 1].Value = "Tiền xét nghiệm";
-            worksheet.Cells[row, 2].Value = reportData.Summary.TotalTestCount;
             worksheet.Cells[row, 3].Value = reportData.Summary.TotalTestFeeRevenue;
             worksheet.Cells[row, 3].Style.Numberformat.Format = "#,##0 ₫";
+            worksheet.Cells[row, 2].Value = reportData.Summary.TotalTestCount;
 
             for (int col = 1; col <= 3; col++)
             {

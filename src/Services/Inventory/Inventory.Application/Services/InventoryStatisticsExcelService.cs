@@ -1,5 +1,4 @@
-﻿// src/Services/Inventory/Inventory.Application/Services/InventoryStatisticsExcelService.cs
-using OfficeOpenXml;
+﻿using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Drawing;
 
@@ -34,8 +33,8 @@ namespace Inventory.Application.Services
             worksheet.Cells[1, 1, 1, 6].Merge = true;
             worksheet.Cells[1, 1].Value = "BÁO CÁO THỐNG KÊ KHO VACCINE";
             worksheet.Cells[1, 1].Style.Font.Size = 16;
-            worksheet.Cells[1, 1].Style.Font.Bold = true;
             worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            worksheet.Cells[1, 1].Style.Font.Bold = true;
 
             worksheet.Cells[2, 1, 2, 6].Merge = true;
             worksheet.Cells[2, 1].Value = $"Từ ngày: {reportData.FromDate:dd/MM/yyyy} - Đến ngày: {reportData.ToDate:dd/MM/yyyy}";
@@ -48,8 +47,8 @@ namespace Inventory.Application.Services
             // Summary statistics
             int row = 5;
             worksheet.Cells[row, 1].Value = "THỐNG KÊ TỔNG QUAN";
-            worksheet.Cells[row, 1].Style.Font.Bold = true;
             worksheet.Cells[row, 1].Style.Font.Size = 14;
+            worksheet.Cells[row, 1].Style.Font.Bold = true;
 
             row += 2;
             worksheet.Cells[row, 1].Value = "Tổng số loại vaccine:";
@@ -113,10 +112,10 @@ namespace Inventory.Application.Services
             for (int i = 0; i < headers.Length; i++)
             {
                 worksheet.Cells[headerRow, i + 1].Value = headers[i];
-                worksheet.Cells[headerRow, i + 1].Style.Font.Bold = true;
                 worksheet.Cells[headerRow, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[headerRow, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
+                worksheet.Cells[headerRow, i + 1].Style.Font.Bold = true;
                 worksheet.Cells[headerRow, i + 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                worksheet.Cells[headerRow, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
             }
 
             // Data rows

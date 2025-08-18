@@ -1,4 +1,6 @@
-﻿public class MedicineRevenueReportDTO
+﻿namespace Inventory.Application.DTOs;
+
+public class MedicineRevenueReportDTO
 {
     public DateOnly FromDate { get; set; }
     public DateOnly ToDate { get; set; }
@@ -9,7 +11,7 @@
     public List<MedicineRevenueDetailDTO> MedicineDetails { get; set; } = new();
     public List<CategoryStatisticDTO> CategoryStatistics { get; set; } = new();
     public List<DailyStatisticDTO> DailyStatistics { get; set; } = new();
-    public List<BatchDetailDTO> BatchDetails { get; set; } = new();
+    public List<Inventory.Application.DTOs.BatchDetailDTO> BatchDetails { get; set; } = new();
 }
 
 public class ReportSummaryDTO
