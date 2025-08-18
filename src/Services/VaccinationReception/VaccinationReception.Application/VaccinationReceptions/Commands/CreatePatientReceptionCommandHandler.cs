@@ -120,7 +120,8 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     var paidVaccinationIds = await _context.ReceptionVaccinations
                         .Where(rv => rv.ReceptionId == previousReception.Id
                             && rv.PaymentStatus == PaymentStatusForItem.Paid
-                            && rv.AppointmentDate >= reception.ReceptionDate)
+                            && rv.AppointmentDate >= reception.ReceptionDate
+                            && !rv.HasIssue)
                         .Select(rv => rv.Id)
                         .ToListAsync(cancellationToken);
 

@@ -13,7 +13,9 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionContractEndpoin
     public record CreateFinalInvoicePaymentContractResponse(
         int ContractId,
         PaymentContractDTO PaymentContract,
-        List<ContractServiceDetailDTO> Details
+        List<ContractServiceDetailDTO> Details,
+        string? CheckoutUrl,
+        string? QrCode
     );
     public class CreateFinalInvoicePaymentContractEndpoint : ICarterModule
     {
@@ -35,7 +37,9 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionContractEndpoin
                     var response = new CreateFinalInvoicePaymentContractResponse(
                         result.ContractId,
                         result.PaymentContract,
-                        result.Details
+                        result.Details,
+                        result.CheckoutUrl,
+                        result.QrCode
                     );
 
                     return Results.Created($"/contracts/{contractId}/final-invoice-payment/{result.PaymentContract.Id}", response);
