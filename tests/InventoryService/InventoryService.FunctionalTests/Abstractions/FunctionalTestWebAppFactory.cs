@@ -1,9 +1,11 @@
 ﻿using BuildingBlocks.Messaging.Contracts.Email;
+using HumanResource.Grpc;
 using Inventory.Infrastructure.Data;
 using InventoryService.FunctionalTests.Helpers;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using NSubstitute;
+using System.Security.Claims;
 using System.Text;
 using Testcontainers.PostgreSql;
 using Xunit;
@@ -27,6 +30,9 @@ namespace InventoryService.FunctionalTests.Abstractions
             .WithCleanUp(true)
             .WithAutoRemove(true)
             .Build();
+
+        public ApplicationUserProtoService.ApplicationUserProtoServiceClient ApplicationUserProtoMock { get; private set; } =
+    Substitute.For<ApplicationUserProtoService.ApplicationUserProtoServiceClient>();
 
         private string? _connectionString;
 
@@ -55,6 +61,25 @@ namespace InventoryService.FunctionalTests.Abstractions
                 mockPublishEndpoint.Publish(Arg.Any<SendEmailMessage>(), Arg.Any<CancellationToken>()).Returns(Task.CompletedTask);
                 services.AddSingleton(mockPublishEndpoint);
 
+                // Remove and replace ApplicationUserProtoService client
+                services.RemoveAll<ApplicationUserProtoService.ApplicationUserProtoServiceClient>();
+                services.AddSingleton(ApplicationUserProtoMock);
+
+                // Mock HttpContextAccessor if needed
+                services.AddSingleton(_ => {
+                    var mockHttpContext = Substitute.For<IHttpContextAccessor>();
+                    var context = new DefaultHttpContext();
+
+                    // Add test claims
+                    var identity = new ClaimsIdentity(new[] {
+                        new Claim(ClaimTypes.NameIdentifier, "1"),
+                        new Claim(ClaimTypes.Role, "Doctor")
+                    });
+                    context.User = new ClaimsPrincipal(identity);
+
+                    mockHttpContext.HttpContext.Returns(context);
+                    return mockHttpContext;
+                });
             });
         }
 

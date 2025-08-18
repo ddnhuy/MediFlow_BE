@@ -8,6 +8,11 @@ namespace Inventory.API.Endpoints
         {
             app.MapGet("/medicine-revenue", async (ISender mediator, [AsParameters] GetMedicineRevenueReportQuery query) =>
             {
+                if ((query.FromDate.HasValue && query.ToDate.HasValue) && (query.FromDate > query.ToDate))
+                {
+                    throw new BadRequestException(BuildingBlocks.Strings.ExceptionKey.FROMDATE_CANNOT_BE_GREATER_THAN_TODATE);
+                }
+
                 var result = await mediator.Send(query);
                 return Results.Ok(result);
             }).RequireAuthorization()

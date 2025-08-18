@@ -1,4 +1,6 @@
 ﻿using HumanResource.Grpc;
+using Inventory.Application.Services;
+using OfficeOpenXml;
 
 namespace Inventory.Application
 {
@@ -14,6 +16,9 @@ namespace Inventory.Application
             });
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            ExcelPackage.License.SetNonCommercialPersonal("Personal Use");
+            services.AddScoped<IInventoryStatisticsExcelService, InventoryStatisticsExcelService>();
+            services.AddScoped<IMedicineRevenueExcelService, MedicineRevenueExcelService>();
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddFeatureManagement();
 
