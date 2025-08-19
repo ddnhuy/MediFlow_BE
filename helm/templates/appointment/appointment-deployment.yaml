@@ -36,10 +36,6 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-            valueFrom:
-              secretKeyRef:
-                name: aws-secret
-                key: SECRET_KEY
           envFrom:
             - configMapRef:
                 name: appointment-config
