@@ -13,6 +13,7 @@ using VaccinationReception.Application.Abstractions.HospitalServiceMessaging;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Application.DTOs.ReceptionVaccinationContractDTOs;
 using VaccinationReception.Application.Helpers;
+using VaccinationReception.Application.Services.PayOSServices;
 using VaccinationReception.Domain.Enums;
 using VaccinationReception.Domain.Models;
 
@@ -32,18 +33,21 @@ namespace VaccinationReception.Application.ReceptionVaccinationContracts.Handler
         private readonly ILogger<CreateFinalInvoicePaymentContractCommandHandler> _logger;
         private readonly IHospitalService _hospitalService;
         private readonly IInventoryService _inventoryService;
+        private readonly IPayOSService _payOSService;
 
 
         public CreateFinalInvoicePaymentContractCommandHandler(
             IApplicationDbContext context,
             ILogger<CreateFinalInvoicePaymentContractCommandHandler> logger,
             IHospitalService hospitalService,
-            IInventoryService inventoryService)
+            IInventoryService inventoryService,
+            IPayOSService payOSService)
         {
             _context = context;
             _logger = logger;
             _hospitalService = hospitalService;
             _inventoryService = inventoryService;
+            _payOSService = payOSService;
         }
 
         public async Task<CreateFinalInvoicePaymentContractResultDTO> Handle(CreateFinalInvoicePaymentContractCommand request, CancellationToken cancellationToken)
@@ -131,6 +135,30 @@ namespace VaccinationReception.Application.ReceptionVaccinationContracts.Handler
             await _context.PaymentContracts.AddAsync(paymentContract, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
+            string? checkoutUrl = null;
+            string? qrCode = null;
+
+            if (request.PaymentMethod == PaymentMethod.BankTransfer)
+            {
+                try
+                {
+                    var payOSData = await _payOSService.CreatePaymentLinkAsync(
+                        UniqueIntGenerator.GenerateUniqueOrderId(),
+                        (int)finalAmount,
+                        paymentContract.InvoiceNumber,
+                        cancellationToken);
+
+                    checkoutUrl = payOSData.checkoutUrl;
+                    qrCode = payOSData.qrCode;
+
+                    _logger.LogInformation("Created PayOS payment link for PaymentContract Id: {Id}", paymentContract.Id);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to create PayOS payment link for PaymentContract Id: {Id}", paymentContract.Id);
+                }
+            }
+
             var serviceIds = contract.ServiceDetails.Where(x => x.ServiceId.HasValue).Select(x => x.ServiceId!.Value).Distinct().ToList();
             var vaccineIds = contract.ServiceDetails.Where(x => x.VaccineId.HasValue).Select(x => x.VaccineId!.Value).Distinct().ToList();
 
@@ -191,7 +219,9 @@ namespace VaccinationReception.Application.ReceptionVaccinationContracts.Handler
             {
                 ContractId = contract.Id,
                 PaymentContract = paymentContractDto,
-                Details = contractServiceDetailsDto
+                Details = contractServiceDetailsDto,
+                CheckoutUrl = checkoutUrl,
+                QrCode = qrCode
             };
         }
     }

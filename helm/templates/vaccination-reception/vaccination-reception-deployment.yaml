@@ -49,6 +49,31 @@ spec:
               value: "/https/tls.crt"
             - name: ASPNETCORE_Kestrel__Certificates__Default__KeyPath
               value: "/https/tls.key"
+            - name: PayOS__ClientId
+              valueFrom:
+                secretKeyRef:
+                  name: pay-os-secret
+                  key: PAYOS_CLIENT_ID
+            - name: PayOS__ApiKey
+              valueFrom:
+                secretKeyRef:
+                  name: pay-os-secret
+                  key: PAYOS_CLIENT_API_KEY
+            - name: PayOS__ChecksumKey
+              valueFrom:
+                secretKeyRef:
+                  name: pay-os-secret
+                  key: PAYOS_CHECKSUM_KEY
+            - name: PayOS__CancelUrl
+              valueFrom:
+                secretKeyRef:
+                  name: pay-os-secret
+                  key: PAYOS_CANCEL_URL
+            - name: PayOS__ReturnUrl
+              valueFrom:
+                secretKeyRef:
+                  name: pay-os-secret
+                  key: PAYOS_RETURN_URL
           envFrom:
             - configMapRef:
                 name: vaccination-reception-config

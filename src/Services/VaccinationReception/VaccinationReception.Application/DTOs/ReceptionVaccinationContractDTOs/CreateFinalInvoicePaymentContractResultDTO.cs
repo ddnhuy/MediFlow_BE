@@ -11,5 +11,7 @@ namespace VaccinationReception.Application.DTOs.ReceptionVaccinationContractDTOs
         public int ContractId { get; set; }
         public PaymentContractDTO PaymentContract { get; set; }
         public List<ContractServiceDetailDTO> Details { get; set; }
+        public string? CheckoutUrl { get; set; }
+        public string? QrCode { get; set; }
     }
 }

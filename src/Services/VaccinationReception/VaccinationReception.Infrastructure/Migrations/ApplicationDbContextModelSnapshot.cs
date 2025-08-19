@@ -83,6 +83,7 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasComment("Diễn giải nội dung");
 
                     b.Property<DateTime?>("ExpectedDate")
+                        .IsRequired()
                         .HasColumnType("timestamp with time zone")
                         .HasComment("Ngày dự kiến tiêm theo kế hoạch");
 
@@ -138,6 +139,16 @@ namespace VaccinationReception.Infrastructure.Migrations
                         .HasComment("Tên đơn vị trực thuộc công ty");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ContractCode")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Contracts_ContractCode_Active")
+                        .HasFilter("\"IsSuspended\" = false AND \"IsCancelled\" = false");
+
+                    b.HasIndex("ContractNumber")
+                        .IsUnique()
+                        .HasDatabaseName("IX_Contracts_ContractNumber_Active")
+                        .HasFilter("\"IsSuspended\" = false AND \"IsCancelled\" = false");
 
                     b.ToTable("Contracts", "public", t =>
                         {

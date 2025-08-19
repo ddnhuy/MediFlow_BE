@@ -6,7 +6,6 @@ using Inventory.Application;
 using Inventory.Infrastructure;
 using Inventory.Infrastructure.Data.Extensions;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);

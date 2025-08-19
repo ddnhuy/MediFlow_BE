@@ -155,6 +155,11 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
       - ASPNETCORE_Kestrel__Certificates__Default__Path=${CERT_PATH}
       - ASPNETCORE_Kestrel__Certificates__Default__KeyPath=${CERT_KEYPATH}
+      - PayOS__ClientId=${PAYOS_CLIENT_ID}
+      - PayOS__ApiKey=${PAYOS_CLIENT_API_KEY}
+      - PayOS__ChecksumKey=${PAYOS_CHECKSUM_KEY}
+      - PayOS__CancelUrl=${PAYOS_CANCEL_URL}
+      - PayOS__ReturnUrl=${PAYOS_RETURN_URL}
     depends_on:
       - postgres_db
       - customerinfo.grpc

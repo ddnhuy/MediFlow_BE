@@ -135,6 +135,8 @@ namespace CustomerInfo.Grpc.Database.Configurations
                 .HasDatabaseName("IX_Patients_PhoneNumber");
 
             builder.HasIndex(x => x.IdentityCard)
+                .IsUnique()
+                .HasFilter("\"IsSuspended\" = false AND \"IsCancelled\" = false")
                 .HasDatabaseName("IX_Patients_IdentityCard");
 
             // Global Query Filter

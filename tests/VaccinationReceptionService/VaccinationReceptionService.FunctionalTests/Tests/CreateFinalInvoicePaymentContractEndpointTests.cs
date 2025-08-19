@@ -48,7 +48,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             {
                 Id = TestContractId,
                 ContractCode = "C001",
-                ContractNumber = 1,
+                ContractNumber = 12,
                 ContractName = "Test Contract 1",
                 CompanyName = "Test Company",
                 UnitName = "Test Unit",

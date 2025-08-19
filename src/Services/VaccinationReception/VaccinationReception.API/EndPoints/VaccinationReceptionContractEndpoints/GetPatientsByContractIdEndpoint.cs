@@ -1,4 +1,5 @@
 ﻿using VaccinationReception.Application.ReceptionVaccinationContracts.Queries;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.API.EndPoints.VaccinationReceptionContractEndpoints
 {
@@ -10,6 +11,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionContractEndpoin
                 int contractId,
                 [AsParameters] PaginationRequest pagination,
                 string ? searchTerm,
+                ContractPatientVaccinationStatus? status,
                 ISender sender) =>
             {
                 if (contractId <= 0)
@@ -17,7 +19,7 @@ namespace VaccinationReception.API.EndPoints.VaccinationReceptionContractEndpoin
                     return Results.BadRequest("Contract ID must be greater than 0");
                 }
 
-                var query = new GetPatientsByContractIdQuery(contractId, pagination, searchTerm ?? string.Empty);
+                var query = new GetPatientsByContractIdQuery(contractId, pagination, searchTerm ?? string.Empty, status);
 
                 var result = await sender.Send(query);
 

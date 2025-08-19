@@ -132,7 +132,9 @@ namespace CustomerInfo.Grpc.Migrations
                         .HasFilter("\"IsSuspended\" = false AND \"IsCancelled\" = false");
 
                     b.HasIndex("IdentityCard")
-                        .HasDatabaseName("IX_Patients_IdentityCard");
+                        .IsUnique()
+                        .HasDatabaseName("IX_Patients_IdentityCard")
+                        .HasFilter("\"IsSuspended\" = false AND \"IsCancelled\" = false");
 
                     b.HasIndex("Name")
                         .HasDatabaseName("IX_Patients_Name");
