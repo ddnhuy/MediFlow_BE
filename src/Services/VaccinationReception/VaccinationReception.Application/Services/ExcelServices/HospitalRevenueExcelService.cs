@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using BuildingBlocks.Excel;
+using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System.Drawing;
 using VaccinationReception.Application.DTOs.Reports;
@@ -17,65 +18,6 @@ namespace VaccinationReception.Application.Services
 
             return await package.GetAsByteArrayAsync();
         }
-
-        #region Helpers
-        private void ApplyHeaderStyle(ExcelRange cell, Color bgColor)
-        {
-            cell.Style.Font.Bold = true;
-            cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
-            cell.Style.Fill.BackgroundColor.SetColor(bgColor);
-            cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
-            cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-        }
-
-        private void ApplyCellBorder(ExcelRange cell) =>
-            cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
-
-        private void ApplyCurrencyFormat(ExcelRange cell) =>
-            cell.Style.Numberformat.Format = "#,##0 ₫";
-
-        private void CreateHeaderRow(ExcelWorksheet ws, int row, string[] headers, Color bgColor)
-        {
-            for (int i = 0; i < headers.Length; i++)
-            {
-                var cell = ws.Cells[row, i + 1];
-                cell.Value = headers[i];
-                ApplyHeaderStyle(cell, bgColor);
-            }
-        }
-
-        private void CreateDataRow(ExcelWorksheet ws, int row, object[] values, int[] currencyCols = null, int? boldCol = null)
-        {
-            for (int i = 0; i < values.Length; i++)
-            {
-                var cell = ws.Cells[row, i + 1];
-                cell.Value = values[i];
-                ApplyCellBorder(cell);
-
-                if (currencyCols != null && currencyCols.Contains(i + 1))
-                    ApplyCurrencyFormat(cell);
-
-                if (boldCol.HasValue && i + 1 == boldCol.Value)
-                    cell.Style.Font.Bold = true;
-            }
-        }
-
-        private void CreateTotalRow(ExcelWorksheet ws, int row, object[] values, int colCount, int[] currencyCols = null)
-        {
-            for (int i = 0; i < colCount; i++)
-            {
-                var cell = ws.Cells[row, i + 1];
-                cell.Value = values[i];
-                cell.Style.Font.Bold = true;
-                cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                cell.Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
-                ApplyCellBorder(cell);
-
-                if (currencyCols != null && currencyCols.Contains(i + 1))
-                    ApplyCurrencyFormat(cell);
-            }
-        }
-        #endregion
 
         private void CreateSummarySheet(ExcelPackage package, HospitalRevenueReportDTO reportData)
         {
@@ -104,16 +46,16 @@ namespace VaccinationReception.Application.Services
             row += 2;
 
             // Header
-            CreateHeaderRow(ws, row, new[] { "Loại doanh thu", "Số lượng", "Doanh thu (VNĐ)" }, Color.LightGray);
+            ExcelHelper.CreateHeaderRow(ws, row, new[] { "Loại doanh thu", "Số lượng", "Doanh thu (VNĐ)" }, Color.LightGray);
             row++;
 
             // Data rows
-            CreateDataRow(ws, row++, new object[] { "Tiền khám", reportData.Summary.TotalExamCount, reportData.Summary.TotalExamFeeRevenue }, new[] { 3 });
-            CreateDataRow(ws, row++, new object[] { "Tiền xét nghiệm", reportData.Summary.TotalTestCount, reportData.Summary.TotalTestFeeRevenue }, new[] { 3 });
-            CreateDataRow(ws, row++, new object[] { "Số công tiêm", reportData.Summary.TotalInjectionCount, reportData.Summary.TotalInjectionRevenue }, new[] { 3 });
+            ExcelHelper.CreateDataRow(ws, row++, new object[] { "Tiền khám", reportData.Summary.TotalExamCount, reportData.Summary.TotalExamFeeRevenue }, new[] { 3 });
+            ExcelHelper.CreateDataRow(ws, row++, new object[] { "Tiền xét nghiệm", reportData.Summary.TotalTestCount, reportData.Summary.TotalTestFeeRevenue }, new[] { 3 });
+            ExcelHelper.CreateDataRow(ws, row++, new object[] { "Số công tiêm", reportData.Summary.TotalInjectionCount, reportData.Summary.TotalInjectionRevenue }, new[] { 3 });
 
             // Total row
-            CreateTotalRow(ws, row, new object[]
+            ExcelHelper.CreateTotalRow(ws, row, new object[]
             {
                 "TỔNG CỘNG",
                 reportData.Summary.TotalExamCount + reportData.Summary.TotalTestCount + reportData.Summary.TotalInjectionCount,
@@ -126,7 +68,7 @@ namespace VaccinationReception.Application.Services
             ws.Cells[row, 1].Value = "Doanh thu trung bình/ngày:";
             ws.Cells[row, 1].Style.Font.Bold = true;
             ws.Cells[row, 2].Value = reportData.Summary.AverageDailyRevenue;
-            ApplyCurrencyFormat(ws.Cells[row, 2]);
+            ExcelHelper.ApplyCurrencyFormat(ws.Cells[row, 2]);
 
             ws.Cells[ws.Dimension.Address].AutoFitColumns();
         }
@@ -151,13 +93,13 @@ namespace VaccinationReception.Application.Services
                 "SL Công tiêm", "Tiền tiêm (VNĐ)",
                 "Tổng doanh thu (VNĐ)"
             };
-            CreateHeaderRow(ws, headerRow, headers, Color.LightGray);
+            ExcelHelper.CreateHeaderRow(ws, headerRow, headers, Color.LightGray);
 
             // Data
             int dataRow = headerRow + 1;
             foreach (var d in reportData.DailyRevenues.OrderBy(x => x.Date))
             {
-                CreateDataRow(ws, dataRow++, new object[]
+                ExcelHelper.CreateDataRow(ws, dataRow++, new object[]
                 {
                     d.Date.ToString("dd/MM/yyyy"),
                     d.ExamCount, d.ExamFeeRevenue,
@@ -170,7 +112,7 @@ namespace VaccinationReception.Application.Services
             // Total row
             if (reportData.DailyRevenues.Any())
             {
-                CreateTotalRow(ws, dataRow, new object[]
+                ExcelHelper.CreateTotalRow(ws, dataRow, new object[]
                 {
                     "TỔNG CỘNG",
                     reportData.Summary.TotalExamCount, reportData.Summary.TotalExamFeeRevenue,

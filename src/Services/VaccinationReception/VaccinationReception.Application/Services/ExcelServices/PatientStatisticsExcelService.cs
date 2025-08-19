@@ -118,8 +118,8 @@ namespace VaccinationReception.Application.Services
             // Header
             worksheet.Cells[1, 1, 1, 4].Merge = true;
             worksheet.Cells[1, 1].Value = "THỐNG KÊ BỆNH NHÂN THEO NHÓM TUỔI";
-            worksheet.Cells[1, 1].Style.Font.Size = 14;
             worksheet.Cells[1, 1].Style.Font.Bold = true;
+            worksheet.Cells[1, 1].Style.Font.Size = 14;
             worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
             int headerRow = 3;
@@ -149,9 +149,9 @@ namespace VaccinationReception.Application.Services
             // Header
             worksheet.Cells[1, 1, 1, 4].Merge = true;
             worksheet.Cells[1, 1].Value = "THỐNG KÊ BỆNH NHÂN THEO ĐỊA PHƯƠNG";
+            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
             worksheet.Cells[1, 1].Style.Font.Size = 14;
             worksheet.Cells[1, 1].Style.Font.Bold = true;
-            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
             int headerRow = 3;
             string[] headers = { "STT", "Tỉnh/Thành phố", "Số lượng", "Tỷ lệ (%)" };
