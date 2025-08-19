@@ -32,7 +32,7 @@ data:
         "RejectionPath": "/pharmacy/expired-medicine/{0}/reject/callback?token={1}"
       },
       "GrpcSettings": {
-        "CustomerInfoUrl": "https://customerinfo.grpc:8081",
-        "HumanResourceUrl": "https://humanresource.grpc:8081"
-      },
+        "CustomerInfoUrl": "http://customer-info-grpc:80",
+        "HumanResourceUrl": "http://human-resource-grpc:80"
+      }
     }
