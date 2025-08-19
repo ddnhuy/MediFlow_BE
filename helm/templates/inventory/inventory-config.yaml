@@ -30,5 +30,9 @@ data:
         "BaseUrl": "https://mediflow.health.vn",
         "ApprovalPath": "/pharmacy/expired-medicine/{0}/approval/callback?token={1}",
         "RejectionPath": "/pharmacy/expired-medicine/{0}/reject/callback?token={1}"
+      },
+      "GrpcSettings": {
+        "CustomerInfoUrl": "http://customer-info-grpc:80",
+        "HumanResourceUrl": "http://human-resource-grpc:80"
       }
     }
