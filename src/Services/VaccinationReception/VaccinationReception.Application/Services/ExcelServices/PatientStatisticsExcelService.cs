@@ -122,55 +122,22 @@ namespace VaccinationReception.Application.Services
             worksheet.Cells[1, 1].Style.Font.Bold = true;
             worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-            // Column headers
             int headerRow = 3;
             string[] headers = { "Nhóm tuổi", "Độ tuổi", "Số lượng", "Tỷ lệ (%)" };
+            CreateHeaderRow(worksheet, headerRow, headers);
 
-            for (int i = 0; i < headers.Length; i++)
-            {
-                worksheet.Cells[headerRow, i + 1].Value = headers[i];
-                worksheet.Cells[headerRow, i + 1].Style.Font.Bold = true;
-                worksheet.Cells[headerRow, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[headerRow, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-                worksheet.Cells[headerRow, i + 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                worksheet.Cells[headerRow, i + 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            }
-
-            // Data rows
             int dataRow = headerRow + 1;
             foreach (var ageGroup in reportData.AgeGroupStatistics)
             {
-                worksheet.Cells[dataRow, 1].Value = ageGroup.AgeGroup;
-                worksheet.Cells[dataRow, 2].Value = ageGroup.AgeRange;
-                worksheet.Cells[dataRow, 3].Value = ageGroup.PatientCount;
-                worksheet.Cells[dataRow, 4].Value = ageGroup.Percentage;
+                CreateDataRow(worksheet, dataRow, new object[] {
+                    ageGroup.AgeGroup, ageGroup.AgeRange, ageGroup.PatientCount, ageGroup.Percentage
+                }, headers.Length);
 
-                // Format percentage
                 worksheet.Cells[dataRow, 4].Style.Numberformat.Format = "0.0";
-
-                // Borders
-                for (int col = 1; col <= headers.Length; col++)
-                {
-                    worksheet.Cells[dataRow, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                }
-
                 dataRow++;
             }
 
-            // Total row
-            worksheet.Cells[dataRow, 1].Value = "TỔNG CỘNG";
-            worksheet.Cells[dataRow, 2].Value = "";
-            worksheet.Cells[dataRow, 3].Value = reportData.Summary.TotalPatients;
-            worksheet.Cells[dataRow, 4].Value = 100.0;
-            worksheet.Cells[dataRow, 4].Style.Numberformat.Format = "0.0";
-
-            for (int col = 1; col <= headers.Length; col++)
-            {
-                worksheet.Cells[dataRow, col].Style.Font.Bold = true;
-                worksheet.Cells[dataRow, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[dataRow, col].Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
-                worksheet.Cells[dataRow, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-            }
+            CreateTotalRow(worksheet, dataRow, headers.Length, new object[] { "TỔNG CỘNG", "", reportData.Summary.TotalPatients, 100.0 });
 
             worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
         }
@@ -186,60 +153,64 @@ namespace VaccinationReception.Application.Services
             worksheet.Cells[1, 1].Style.Font.Bold = true;
             worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-            // Column headers
             int headerRow = 3;
             string[] headers = { "STT", "Tỉnh/Thành phố", "Số lượng", "Tỷ lệ (%)" };
+            CreateHeaderRow(worksheet, headerRow, headers);
 
-            for (int i = 0; i < headers.Length; i++)
-            {
-                worksheet.Cells[headerRow, i + 1].Value = headers[i];
-                worksheet.Cells[headerRow, i + 1].Style.Font.Bold = true;
-                worksheet.Cells[headerRow, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[headerRow, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-                worksheet.Cells[headerRow, i + 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                worksheet.Cells[headerRow, i + 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            }
-
-            // Data rows
             int dataRow = headerRow + 1;
             foreach (var location in reportData.LocationStatistics)
             {
-                worksheet.Cells[dataRow, 1].Value = location.Stt;
-                worksheet.Cells[dataRow, 2].Value = location.Province;
-                worksheet.Cells[dataRow, 3].Value = location.PatientCount;
-                worksheet.Cells[dataRow, 4].Value = location.Percentage;
+                CreateDataRow(worksheet, dataRow, new object[] {
+                    location.Stt, location.Province, location.PatientCount, location.Percentage
+                }, headers.Length);
 
-                // Format percentage
                 worksheet.Cells[dataRow, 4].Style.Numberformat.Format = "0.0";
-
-                // Borders
-                for (int col = 1; col <= headers.Length; col++)
-                {
-                    worksheet.Cells[dataRow, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                }
-
                 dataRow++;
             }
 
-            // Total row
             if (reportData.LocationStatistics.Any())
             {
-                worksheet.Cells[dataRow, 1].Value = "";
-                worksheet.Cells[dataRow, 2].Value = "TỔNG CỘNG";
-                worksheet.Cells[dataRow, 3].Value = reportData.Summary.TotalPatients;
-                worksheet.Cells[dataRow, 4].Value = 100.0;
-                worksheet.Cells[dataRow, 4].Style.Numberformat.Format = "0.0";
-
-                for (int col = 1; col <= headers.Length; col++)
-                {
-                    worksheet.Cells[dataRow, col].Style.Font.Bold = true;
-                    worksheet.Cells[dataRow, col].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                    worksheet.Cells[dataRow, col].Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
-                    worksheet.Cells[dataRow, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                }
+                CreateTotalRow(worksheet, dataRow, headers.Length, new object[] { "", "TỔNG CỘNG", reportData.Summary.TotalPatients, 100.0 });
             }
 
             worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+        }
+
+        private void CreateHeaderRow(ExcelWorksheet worksheet, int row, string[] headers)
+        {
+            for (int i = 0; i < headers.Length; i++)
+            {
+                var cell = worksheet.Cells[row, i + 1];
+                cell.Value = headers[i];
+                cell.Style.Font.Bold = true;
+                cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                cell.Style.Fill.BackgroundColor.SetColor(Color.LightGray);
+                cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            }
+        }
+
+        private void CreateDataRow(ExcelWorksheet worksheet, int row, object[] values, int colCount)
+        {
+            for (int col = 0; col < colCount; col++)
+            {
+                var cell = worksheet.Cells[row, col + 1];
+                cell.Value = values[col];
+                cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
+            }
+        }
+
+        private void CreateTotalRow(ExcelWorksheet worksheet, int row, int colCount, object[] values)
+        {
+            for (int col = 0; col < colCount; col++)
+            {
+                var cell = worksheet.Cells[row, col + 1];
+                cell.Value = values[col];
+                cell.Style.Font.Bold = true;
+                cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                cell.Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
+                cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
+            }
         }
     }
 }

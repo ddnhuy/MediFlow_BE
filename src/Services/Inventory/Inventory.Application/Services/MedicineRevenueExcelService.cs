@@ -22,41 +22,136 @@ namespace Inventory.Application.Services
             // Batch details sheet
             CreateBatchDetailsSheet(package, reportData);
 
-            return await Task.FromResult(package.GetAsByteArray());
+            return await package.GetAsByteArrayAsync();
         }
+
+        #region Helper Methods
+        private void ApplyHeaderStyle(ExcelRange cell, Color bgColor)
+        {
+            cell.Style.Font.Bold = true;
+            cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+            cell.Style.Fill.BackgroundColor.SetColor(bgColor);
+            cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
+            cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+        }
+
+        private void ApplyCellBorder(ExcelRange cell) =>
+            cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
+
+        private void ApplyCurrencyFormat(ExcelRange cell) =>
+            cell.Style.Numberformat.Format = "#,##0 ₫";
+
+        private void ApplyNumberFormat(ExcelRange cell) =>
+            cell.Style.Numberformat.Format = "#,##0";
+
+        private void ApplyPercentageFormat(ExcelRange cell) =>
+            cell.Style.Numberformat.Format = "0.0%";
+
+        private void CreateHeaderRow(ExcelWorksheet ws, int row, string[] headers, Color bgColor)
+        {
+            for (int i = 0; i < headers.Length; i++)
+            {
+                var cell = ws.Cells[row, i + 1];
+                cell.Value = headers[i];
+                ApplyHeaderStyle(cell, bgColor);
+            }
+        }
+
+        private void CreateDataRow(ExcelWorksheet ws, int row, object[] values, int[] currencyCols = null, int[] numberCols = null, int[] percentageCols = null)
+        {
+            for (int i = 0; i < values.Length; i++)
+            {
+                var cell = ws.Cells[row, i + 1];
+                cell.Value = values[i];
+                ApplyCellBorder(cell);
+
+                if (currencyCols != null && currencyCols.Contains(i + 1))
+                    ApplyCurrencyFormat(cell);
+
+                if (numberCols != null && numberCols.Contains(i + 1))
+                    ApplyNumberFormat(cell);
+
+                if (percentageCols != null && percentageCols.Contains(i + 1))
+                    ApplyPercentageFormat(cell);
+            }
+        }
+
+        private void CreateTotalRow(ExcelWorksheet ws, int row, object[] values, int colCount, int[] currencyCols = null, int[] numberCols = null, int[] percentageCols = null)
+        {
+            for (int i = 0; i < colCount; i++)
+            {
+                var cell = ws.Cells[row, i + 1];
+                cell.Value = values[i];
+                cell.Style.Font.Bold = true;
+                cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                cell.Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
+                ApplyCellBorder(cell);
+
+                if (currencyCols != null && currencyCols.Contains(i + 1))
+                    ApplyCurrencyFormat(cell);
+
+                if (numberCols != null && numberCols.Contains(i + 1))
+                    ApplyNumberFormat(cell);
+
+                if (percentageCols != null && percentageCols.Contains(i + 1))
+                    ApplyPercentageFormat(cell);
+            }
+        }
+
+        private void CreateSectionTitle(ExcelWorksheet ws, int row, int colCount, string title, Color bgColor)
+        {
+            ws.Cells[row, 1, row, colCount].Merge = true;
+            ws.Cells[row, 1].Value = title;
+            ws.Cells[row, 1].Style.Font.Bold = true;
+            ws.Cells[row, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            ws.Cells[row, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+            ws.Cells[row, 1].Style.Fill.BackgroundColor.SetColor(bgColor);
+        }
+
+        private void CreateReportHeader(ExcelWorksheet ws, string title, DateOnly fromDate, DateOnly toDate, DateTime generatedAt, int colCount, string generatedBy = null)
+        {
+            // Main title
+            ws.Cells[1, 1, 1, colCount].Merge = true;
+            ws.Cells[1, 1].Value = title;
+            ws.Cells[1, 1].Style.Font.Bold = true;
+            ws.Cells[1, 1].Style.Font.Size = 16;
+            ws.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+            // Date range
+            ws.Cells[2, 1, 2, colCount].Merge = true;
+            ws.Cells[2, 1].Value = $"Từ ngày: {fromDate:dd/MM/yyyy} - Đến ngày: {toDate:dd/MM/yyyy}";
+            ws.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+
+            // Generated info
+            ws.Cells[3, 1, 3, colCount].Merge = true;
+            if (!string.IsNullOrEmpty(generatedBy))
+            {
+                ws.Cells[3, 1].Value = $"Ngày xuất: {generatedAt:dd/MM/yyyy HH:mm:ss} - Người xuất: {generatedBy}";
+            }
+            else
+            {
+                ws.Cells[3, 1].Value = $"Ngày xuất: {generatedAt:dd/MM/yyyy HH:mm:ss}";
+            }
+            ws.Cells[3, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+        }
+        #endregion
 
         private void CreateMainReportSheet(ExcelPackage package, MedicineRevenueReportDTO reportData)
         {
             var worksheet = package.Workbook.Worksheets.Add("Báo cáo chính");
 
-            // Header
-            worksheet.Cells[1, 1, 1, 9].Merge = true;
-            worksheet.Cells[1, 1].Value = "BÁO CÁO DOANH SỐ SỬ DỤNG THUỐC";
-            worksheet.Cells[1, 1].Style.Font.Bold = true;
-            worksheet.Cells[1, 1].Style.Font.Size = 16;
-            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-            worksheet.Cells[2, 1, 2, 9].Merge = true;
-            worksheet.Cells[2, 1].Value = $"Từ ngày: {reportData.FromDate:dd/MM/yyyy} - Đến ngày: {reportData.ToDate:dd/MM/yyyy}";
-            worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-            worksheet.Cells[3, 1, 3, 9].Merge = true;
-            worksheet.Cells[3, 1].Value = $"Ngày xuất: {reportData.GeneratedAt:dd/MM/yyyy HH:mm:ss}";
-            worksheet.Cells[3, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            // Report header
+            CreateReportHeader(worksheet, "BÁO CÁO DOANH SỐ SỬ DỤNG THUỐC",
+                reportData.FromDate, reportData.ToDate, reportData.GeneratedAt, 9);
 
             // Summary section
             int currentRow = 5;
-            worksheet.Cells[currentRow, 1, currentRow, 9].Merge = true;
-            worksheet.Cells[currentRow, 1].Value = "TỔNG QUAN";
-            worksheet.Cells[currentRow, 1].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            worksheet.Cells[currentRow, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-            worksheet.Cells[currentRow, 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
+            CreateSectionTitle(worksheet, currentRow, 9, "TỔNG QUAN", Color.LightGray);
 
             currentRow++;
             worksheet.Cells[currentRow, 1].Value = "• Tổng doanh thu:";
             worksheet.Cells[currentRow, 2].Value = reportData.Summary.TotalRevenue;
-            worksheet.Cells[currentRow, 2].Style.Numberformat.Format = "#,##0 ₫";
+            ApplyCurrencyFormat(worksheet.Cells[currentRow, 2]);
             worksheet.Cells[currentRow, 5].Value = "• Tổng số loại thuốc:";
             worksheet.Cells[currentRow, 6].Value = reportData.Summary.TotalMedicineTypes;
 
@@ -65,68 +160,51 @@ namespace Inventory.Application.Services
             worksheet.Cells[currentRow, 2].Value = reportData.Summary.TotalQuantityUsed;
             worksheet.Cells[currentRow, 5].Value = "• Đơn giá trung bình:";
             worksheet.Cells[currentRow, 6].Value = reportData.Summary.AverageUnitPrice;
-            worksheet.Cells[currentRow, 6].Style.Numberformat.Format = "#,##0 ₫";
+            ApplyCurrencyFormat(worksheet.Cells[currentRow, 6]);
 
             currentRow++;
             worksheet.Cells[currentRow, 1].Value = "• Lợi nhuận ước tính:";
             worksheet.Cells[currentRow, 2].Value = reportData.Summary.EstimatedProfit;
-            worksheet.Cells[currentRow, 2].Style.Numberformat.Format = "#,##0 ₫";
+            ApplyCurrencyFormat(worksheet.Cells[currentRow, 2]);
 
             // Main data table
             currentRow += 2;
-            worksheet.Cells[currentRow, 1, currentRow, 9].Merge = true;
-            worksheet.Cells[currentRow, 1].Value = "CHI TIẾT THEO THUỐC";
-            worksheet.Cells[currentRow, 1].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            worksheet.Cells[currentRow, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-            worksheet.Cells[currentRow, 1].Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
+            CreateSectionTitle(worksheet, currentRow, 9, "CHI TIẾT THEO THUỐC", Color.LightBlue);
 
             currentRow++;
             // Headers
             string[] headers = { "STT", "Mã thuốc", "Tên thuốc", "Đơn vị", "Phân loại", "SL dùng", "Đơn giá TB", "Doanh thu", "Nhà cung cấp" };
-            for (int i = 0; i < headers.Length; i++)
-            {
-                worksheet.Cells[currentRow, i + 1].Value = headers[i];
-                worksheet.Cells[currentRow, i + 1].Style.Font.Bold = true;
-                worksheet.Cells[currentRow, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[currentRow, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-                worksheet.Cells[currentRow, i + 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-            }
+            CreateHeaderRow(worksheet, currentRow, headers, Color.LightGray);
 
             // Data rows
             currentRow++;
             foreach (var medicine in reportData.MedicineDetails)
             {
-                worksheet.Cells[currentRow, 1].Value = medicine.Stt;
-                worksheet.Cells[currentRow, 2].Value = medicine.MedicineCode;
-                worksheet.Cells[currentRow, 3].Value = medicine.MedicineName;
-                worksheet.Cells[currentRow, 4].Value = medicine.Unit;
-                worksheet.Cells[currentRow, 5].Value = medicine.Classification;
-                worksheet.Cells[currentRow, 6].Value = medicine.QuantityUsed;
-                worksheet.Cells[currentRow, 7].Value = medicine.AverageUnitPrice;
-                worksheet.Cells[currentRow, 7].Style.Numberformat.Format = "#,##0";
-                worksheet.Cells[currentRow, 8].Value = medicine.TotalRevenue;
-                worksheet.Cells[currentRow, 8].Style.Numberformat.Format = "#,##0";
-                worksheet.Cells[currentRow, 9].Value = medicine.SupplierName;
-
-                // Apply borders
-                for (int col = 1; col <= 9; col++)
+                CreateDataRow(worksheet, currentRow, new object[]
                 {
-                    worksheet.Cells[currentRow, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                }
+                    medicine.Stt,
+                    medicine.MedicineCode,
+                    medicine.MedicineName,
+                    medicine.Unit,
+                    medicine.Classification,
+                    medicine.QuantityUsed,
+                    medicine.AverageUnitPrice,
+                    medicine.TotalRevenue,
+                    medicine.SupplierName
+                }, new[] { 7, 8 }, new[] { 6 });
 
                 currentRow++;
             }
 
             // Total row
-            worksheet.Cells[currentRow, 1, currentRow, 5].Merge = true;
-            worksheet.Cells[currentRow, 1].Value = "TỔNG CỘNG:";
-            worksheet.Cells[currentRow, 1].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 6].Value = reportData.Summary.TotalQuantityUsed;
-            worksheet.Cells[currentRow, 6].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 8].Value = reportData.Summary.TotalRevenue;
-            worksheet.Cells[currentRow, 8].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 8].Style.Numberformat.Format = "#,##0";
+            CreateTotalRow(worksheet, currentRow, new object[]
+            {
+                "TỔNG CỘNG:", "", "", "", "",
+                reportData.Summary.TotalQuantityUsed,
+                "",
+                reportData.Summary.TotalRevenue,
+                ""
+            }, 9, new[] { 8 }, new[] { 6 });
 
             // Auto-fit columns
             worksheet.Cells.AutoFitColumns();
@@ -139,49 +217,28 @@ namespace Inventory.Application.Services
         {
             var worksheet = package.Workbook.Worksheets.Add("Phân tích theo loại");
 
-            // Header
-            worksheet.Cells[1, 1, 1, 6].Merge = true;
-            worksheet.Cells[1, 1].Value = "PHÂN TÍCH DOANH SỐ THEO PHÂN LOẠI THUỐC";
-            worksheet.Cells[1, 1].Style.Font.Size = 14;
-            worksheet.Cells[1, 1].Style.Font.Bold = true;
-            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-            worksheet.Cells[2, 1, 2, 6].Merge = true;
-            worksheet.Cells[2, 1].Value = $"Từ ngày: {reportData.FromDate:dd/MM/yyyy} - Đến ngày: {reportData.ToDate:dd/MM/yyyy}";
-            worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            // Report header
+            CreateReportHeader(worksheet, "PHÂN TÍCH DOANH SỐ THEO PHÂN LOẠI THUỐC",
+                reportData.FromDate, reportData.ToDate, reportData.GeneratedAt, 6);
 
             // Column headers
             int currentRow = 4;
             string[] headers = { "Phân loại", "Số lượng", "Doanh thu", "Tỷ lệ %", "Lợi nhuận ước tính", "Tỷ lệ lợi nhuận" };
-            for (int i = 0; i < headers.Length; i++)
-            {
-                worksheet.Cells[currentRow, i + 1].Value = headers[i];
-                worksheet.Cells[currentRow, i + 1].Style.Font.Bold = true;
-                worksheet.Cells[currentRow, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[currentRow, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-                worksheet.Cells[currentRow, i + 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-            }
+            CreateHeaderRow(worksheet, currentRow, headers, Color.LightGray);
 
             // Data rows
             currentRow++;
             foreach (var category in reportData.CategoryStatistics)
             {
-                worksheet.Cells[currentRow, 1].Value = category.Category;
-                worksheet.Cells[currentRow, 2].Value = category.Quantity;
-                worksheet.Cells[currentRow, 3].Value = category.Revenue;
-                worksheet.Cells[currentRow, 3].Style.Numberformat.Format = "#,##0 ₫";
-                worksheet.Cells[currentRow, 4].Value = category.Percentage / 100; // Convert to decimal for percentage format
-                worksheet.Cells[currentRow, 4].Style.Numberformat.Format = "0.0%";
-                worksheet.Cells[currentRow, 5].Value = category.EstimatedProfit;
-                worksheet.Cells[currentRow, 5].Style.Numberformat.Format = "#,##0 ₫";
-                worksheet.Cells[currentRow, 6].Value = category.ProfitMargin / 100; // Convert to decimal for percentage format
-                worksheet.Cells[currentRow, 6].Style.Numberformat.Format = "0.0%";
-
-                // Apply borders
-                for (int col = 1; col <= 6; col++)
+                CreateDataRow(worksheet, currentRow, new object[]
                 {
-                    worksheet.Cells[currentRow, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                }
+                    category.Category,
+                    category.Quantity,
+                    category.Revenue,
+                    category.Percentage / 100,
+                    category.EstimatedProfit,
+                    category.ProfitMargin / 100
+                }, new[] { 3, 5 }, null, new[] { 4, 6 });
 
                 currentRow++;
             }
@@ -191,22 +248,15 @@ namespace Inventory.Application.Services
             var totalQuantity = reportData.CategoryStatistics.Sum(c => c.Quantity);
             var totalProfit = reportData.CategoryStatistics.Sum(c => c.EstimatedProfit);
 
-            worksheet.Cells[currentRow, 1].Value = "TỔNG CỘNG:";
-            worksheet.Cells[currentRow, 1].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 2].Value = totalQuantity;
-            worksheet.Cells[currentRow, 2].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 3].Value = totalRevenue;
-            worksheet.Cells[currentRow, 3].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 3].Style.Numberformat.Format = "#,##0 ₫";
-            worksheet.Cells[currentRow, 4].Value = 1.0; // 100%
-            worksheet.Cells[currentRow, 4].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 4].Style.Numberformat.Format = "0.0%";
-            worksheet.Cells[currentRow, 5].Value = totalProfit;
-            worksheet.Cells[currentRow, 5].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 5].Style.Numberformat.Format = "#,##0 ₫";
-            worksheet.Cells[currentRow, 6].Value = totalRevenue > 0 ? totalProfit / totalRevenue : 0;
-            worksheet.Cells[currentRow, 6].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 6].Style.Numberformat.Format = "0.0%";
+            CreateTotalRow(worksheet, currentRow, new object[]
+            {
+                "TỔNG CỘNG:",
+                totalQuantity,
+                totalRevenue,
+                1.0,
+                totalProfit,
+                totalRevenue > 0 ? totalProfit / totalRevenue : 0
+            }, 6, new[] { 3, 5 }, null, new[] { 4, 6 });
 
             worksheet.Cells.AutoFitColumns();
         }
@@ -215,28 +265,14 @@ namespace Inventory.Application.Services
         {
             var worksheet = package.Workbook.Worksheets.Add("Thống kê theo ngày");
 
-            // Header
-            worksheet.Cells[1, 1, 1, 4].Merge = true;
-            worksheet.Cells[1, 1].Value = "THỐNG KÊ DOANH SỐ THEO NGÀY";
-            worksheet.Cells[1, 1].Style.Font.Size = 14;
-            worksheet.Cells[1, 1].Style.Font.Bold = true;
-            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-            worksheet.Cells[2, 1, 2, 4].Merge = true;
-            worksheet.Cells[2, 1].Value = $"Từ ngày: {reportData.FromDate:dd/MM/yyyy} - Đến ngày: {reportData.ToDate:dd/MM/yyyy}";
-            worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            // Report header
+            CreateReportHeader(worksheet, "THỐNG KÊ DOANH SỐ THEO NGÀY",
+                reportData.FromDate, reportData.ToDate, reportData.GeneratedAt, 4);
 
             // Column headers
             int currentRow = 4;
             string[] headers = { "Ngày", "SL sử dụng", "Doanh thu", "Số loại thuốc" };
-            for (int i = 0; i < headers.Length; i++)
-            {
-                worksheet.Cells[currentRow, i + 1].Value = headers[i];
-                worksheet.Cells[currentRow, i + 1].Style.Font.Bold = true;
-                worksheet.Cells[currentRow, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[currentRow, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-                worksheet.Cells[currentRow, i + 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-            }
+            CreateHeaderRow(worksheet, currentRow, headers, Color.LightGray);
 
             // Data rows
             currentRow++;
@@ -245,45 +281,43 @@ namespace Inventory.Application.Services
 
             foreach (var daily in reportData.DailyStatistics)
             {
-                worksheet.Cells[currentRow, 1].Value = daily.Date;
+                CreateDataRow(worksheet, currentRow, new object[]
+                {
+                    daily.Date,
+                    daily.QuantityUsed,
+                    daily.Revenue,
+                    daily.MedicineTypeCount
+                }, new[] { 3 }, new[] { 2, 4 });
+
                 worksheet.Cells[currentRow, 1].Style.Numberformat.Format = "dd/MM/yyyy";
-                worksheet.Cells[currentRow, 2].Value = daily.QuantityUsed;
-                worksheet.Cells[currentRow, 3].Value = daily.Revenue;
-                worksheet.Cells[currentRow, 3].Style.Numberformat.Format = "#,##0 ₫";
-                worksheet.Cells[currentRow, 4].Value = daily.MedicineTypeCount;
 
                 totalDailyRevenue += daily.Revenue;
                 totalDailyQuantity += daily.QuantityUsed;
-
-                // Apply borders
-                for (int col = 1; col <= 4; col++)
-                {
-                    worksheet.Cells[currentRow, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                }
 
                 currentRow++;
             }
 
             // Total row
-            worksheet.Cells[currentRow, 1].Value = "TỔNG CỘNG:";
-            worksheet.Cells[currentRow, 1].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 2].Value = totalDailyQuantity;
-            worksheet.Cells[currentRow, 2].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 3].Value = totalDailyRevenue;
-            worksheet.Cells[currentRow, 3].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 3].Style.Numberformat.Format = "#,##0 ₫";
+            CreateTotalRow(worksheet, currentRow, new object[]
+            {
+                "TỔNG CỘNG:",
+                totalDailyQuantity,
+                totalDailyRevenue,
+                ""
+            }, 4, new[] { 3 }, new[] { 2 });
 
             // Add average row
             currentRow++;
-            worksheet.Cells[currentRow, 1].Value = "TRUNG BÌNH/NGÀY:";
-            worksheet.Cells[currentRow, 1].Style.Font.Bold = true;
             var avgQuantity = reportData.DailyStatistics.Any() ? totalDailyQuantity / reportData.DailyStatistics.Count : 0;
             var avgRevenue = reportData.DailyStatistics.Any() ? totalDailyRevenue / reportData.DailyStatistics.Count : 0;
+
+            worksheet.Cells[currentRow, 1].Value = "TRUNG BÌNH/NGÀY:";
+            worksheet.Cells[currentRow, 1].Style.Font.Bold = true;
             worksheet.Cells[currentRow, 2].Value = avgQuantity;
             worksheet.Cells[currentRow, 2].Style.Font.Bold = true;
             worksheet.Cells[currentRow, 3].Value = avgRevenue;
             worksheet.Cells[currentRow, 3].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 3].Style.Numberformat.Format = "#,##0 ₫";
+            ApplyCurrencyFormat(worksheet.Cells[currentRow, 3]);
 
             worksheet.Cells.AutoFitColumns();
         }
@@ -292,28 +326,14 @@ namespace Inventory.Application.Services
         {
             var worksheet = package.Workbook.Worksheets.Add("Chi tiết lô thuốc");
 
-            // Header
-            worksheet.Cells[1, 1, 1, 9].Merge = true;
-            worksheet.Cells[1, 1].Value = "CHI TIẾT SỬ DỤNG THEO LÔ THUỐC";
-            worksheet.Cells[1, 1].Style.Font.Size = 14;
-            worksheet.Cells[1, 1].Style.Font.Bold = true;
-            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-
-            worksheet.Cells[2, 1, 2, 9].Merge = true;
-            worksheet.Cells[2, 1].Value = $"Từ ngày: {reportData.FromDate:dd/MM/yyyy} - Đến ngày: {reportData.ToDate:dd/MM/yyyy}";
-            worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            // Report header
+            CreateReportHeader(worksheet, "CHI TIẾT SỬ DỤNG THEO LÔ THUỐC",
+                reportData.FromDate, reportData.ToDate, reportData.GeneratedAt, 9);
 
             // Column headers
             int currentRow = 4;
             string[] headers = { "Mã thuốc", "Tên thuốc", "Số lô", "Hạn sử dụng", "SL sử dụng", "Giá nhập", "Giá bán", "Doanh thu", "Lợi nhuận" };
-            for (int i = 0; i < headers.Length; i++)
-            {
-                worksheet.Cells[currentRow, i + 1].Value = headers[i];
-                worksheet.Cells[currentRow, i + 1].Style.Font.Bold = true;
-                worksheet.Cells[currentRow, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[currentRow, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-                worksheet.Cells[currentRow, i + 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-            }
+            CreateHeaderRow(worksheet, currentRow, headers, Color.LightGray);
 
             // Group by medicine for better organization
             var groupedBatches = reportData.BatchDetails
@@ -324,29 +344,25 @@ namespace Inventory.Application.Services
             foreach (var medicineGroup in groupedBatches)
             {
                 // Medicine group header
-                worksheet.Cells[currentRow, 1, currentRow, 9].Merge = true;
-                worksheet.Cells[currentRow, 1].Value = $"THUỐC: {medicineGroup.Key.MedicineName} ({medicineGroup.Key.MedicineCode})";
-                worksheet.Cells[currentRow, 1].Style.Font.Bold = true;
-                worksheet.Cells[currentRow, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[currentRow, 1].Style.Fill.BackgroundColor.SetColor(Color.LightYellow);
+                CreateSectionTitle(worksheet, currentRow, 9,
+                    $"THUỐC: {medicineGroup.Key.MedicineName} ({medicineGroup.Key.MedicineCode})", Color.LightYellow);
                 currentRow++;
 
                 // Batch details for this medicine
                 foreach (var batch in medicineGroup.OrderBy(b => b.BatchNumber))
                 {
-                    worksheet.Cells[currentRow, 1].Value = batch.MedicineCode;
-                    worksheet.Cells[currentRow, 2].Value = batch.MedicineName;
-                    worksheet.Cells[currentRow, 3].Value = batch.BatchNumber;
-                    worksheet.Cells[currentRow, 4].Value = batch.ExpiryDate.ToString("dd/MM/yyyy");
-                    worksheet.Cells[currentRow, 5].Value = batch.QuantityUsed;
-                    worksheet.Cells[currentRow, 6].Value = batch.ImportPrice;
-                    worksheet.Cells[currentRow, 6].Style.Numberformat.Format = "#,##0 ₫";
-                    worksheet.Cells[currentRow, 7].Value = batch.SellingPrice;
-                    worksheet.Cells[currentRow, 7].Style.Numberformat.Format = "#,##0 ₫";
-                    worksheet.Cells[currentRow, 8].Value = batch.Revenue;
-                    worksheet.Cells[currentRow, 8].Style.Numberformat.Format = "#,##0 ₫";
-                    worksheet.Cells[currentRow, 9].Value = batch.Profit;
-                    worksheet.Cells[currentRow, 9].Style.Numberformat.Format = "#,##0 ₫";
+                    CreateDataRow(worksheet, currentRow, new object[]
+                    {
+                        batch.MedicineCode,
+                        batch.MedicineName,
+                        batch.BatchNumber,
+                        batch.ExpiryDate.ToString("dd/MM/yyyy"),
+                        batch.QuantityUsed,
+                        batch.ImportPrice,
+                        batch.SellingPrice,
+                        batch.Revenue,
+                        batch.Profit
+                    }, new[] { 6, 7, 8, 9 }, new[] { 5 });
 
                     // Color coding for profit
                     if (batch.Profit > 0)
@@ -356,12 +372,6 @@ namespace Inventory.Application.Services
                     else if (batch.Profit < 0)
                     {
                         worksheet.Cells[currentRow, 9].Style.Font.Color.SetColor(Color.Red);
-                    }
-
-                    // Apply borders
-                    for (int col = 1; col <= 9; col++)
-                    {
-                        worksheet.Cells[currentRow, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
                     }
 
                     currentRow++;
@@ -382,29 +392,25 @@ namespace Inventory.Application.Services
                 worksheet.Cells[currentRow, 5].Style.Font.Bold = true;
                 worksheet.Cells[currentRow, 8].Value = groupTotal;
                 worksheet.Cells[currentRow, 8].Style.Font.Bold = true;
-                worksheet.Cells[currentRow, 8].Style.Numberformat.Format = "#,##0 ₫";
+                ApplyCurrencyFormat(worksheet.Cells[currentRow, 8]);
                 worksheet.Cells[currentRow, 9].Value = groupProfit;
                 worksheet.Cells[currentRow, 9].Style.Font.Bold = true;
-                worksheet.Cells[currentRow, 9].Style.Numberformat.Format = "#,##0 ₫";
+                ApplyCurrencyFormat(worksheet.Cells[currentRow, 9]);
 
                 currentRow += 2; // Add space between medicine groups
             }
 
             // Grand total
-            worksheet.Cells[currentRow, 1, currentRow, 4].Merge = true;
-            worksheet.Cells[currentRow, 1].Value = "TỔNG CỘNG TẤT CẢ:";
-            worksheet.Cells[currentRow, 1].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-            worksheet.Cells[currentRow, 1].Style.Fill.BackgroundColor.SetColor(Color.Orange);
+            CreateSectionTitle(worksheet, currentRow, 9, "TỔNG CỘNG TẤT CẢ:", Color.Orange);
 
             worksheet.Cells[currentRow, 5].Value = reportData.BatchDetails.Sum(b => b.QuantityUsed);
             worksheet.Cells[currentRow, 5].Style.Font.Bold = true;
             worksheet.Cells[currentRow, 8].Value = reportData.BatchDetails.Sum(b => b.Revenue);
             worksheet.Cells[currentRow, 8].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 8].Style.Numberformat.Format = "#,##0 ₫";
+            ApplyCurrencyFormat(worksheet.Cells[currentRow, 8]);
             worksheet.Cells[currentRow, 9].Value = reportData.BatchDetails.Sum(b => b.Profit);
             worksheet.Cells[currentRow, 9].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 9].Style.Numberformat.Format = "#,##0 ₫";
+            ApplyCurrencyFormat(worksheet.Cells[currentRow, 9]);
 
             worksheet.Cells.AutoFitColumns();
 

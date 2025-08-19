@@ -10,285 +10,217 @@ namespace Inventory.Application.Services
         {
             using var package = new ExcelPackage();
 
-            // Main statistics sheet
             CreateStatisticsSheet(package, reportData);
-
-            // Vaccine stocks sheet
             CreateVaccineStocksSheet(package, reportData);
-
-            // Batch details sheet
             CreateBatchDetailsSheet(package, reportData);
-
-            // Transactions sheet
             CreateTransactionsSheet(package, reportData);
 
             return await package.GetAsByteArrayAsync();
         }
 
+        #region Helpers
+        private void CreateMergedHeader(ExcelWorksheet sheet, int fromCol, int toCol, string text, int fontSize = 14, bool bold = true)
+        {
+            sheet.Cells[1, fromCol, 1, toCol].Merge = true;
+            sheet.Cells[1, fromCol].Value = text;
+            sheet.Cells[1, fromCol].Style.Font.Size = fontSize;
+            sheet.Cells[1, fromCol].Style.Font.Bold = bold;
+            sheet.Cells[1, fromCol].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+        }
+
+        private void CreateColumnHeaders(ExcelWorksheet sheet, int row, string[] headers)
+        {
+            for (int i = 0; i < headers.Length; i++)
+            {
+                var cell = sheet.Cells[row, i + 1];
+                cell.Value = headers[i];
+                cell.Style.Font.Bold = true;
+                cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                cell.Style.Fill.BackgroundColor.SetColor(Color.LightGray);
+                cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
+            }
+        }
+
+        private void ApplyBorders(ExcelWorksheet sheet, int row, int colCount)
+        {
+            for (int col = 1; col <= colCount; col++)
+            {
+                sheet.Cells[row, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+            }
+        }
+
+        private void AutoFit(ExcelWorksheet sheet)
+        {
+            sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+        }
+        #endregion
+
         private void CreateStatisticsSheet(ExcelPackage package, InventoryStatisticsReportDTO reportData)
         {
-            var worksheet = package.Workbook.Worksheets.Add("Thống kê tổng quan");
+            var sheet = package.Workbook.Worksheets.Add("Thống kê tổng quan");
 
-            // Header
-            worksheet.Cells[1, 1, 1, 6].Merge = true;
-            worksheet.Cells[1, 1].Value = "BÁO CÁO THỐNG KÊ KHO VACCINE";
-            worksheet.Cells[1, 1].Style.Font.Size = 16;
-            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            worksheet.Cells[1, 1].Style.Font.Bold = true;
+            // Title + meta
+            CreateMergedHeader(sheet, 1, 6, "BÁO CÁO THỐNG KÊ KHO VACCINE", 16);
 
-            worksheet.Cells[2, 1, 2, 6].Merge = true;
-            worksheet.Cells[2, 1].Value = $"Từ ngày: {reportData.FromDate:dd/MM/yyyy} - Đến ngày: {reportData.ToDate:dd/MM/yyyy}";
-            worksheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            sheet.Cells[2, 1, 2, 6].Merge = true;
+            sheet.Cells[2, 1].Value = $"Từ ngày: {reportData.FromDate:dd/MM/yyyy} - Đến ngày: {reportData.ToDate:dd/MM/yyyy}";
+            sheet.Cells[2, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-            worksheet.Cells[3, 1, 3, 6].Merge = true;
-            worksheet.Cells[3, 1].Value = $"Ngày xuất: {reportData.GeneratedAt:dd/MM/yyyy HH:mm:ss} - Người xuất: {reportData.GeneratedBy}";
-            worksheet.Cells[3, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            sheet.Cells[3, 1, 3, 6].Merge = true;
+            sheet.Cells[3, 1].Value = $"Ngày xuất: {reportData.GeneratedAt:dd/MM/yyyy HH:mm:ss} - Người xuất: {reportData.GeneratedBy}";
+            sheet.Cells[3, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-            // Summary statistics
+            // Summary
             int row = 5;
-            worksheet.Cells[row, 1].Value = "THỐNG KÊ TỔNG QUAN";
-            worksheet.Cells[row, 1].Style.Font.Size = 14;
-            worksheet.Cells[row, 1].Style.Font.Bold = true;
+            sheet.Cells[row, 1].Value = "THỐNG KÊ TỔNG QUAN";
+            sheet.Cells[row, 1].Style.Font.Size = 14;
+            sheet.Cells[row, 1].Style.Font.Bold = true;
 
-            row += 2;
-            worksheet.Cells[row, 1].Value = "Tổng số loại vaccine:";
-            worksheet.Cells[row, 2].Value = reportData.Summary.TotalVaccineTypes;
-            worksheet.Cells[row, 1].Style.Font.Bold = true;
-
-            row++;
-            worksheet.Cells[row, 1].Value = "Tổng số lượng tồn kho:";
-            worksheet.Cells[row, 2].Value = reportData.Summary.TotalQuantityInStock;
-            worksheet.Cells[row, 2].Style.Numberformat.Format = "#,##0";
-            worksheet.Cells[row, 1].Style.Font.Bold = true;
-
-            row++;
-            worksheet.Cells[row, 1].Value = "Tổng giá trị tồn kho:";
-            worksheet.Cells[row, 2].Value = reportData.Summary.TotalInventoryValue;
-            worksheet.Cells[row, 2].Style.Numberformat.Format = "#,##0 ₫";
-            worksheet.Cells[row, 1].Style.Font.Bold = true;
-
-            row++;
-            worksheet.Cells[row, 1].Value = "Tổng số lô hàng:";
-            worksheet.Cells[row, 2].Value = reportData.Summary.TotalBatches;
-            worksheet.Cells[row, 1].Style.Font.Bold = true;
-
-            row++;
-            worksheet.Cells[row, 1].Value = "Số lô gần hết hạn:";
-            worksheet.Cells[row, 2].Value = reportData.Summary.BatchesNearExpiry;
-            worksheet.Cells[row, 1].Style.Font.Bold = true;
-            if (reportData.Summary.BatchesNearExpiry > 0)
+            void WriteSummary(string label, object value, string? format = null, Color? color = null)
             {
-                worksheet.Cells[row, 2].Style.Font.Color.SetColor(Color.Orange);
+                row++;
+                sheet.Cells[row, 1].Value = label;
+                sheet.Cells[row, 1].Style.Font.Bold = true;
+                sheet.Cells[row, 2].Value = value;
+                if (!string.IsNullOrEmpty(format))
+                    sheet.Cells[row, 2].Style.Numberformat.Format = format;
+                if (color.HasValue)
+                    sheet.Cells[row, 2].Style.Font.Color.SetColor(color.Value);
             }
 
-            row++;
-            worksheet.Cells[row, 1].Value = "Số vaccine tồn kho thấp:";
-            worksheet.Cells[row, 2].Value = reportData.Summary.LowStockVaccines;
-            worksheet.Cells[row, 1].Style.Font.Bold = true;
-            if (reportData.Summary.LowStockVaccines > 0)
-            {
-                worksheet.Cells[row, 2].Style.Font.Color.SetColor(Color.Red);
-            }
+            WriteSummary("Tổng số loại vaccine:", reportData.Summary.TotalVaccineTypes);
+            WriteSummary("Tổng số lượng tồn kho:", reportData.Summary.TotalQuantityInStock, "#,##0");
+            WriteSummary("Tổng giá trị tồn kho:", reportData.Summary.TotalInventoryValue, "#,##0 ₫");
+            WriteSummary("Tổng số lô hàng:", reportData.Summary.TotalBatches);
+            WriteSummary("Số lô gần hết hạn:", reportData.Summary.BatchesNearExpiry,
+                null, reportData.Summary.BatchesNearExpiry > 0 ? Color.Orange : null);
+            WriteSummary("Số vaccine tồn kho thấp:", reportData.Summary.LowStockVaccines,
+                null, reportData.Summary.LowStockVaccines > 0 ? Color.Red : null);
 
-            // Auto fit columns
-            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+            AutoFit(sheet);
         }
 
         private void CreateVaccineStocksSheet(ExcelPackage package, InventoryStatisticsReportDTO reportData)
         {
-            var worksheet = package.Workbook.Worksheets.Add("Tồn kho vaccine");
+            var sheet = package.Workbook.Worksheets.Add("Tồn kho vaccine");
 
-            // Header
-            worksheet.Cells[1, 1, 1, 9].Merge = true;
-            worksheet.Cells[1, 1].Value = "THỐNG KÊ TỒN KHO THEO LOẠI VACCINE";
-            worksheet.Cells[1, 1].Style.Font.Size = 14;
-            worksheet.Cells[1, 1].Style.Font.Bold = true;
-            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            CreateMergedHeader(sheet, 1, 9, "THỐNG KÊ TỒN KHO THEO LOẠI VACCINE");
 
-            // Column headers
             int headerRow = 3;
             string[] headers = { "STT", "Mã vaccine", "Tên vaccine", "Đơn vị", "Phân loại", "Tổng SL", "Giá TB", "Tổng giá trị", "Trạng thái" };
+            CreateColumnHeaders(sheet, headerRow, headers);
 
-            for (int i = 0; i < headers.Length; i++)
+            int row = headerRow + 1;
+            foreach (var v in reportData.VaccineStocks)
             {
-                worksheet.Cells[headerRow, i + 1].Value = headers[i];
-                worksheet.Cells[headerRow, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[headerRow, i + 1].Style.Font.Bold = true;
-                worksheet.Cells[headerRow, i + 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                worksheet.Cells[headerRow, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
+                sheet.Cells[row, 1].Value = v.Stt;
+                sheet.Cells[row, 2].Value = v.VaccineCode;
+                sheet.Cells[row, 3].Value = v.VaccineName;
+                sheet.Cells[row, 4].Value = v.Unit;
+                sheet.Cells[row, 5].Value = v.Classification;
+                sheet.Cells[row, 6].Value = v.TotalQuantity;
+                sheet.Cells[row, 7].Value = v.AverageUnitPrice;
+                sheet.Cells[row, 8].Value = v.TotalValue;
+                sheet.Cells[row, 9].Value = v.Status;
+
+                sheet.Cells[row, 6].Style.Numberformat.Format = "#,##0";
+                sheet.Cells[row, 7].Style.Numberformat.Format = "#,##0 ₫";
+                sheet.Cells[row, 8].Style.Numberformat.Format = "#,##0 ₫";
+
+                if (v.Status.Contains("thấp") || v.Status.Contains("nghiêm trọng"))
+                    sheet.Cells[row, 9].Style.Font.Color.SetColor(Color.Red);
+                else if (v.Status.Contains("hạn"))
+                    sheet.Cells[row, 9].Style.Font.Color.SetColor(Color.Orange);
+
+                ApplyBorders(sheet, row, headers.Length);
+                row++;
             }
 
-            // Data rows
-            int dataRow = headerRow + 1;
-            foreach (var vaccine in reportData.VaccineStocks)
-            {
-                worksheet.Cells[dataRow, 1].Value = vaccine.Stt;
-                worksheet.Cells[dataRow, 2].Value = vaccine.VaccineCode;
-                worksheet.Cells[dataRow, 3].Value = vaccine.VaccineName;
-                worksheet.Cells[dataRow, 4].Value = vaccine.Unit;
-                worksheet.Cells[dataRow, 5].Value = vaccine.Classification;
-                worksheet.Cells[dataRow, 6].Value = vaccine.TotalQuantity;
-                worksheet.Cells[dataRow, 7].Value = vaccine.AverageUnitPrice;
-                worksheet.Cells[dataRow, 8].Value = vaccine.TotalValue;
-                worksheet.Cells[dataRow, 9].Value = vaccine.Status;
-
-                // Format numbers
-                worksheet.Cells[dataRow, 6].Style.Numberformat.Format = "#,##0";
-                worksheet.Cells[dataRow, 7].Style.Numberformat.Format = "#,##0 ₫";
-                worksheet.Cells[dataRow, 8].Style.Numberformat.Format = "#,##0 ₫";
-
-                // Color status
-                if (vaccine.Status.Contains("thấp") || vaccine.Status.Contains("nghiêm trọng"))
-                {
-                    worksheet.Cells[dataRow, 9].Style.Font.Color.SetColor(Color.Red);
-                }
-                else if (vaccine.Status.Contains("hạn"))
-                {
-                    worksheet.Cells[dataRow, 9].Style.Font.Color.SetColor(Color.Orange);
-                }
-
-                // Borders
-                for (int col = 1; col <= headers.Length; col++)
-                {
-                    worksheet.Cells[dataRow, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                }
-
-                dataRow++;
-            }
-
-            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+            AutoFit(sheet);
         }
 
         private void CreateBatchDetailsSheet(ExcelPackage package, InventoryStatisticsReportDTO reportData)
         {
-            var worksheet = package.Workbook.Worksheets.Add("Chi tiết lô hàng");
+            var sheet = package.Workbook.Worksheets.Add("Chi tiết lô hàng");
 
-            // Header
-            worksheet.Cells[1, 1, 1, 10].Merge = true;
-            worksheet.Cells[1, 1].Value = "CHI TIẾT CÁC LÔ HÀNG VACCINE";
-            worksheet.Cells[1, 1].Style.Font.Size = 14;
-            worksheet.Cells[1, 1].Style.Font.Bold = true;
-            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            CreateMergedHeader(sheet, 1, 10, "CHI TIẾT CÁC LÔ HÀNG VACCINE");
 
-            // Column headers
             int headerRow = 3;
             string[] headers = { "STT", "Mã vaccine", "Tên vaccine", "Số lô", "Nhà cung cấp", "Số lượng", "Đơn giá", "Tổng giá trị", "Ngày hết hạn", "Trạng thái" };
+            CreateColumnHeaders(sheet, headerRow, headers);
 
-            for (int i = 0; i < headers.Length; i++)
+            int row = headerRow + 1;
+            foreach (var b in reportData.BatchDetails)
             {
-                worksheet.Cells[headerRow, i + 1].Value = headers[i];
-                worksheet.Cells[headerRow, i + 1].Style.Font.Bold = true;
-                worksheet.Cells[headerRow, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[headerRow, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-                worksheet.Cells[headerRow, i + 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                sheet.Cells[row, 1].Value = b.Stt;
+                sheet.Cells[row, 2].Value = b.VaccineCode;
+                sheet.Cells[row, 3].Value = b.VaccineName;
+                sheet.Cells[row, 4].Value = b.BatchNumber;
+                sheet.Cells[row, 5].Value = b.SupplierName;
+                sheet.Cells[row, 6].Value = b.Quantity;
+                sheet.Cells[row, 7].Value = b.UnitPrice;
+                sheet.Cells[row, 8].Value = b.TotalValue;
+                sheet.Cells[row, 9].Value = b.ExpiryDate.ToString("dd/MM/yyyy");
+                sheet.Cells[row, 10].Value = b.Status;
+
+                sheet.Cells[row, 6].Style.Numberformat.Format = "#,##0";
+                sheet.Cells[row, 7].Style.Numberformat.Format = "#,##0 ₫";
+                sheet.Cells[row, 8].Style.Numberformat.Format = "#,##0 ₫";
+
+                if (b.Status.Contains("Hết hạn"))
+                {
+                    sheet.Cells[row, 10].Style.Font.Color.SetColor(Color.Red);
+                    sheet.Cells[row, 10].Style.Font.Bold = true;
+                }
+                else if (b.Status.Contains("hạn"))
+                {
+                    sheet.Cells[row, 10].Style.Font.Color.SetColor(Color.Orange);
+                }
+
+                ApplyBorders(sheet, row, headers.Length);
+                row++;
             }
 
-            // Data rows
-            int dataRow = headerRow + 1;
-            foreach (var batch in reportData.BatchDetails)
-            {
-                worksheet.Cells[dataRow, 1].Value = batch.Stt;
-                worksheet.Cells[dataRow, 2].Value = batch.VaccineCode;
-                worksheet.Cells[dataRow, 3].Value = batch.VaccineName;
-                worksheet.Cells[dataRow, 4].Value = batch.BatchNumber;
-                worksheet.Cells[dataRow, 5].Value = batch.SupplierName;
-                worksheet.Cells[dataRow, 6].Value = batch.Quantity;
-                worksheet.Cells[dataRow, 7].Value = batch.UnitPrice;
-                worksheet.Cells[dataRow, 8].Value = batch.TotalValue;
-                worksheet.Cells[dataRow, 9].Value = batch.ExpiryDate.ToString("dd/MM/yyyy");
-                worksheet.Cells[dataRow, 10].Value = batch.Status;
-
-                // Format numbers
-                worksheet.Cells[dataRow, 6].Style.Numberformat.Format = "#,##0";
-                worksheet.Cells[dataRow, 7].Style.Numberformat.Format = "#,##0 ₫";
-                worksheet.Cells[dataRow, 8].Style.Numberformat.Format = "#,##0 ₫";
-
-                // Color status
-                if (batch.Status.Contains("Hết hạn"))
-                {
-                    worksheet.Cells[dataRow, 10].Style.Font.Color.SetColor(Color.Red);
-                    worksheet.Cells[dataRow, 10].Style.Font.Bold = true;
-                }
-                else if (batch.Status.Contains("hạn"))
-                {
-                    worksheet.Cells[dataRow, 10].Style.Font.Color.SetColor(Color.Orange);
-                }
-
-                // Borders
-                for (int col = 1; col <= headers.Length; col++)
-                {
-                    worksheet.Cells[dataRow, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                }
-
-                dataRow++;
-            }
-
-            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+            AutoFit(sheet);
         }
 
         private void CreateTransactionsSheet(ExcelPackage package, InventoryStatisticsReportDTO reportData)
         {
-            var worksheet = package.Workbook.Worksheets.Add("Lịch sử giao dịch");
+            var sheet = package.Workbook.Worksheets.Add("Lịch sử giao dịch");
 
-            // Header
-            worksheet.Cells[1, 1, 1, 9].Merge = true;
-            worksheet.Cells[1, 1].Value = "LỊCH SỬ GIAO DỊCH KHO VACCINE";
-            worksheet.Cells[1, 1].Style.Font.Size = 14;
-            worksheet.Cells[1, 1].Style.Font.Bold = true;
-            worksheet.Cells[1, 1].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            CreateMergedHeader(sheet, 1, 9, "LỊCH SỬ GIAO DỊCH KHO VACCINE");
 
-            // Column headers
             int headerRow = 3;
             string[] headers = { "STT", "Ngày GD", "Loại GD", "Mã vaccine", "Tên vaccine", "Số lô", "Số lượng", "Đơn giá", "Tổng tiền" };
+            CreateColumnHeaders(sheet, headerRow, headers);
 
-            for (int i = 0; i < headers.Length; i++)
+            int row = headerRow + 1;
+            foreach (var t in reportData.Transactions)
             {
-                worksheet.Cells[headerRow, i + 1].Value = headers[i];
-                worksheet.Cells[headerRow, i + 1].Style.Font.Bold = true;
-                worksheet.Cells[headerRow, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                worksheet.Cells[headerRow, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-                worksheet.Cells[headerRow, i + 1].Style.Border.BorderAround(ExcelBorderStyle.Thin);
+                sheet.Cells[row, 1].Value = t.Stt;
+                sheet.Cells[row, 2].Value = t.TransactionDate.ToString("dd/MM/yyyy HH:mm");
+                sheet.Cells[row, 3].Value = t.TransactionType;
+                sheet.Cells[row, 4].Value = t.VaccineCode;
+                sheet.Cells[row, 5].Value = t.VaccineName;
+                sheet.Cells[row, 6].Value = t.BatchNumber;
+                sheet.Cells[row, 7].Value = t.Quantity;
+                sheet.Cells[row, 8].Value = t.UnitPrice;
+                sheet.Cells[row, 9].Value = t.TotalValue;
+
+                sheet.Cells[row, 7].Style.Numberformat.Format = "#,##0";
+                sheet.Cells[row, 8].Style.Numberformat.Format = "#,##0 ₫";
+                sheet.Cells[row, 9].Style.Numberformat.Format = "#,##0 ₫";
+
+                if (t.TransactionType == "Nhập kho")
+                    sheet.Cells[row, 3].Style.Font.Color.SetColor(Color.Green);
+                else if (t.TransactionType == "Xuất kho")
+                    sheet.Cells[row, 3].Style.Font.Color.SetColor(Color.Blue);
+
+                ApplyBorders(sheet, row, headers.Length);
+                row++;
             }
 
-            // Data rows
-            int dataRow = headerRow + 1;
-            foreach (var transaction in reportData.Transactions)
-            {
-                worksheet.Cells[dataRow, 1].Value = transaction.Stt;
-                worksheet.Cells[dataRow, 2].Value = transaction.TransactionDate.ToString("dd/MM/yyyy HH:mm");
-                worksheet.Cells[dataRow, 3].Value = transaction.TransactionType;
-                worksheet.Cells[dataRow, 4].Value = transaction.VaccineCode;
-                worksheet.Cells[dataRow, 5].Value = transaction.VaccineName;
-                worksheet.Cells[dataRow, 6].Value = transaction.BatchNumber;
-                worksheet.Cells[dataRow, 7].Value = transaction.Quantity;
-                worksheet.Cells[dataRow, 8].Value = transaction.UnitPrice;
-                worksheet.Cells[dataRow, 9].Value = transaction.TotalValue;
-
-                // Format numbers
-                worksheet.Cells[dataRow, 7].Style.Numberformat.Format = "#,##0";
-                worksheet.Cells[dataRow, 8].Style.Numberformat.Format = "#,##0 ₫";
-                worksheet.Cells[dataRow, 9].Style.Numberformat.Format = "#,##0 ₫";
-
-                // Color transaction type
-                if (transaction.TransactionType == "Nhập kho")
-                {
-                    worksheet.Cells[dataRow, 3].Style.Font.Color.SetColor(Color.Green);
-                }
-                else if (transaction.TransactionType == "Xuất kho")
-                {
-                    worksheet.Cells[dataRow, 3].Style.Font.Color.SetColor(Color.Blue);
-                }
-
-                // Borders
-                for (int col = 1; col <= headers.Length; col++)
-                {
-                    worksheet.Cells[dataRow, col].Style.Border.BorderAround(ExcelBorderStyle.Thin);
-                }
-
-                dataRow++;
-            }
-
-            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+            AutoFit(sheet);
         }
     }
 }
