@@ -16,6 +16,7 @@ using System.Security.Claims;
 using Serilog;
 using Microsoft.Extensions.Hosting;
 using Quartz;
+using VaccinationReception.Application.Services.PatientServices;
 
 namespace HospitalFee.FunctionalTests.Abstractions
 {
@@ -32,6 +33,8 @@ namespace HospitalFee.FunctionalTests.Abstractions
         public IInventoryService InventoryServiceMock { get; private set; } = Substitute.For<IInventoryService>();
 
         public IHospitalService HospitalServiceMock { get; private set; } = Substitute.For<IHospitalService>();
+        public IPatientGrpcClient PatientGrpcClientMock { get; private set; } = Substitute.For<IPatientGrpcClient>();
+
         public ApplicationDbContext? DbContext { get; private set; }
 
         public async Task ResetDatabaseAsync()
@@ -87,6 +90,10 @@ namespace HospitalFee.FunctionalTests.Abstractions
              
                 services.RemoveAll<IHostedService>();
                 services.RemoveAll<VaccinationReception.Application.Jobs.CleanupUnpaidItemsJob>();
+
+
+                services.RemoveAll<IPatientGrpcClient>();
+                services.AddSingleton(PatientGrpcClientMock);
                 // Get DbContext instance
                 var serviceProvider = services.BuildServiceProvider();
                 DbContext = serviceProvider.GetRequiredService<ApplicationDbContext>();
