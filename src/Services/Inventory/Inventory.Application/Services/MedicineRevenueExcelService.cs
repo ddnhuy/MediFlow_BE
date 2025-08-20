@@ -291,18 +291,20 @@ namespace Inventory.Application.Services
             }
 
             // Grand total
-            ExcelHelper.CreateSectionTitle(worksheet, currentRow, 9, "TỔNG CỘNG TẤT CẢ:", Color.Orange);
-
-            worksheet.Cells[currentRow, 5].Value = reportData.BatchDetails.Sum(b => b.QuantityUsed);
-            worksheet.Cells[currentRow, 5].Style.Font.Bold = true;
-            worksheet.Cells[currentRow, 8].Value = reportData.BatchDetails.Sum(b => b.Revenue);
-            worksheet.Cells[currentRow, 8].Style.Font.Bold = true;
-            ExcelHelper.ApplyCurrencyFormat(worksheet.Cells[currentRow, 8]);
-            worksheet.Cells[currentRow, 9].Value = reportData.BatchDetails.Sum(b => b.Profit);
-            worksheet.Cells[currentRow, 9].Style.Font.Bold = true;
-            ExcelHelper.ApplyCurrencyFormat(worksheet.Cells[currentRow, 9]);
+            ExcelHelper.CreateTotalRow(worksheet, currentRow, new object[]
+            {
+                "TỔNG CỘNG TẤT CẢ:", "", "", "",
+                reportData.BatchDetails.Sum(b => b.QuantityUsed),
+                "",
+                "",
+                reportData.BatchDetails.Sum(b => b.Revenue),
+                reportData.BatchDetails.Sum(b => b.Profit)
+            }, 9, new[] { 8, 9 }, new[] { 5 });
 
             worksheet.Cells.AutoFitColumns();
+
+            // Freeze panes at header
+            worksheet.View.FreezePanes(5, 1);
 
             // Freeze panes at header
             worksheet.View.FreezePanes(5, 1);

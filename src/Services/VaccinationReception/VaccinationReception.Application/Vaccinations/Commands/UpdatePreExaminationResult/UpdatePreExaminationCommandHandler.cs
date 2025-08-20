@@ -24,9 +24,19 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdatePreExamin
                 throw new BadRequestException(BuildingBlocks.Strings.ExceptionKey.NOT_FOUND_VACCINATION_RECEPTION_WITH_ID);
             }
 
+            // Check if vaccination has been confirmed (any confirmed vaccination exists for this ReceptionVaccination)
+            var hasConfirmedVaccination = await _context.Vaccinations
+                .AnyAsync(v => v.ReceptionVaccinationId == request.ReceptionVaccinationId && v.IsConfirmed, cancellationToken);
+
+            if (hasConfirmedVaccination)
+            {
+                throw new BadRequestException(BuildingBlocks.Strings.ExceptionKey.CANNOT_UPDATE_PRE_EXAMINATION_RESULT_AFTER_VACCINATION_CONFIRMED);
+            }
+
             receptionVacination.TestResultEntry = request.TestEntryResult;
             receptionVacination.IsPreExaminationTesting = true;
             receptionVacination.VaccinationTestDate = DateTime.UtcNow;
+
 
             // Update the Reception's last updated time
             var currentReception = receptionVacination.SecondaryReception ?? receptionVacination.Reception;
