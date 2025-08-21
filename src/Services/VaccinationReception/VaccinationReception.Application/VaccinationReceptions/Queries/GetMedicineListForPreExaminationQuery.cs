@@ -5,6 +5,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
     public record GetMedicineListForPreExaminationQuery (int ReceptionId): IQuery<GetMedicineListForPreExaminationResult>;
 
     public record PreExaminationMedicineItem(
+        int VaccineId,
         int ReceptionVaccinationId,
         string PatientName,
         string VaccineName,
