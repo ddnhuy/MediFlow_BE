@@ -16,7 +16,11 @@ namespace HumanResource.Grpc.Services
             var query = dbContext.Departments.AsQueryable();
             if (!string.IsNullOrEmpty(request.Keyword))
             {
-                query = query.Where(x => x.Code.Contains(request.Keyword) || x.Name.Contains(request.Keyword));
+                string keyword = request.Keyword.Trim().ToLower();
+                query = query.Where(
+                    x => x.Code.ToLower().Contains(keyword)
+                    || x.Name.ToLower().Contains(keyword)
+                    || x.NameInEnglish.ToLower().Contains(keyword));
             }
 
             result.Count = await query.CountAsync();

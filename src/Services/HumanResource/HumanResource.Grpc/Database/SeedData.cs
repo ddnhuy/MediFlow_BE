@@ -546,9 +546,11 @@
                 (Roles.DOCTOR, DepartmentTypes.CLINIC),
                 (Roles.DOCTOR, DepartmentTypes.VACCINE),
                 (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.NURSE, DepartmentTypes.CLINIC),
                 (Roles.NURSE, DepartmentTypes.VACCINE),
                 (Roles.NURSE, DepartmentTypes.LAB),
+                (Roles.NURSE, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.IMAGING_TECHNICIAN, DepartmentTypes.IMAGING),
                 (Roles.LABORATORY_STAFF, DepartmentTypes.LAB),
                 (Roles.PHARMACY_STAFF, DepartmentTypes.PHARMACY),
@@ -564,9 +566,11 @@
                 (Roles.DOCTOR, DepartmentTypes.CLINIC),
                 (Roles.DOCTOR, DepartmentTypes.VACCINE),
                 (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.NURSE, DepartmentTypes.CLINIC),
                 (Roles.NURSE, DepartmentTypes.VACCINE),
                 (Roles.NURSE, DepartmentTypes.LAB),
+                (Roles.NURSE, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
             },
             ["hospital-service"] = new()
@@ -576,9 +580,11 @@
                 (Roles.DOCTOR, DepartmentTypes.CLINIC),
                 (Roles.DOCTOR, DepartmentTypes.VACCINE),
                 (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.NURSE, DepartmentTypes.CLINIC),
                 (Roles.NURSE, DepartmentTypes.VACCINE),
                 (Roles.NURSE, DepartmentTypes.LAB),
+                (Roles.NURSE, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
             }
         };

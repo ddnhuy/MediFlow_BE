@@ -1,7 +1,6 @@
 ﻿using BuildingBlocks.Messaging.Contracts.Email;
 using BuildingBlocks.Messaging.Enums.BuildingBlocks.Messaging.Enums;
 using MassTransit;
-using MassTransit.Transports;
 
 namespace HumanResource.Grpc.Services
 {
@@ -35,7 +34,11 @@ namespace HumanResource.Grpc.Services
 
             if (!string.IsNullOrEmpty(request.Keyword))
             {
-                query = query.Where(x => x.UserName!.Contains(request.Keyword) || x.Name!.Contains(request.Keyword) || x.Email!.Contains(request.Keyword));
+                string keyword = request.Keyword.Trim().ToLower();
+                query = query.Where(
+                    x => x.UserName!.ToLower().Contains(keyword)
+                    || x.Name!.ToLower().Contains(keyword)
+                    || x.Email!.ToLower().Contains(keyword));
             }
 
             var rolesToExclude = new List<string>();
