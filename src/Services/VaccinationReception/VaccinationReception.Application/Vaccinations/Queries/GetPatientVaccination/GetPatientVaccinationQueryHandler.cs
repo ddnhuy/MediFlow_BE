@@ -83,6 +83,18 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
                         // Get patient information from the gRPC service
                         var patient = await _patientGrpcClient.GetPatientAsync(currentReception.PatientId, cancellationToken);
 
+                        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+                        {
+                            var searchTerm = request.SearchTerm.Trim().ToLowerInvariant();
+                            var patientCode = patient.Code?.ToLowerInvariant() ?? string.Empty;
+                            var patientName = patient.Name?.ToLowerInvariant() ?? string.Empty;
+
+                            if (!patientCode.Contains(searchTerm) && !patientName.Contains(searchTerm))
+                            {
+                                continue;
+                            }
+                        }
+
                         var weightKg = receptionVaccination.Reception.ScreeningEvaluationReport?.WeightKg ?? 0.0;
 
                         var genderString = patient.Gender == 0 ? "Nữ" : "Nam";

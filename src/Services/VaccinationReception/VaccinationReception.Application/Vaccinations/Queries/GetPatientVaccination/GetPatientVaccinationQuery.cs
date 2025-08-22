@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccination
 {
-    public record GetPatientVaccinationQuery() : IQuery<GetPatientVaccinationQueryResult>;
+    public record GetPatientVaccinationQuery(string? SearchTerm = null) : IQuery<GetPatientVaccinationQueryResult>;
 
 
     public record GetPatientVaccinationQueryResult(List<PatientVaccinationItem> PatientVaccinationItems);

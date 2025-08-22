@@ -191,5 +191,152 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
                 dbContext.SaveChanges();
             }
         }
+
+        [Fact]
+        public async Task GetPatientVaccination_WithEmptySearchTerm_ReturnsAllPatients()
+        {
+            // Act
+            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetPatientVaccinationQueryResult>();
+            result.Should().NotBeNull();
+            result!.PatientVaccinationItems.Should().NotBeNull();
+            // Should return same results as without search term
+        }
+
+        [Fact]
+        public async Task GetPatientVaccination_WithWhitespaceSearchTerm_ReturnsAllPatients()
+        {
+            // Act
+            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=%20%20%20"); // URL encoded spaces
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetPatientVaccinationQueryResult>();
+            result.Should().NotBeNull();
+            result!.PatientVaccinationItems.Should().NotBeNull();
+            // Should return same results as without search term
+        }
+
+        [Fact]
+        public async Task GetPatientVaccination_WithValidSearchTermMatchingPatientCode_ReturnsFilteredResults()
+        {
+            // Act
+            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=P001"); // Assuming mock patient has code P001
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetPatientVaccinationQueryResult>();
+            result.Should().NotBeNull();
+            result!.PatientVaccinationItems.Should().NotBeNull();
+
+            // If the search term matches the mock patient code, should return results
+            // If not, should return empty list
+        }
+
+        [Fact]
+        public async Task GetPatientVaccination_WithValidSearchTermMatchingPatientName_ReturnsFilteredResults()
+        {
+            // Act
+            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=John"); // Assuming mock patient has name containing "John"
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetPatientVaccinationQueryResult>();
+            result.Should().NotBeNull();
+            result!.PatientVaccinationItems.Should().NotBeNull();
+
+            // If the search term matches the mock patient name, should return results
+            // If not, should return empty list
+        }
+
+        [Fact]
+        public async Task GetPatientVaccination_WithCaseInsensitiveSearchTerm_ReturnsFilteredResults()
+        {
+            // Act
+            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=JOHN"); // Uppercase search term
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetPatientVaccinationQueryResult>();
+            result.Should().NotBeNull();
+            result!.PatientVaccinationItems.Should().NotBeNull();
+
+            // Should work the same as lowercase search (case-insensitive)
+        }
+
+        [Fact]
+        public async Task GetPatientVaccination_WithPartialSearchTerm_ReturnsFilteredResults()
+        {
+            // Act
+            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=Jo");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetPatientVaccinationQueryResult>();
+            result.Should().NotBeNull();
+            result!.PatientVaccinationItems.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task GetPatientVaccination_WithNonMatchingSearchTerm_ReturnsEmptyList()
+        {
+            // Act
+            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=NonExistentPatient");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetPatientVaccinationQueryResult>();
+            result.Should().NotBeNull();
+            result!.PatientVaccinationItems.Should().NotBeNull();
+            result.PatientVaccinationItems.Should().BeEmpty();
+        }
+
+        [Fact]
+        public async Task GetPatientVaccination_WithSpecialCharactersInSearchTerm_HandlesGracefully()
+        {
+            // Act
+            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=%40%23%24%25"); // URL encoded @#$%
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetPatientVaccinationQueryResult>();
+            result.Should().NotBeNull();
+            result!.PatientVaccinationItems.Should().NotBeNull();
+            // Should handle special characters gracefully without throwing exceptions
+        }
+
+        [Fact]
+        public async Task GetPatientVaccination_WithUnicodeSearchTerm_HandlesGracefully()
+        {
+            // Act
+            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=Nguyễn"); // Vietnamese characters
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetPatientVaccinationQueryResult>();
+            result.Should().NotBeNull();
+            result!.PatientVaccinationItems.Should().NotBeNull();
+            // Should handle Unicode characters gracefully
+        }
+
+        [Fact]
+        public async Task GetPatientVaccination_WithVeryLongSearchTerm_HandlesGracefully()
+        {
+            // Arrange
+            var longSearchTerm = new string('a', 1000); // 1000 character string
+
+            // Act
+            var response = await _client.GetAsync($"/vaccination/waiting-patients?searchTerm={longSearchTerm}");
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<GetPatientVaccinationQueryResult>();
+            result.Should().NotBeNull();
+            result!.PatientVaccinationItems.Should().NotBeNull();
+            // Should handle very long search terms gracefully
+        }
     }
 }

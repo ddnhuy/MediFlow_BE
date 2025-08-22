@@ -7,9 +7,9 @@ namespace VaccinationReception.API.EndPoints.VaccinationEndpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/vaccination/waiting-patients", async (ISender sender) =>
+            app.MapGet("/vaccination/waiting-patients", async (ISender sender, string? searchTerm = null) =>
             {
-                var query = new GetPatientVaccinationQuery();
+                var query = new GetPatientVaccinationQuery(searchTerm);
                 var results = await sender.Send(query);
 
                 return Results.Ok(results);
