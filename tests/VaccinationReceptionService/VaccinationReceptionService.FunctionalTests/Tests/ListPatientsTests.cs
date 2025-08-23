@@ -1,4 +1,4 @@
-﻿namespace VaccinationReception.FunctionalTests.Tests;
+﻿namespace VaccinationReceptionService.FunctionalTests.Tests;
 
 public class ListPatientsTests : BaseFunctionalTest
 {

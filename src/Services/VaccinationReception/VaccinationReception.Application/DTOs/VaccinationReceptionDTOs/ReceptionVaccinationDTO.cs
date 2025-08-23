@@ -10,7 +10,7 @@ namespace VaccinationReception.Application.DTOs.VaccinationReceptionDTOs
     public class ReceptionVaccinationDTO
     {
         public int Id { get; set; }
-        public DateTime AppointmentDate { get; set; }
+        public DateTime? AppointmentDate { get; set; }
         public int? VaccineId { get; set; }
         public string? VaccineName { get; set; }
         public string? VaccineTypeName { get; set; }

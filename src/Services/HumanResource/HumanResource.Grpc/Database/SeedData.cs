@@ -515,11 +515,13 @@
                 (Roles.ACCOUNTANT, DepartmentTypes.STORAGE),
                 (Roles.ACCOUNTANT, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.ACCOUNTANT, DepartmentTypes.FINANCE),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.PHARMACY),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.STORAGE),
             },
             ["management"] = new()
             {
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
-                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
             },
             ["vaccination-reception"] = new()
             {
@@ -538,6 +540,8 @@
                 (Roles.ACCOUNTANT, DepartmentTypes.STORAGE),
                 (Roles.ACCOUNTANT, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.ACCOUNTANT, DepartmentTypes.FINANCE),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.PHARMACY),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.STORAGE),
             },
             ["file-storage"] = new()
             {
@@ -557,7 +561,7 @@
                 (Roles.WAREHOUSE_STAFF, DepartmentTypes.STORAGE),
                 (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
                 (Roles.ACCOUNTANT, DepartmentTypes.FINANCE),
-                (Roles.IT_SUPPORT, DepartmentTypes.ADMIN)
+                (Roles.IT_SUPPORT, DepartmentTypes.ADMIN),
             },
             ["appointments"] = new()
             {
@@ -571,7 +575,7 @@
                 (Roles.NURSE, DepartmentTypes.VACCINE),
                 (Roles.NURSE, DepartmentTypes.LAB),
                 (Roles.NURSE, DepartmentTypes.VACCINE_RECEPTION),
-                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
             },
             ["hospital-service"] = new()
             {
@@ -585,7 +589,9 @@
                 (Roles.NURSE, DepartmentTypes.VACCINE),
                 (Roles.NURSE, DepartmentTypes.LAB),
                 (Roles.NURSE, DepartmentTypes.VACCINE_RECEPTION),
-                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.PHARMACY),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.STORAGE),
             }
         };
     }
