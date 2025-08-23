@@ -432,7 +432,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             // Verify no duplicate ServiceRequestDetail was created for the new reception
             var serviceDetailsCount = await dbContext.ServiceRequestDetails
                 .CountAsync(d => d.ServiceId == 100);
-            serviceDetailsCount.Should().Be(3); // Only the pre-existing one
+            serviceDetailsCount.Should().Be(1); // Only the pre-existing one
         }
 
         [Fact]

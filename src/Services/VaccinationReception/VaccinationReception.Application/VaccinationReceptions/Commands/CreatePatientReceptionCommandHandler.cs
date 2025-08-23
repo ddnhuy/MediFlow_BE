@@ -72,6 +72,25 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     patientId = createdPatient.Id;
                 }
 
+                var unpaidServiceDetails = await _context.ServiceRequestDetails
+                    .Where(srd => srd.Reception.PatientId == patientId
+                               && srd.PaymentStatus == PaymentStatusForItem.NotPaid
+                               && !srd.IsCancelled)
+                    .ToListAsync(cancellationToken);
+
+                if (unpaidServiceDetails.Any())
+                {
+                    foreach (var detail in unpaidServiceDetails)
+                    {
+                        detail.IsCancelled = true;
+                    }
+
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    _logger.LogInformation("Cancelled {Count} unpaid service request details for patient {PatientId} before creating new reception",
+                        unpaidServiceDetails.Count, patientId);
+                }
+
                 // Create reception
                 var reception = new Reception
                 {
