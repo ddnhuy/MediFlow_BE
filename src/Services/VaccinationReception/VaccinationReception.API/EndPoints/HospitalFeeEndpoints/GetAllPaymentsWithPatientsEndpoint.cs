@@ -9,7 +9,7 @@ namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/payments", async ([AsParameters] PaginationRequest request, string? searchTerm, DateTime? fromDate, DateTime? toDate, ISender sender) =>
+            app.MapGet("/payments", async ([AsParameters] PaginationRequest request, string? searchTerm, DateOnly? fromDate, DateOnly? toDate, ISender sender) =>
             {
                 PaginationHelper.VerifyPaginationRequest(request.PageIndex, request.PageSize);
 
