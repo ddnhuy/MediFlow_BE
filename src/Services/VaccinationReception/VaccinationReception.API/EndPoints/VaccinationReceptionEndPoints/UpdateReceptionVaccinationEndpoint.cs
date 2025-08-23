@@ -3,7 +3,7 @@ using VaccinationReception.Application.VaccinationReceptions.Commands;
 
 namespace VaccinationReception.API.EndPoints.VaccinationReceptionEndPoints
 {
-    public record UpdateReceptionVaccinationRequest(int Id, int Quantity, bool IsReadyToUse, DateTime? ScheduledDate, DateTime AppointmentDate, string? Note);
+    public record UpdateReceptionVaccinationRequest(int Id, int Quantity, bool IsReadyToUse, DateTime ScheduledDate, DateTime? AppointmentDate, string? Note);
 
     public record UpdateReceptionVaccinationResponse(bool IsSuccess);
 

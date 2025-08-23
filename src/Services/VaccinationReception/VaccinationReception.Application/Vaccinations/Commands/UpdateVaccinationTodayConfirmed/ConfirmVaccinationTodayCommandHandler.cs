@@ -32,11 +32,11 @@ namespace VaccinationReception.Application.Vaccinations.Commands.UpdateVaccinati
             var today = DateTime.UtcNow.Date;
 
             var allTodayReceptionVaccinations = reception.ReceptionVaccinations
-                .Where(rv => rv.ScheduledDate.HasValue && rv.ScheduledDate.Value.Date == today)
+                .Where(rv => rv.ScheduledDate.Date == today)
                 .ToList();
 
             var allTodayIncomingTransferredVaccinations = reception.IncomingTransferredVaccinations
-                .Where(rv => rv.ScheduledDate.HasValue && rv.ScheduledDate.Value.Date == today)
+                .Where(rv => rv.ScheduledDate.Date == today)
                 .ToList();
 
             var allTodayVaccinationsIncludingRejected = allTodayReceptionVaccinations

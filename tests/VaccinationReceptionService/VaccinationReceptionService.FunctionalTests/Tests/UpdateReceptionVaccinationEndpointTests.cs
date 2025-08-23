@@ -115,8 +115,8 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             receptionVaccination.Should().NotBeNull();
             receptionVaccination!.Quantity.Should().Be(request.Quantity);
             receptionVaccination.IsReadyToUse.Should().Be(request.IsReadyToUse);
-            receptionVaccination.ScheduledDate.Should().BeCloseTo(request.ScheduledDate!.Value, TimeSpan.FromSeconds(1));
-            receptionVaccination.AppointmentDate.Should().BeCloseTo(request.AppointmentDate, TimeSpan.FromSeconds(1));
+            receptionVaccination.ScheduledDate.Should().BeCloseTo(request.ScheduledDate, TimeSpan.FromSeconds(1));
+            receptionVaccination.AppointmentDate.Should().BeCloseTo(request.AppointmentDate!.Value, TimeSpan.FromSeconds(1));
             receptionVaccination.Note.Should().Be(request.Note);
         }
 

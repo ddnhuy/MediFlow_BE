@@ -21,13 +21,13 @@ namespace VaccinationReception.Application.VaccinationReceptions.Validators
                 .WithMessage(ExceptionKey.INVALID_QUANTITY.ToString());
 
             RuleFor(x => x.ScheduledDate)
-                .Must(date => date == null || date >= DateTime.Now)
+                .NotEmpty()
+                .WithMessage(ExceptionKey.REQUIRED_SCHEDULED_DATE.ToString())
+                .Must(date =>date >= DateTime.Now)
                 .WithMessage(ExceptionKey.INVALID_SCHEDULED_DATE.ToString());
 
             RuleFor(x => x.AppointmentDate)
-                .NotEmpty()
-                .WithMessage(ExceptionKey.REQUIRED_APPOINTMENT_DATE.ToString())
-                .Must(date => date > DateTime.Now)
+                .Must(date => date == null || date >= DateTime.Now)
                 .WithMessage(ExceptionKey.INVALID_APPOINTMENT_DATE.ToString());
 
             // Validate Note if provided
