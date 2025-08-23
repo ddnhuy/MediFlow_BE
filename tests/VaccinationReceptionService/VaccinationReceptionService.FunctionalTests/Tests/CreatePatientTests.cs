@@ -1,6 +1,6 @@
 ﻿using BuildingBlocks.Strings;
 
-namespace VaccinationReception.FunctionalTests.Tests
+namespace VaccinationReceptionService.FunctionalTests.Tests
 {
     public class CreatePatientTests : BaseFunctionalTest
     {
