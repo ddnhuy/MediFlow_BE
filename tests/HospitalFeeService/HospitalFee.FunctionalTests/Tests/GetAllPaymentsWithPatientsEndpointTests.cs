@@ -164,5 +164,51 @@ namespace HospitalFee.FunctionalTests.Tests
             byInvoiceContent!.Payments.Data.Should().HaveCount(1);
             byInvoiceContent.Payments.Data.First().Payment.InvoiceNumber.Should().Be("INV-222");
         }
+
+        [Fact]
+        public async Task GetAllPaymentsWithPatients_With_From_And_To_Date()
+        {
+            SetAuthHeader();
+            await _factory.ResetDatabaseAsync();
+            _dbContext.ChangeTracker.Clear();
+
+            var reception1 = new Reception { PatientId = 1, ServiceTypeId = 1 };
+            var reception2 = new Reception { PatientId = 2, ServiceTypeId = 1 };
+            _dbContext.Receptions.AddRange(reception1, reception2);
+            await _dbContext.SaveChangesAsync(CancellationToken.None);
+            _dbContext.ChangeTracker.Clear();
+
+            var payment1 = new Payment
+            {
+                ReceptionId = reception1.Id,
+                TotalAmount = 100m,
+                Method = PaymentMethod.Cash,
+                PaymentType = PaymentType.Receipt,
+                InvoiceNumber = "INV-212",
+                Status = PaymentStatus.Pending
+            };
+            var payment2 = new Payment
+            {
+                ReceptionId = reception2.Id,
+                TotalAmount = 200m,
+                Method = PaymentMethod.CreditCard,
+                PaymentType = PaymentType.Receipt,
+                InvoiceNumber = "INV-123",
+                Status = PaymentStatus.Completed
+            };
+            await SeedEntityAsync(payment1);
+            await SeedEntityAsync(payment2);
+
+            _factory.PatientGrpcClientMock
+                .ListPatientsByIdsAndSearchAsync(Arg.Any<List<int>>(), Arg.Any<string?>(), Arg.Any<CancellationToken>())
+                .Returns(new List<PatientSummaryDTO>
+                {
+                    new PatientSummaryDTO { Id = 1, Name = "Alice", Code = "P001", IdentityCard = "ID123" },
+                    new PatientSummaryDTO { Id = 2, Name = "Bob",   Code = "P002", IdentityCard = "ID456" }
+                });
+
+            var response = await _client.GetAsync("/payments?pageIndex=1&pageSize=10&fromDate=2025-01-12&toDate=2025-02-01");
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using BuildingBlocks.Strings;
 using System.Text.Json;
 
-namespace VaccinationReception.FunctionalTests.Tests;
+namespace VaccinationReceptionService.FunctionalTests.Tests;
 
 public class GetPatientByIdTests : BaseFunctionalTest
 {

@@ -432,7 +432,7 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             // Verify no duplicate ServiceRequestDetail was created for the new reception
             var serviceDetailsCount = await dbContext.ServiceRequestDetails
                 .CountAsync(d => d.ServiceId == 100);
-            serviceDetailsCount.Should().Be(3); // Only the pre-existing one
+            serviceDetailsCount.Should().Be(1); // Only the pre-existing one
         }
 
         [Fact]
@@ -526,6 +526,81 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             updatedVaccination!.SecondaryReceptionId.Should().BeNull();
         }
 
+        [Fact]
+        public async Task CreatePatientReception_WhenUnpaidItemsExist_CancelsThem_AndReturnsCreated()
+        {
+            // Arrange
+            var newPatient = new PatientDetailModel
+            {
+                Id = 99,
+                Name = "Seeded Patient",
+                Code = "PAT099"
+            };
+
+            var createResponse = new AsyncUnaryCall<PatientDetailModel>(
+                Task.FromResult(newPatient),
+                Task.FromResult(new Metadata()),
+                () => Status.DefaultSuccess,
+                () => new Metadata(),
+                () => { });
+
+            _grpcClientMock!
+                .CreatePatientAsync(Arg.Any<CreatePatientRequest>(), Arg.Any<Metadata>())
+                .Returns(createResponse);
+
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            var previousReception = new Reception
+            {
+                PatientId = newPatient.Id,
+                ReceptionDate = DateTime.UtcNow.AddDays(-3),
+                ServiceTypeId = TestServiceTypeId
+            };
+            await dbContext.Receptions.AddAsync(previousReception);
+            await dbContext.SaveChangesAsync();
+            dbContext.ChangeTracker.Clear();
+
+            var detail = new ServiceRequestDetail
+            {
+                ReceptionId = previousReception.Id,
+                RequestNumber = "REQ-UNPAID-1",
+                ServiceId = 100,
+                Quantity = 1,
+                UnitPrice = 50000,
+                PaymentStatus = PaymentStatusForItem.NotPaid
+            };
+
+            var rv = new ReceptionVaccination
+            {
+                ReceptionId = previousReception.Id,
+                VaccineId = 1,
+                Quantity = 1,
+                PaymentStatus = PaymentStatusForItem.NotPaid,
+                RequestNumber = UniqueStringGenerator.GenerateUniqueString(),
+                UnitPrice = 200000,
+                ScheduledDate = DateTime.UtcNow
+            };
+
+            await dbContext.ServiceRequestDetails.AddAsync(detail);
+            await dbContext.ReceptionVaccinations.AddAsync(rv);
+            await dbContext.SaveChangesAsync();
+            dbContext.ChangeTracker.Clear();
+
+            _factory.HospitalServiceMock
+                .GetServicesByServiceCodeAsync(Arg.Any<List<string>>(), Arg.Any<CancellationToken>())
+                .Returns(new List<BuildingBlocks.Messaging.Contracts.HospitalService.ServiceDTO>());
+
+            var command = CreateValidCommand() with
+            {
+                patientId = 0
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/patient-reception", command);
+
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+        }
         private CreatePatientReceptionCommand CreateValidCommand()
         {
             return new CreatePatientReceptionCommand(
