@@ -17,7 +17,7 @@ namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
         string? ATMTransactionCode,
         string PaymentType,
         string? InvoiceNumber,
-        string? Status,
+        PaymentStatus? Status,
         int? OriginalPaymentId,
         DateTime CreatedAt,
         DateTime LastUpdatedAt
@@ -46,7 +46,7 @@ namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
                         p.ATMTransactionCode,
                         p.PaymentType.ToString(),
                         p.InvoiceNumber,
-                        p.Status?.ToString(),
+                        p.Status,
                         p.OriginalPaymentId,
                         p.CreatedAt,
                         p.LastUpdatedAt

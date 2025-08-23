@@ -56,7 +56,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
 
             // Map to result types for doctor prescribed vaccines (ScheduledDate == today)
             var doctorPrescribedVaccines = receptionVaccinations
-                .Where(rv => rv.ScheduledDate?.Date == today)
+                .Where(rv => rv.ScheduledDate.Date == today)
                 .ToList();
 
             var doctorPrescribedResult = new List<MedicineInfo>();
@@ -87,7 +87,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetMedicineListF
 
             // Map to result types for customer warehouse vaccines (ScheduledDate > today)
             var customerWarehouseVaccines = receptionVaccinations
-                .Where(rv => rv.ScheduledDate?.Date > today)
+                .Where(rv => rv.ScheduledDate.Date > today)
                 .ToList();
 
             var customerWarehouseResult = new List<MedicineInfo>();

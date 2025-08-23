@@ -91,6 +91,25 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                         unpaidServiceDetails.Count, patientId);
                 }
 
+                var unpaidReceptionVaccination = await _context.ReceptionVaccinations
+                    .Where(srd => srd.Reception.PatientId == patientId
+                               && srd.PaymentStatus == PaymentStatusForItem.NotPaid
+                               && !srd.IsCancelled)
+                    .ToListAsync(cancellationToken);
+
+                if (unpaidReceptionVaccination.Any())
+                {
+                    foreach (var receptionVaccination in unpaidReceptionVaccination)
+                    {
+                        receptionVaccination.IsCancelled = true;
+                    }
+
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    _logger.LogInformation("Cancelled {Count} unpaid reception vaccination for patient {PatientId} before creating new reception",
+                        unpaidReceptionVaccination.Count, patientId);
+                }
+
                 // Create reception
                 var reception = new Reception
                 {
@@ -139,7 +158,8 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                     var paidVaccinationIds = await _context.ReceptionVaccinations
                         .Where(rv => rv.ReceptionId == previousReception.Id
                             && rv.PaymentStatus == PaymentStatusForItem.Paid
-                            && rv.AppointmentDate >= reception.ReceptionDate
+                            && rv.AppointmentDate.HasValue
+                            && rv.AppointmentDate.Value >= reception.ReceptionDate
                             && !rv.HasIssue)
                         .Select(rv => rv.Id)
                         .ToListAsync(cancellationToken);

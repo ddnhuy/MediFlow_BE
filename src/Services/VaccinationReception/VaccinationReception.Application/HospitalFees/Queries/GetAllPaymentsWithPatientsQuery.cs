@@ -9,7 +9,9 @@ namespace VaccinationReception.Application.HospitalFees.Queries
 {
     public record GetAllPaymentsWithPatientsQuery(
         PaginationRequest PaginationRequest,
-        string? SearchTerm
+        string? SearchTerm,
+        DateTime? FromDate,
+        DateTime? ToDate
     ) : IQuery<PaginatedResult<PaymentWithPatientDTO>>;
 
     public class GetAllPaymentsWithPatientsQueryHandler
@@ -30,9 +32,21 @@ namespace VaccinationReception.Application.HospitalFees.Queries
             var pageSize = request.PaginationRequest.PageSize;
             var searchTerm = request.SearchTerm?.Trim();
 
-            var payments = await _context.Payments
+            var query = _context.Payments
                 .Include(p => p.Reception)
-                .Where(p => !p.IsCancelled)
+                .Where(p => !p.IsCancelled);
+
+            if (request.FromDate.HasValue)
+            {
+                query = query.Where(p => p.CreatedAt >= request.FromDate.Value);
+            }
+
+            if (request.ToDate.HasValue)
+            {
+                query = query.Where(p => p.CreatedAt < request.ToDate.Value);
+            }
+
+            var payments = await query
                 .OrderByDescending(p => p.CreatedAt)
                 .Select(p => new
                 {
