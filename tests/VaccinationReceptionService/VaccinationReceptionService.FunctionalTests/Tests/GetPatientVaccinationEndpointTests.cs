@@ -195,8 +195,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task GetPatientVaccination_WithEmptySearchTerm_ReturnsAllPatients()
         {
+            var searchTerm = "";
             // Act
-            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=");
+            var response = await _client.GetAsync($"/vaccination/waiting-patients?searchTerm={searchTerm}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -209,8 +210,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task GetPatientVaccination_WithWhitespaceSearchTerm_ReturnsAllPatients()
         {
+            var searchTerm = "   ";
             // Act
-            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=%20%20%20"); // URL encoded spaces
+            var response = await _client.GetAsync($"/vaccination/waiting-patients?searchTerm={searchTerm}"); 
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -223,8 +225,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task GetPatientVaccination_WithValidSearchTermMatchingPatientCode_ReturnsFilteredResults()
         {
+            var searchTerm = "P001";
             // Act
-            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=P001"); // Assuming mock patient has code P001
+            var response = await _client.GetAsync($"/vaccination/waiting-patients?searchTerm={searchTerm}"); // Assuming mock patient has code P001
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -239,8 +242,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task GetPatientVaccination_WithValidSearchTermMatchingPatientName_ReturnsFilteredResults()
         {
+            var searchTerm = "John";
             // Act
-            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=John"); // Assuming mock patient has name containing "John"
+            var response = await _client.GetAsync($"/vaccination/waiting-patients?searchTerm={searchTerm}"); // Assuming mock patient has name containing "John"
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -255,8 +259,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task GetPatientVaccination_WithCaseInsensitiveSearchTerm_ReturnsFilteredResults()
         {
+            var searchTerm = "JOHN";
             // Act
-            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=JOHN"); // Uppercase search term
+            var response = await _client.GetAsync($"/vaccination/waiting-patients?searchTerm={searchTerm}"); // Uppercase search term
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -270,8 +275,10 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task GetPatientVaccination_WithPartialSearchTerm_ReturnsFilteredResults()
         {
+            var searchTerm = "Jo";
+
             // Act
-            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=Jo");
+            var response = await _client.GetAsync($"/vaccination/waiting-patients?searchTerm={searchTerm}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -283,8 +290,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task GetPatientVaccination_WithNonMatchingSearchTerm_ReturnsEmptyList()
         {
+            var searchTerm = "NonExistentPatient";
             // Act
-            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=NonExistentPatient");
+            var response = await _client.GetAsync($"/vaccination/waiting-patients?searchTerm={searchTerm}");
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -297,8 +305,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task GetPatientVaccination_WithSpecialCharactersInSearchTerm_HandlesGracefully()
         {
+            var searchTerm = "%40%23%24%25";
             // Act
-            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=%40%23%24%25"); // URL encoded @#$%
+            var response = await _client.GetAsync($"/vaccination/waiting-patients?searchTerm={searchTerm}"); // URL encoded @#$%
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -311,8 +320,9 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
         [Fact]
         public async Task GetPatientVaccination_WithUnicodeSearchTerm_HandlesGracefully()
         {
+            var searchTerm = "Nguyễn";
             // Act
-            var response = await _client.GetAsync("/vaccination/waiting-patients?searchTerm=Nguyễn"); // Vietnamese characters
+            var response = await _client.GetAsync($"/vaccination/waiting-patients?searchTerm={searchTerm}"); // Vietnamese characters
 
             // Assert
             response.StatusCode.Should().Be(HttpStatusCode.OK);
