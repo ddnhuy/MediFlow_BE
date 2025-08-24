@@ -511,14 +511,17 @@
                 (Roles.WAREHOUSE_STAFF, DepartmentTypes.STORAGE),
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
                 (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.STORAGE),
                 (Roles.ACCOUNTANT, DepartmentTypes.STORAGE),
                 (Roles.ACCOUNTANT, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.ACCOUNTANT, DepartmentTypes.FINANCE),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.PHARMACY),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.STORAGE),
             },
             ["management"] = new()
             {
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
-                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
             },
             ["vaccination-reception"] = new()
             {
@@ -533,9 +536,12 @@
                 (Roles.NURSE, DepartmentTypes.VACCINE),
                 (Roles.NURSE, DepartmentTypes.LAB),
                 (Roles.NURSE, DepartmentTypes.VACCINE_RECEPTION),
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.ACCOUNTANT, DepartmentTypes.STORAGE),
                 (Roles.ACCOUNTANT, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.ACCOUNTANT, DepartmentTypes.FINANCE),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.PHARMACY),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.STORAGE),
             },
             ["file-storage"] = new()
             {
@@ -544,16 +550,18 @@
                 (Roles.DOCTOR, DepartmentTypes.CLINIC),
                 (Roles.DOCTOR, DepartmentTypes.VACCINE),
                 (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.NURSE, DepartmentTypes.CLINIC),
                 (Roles.NURSE, DepartmentTypes.VACCINE),
                 (Roles.NURSE, DepartmentTypes.LAB),
+                (Roles.NURSE, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.IMAGING_TECHNICIAN, DepartmentTypes.IMAGING),
                 (Roles.LABORATORY_STAFF, DepartmentTypes.LAB),
                 (Roles.PHARMACY_STAFF, DepartmentTypes.PHARMACY),
                 (Roles.WAREHOUSE_STAFF, DepartmentTypes.STORAGE),
                 (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
                 (Roles.ACCOUNTANT, DepartmentTypes.FINANCE),
-                (Roles.IT_SUPPORT, DepartmentTypes.ADMIN)
+                (Roles.IT_SUPPORT, DepartmentTypes.ADMIN),
             },
             ["appointments"] = new()
             {
@@ -562,10 +570,12 @@
                 (Roles.DOCTOR, DepartmentTypes.CLINIC),
                 (Roles.DOCTOR, DepartmentTypes.VACCINE),
                 (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.NURSE, DepartmentTypes.CLINIC),
                 (Roles.NURSE, DepartmentTypes.VACCINE),
                 (Roles.NURSE, DepartmentTypes.LAB),
-                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
+                (Roles.NURSE, DepartmentTypes.VACCINE_RECEPTION),
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
             },
             ["hospital-service"] = new()
             {
@@ -574,10 +584,14 @@
                 (Roles.DOCTOR, DepartmentTypes.CLINIC),
                 (Roles.DOCTOR, DepartmentTypes.VACCINE),
                 (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.NURSE, DepartmentTypes.CLINIC),
                 (Roles.NURSE, DepartmentTypes.VACCINE),
                 (Roles.NURSE, DepartmentTypes.LAB),
-                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT)
+                (Roles.NURSE, DepartmentTypes.VACCINE_RECEPTION),
+                (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.PHARMACY),
+                (Roles.PHARMACY_STAFF, DepartmentTypes.STORAGE),
             }
         };
     }

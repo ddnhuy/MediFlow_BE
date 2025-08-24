@@ -19,7 +19,7 @@ namespace VaccinationReception.Application.HospitalFees.Commands
         List<int> ReceptionVaccinationIds,
         List<int> ServiceRequestDetailIds) : ICommand<CreatePaymentResult>;
 
-    public record CreatePaymentResult(int PaymentId);
+    public record CreatePaymentResult(int PaymentId, string InvoiceNumber);
 
     public class CreatePaymentCommandHandler : ICommandHandler<CreatePaymentCommand, CreatePaymentResult>
     {
@@ -112,7 +112,7 @@ namespace VaccinationReception.Application.HospitalFees.Commands
                 await _context.SaveChangesAsync(cancellationToken);
 
                 _logger.LogInformation("Successfully created Payment with Id: {PaymentId}", newPayment.Id);
-                return new CreatePaymentResult(newPayment.Id);
+                return new CreatePaymentResult(newPayment.Id, newPayment.InvoiceNumber);
             }
             catch (Exception ex)
             {

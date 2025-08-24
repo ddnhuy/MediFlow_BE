@@ -58,7 +58,7 @@ namespace VaccinationReception.Application.Examinations.Queries
                 var service = services.FirstOrDefault(s => s.Id == exam.ServiceId);
 
                 exam.ServiceName = service!.ServiceName;
-                exam.Status = exam.ReturnTime < DateTime.UtcNow ? "COMPLETED" : "PENDING";
+                exam.Status = exam.ReturnTime != DateTime.MinValue ? "COMPLETED" : "PENDING";
             }
 
             var response = new GetAllExaminationHistoryOfPatientResponse 

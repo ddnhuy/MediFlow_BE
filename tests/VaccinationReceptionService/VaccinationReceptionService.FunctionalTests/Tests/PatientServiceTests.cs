@@ -3,7 +3,7 @@ using DeletePatientResponse = CustomerInfo.Grpc.Protos.DeletePatientResponse;
 using Newtonsoft.Json.Linq;
 using System.Text.Json;
 
-namespace VaccinationReception.FunctionalTests.Tests;
+namespace VaccinationReceptionService.FunctionalTests.Tests;
 
 public class PatientServiceTests : BaseFunctionalTest
 {

@@ -43,9 +43,9 @@ namespace Inventory.Application.Medicines.Queries.GetMedicineBatchesByMedicineId
                     MedicineId = mb.MedicineId,
                     MedicineName = mb.Medicine!.MedicineName,
                     BatchNumber = mb.BatchNumber,
-                    Quantity = _context.SupplierImportDocumentDetails
-                        .Where(sidd => sidd.MedicineBatchId == mb.Id)
-                        .Sum(sidd => sidd.Quantity),
+                    Quantity = _context.InventoryDetails
+                        .Where(id => id.MedicineBatchId == mb.Id && !id.IsSuspended && !id.IsCancelled)
+                        .Sum(id => id.Quantity),
                     ImportDate = mb.ImportDate,
                     ExpiryDate = mb.ExpiryDate,
                     ImportPrice = mb.ImportPrice,

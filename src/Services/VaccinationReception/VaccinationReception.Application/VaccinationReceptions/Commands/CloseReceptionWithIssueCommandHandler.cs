@@ -85,8 +85,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                 .Include(r => r.Reception)
                 .Where(rv =>
                     (rv.ReceptionId == receptionId || rv.SecondaryReceptionId == receptionId) &&
-                    rv.ScheduledDate.HasValue &&
-                    rv.ScheduledDate.Value.Date == today &&
+                    rv.ScheduledDate.Date == today &&
                     !rv.IsCancelled)
                 .ToListAsync(cancellationToken);
 

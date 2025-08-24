@@ -43,8 +43,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries.GetPend
                 var todayReceptionVaccinations = await _context.ReceptionVaccinations
                 .Where(rv =>
                     (rv.ReceptionId == request.ReceptionId || rv.SecondaryReceptionId == request.ReceptionId) &&
-                    rv.ScheduledDate.HasValue &&
-                    rv.ScheduledDate.Value.Date == today &&
+                    rv.ScheduledDate.Date == today &&
                     rv.TestResultEntry != POSITIVE_RESULT &&
                     !rv.HasIssue &&
                     !rv.IsCancelled)

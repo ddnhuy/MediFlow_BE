@@ -64,6 +64,7 @@ ingress:
   className: public
   annotations:
     cert-manager.io/cluster-issuer: lets-encrypt
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
   hosts:
     - host: api.mediflow.health.vn
       paths:

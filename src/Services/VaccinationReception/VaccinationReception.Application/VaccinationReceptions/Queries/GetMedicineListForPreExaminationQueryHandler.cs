@@ -88,6 +88,7 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                 var hasAnyVaccinated = vaccinations.Any(v => v.ReceptionVaccinationId == rv.Id);
 
                 receptionVaccinations.Add(new PreExaminationMedicineItem(
+                    VaccineId: rv.VaccineId,
                     ReceptionVaccinationId: rv.Id,
                     PatientName: patientName,
                     VaccineName: vaccineName ?? "",
@@ -96,7 +97,6 @@ namespace VaccinationReception.Application.VaccinationReceptions.Queries
                     TestResultEntry: rv.TestResultEntry ?? string.Empty,
                     DoctorName: doctorDictionary.TryGetValue(rv.DoctorId, out var doctorName) ? doctorName : ""
                 ));
-                
             }
 
             return new GetMedicineListForPreExaminationResult(receptionVaccinations);

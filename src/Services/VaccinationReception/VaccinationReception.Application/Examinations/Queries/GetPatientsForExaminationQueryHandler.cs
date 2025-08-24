@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VaccinationReception.Application.Data;
 using VaccinationReception.Application.Services.PatientServices;
+using VaccinationReception.Domain.Enums;
 
 namespace VaccinationReception.Application.Examinations.Queries
 {
@@ -32,37 +33,42 @@ namespace VaccinationReception.Application.Examinations.Queries
                     .Where(e => string.IsNullOrEmpty(e.Diagnose) && !e.ReturnTime.HasValue && string.IsNullOrEmpty(e.Conclusion)) // Not take examinations with diagnose, return time or conclusion
                     .Where(e => !e.IsCancelled && !e.IsSuspended);
 
-                // Get all examinations with their reception and patient information
-                var examinationsWithPatients = await query
-                    .Select(e => new
+                // Get all examinations with their reception and check payment status
+                var examinationsWithPaymentStatus = await query
+                    .Join(_context.ServiceRequestDetails,
+                        e => new { e.ReceptionId, e.ServiceId },
+                        srd => new { ReceptionId = (int?)srd.ReceptionId, ServiceId = (int?)srd.ServiceId },
+                        (e, srd) => new { Examination = e, ServiceDetail = srd })
+                    .Where(joined => joined.ServiceDetail.PaymentStatus == PaymentStatusForItem.Paid) // Only paid examinations
+                    .Select(joined => new
                     {
-                        e.Id,
-                        e.ReceptionId,
-                        e.PatientId,
-                        e.ReceptionTime,
-                        e.ExecutionTime,
-                        e.ReturnTime,
-                        e.RequestNumber,
-                        e.Diagnose,
-                        e.Conclusion,
-                        e.Note
+                        joined.Examination.Id,
+                        joined.Examination.ReceptionId,
+                        joined.Examination.PatientId,
+                        joined.Examination.ReceptionTime,
+                        joined.Examination.ExecutionTime,
+                        joined.Examination.ReturnTime,
+                        joined.Examination.RequestNumber,
+                        joined.Examination.Diagnose,
+                        joined.Examination.Conclusion,
+                        joined.Examination.Note
                     })
                     .ToListAsync(cancellationToken);
 
-                if (!examinationsWithPatients.Any())
+                if (!examinationsWithPaymentStatus.Any())
                 {
-                    _logger.LogInformation("No examination records found.");
+                    _logger.LogInformation("No paid examination records found.");
                     return new GetPatientsForExaminationResponse(new List<PatientExaminationInfo>());
                 }
 
                 // Get unique patient IDs from examinations
-                var patientIds = examinationsWithPatients
+                var patientIds = examinationsWithPaymentStatus
                     .Where(e => e.PatientId.HasValue)
                     .Select(e => e.PatientId.Value)
                     .Distinct()
                     .ToList();
 
-                _logger.LogInformation("Found {Count} unique patients with examination records.", patientIds.Count);
+                _logger.LogInformation("Found {Count} unique patients with paid examination records.", patientIds.Count);
 
                 // Get patient information from CustomerInfo service
                 var patients = await _patientGrpcClient.ListPatientsByIdsAndSearchAsync(
@@ -79,7 +85,7 @@ namespace VaccinationReception.Application.Examinations.Queries
                 var patientExaminationInfos = new List<PatientExaminationInfo>();
 
                 // Group by ReceptionId and PatientId to avoid duplicates
-                var groupedExaminations = examinationsWithPatients
+                var groupedExaminations = examinationsWithPaymentStatus
                     .Where(e => e.PatientId.HasValue)
                     .GroupBy(e => new { e.ReceptionId, e.PatientId })
                     .Select(g => g.First()) // Take the first examination for each reception-patient combination
@@ -111,7 +117,7 @@ namespace VaccinationReception.Application.Examinations.Queries
                     }
                 }
 
-                _logger.LogInformation("Returning {Count} patient examination records.", patientExaminationInfos.Count);
+                _logger.LogInformation("Returning {Count} patient examination records with paid status.", patientExaminationInfos.Count);
 
                 return new GetPatientsForExaminationResponse(patientExaminationInfos);
             }

@@ -66,6 +66,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
                 // Group by ReceptionId and select the first for each Reception
                 var receptionsWithPendingVaccinations = pendingReceptionVaccinations
                     .GroupBy(rv => (rv.SecondaryReception ?? rv.Reception).Id)
+                    .Where(group => group.Any(rv => rv.IsReadyToUse))
                     .Select(group => group.First())
                     .OrderBy(rv => rv.Reception.ReceptionDate)
                     .ToList();
@@ -82,6 +83,18 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetPatientVaccin
 
                         // Get patient information from the gRPC service
                         var patient = await _patientGrpcClient.GetPatientAsync(currentReception.PatientId, cancellationToken);
+
+                        if (!string.IsNullOrWhiteSpace(request.SearchTerm))
+                        {
+                            var searchTerm = request.SearchTerm.Trim().ToLowerInvariant();
+                            var patientCode = patient.Code?.ToLowerInvariant() ?? string.Empty;
+                            var patientName = patient.Name?.ToLowerInvariant() ?? string.Empty;
+
+                            if (!patientCode.Contains(searchTerm) && !patientName.Contains(searchTerm))
+                            {
+                                continue;
+                            }
+                        }
 
                         var weightKg = receptionVaccination.Reception.ScreeningEvaluationReport?.WeightKg ?? 0.0;
 

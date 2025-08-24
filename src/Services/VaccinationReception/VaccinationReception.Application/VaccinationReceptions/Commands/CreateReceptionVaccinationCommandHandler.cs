@@ -163,17 +163,20 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
                                        receptionVaccination.Id, request.ReceptionId);
 
                 // Publish ReceptionVaccinationCreatedEvent
-                var createdEvent = new ReceptionVaccinationCreatedEvent
+                if (receptionVaccination.AppointmentDate.HasValue)
                 {
-                    PatientId = reception.PatientId,
-                    VaccineId = receptionVaccination.VaccineId,
-                    AppointmentDate = receptionVaccination.AppointmentDate,
-                    Note = receptionVaccination.Note,
-                    VaccineName = medicine!.MedicineName,
-                    Dose = "N/A",   
-                    DoctorId = receptionVaccination.DoctorId.Value
-                };
-                await _publisher.Publish(createdEvent, cancellationToken);
+                    var createdEvent = new ReceptionVaccinationCreatedEvent
+                    {
+                        PatientId = reception.PatientId,
+                        VaccineId = receptionVaccination.VaccineId,
+                        AppointmentDate = receptionVaccination.AppointmentDate.Value,
+                        Note = receptionVaccination.Note,
+                        VaccineName = medicine!.MedicineName,
+                        Dose = "N/A",
+                        DoctorId = receptionVaccination.DoctorId.GetValueOrDefault()
+                    };
+                    await _publisher.Publish(createdEvent, cancellationToken);
+                }
 
                 return new CreateReceptionVaccinationResult(receptionVaccination.Id);
             }

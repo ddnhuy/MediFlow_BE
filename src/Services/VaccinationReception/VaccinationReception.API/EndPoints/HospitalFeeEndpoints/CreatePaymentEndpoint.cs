@@ -10,7 +10,7 @@ namespace VaccinationReception.API.EndPoints.HospitalFeeEndpoints
             List<int> ReceptionVaccinationIds,
             List<int> ServiceRequestDetailIds);
 
-    public record CreatePaymentResponse(int PaymentId);
+    public record CreatePaymentResponse(int PaymentId, string InvoiceNumber);
 
     public class CreatePaymentEndpoint : ICarterModule
     {

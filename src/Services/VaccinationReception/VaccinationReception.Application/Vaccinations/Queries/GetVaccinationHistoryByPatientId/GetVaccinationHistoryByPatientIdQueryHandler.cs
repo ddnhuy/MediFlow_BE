@@ -41,6 +41,7 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHi
             // Get all vaccinations for all ReceptionVaccinations
             var receptionVaccinationIds = allReceptionVaccinations.Select(rv => rv.Id).ToList();
             var allVaccinations = await _dbContext.Vaccinations
+                .Include(v => v.ReceptionVaccination)
                 .Where(v => receptionVaccinationIds.Contains(v.ReceptionVaccinationId))
                 .ToListAsync(cancellationToken);
 
@@ -68,73 +69,19 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHi
                     doctorName = doctor.Name ?? string.Empty;
                 }
 
-                if (receptionVaccination.HasIssue)
+                // Get vaccinations for this ReceptionVaccination
+                var vaccinationsForThisRV = allVaccinations
+                    .Where(v => v.ReceptionVaccinationId == receptionVaccination.Id)
+                    .ToList();
+
+                if (vaccinationsForThisRV.Any())
                 {
-                    // Case 1: ReceptionVaccination has issue
-                    // This could be:
-                    // - Vaccine was rejected before injection
-                    // - Vaccine was injected but had adverse reactions later
-
-                    // Check if there are any vaccinations for this ReceptionVaccination
-                    var vaccinationsForThisRV = allVaccinations
-                        .Where(v => v.ReceptionVaccinationId == receptionVaccination.Id)
-                        .ToList();
-
-                    if (vaccinationsForThisRV.Any())
-                    {
-                        // Vaccine was injected but has issues (adverse reactions)
-                        foreach (var vaccination in vaccinationsForThisRV)
-                        {
-                            historyItems.Add(new VaccinationHistoryItem(
-                                Id: vaccination.Id,
-                                ReceptionId: currentReceptionId,
-                                ReceptionVaccinationId: receptionVaccination.Id,
-                                MedicineTypeName: medicineInfo?.VaccineTypeName ?? string.Empty,
-                                MedicineName: vaccination.MedicineName ?? string.Empty,
-                                DoseNumber: $"Mũi thứ {vaccination.DoseNumber}",
-                                VaccinationTestDate: receptionVaccination.VaccinationTestDate,
-                                VaccinationDate: vaccination.VaccinationDate,
-                                VaccinationConfirmation: vaccination.IsConfirmed,
-                                DoctorName: $"B.S {doctorName}",
-                                HasIssue: true,
-                                IssueNote: receptionVaccination.IssueNote,
-                                IssueDate: receptionVaccination.IssueDate
-                            ));
-                        }
-                    }
-                    else
-                    {
-                        // Vaccine was rejected before injection
-                        // Create entries based on the planned quantity
-                        for (int doseNum = 1; doseNum <= receptionVaccination.Quantity; doseNum++)
-                        {
-                            historyItems.Add(new VaccinationHistoryItem(
-                                Id: null, 
-                                ReceptionId: currentReceptionId,
-                                ReceptionVaccinationId: receptionVaccination.Id,
-                                MedicineTypeName: medicineInfo?.VaccineTypeName ?? string.Empty,
-                                MedicineName: medicineInfo?.MedicineName ?? string.Empty,
-                                DoseNumber: "N/A",
-                                VaccinationTestDate: receptionVaccination.VaccinationTestDate,
-                                VaccinationDate: null, // No vaccination date since it was rejected
-                                VaccinationConfirmation: false,
-                                DoctorName: !string.IsNullOrEmpty(doctorName) ? $"B.S {doctorName}" : string.Empty,
-                                HasIssue: true,
-                                IssueNote: receptionVaccination.IssueNote,
-                                IssueDate: receptionVaccination.IssueDate
-                            ));
-                        }
-                    }
-                }
-                else
-                {
-                    // Case 2: ReceptionVaccination has no issue - show actual vaccinations
-                    var vaccinationsForThisRV = allVaccinations
-                        .Where(v => v.ReceptionVaccinationId == receptionVaccination.Id)
-                        .ToList();
-
+                    // Has actual vaccinations - check each vaccination individually
                     foreach (var vaccination in vaccinationsForThisRV)
                     {
+                        // Check if this specific vaccination has reactions
+                        var hasVaccinationReaction = vaccination.HasReaction;
+
                         historyItems.Add(new VaccinationHistoryItem(
                             Id: vaccination.Id,
                             ReceptionId: currentReceptionId,
@@ -143,12 +90,35 @@ namespace VaccinationReception.Application.Vaccinations.Queries.GetVaccinationHi
                             MedicineName: vaccination.MedicineName ?? string.Empty,
                             DoseNumber: $"Mũi thứ {vaccination.DoseNumber}",
                             VaccinationTestDate: receptionVaccination.VaccinationTestDate,
-                            VaccinationDate: vaccination.VaccinationDate!.Value,
+                            VaccinationDate: vaccination.VaccinationDate,
                             VaccinationConfirmation: vaccination.IsConfirmed,
                             DoctorName: $"B.S {doctorName}",
-                            HasIssue: false,
-                            IssueNote: null,
-                            IssueDate: null
+                            HasIssue: hasVaccinationReaction,
+                            IssueNote: hasVaccinationReaction ? receptionVaccination.Reception.IssueNote : null,
+                            IssueDate: hasVaccinationReaction ? receptionVaccination.Reception.IssueDate : null
+                        ));
+                    }
+                }
+                else if (receptionVaccination.HasIssue)
+                {
+                    // Case 1b: Vaccine was rejected before injection (receptionVaccination.HasIssue = true)
+                    // Create entries based on the planned quantity
+                    for (int doseNum = 1; doseNum <= receptionVaccination.Quantity; doseNum++)
+                    {
+                        historyItems.Add(new VaccinationHistoryItem(
+                            Id: null,
+                            ReceptionId: currentReceptionId,
+                            ReceptionVaccinationId: receptionVaccination.Id,
+                            MedicineTypeName: medicineInfo?.VaccineTypeName ?? string.Empty,
+                            MedicineName: medicineInfo?.MedicineName ?? string.Empty,
+                            DoseNumber: "N/A",
+                            VaccinationTestDate: receptionVaccination.VaccinationTestDate,
+                            VaccinationDate: null, // No vaccination date since it was rejected
+                            VaccinationConfirmation: false,
+                            DoctorName: !string.IsNullOrEmpty(doctorName) ? $"B.S {doctorName}" : string.Empty,
+                            HasIssue: true,
+                            IssueNote: receptionVaccination.IssueNote,
+                            IssueDate: receptionVaccination.IssueDate
                         ));
                     }
                 }
