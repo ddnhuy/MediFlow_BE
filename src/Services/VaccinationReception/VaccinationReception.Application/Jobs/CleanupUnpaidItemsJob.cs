@@ -78,6 +78,39 @@ namespace VaccinationReception.Application.Jobs
                     _logger.LogInformation("Will cancel {Count} ServiceRequestDetail records.", serviceDetailCount);
                 }
 
+                var pendingPaymentsToCancel = await _context.Payments
+                    .Where(p => p.LastUpdatedAt <= cutoffLatestActivityTime &&
+                                p.Status == PaymentStatus.Pending)
+                    .ToListAsync();
+
+                var paymentCount = pendingPaymentsToCancel.Count;
+                if (paymentCount > 0)
+                {
+                    foreach (var payment in pendingPaymentsToCancel)
+                    {
+                        payment.IsCancelled = true;
+                    }
+                    _logger.LogInformation("Will cancel {Count} Pending Payment records.", paymentCount);
+                }
+
+                if (paymentCount > 0)
+                {
+                    var paymentIds = pendingPaymentsToCancel.Select(p => p.Id).ToList();
+                    var paymentDetailsToCancel = await _context.PaymentDetails
+                        .Where(pd => paymentIds.Contains(pd.PaymentId))
+                        .ToListAsync();
+
+                    var paymentDetailCount = paymentDetailsToCancel.Count;
+                    if (paymentDetailCount > 0)
+                    {
+                        foreach (var paymentDetail in paymentDetailsToCancel)
+                        {
+                            paymentDetail.IsCancelled = true;
+                        }
+                        _logger.LogInformation("Will cancel {Count} PaymentDetail records.", paymentDetailCount);
+                    }
+                }
+
                 var totalUpdated = await _context.SaveChangesAsync();
                 _logger.LogInformation("Successfully updated {Count} records.", totalUpdated);
             }
