@@ -102,40 +102,53 @@ namespace VaccinationReception.Application.VaccinationReceptions.Commands
 
             foreach (var receptionVaccination in todayReceptionVaccinations)
             {
-                var completedDoses = completedVaccinations
+                var completedVaccinationsForThisReception = completedVaccinations
                     .Where(v => v.ReceptionVaccinationId == receptionVaccination.Id)
-                    .Count();
+                    .ToList();
 
-                var medicineList = await _inventoryService.GetMedicineInformationAsync([receptionVaccination.VaccineId], cancellationToken); 
+                var medicineList = await _inventoryService.GetMedicineInformationAsync([receptionVaccination.VaccineId], cancellationToken);
                 var medicine = medicineList.FirstOrDefault(m => m.MedicineId == receptionVaccination.VaccineId);
 
-                if (completedDoses < receptionVaccination.Quantity)
+                // Kiểm tra xem có mũi tiêm nào có phản ứng xấu không
+                var hasReactionInCompletedDoses = completedVaccinationsForThisReception.Any(v => v.HasReaction);
+
+                // Nếu có mũi chưa tiêm hoặc có phản ứng trong mũi đã tiêm
+                if (completedVaccinationsForThisReception.Count < receptionVaccination.Quantity || hasReactionInCompletedDoses)
                 {
-                    var pendingDoses = receptionVaccination.Quantity - completedDoses;
+                    var pendingDoses = receptionVaccination.Quantity - completedVaccinationsForThisReception.Count;
 
                     receptionVaccination.ScheduledDate = rescheduleDate;
                     receptionVaccination.AppointmentDate = rescheduleDate;
-                    receptionVaccination.HasIssue = true;
-                    receptionVaccination.IssueNote = $"{rescheduleReason}";
-                    receptionVaccination.IssueDate = DateTime.UtcNow;
+
+                    // HasIssue nếu có phản ứng trong mũi đã tiêm
+                    if (hasReactionInCompletedDoses)
+                    {
+                        receptionVaccination.HasIssue = true;
+                        receptionVaccination.IssueNote = $"{rescheduleReason}";
+                        receptionVaccination.IssueDate = DateTime.UtcNow;
+                    }
+
                     receptionVaccination.LastUpdatedAt = DateTime.UtcNow;
 
-                    rescheduledCount += pendingDoses;
+                    if (pendingDoses > 0)
+                    {
+                        rescheduledCount += pendingDoses;
+                    }
 
                     var createdEvent = new ReceptionVaccinationCreatedEvent
                     {
                         PatientId = receptionVaccination.Reception.PatientId,
                         VaccineId = receptionVaccination.VaccineId,
                         AppointmentDate = rescheduleDate,
-                        Note = $"{rescheduleReason}",                        
+                        Note = $"{rescheduleReason}",
                         VaccineName = medicine!.MedicineName,
                         Dose = "N/A",
                         DoctorId = receptionVaccination.DoctorId.Value
                     };
                     await _publisher.Publish(createdEvent, cancellationToken);
 
-                    _logger.LogInformation("Rescheduled ReceptionVaccination {Id}: {Pending}/{Total} doses from {OldDate} to {NewDate}",
-                        receptionVaccination.Id, pendingDoses, receptionVaccination.Quantity, today, rescheduleDate);
+                    _logger.LogInformation("Updated ReceptionVaccination {Id}: {Pending} pending doses, HasReaction: {HasReaction}, HasIssue: {HasIssue}",
+                        receptionVaccination.Id, pendingDoses, hasReactionInCompletedDoses, hasReactionInCompletedDoses);
                 }
             }
 
