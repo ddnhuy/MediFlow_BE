@@ -1,4 +1,5 @@
 ﻿using BuildingBlocks.Messaging.Contracts.Inventory.MedicineInformation;
+using MediatR;
 using VaccinationReception.Application.VaccinationReceptions.Commands;
 using VaccinationReception.Domain.Models;
 
@@ -323,6 +324,152 @@ namespace VaccinationReceptionService.FunctionalTests.Tests
             _factory.InventoryServiceMock!
                 .GetMedicineInformationAsync(Arg.Any<IEnumerable<int>>(), Arg.Any<CancellationToken>())
                 .Returns(medicineInfoList);
+        }
+
+        [Fact]
+        public async Task CloseReceptionWithIssue_WithReactionInCompletedVaccination_MarksReceptionVaccinationAsHasIssue()
+        {
+            // Arrange
+            SeedReceptionDataWithReactionInCompletedVaccination();
+            SetupInventoryServiceMock();
+            SetupPublisherMock();
+
+            var command = new CloseReceptionWithIssueCommand(
+                ReceptionId: TestReceptionId,
+                IssueNote: "Patient had adverse reaction",
+                ReScheduleDate: DateTime.UtcNow.Date.AddDays(7)
+            );
+
+            // Act
+            var response = await _client.PutAsJsonAsync($"/closing-reception/reception/{TestReceptionId}", command);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            var result = await response.Content.ReadFromJsonAsync<CloseReceptionWithIssueResult>();
+            result.Should().NotBeNull();
+            result!.IsSuccess.Should().BeTrue();
+
+            // Verify database changes
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            var updatedReceptionVaccination = await dbContext.ReceptionVaccinations
+                .FirstOrDefaultAsync(rv => rv.Id == TestReceptionVaccinationId);
+
+            updatedReceptionVaccination.Should().NotBeNull();
+            updatedReceptionVaccination!.HasIssue.Should().BeTrue(); // Should be marked as HasIssue because completed dose had reaction
+            updatedReceptionVaccination.IssueNote.Should().Contain("Patient had adverse reaction");
+            updatedReceptionVaccination.ScheduledDate.Date.Should().Be(DateTime.UtcNow.Date.AddDays(7)); // Should be rescheduled
+        }
+
+        private void SeedReceptionDataWithReactionInCompletedVaccination()
+        {
+            using var scope = _factory.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+            // Clean up existing data
+            CleanupTestData(dbContext);
+
+            var reception = new Reception
+            {
+                Id = TestReceptionId,
+                PatientId = TestPatientId,
+                ServiceTypeId = 1,
+                ReceptionDate = DateTime.UtcNow,
+                IsVaccinationTodayConfirmed = false,
+                IsCancelled = false,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = 1,
+                LastUpdatedAt = DateTime.UtcNow,
+                LastUpdatedBy = 1
+            };
+
+            var receptionVaccination = new ReceptionVaccination
+            {
+                Id = TestReceptionVaccinationId,
+                ReceptionId = TestReceptionId,
+                VaccineId = TestMedicineId,
+                Quantity = 2, // Need 2 doses
+                ScheduledDate = DateTime.UtcNow.Date, // Today
+                AppointmentDate = DateTime.UtcNow.Date,
+                RequestNumber = "REQ-TEST-001",
+                UnitPrice = 100.00m,
+                DoctorId = TestDoctorId,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = 1,
+                LastUpdatedAt = DateTime.UtcNow,
+                LastUpdatedBy = 1,
+                IsCancelled = false
+            };
+
+            // Create one completed vaccination with reaction
+            var vaccination = new Vaccination
+            {
+                ReceptionVaccinationId = TestReceptionVaccinationId,
+                PatientId = TestPatientId,
+                MedicineId = TestMedicineId,
+                MedicineName = "Test Vaccine",
+                DoctorId = TestDoctorId,
+                IsConfirmed = true,
+                HasReaction = true, // HAS REACTION - this should trigger HasIssue = true
+                VaccinationDate = DateTime.UtcNow,
+                DoseNumber = 1,
+                CreatedAt = DateTime.UtcNow,
+                LastUpdatedAt = DateTime.UtcNow
+            };
+
+            dbContext.Receptions.Add(reception);
+            dbContext.ReceptionVaccinations.Add(receptionVaccination);
+            dbContext.Vaccinations.Add(vaccination);
+            dbContext.SaveChanges();
+        }
+
+        private void CleanupTestData(ApplicationDbContext dbContext)
+        {
+            // Clean up existing data
+            var existingVaccinations = dbContext.Vaccinations.Where(v => v.ReceptionVaccinationId == TestReceptionVaccinationId);
+            dbContext.Vaccinations.RemoveRange(existingVaccinations);
+
+            var existingReceptionVaccination = dbContext.ReceptionVaccinations.FirstOrDefault(rv => rv.Id == TestReceptionVaccinationId);
+            if (existingReceptionVaccination != null)
+            {
+                dbContext.ReceptionVaccinations.Remove(existingReceptionVaccination);
+            }
+
+            var existingReception = dbContext.Receptions.FirstOrDefault(r => r.Id == TestReceptionId);
+            if (existingReception != null)
+            {
+                dbContext.Receptions.Remove(existingReception);
+            }
+
+            dbContext.SaveChanges();
+        }
+
+        private void SetupPublisherMock()
+        {
+            var patientResponse = new PatientDetailModel
+            {
+                Id = TestPatientId,
+                Code = "BN001",
+                Name = "Test Patient",
+                Email = "test@example.com",
+                PhoneNumber = "0123456789"
+            };
+
+            var patientAsyncUnaryCall = new AsyncUnaryCall<PatientDetailModel>(
+                Task.FromResult(patientResponse),
+                Task.FromResult(new Metadata()),
+                () => Status.DefaultSuccess,
+                () => new Metadata(),
+                () => { });
+
+            _grpcClientMock?
+                .GetPatientAsync(Arg.Any<GetPatientRequest>(), Arg.Any<Metadata>())
+                .Returns(patientAsyncUnaryCall);
+
+            var publisherMock = Substitute.For<IPublisher>();
+            publisherMock.Publish(Arg.Any<object>(), Arg.Any<CancellationToken>())
+                     .Returns(Task.CompletedTask);
         }
     }
 }
