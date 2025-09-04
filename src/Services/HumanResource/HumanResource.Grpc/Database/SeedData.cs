@@ -600,6 +600,9 @@
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
                 (Roles.LABORATORY_STAFF, DepartmentTypes.LAB),
                 (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.DOCTOR, DepartmentTypes.CLINIC),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE_RECEPTION),
             },
         };
     }
