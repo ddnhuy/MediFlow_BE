@@ -89,7 +89,7 @@ namespace YarpApiGateWay.Middlewares
                 return;
             }
 
-            var permission = await _permissionService.GetPermissionsAsync(role, department, resourceType);
+            var permission = await _permissionService.GetPermissionsAsync(role, department, path.Contains("examination") ? "examination" : resourceType);
 
             if (!permission.ToLower().Contains(action.ToLower()))
             {

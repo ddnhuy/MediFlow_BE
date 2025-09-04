@@ -501,7 +501,11 @@
             ["hospital-service"] = new()
             {
                 new Policy { ResourceType = "hospital-service", Actions = ["read", "write"] }
-            }
+            },
+            ["examination"] = new()
+            {
+                new Policy { ResourceType = "examination", Actions = ["read", "write"] }
+            },
         };
 
         private static readonly Dictionary<string, List<(string roleName, string departmentType)>> RoleDepartmentMappings = new()
@@ -527,10 +531,8 @@
             {
                 (Roles.ADMIN, DepartmentTypes.ADMIN),
                 (Roles.RECEPTIONIST, DepartmentTypes.VACCINE_RECEPTION),
-                (Roles.LABORATORY_STAFF, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.DOCTOR, DepartmentTypes.CLINIC),
                 (Roles.DOCTOR, DepartmentTypes.VACCINE),
-                (Roles.DOCTOR, DepartmentTypes.LAB),
                 (Roles.DOCTOR, DepartmentTypes.VACCINE_RECEPTION),
                 (Roles.NURSE, DepartmentTypes.CLINIC),
                 (Roles.NURSE, DepartmentTypes.VACCINE),
@@ -592,7 +594,16 @@
                 (Roles.HEAD_OF_DEPARTMENT, DepartmentTypes.MANAGEMENT),
                 (Roles.PHARMACY_STAFF, DepartmentTypes.PHARMACY),
                 (Roles.PHARMACY_STAFF, DepartmentTypes.STORAGE),
-            }
+            },
+            ["examination"] = new()
+            {
+                (Roles.ADMIN, DepartmentTypes.ADMIN),
+                (Roles.LABORATORY_STAFF, DepartmentTypes.LAB),
+                (Roles.DOCTOR, DepartmentTypes.LAB),
+                (Roles.DOCTOR, DepartmentTypes.CLINIC),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE),
+                (Roles.DOCTOR, DepartmentTypes.VACCINE_RECEPTION),
+            },
         };
     }
 }
